@@ -1,0 +1,396 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F56F1D64-B18F-4474-AB7A-7F2A1DD793A2}</ProjectGuid>
+    <RootNamespace>TmaxPresentation</RootNamespace>
+    <SccLocalPath>Desktop</SccLocalPath>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v100</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v100</PlatformToolset>
+    <UseOfMfc>Dynamic</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.50727.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>.\..\..\Bin\Debug\</OutDir>
+    <IntDir>.\Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>.\..\..\Bin\Release\</OutDir>
+    <IntDir>.\Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\..\..\Bin\Debug/TmaxPresentation.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>Include;..\Common\Include;..\Common\Include\Tmview;..\Common\Include\Tmdata;..\Common\Include\Tmmovie;..\Common\Include\Tmbars;..\Common\Include\Tmtool;..\Common\Include\Directx;..\Common\Include\Tmhelp;..\Common\Include\Tmtext;..\Common\Include\Tmstat;..\Common\Include\Tmlpen;..\Common\Include\Tmpower;..\Common\Include\Tmsetup;..\Common\Include\Tmgrab;..\Common\Include\Tmdb45;..\Common\Include\Tmdbnet;..\Common\Include\Msxml;..\Common\Include\Tmshare;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeaderOutputFile>.\Debug/TmaxPresentation.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
+      <ObjectFileName>.\Debug/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Debug/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4995;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Link>
+      <OutputFile>.\..\..\Bin\Debug/TmaxPresentation.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\..\..\Bin\Debug/TmaxPresentation.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\..\..\Bin\Debug/TmaxPresentation.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\..\..\Bin\Release/TmaxPresentation.tlb</TypeLibraryName>
+      <HeaderFileName />
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>Include;..\Common\Include;..\Common\Include\Tmview;..\Common\Include\Tmdata;..\Common\Include\Tmmovie;..\Common\Include\Tmbars;..\Common\Include\Tmtool;..\Common\Include\Directx;..\Common\Include\Tmhelp;..\Common\Include\Tmtext;..\Common\Include\Tmstat;..\Common\Include\Tmlpen;..\Common\Include\Tmpower;..\Common\Include\Tmsetup;..\Common\Include\Tmgrab;..\Common\Include\Tmdb45;..\Common\Include\Tmdbnet;..\Common\Include\Msxml;..\Common\Include\Tmshare;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeaderOutputFile>.\Release/TmaxPresentation.pch</PrecompiledHeaderOutputFile>
+      <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
+      <ObjectFileName>.\Release/</ObjectFileName>
+      <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat />
+      <DisableSpecificWarnings>4995;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <Link>
+      <OutputFile>.\..\..\Bin\Release/TmaxPresentation.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <ProgramDatabaseFile>.\..\..\Bin\Release/TmaxPresentation.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences />
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <OutputFile>.\..\..\Bin\Release/TmaxPresentation.bsc</OutputFile>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Common\Source\Tmdbnet\Alias.cpp" />
+    <ClCompile Include="Source\App.cpp" />
+    <ClCompile Include="Source\Applink.cpp" />
+    <ClCompile Include="Source\Barcode.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Bcmapset.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Colorset.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Db45.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Dbabstract.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbbarcodemap.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\App;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\App;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbdetails.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbextents.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbhighlighters.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbnet.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbprimary.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbquaternary.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\App;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\App;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbsecondary.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\dbtertiary.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbtranscripts.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Dbusers.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Deposit.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Desgset.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Designat.cpp" />
+    <ClCompile Include="Source\Document.cpp" />
+    <ClCompile Include="..\Common\Source\Lead\Font.cpp" />
+    <ClCompile Include="Source\Frame.cpp" />
+    <ClCompile Include="..\Common\Source\Handler.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Link.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Linkset.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdbnet\Machine.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Media.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Mediaset.cpp" />
+    <ClCompile Include="..\Common\Source\Msxml\Msxml3.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Multipg.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Pageset.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Playlist.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Secondary.cpp" />
+    <ClCompile Include="Source\Setline.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="Source\Setup.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Tmdata\Show.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\ShowItem.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Showset.cpp" />
+    <ClCompile Include="..\Common\Source\splash.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\TmaxPresentation;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\TmaxPresentation;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="Source\Stdafx.cpp" />
+    <ClCompile Include="SOURCE\Tables.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Tertiary.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Textline.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Textpage.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Textset.cpp" />
+    <ClCompile Include="..\Common\Source\Tmbars\Tmbars.cpp" />
+    <ClCompile Include="..\Common\Source\Tmcmdlin.cpp" />
+    <ClCompile Include="..\Common\Source\Tmgrab\Tmgrab.cpp" />
+    <ClCompile Include="..\Common\Source\Tmhelp\Tmhelp.cpp" />
+    <ClCompile Include="..\Common\Source\Tmini.cpp" />
+    <ClCompile Include="..\Common\Source\Tmlpen\Tmlpen.cpp" />
+    <ClCompile Include="..\Common\Source\Tmmovie\Tmmovie.cpp" />
+    <ClCompile Include="..\Common\Source\Tmpower\Tmpower.cpp" />
+    <ClCompile Include="..\Common\Source\Tmsetup\Tmsetup.cpp" />
+    <ClCompile Include="..\Common\Source\Tmshare\Tmshare.cpp" />
+    <ClCompile Include="..\Common\Source\Tmstat\Tmstat.cpp" />
+    <ClCompile Include="..\Common\Source\Tmtext\Tmtext.cpp" />
+    <ClCompile Include="..\Common\Source\Tmtool\Tmtool.cpp" />
+    <ClCompile Include="..\Common\Source\Tmview\Tmview.cpp" />
+    <ClCompile Include="Source\Toolbars.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Toolbox.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Transcpt.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Transet.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Treatset.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Verset.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdata\Video.cpp" />
+    <ClCompile Include="..\Common\Source\Tmdb45\Videoset.cpp" />
+    <ClCompile Include="Source\View.cpp" />
+    <ClCompile Include="Source\VKBDlg.cpp" />
+    <ClCompile Include="VKBDlg.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\Common\Lib\Directx\strmiids.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="TmaxPresentation.odl">
+      <TargetEnvironment Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Win32</TargetEnvironment>
+      <TargetEnvironment Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Win32</TargetEnvironment>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TmaxPresentation.rc">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OUTDIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OUTDIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\Include\Tmdbnet\Alias.h" />
+    <ClInclude Include="Include\App.h" />
+    <ClInclude Include="Include\Applink.h" />
+    <ClInclude Include="C:\Program Files\Microsoft Visual Studio 8\VC\atlmfc\include\atlimage.h" />
+    <ClInclude Include="Include\Barcode.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\bcmapset.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Colorset.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Dao36.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Db45.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Dbabstract.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbbarcodemap.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Dbdefs.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbdetails.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbextents.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbhighlighters.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbnet.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbprimary.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbquaternary.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbsecondary.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbtertiary.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbtranscripts.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Dbusers.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Deposit.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Desgset.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Designat.h" />
+    <ClInclude Include="Include\Document.h" />
+    <ClInclude Include="Include\Frame.h" />
+    <ClInclude Include="..\Common\Include\Handler.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Link.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Linkset.h" />
+    <ClInclude Include="..\Common\Include\Tmdbnet\Machine.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Media.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Mediaset.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Multipg.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Pageset.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Playlist.h" />
+    <ClInclude Include="Include\Resource.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Secondary.h" />
+    <ClInclude Include="Include\Setline.h" />
+    <ClInclude Include="Include\Setup.h" />
+    <ClInclude Include="..\Common\Include\Tmshare\Sharedef.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Show.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\ShowItem.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Showset.h" />
+    <ClInclude Include="..\Common\Include\splash.h" />
+    <ClInclude Include="Include\Stdafx.h" />
+    <ClInclude Include="INCLUDE\Tables.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Tertiary.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Textline.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Textpage.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Textset.h" />
+    <ClInclude Include="..\Common\Include\Tmbars\Tmbadefs.h" />
+    <ClInclude Include="..\Common\Include\Tmbars\Tmbars.h" />
+    <ClInclude Include="..\Common\Include\Tmcmdlin.h" />
+    <ClInclude Include="..\Common\Include\Tmgrab\Tmgrab.h" />
+    <ClInclude Include="..\Common\Include\Tmhelp\Tmhelp.h" />
+    <ClInclude Include="..\Common\Include\Tmini.h" />
+    <ClInclude Include="..\Common\Include\Tmlpen\Tmlpen.h" />
+    <ClInclude Include="..\Common\Include\Tmmovie\Tmmovie.h" />
+    <ClInclude Include="..\Common\Include\Tmpower\Tmpower.h" />
+    <ClInclude Include="..\Common\Include\Tmsetup\Tmsetup.h" />
+    <ClInclude Include="..\Common\Include\Tmshare\Tmshare.h" />
+    <ClInclude Include="..\Common\Include\Tmstat\Tmstat.h" />
+    <ClInclude Include="..\Common\Include\Tmstat\Tmstdefs.h" />
+    <ClInclude Include="..\Common\Include\Tmtool\Tmtbdefs.h" />
+    <ClInclude Include="..\Common\Include\Tmtext\Tmtext.h" />
+    <ClInclude Include="..\Common\Include\Tmtool\Tmtool.h" />
+    <ClInclude Include="..\Common\Include\Tmview\Tmview.h" />
+    <ClInclude Include="Include\Toolbars.h" />
+    <ClInclude Include="..\Common\Include\Toolbox.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Transcpt.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Transet.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Treatset.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Verset.h" />
+    <ClInclude Include="..\Common\Include\Tmdata\Video.h" />
+    <ClInclude Include="..\Common\Include\Tmdb45\Videoset.h" />
+    <ClInclude Include="Include\View.h" />
+    <ClInclude Include="Include\VKBDlg.h" />
+    <ClInclude Include="VKBDlg.h" />
+    <ClInclude Include="VKBWndDlg.h" />
+    <ClInclude Include="Include\VKBWndDlg.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Common\Resource\Colors\bitmap1.bmp" />
+    <Image Include="..\Common\Resource\Colors\blackf.bmp" />
+    <Image Include="..\Common\Resource\Colors\blacku.bmp" />
+    <Image Include="..\Common\Resource\Colors\bluef.bmp" />
+    <Image Include="..\Common\Resource\Colors\blueu.bmp" />
+    <Image Include="..\Common\Resource\Colors\bmp00001.bmp" />
+    <Image Include="..\Common\Resource\Misc\browsed.bmp" />
+    <Image Include="..\Common\Resource\Misc\browsef.bmp" />
+    <Image Include="..\Common\Resource\Misc\browseu.bmp" />
+    <Image Include="..\Common\Resource\Misc\browsex.bmp" />
+    <Image Include="..\Common\Resource\Colors\cyanf.bmp" />
+    <Image Include="..\Common\Resource\Colors\cyanu.bmp" />
+    <Image Include="..\Common\Resource\Colors\dbluef.bmp" />
+    <Image Include="..\Common\Resource\Colors\dblueu.bmp" />
+    <Image Include="..\Common\Resource\Colors\dgreenf.bmp" />
+    <Image Include="..\Common\Resource\Colors\dgreenu.bmp" />
+    <Image Include="Resource\Document.ico" />
+    <Image Include="..\Common\Resource\Colors\dredf.bmp" />
+    <Image Include="..\Common\Resource\Colors\dredu.bmp" />
+    <Image Include="..\Common\Resource\Colors\greenf.bmp" />
+    <Image Include="..\Common\Resource\Colors\greenu.bmp" />
+    <Image Include="..\Common\Resource\Colors\greyf.bmp" />
+    <Image Include="..\Common\Resource\Colors\greyu.bmp" />
+    <Image Include="..\..\Common\Resources\kb.bmp" />
+    <Image Include="..\Common\Resource\Colors\lbluef.bmp" />
+    <Image Include="..\Common\Resource\Colors\lblueu.bmp" />
+    <Image Include="..\Common\Resource\Colors\lgreenf.bmp" />
+    <Image Include="..\Common\Resource\Colors\lgreenu.bmp" />
+    <Image Include="..\Common\Resource\Colors\lredf.bmp" />
+    <Image Include="..\Common\Resource\Colors\lredu.bmp" />
+    <Image Include="..\Common\Resource\Colors\magentaf.bmp" />
+    <Image Include="..\Common\Resource\Colors\magentau.bmp" />
+    <Image Include="Resource\question.ico" />
+    <Image Include="..\Common\Resource\Colors\redf.bmp" />
+    <Image Include="..\Common\Resource\Colors\redu.bmp" />
+    <Image Include="..\Common\Resource\Splash.bmp" />
+    <Image Include="..\..\Common\Resources\Strips\Tbsmall.bmp" />
+    <Image Include="..\Common\Resource\Toolbar\Tbsmall.bmp" />
+    <Image Include="Resource\TmaxPresentation.ico" />
+    <Image Include="res\TmaxPresentation.ico" />
+    <Image Include="Resource\Toolbar.bmp" />
+    <Image Include="..\..\..\Source Code\Trialmax_640_64bit_beta\TmaxPresentation\App\Resource\TOOLBAR.BMP" />
+    <Image Include="..\Common\Resource\Colors\vkeyboard.bmp" />
+    <Image Include="..\Common\Resource\Colors\whitef.bmp" />
+    <Image Include="..\Common\Resource\Colors\whiteu.bmp" />
+    <Image Include="..\Common\Resource\Colors\yellowf.bmp" />
+    <Image Include="..\Common\Resource\Colors\yellowu.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\TmaxPresentation.rc2" />
+    <None Include="TmaxPresentation.reg" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="TmaxPresentation.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

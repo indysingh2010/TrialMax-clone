@@ -1,0 +1,128 @@
+// Tm_text6.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (Tm_text6.tlb) that will become a resource in
+// Tm_text6.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+#include ".\include\dispid.h"
+
+[ uuid(9EA2E413-85CA-4FD7-B810-2209D5AF3354), version(6.3), /* Replace 1 */
+  helpfile("Tm_text6.hlp"),
+  helpstring("TMText 6 ActiveX Control"),
+  control ]
+library TM_TEXT6Lib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CTMTextCtrl
+
+	[ uuid(E931C59C-513E-45C6-A4B8-FA0227BBC791), /* Replace 2 */
+	  helpstring("Dispatch interface for TMText 6 Control"), hidden ]
+	dispinterface _DTMText6
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTMTextCtrl)
+			[id(1)] boolean AutoInit;
+			[id(2)] short VerBuild;
+			[id(DISPID_BACKCOLOR), bindable, requestedit] OLE_COLOR BackColor;
+			[id(3)] boolean EnableErrors;
+			[id(DISPID_FONT), bindable] IFontDisp* Font;
+			[id(DISPID_FORECOLOR), bindable, requestedit] OLE_COLOR ForeColor;
+			[id(4)] short VerMajor;
+			[id(5)] short VerMinor;
+			[id(6)] OLE_COLOR HighlightColor;
+			[id(7)] OLE_COLOR HighlightTextColor;
+			[id(8)] short HighlightLines;
+			[id(9)] short DisplayLines;
+			[id(10)] boolean CombineDesignations;
+			[id(11)] boolean ShowPageLine;
+			[id(12)] boolean UseAvgCharWidth;
+			[id(13)] boolean ResizeOnChange;
+			[id(14)] short MaxCharsPerLine;
+			[id(15)] short TopMargin;
+			[id(16)] short BottomMargin;
+			[id(17)] short LeftMargin;
+			[id(18)] short RightMargin;
+			[id(19)] BSTR VerTextLong;
+			[id(20)] boolean SmoothScroll;
+			[id(21)] short ScrollTime;
+			[id(22)] short ScrollSteps;
+			//}}AFX_ODL_PROP
+
+			//	These properties were added in rev 6.0
+			[id(DISPID_USELINECOLOR)] boolean UseLineColor;
+
+			//	These properties were added in rev 6.0
+			[id(DISPID_VERQEF)] short VerQEF;
+			[id(DISPID_VERTEXTSHORT)] BSTR VerTextShort;
+			[id(DISPID_VERBUILDDATE)] BSTR VerBuildDate;
+
+			//	These properties were added in rev 6.3.4
+			[id(DISPID_SHOWTEXT)] boolean ShowText;
+			[id(DISPID_BULLETSTYLE)] short BulletStyle;
+			[id(DISPID_BULLETMARGIN)] short BulletMargin;
+
+		methods:
+
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTMTextCtrl)
+			[id(23)] short Initialize();
+			[id(24)] short GetMinHeight();
+			[id(25)] long GetCurrentLine();
+			[id(26)] short ResizeFont(short bRedraw);
+			[id(27)] short IsFirstLine();
+			[id(28)] short IsLastLine();
+			[id(29)] short Next(short bRedraw);
+			[id(30)] short Previous(short bRedraw);
+			[id(31)] short SetLineObject(long lLine, short bRedraw);
+			[id(32)] short SetMaxWidth(short sWidth, short bRedraw);
+			[id(33)] short SetPlaylist(long lPlaylist, short bRedraw);
+			[id(34)] short GetCharHeight();
+			[id(35)] short GetCharWidth();
+			[id(36)] short GetLogFont(long lLogFont);
+			[id(37)] boolean IsReady();
+			[id(38)] short SetLine(long lDesignation, long lPageNum, long lLineNum, short bRedraw);
+			[id(39)] BSTR GetRegisteredPath();
+			[id(40)] BSTR GetClassIdString();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CTMTextCtrl
+
+	[ uuid(F8EDB3AF-6E80-4C5C-9F11-2CCFE0D984D9), /* Replace 3 */
+	  helpstring("Event interface for TMText 6 Control") ]
+	dispinterface _DTMText6Events
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CTMTextCtrl)
+			[id(1)] void HeightChange(short sHeight);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CTMTextCtrl
+
+	[ uuid(AA52288D-2A50-494F-98FE-FFF0D9FBDE56), /* Replace 4 */
+	  helpstring("TMText 6 Control"), control ]
+	coclass TMText6
+	{
+		[default] dispinterface _DTMText6;
+		[default, source] dispinterface _DTMText6Events;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

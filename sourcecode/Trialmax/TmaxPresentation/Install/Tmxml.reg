@@ -1,0 +1,46 @@
+REGEDIT4
+
+#--------------------------------------------------------------------------------------
+# TIFF REGISTRATION 
+#--------------------------------------------------------------------------------------
+[HKEY_CLASSES_ROOT\MIME\DataBase\Content Type\image/tiff]
+"Extension"=".tiff"
+"CLSID"="{B66F23C5-5B3C-11D5-8F0A-00802966F8C1}"
+
+[HKEY_CLASSES_ROOT\MIME\DataBase\Content Type\application/ftic-tif]
+"Extension"=".tiff"
+"CLSID"="{B66F23C5-5B3C-11D5-8F0A-00802966F8C1}"
+
+[HKEY_CLASSES_ROOT\.tiff]
+"Content Type"="application/ftic-tif"
+
+[HKEY_CLASSES_ROOT\CLSID\{B66F23C5-5B3C-11D5-8F0A-00802966F8C1}\EnableFullPage\.tiff]
+
+=============
+
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\
+   CurrentVersion\explorer\mycomputer\NameSpace\
+for the CLSIDs of namespace extensions so you need to add your CLSID to this list. For Windows NT support, add this "approved" key:
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsNT\CurrentVersion\
+ShellExtensions\Approved\{B9FF67C7-1BB8-11D0-8217-0020AF0B6C98}]
+@="Clipcode Weekends"
+Create a file called namespc.reg and add these lines:
+REGEDIT4
+
+[HKEY_CLASSES_ROOT\CLSID\{B9FF67C7-1BB8-11D0-8217-0020AF0B6C98}]
+@="Clipcode Weekends"
+
+[HKEY_CLASSES_ROOT\CLSID\{B9FF67C7-1BB8-11D0-8217-0020AF0B6C98}\InprocServer32]
+@="c:\\clipcode\\techreports\\components\\samples\\namespc\\debug\\NameSpc.dll"
+
+"ThreadingModel"="Apartment"
+
+[HKEY_CLASSES_ROOT\CLSID\{B9FF67C7-1BB8-11D0-8217-0020AF0B6C98}\ShellFolder]
+
+"Attributes"=hex:04,00,00,20
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\explorer\mycomputer\NameSpace\{B9FF67C7-1BB8-11D0-8217-0020AF0B6C98}]
+@="Weekends"
+To add these lines to the registry on a certain PC execute this:
+regedit -s C:\Clipcode\SWReports\Components\Samples\namespc.reg
+(Make su

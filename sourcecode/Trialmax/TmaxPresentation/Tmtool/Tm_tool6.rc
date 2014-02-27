@@ -1,0 +1,337 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "include\resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "include\\resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "1 TYPELIB ""Tm_tool6.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 7,0,19,10153
+ PRODUCTVERSION 7,0,19,10153
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "FTI Consulting"
+            VALUE "FileDescription", "TrialMax Media Toolbar ActiveX Control"
+            VALUE "FileVersion", "7.0.18.9253"
+            VALUE "InternalName", "TMTOOL"
+            VALUE "LegalCopyright", "Copyright (C) FTI Consulting 2004"
+            VALUE "OriginalFilename", "TM_TOOL6.OCX"
+            VALUE "ProductName", "TrialMax Media Toolbar ActiveX Control"
+            VALUE "ProductVersion", "7, 0, 19, 10153"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ABOUTDLL            ICON                    "Resource\\Tmtool.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TMTOOL              BITMAP                  "Resource\\Tmtool.bmp"
+IDB_TBLARGE             BITMAP                  "..\\..\\common\\resources\\strips\\Tblarge.bmp"
+IDB_TBMEDIUM            BITMAP                  "..\\..\\common\\resources\\strips\\Tbmedium.bmp"
+IDB_TBSMALL             BITMAP                  "..\\..\\common\\resources\\strips\\Tbsmall.bmp"
+IDB_TBDLARGE            BITMAP                  "..\\..\\common\\resources\\strips\\Tdlarge.bmp"
+IDB_TBDSMALL            BITMAP                  "..\\..\\common\\resources\\strips\\Tdsmall.bmp"
+IDB_TBDMEDIUM           BITMAP                  "..\\..\\common\\resources\\strips\\Tdmedium.bmp"
+IDB_COLORTBLARGE        BITMAP                  "..\\..\\Common\\Resources\\Strips\\ColorTblarge.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX_TMTOOL DIALOG  34, 22, 260, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About TMTool Control"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ABOUTDLL,IDC_STATIC,10,10,20,20
+    LTEXT           "TMTool Control, Version 6.0",IDC_STATIC,40,10,170,8
+    LTEXT           "Copyright (C) FTI Consulting",IDC_STATIC,40,25,170,8
+    DEFPUSHBUTTON   "OK",IDOK,221,7,32,14,WS_GROUP
+END
+
+IDD_PROPPAGE_TMTOOL DIALOG  0, 0, 250, 62
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "TODO: Place controls to manipulate properties of TMTool Control on this dialog.",IDC_STATIC,7,25,229,16
+END
+
+IDD_CONFIGURE_TMTOOL DIALOGEX 0, 0, 256, 184
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Configure Toolbar"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "List1",IDC_CONFIGURE_IMAGES,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_AUTOARRANGE | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,3,11,92,170,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Insert &Before >>",IDC_CONFIGURE_BEFORE,100,11,57,14
+    PUSHBUTTON      "Insert &After   >>",IDC_CONFIGURE_AFTER,100,27,57,14
+    PUSHBUTTON      "<<   &Remove",IDC_CONFIGURE_REMOVE,100,45,57,14
+    CONTROL         "Top",IDC_CONFIGURE_TOP,"Button",BS_AUTORADIOBUTTON | WS_GROUP,106,73,37,10
+    CONTROL         "Bottom",IDC_CONFIGURE_BOTTOM,"Button",BS_AUTORADIOBUTTON,106,83,37,10
+    CONTROL         "Left",IDC_CONFIGURE,"Button",BS_AUTORADIOBUTTON,106,93,37,10
+    CONTROL         "Right",IDC_CONFIGURE_RIGHT,"Button",BS_AUTORADIOBUTTON,106,103,37,10
+    CONTROL         "Small",IDC_CONFIGURE_SMALL,"Button",BS_AUTORADIOBUTTON | WS_GROUP,106,128,40,10
+    CONTROL         "Medium",IDC_CONFIGURE_MEDIUM,"Button",BS_AUTORADIOBUTTON,106,138,40,10
+    CONTROL         "Large",IDC_CONFIGURE_LARGE,"Button",BS_AUTORADIOBUTTON,106,148,40,10
+    CONTROL         "List1",IDC_CONFIGURE_TOOLBAR,"SysListView32",LVS_SMALLICON | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SHAREIMAGELISTS | LVS_NOLABELWRAP | LVS_AUTOARRANGE | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,161,11,92,87,WS_EX_CLIENTEDGE
+    EDITTEXT        IDC_ROWS,167,112,20,14,ES_AUTOHSCROLL
+    CONTROL         "Tool Tips",IDC_CONFIGURE_TOOLTIPS,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,167,128,45,10
+    CONTROL         "Stretch",IDC_CONFIGURE_STRETCH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,167,138,37,10
+    CONTROL         "Flat Buttons",IDC_CONFIGURE_FLAT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,167,148,51,10
+    PUSHBUTTON      "&OK",IDOK,118,167,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,182,167,50,14
+    LTEXT           "Toolbar",IDC_STATIC,163,3,64,8
+    LTEXT           "Buttons",IDC_STATIC,5,3,23,8
+    GROUPBOX        "Orientation",IDC_STATIC,101,63,57,52
+    GROUPBOX        "Button Size",IDC_STATIC,101,118,57,43
+    GROUPBOX        "Options",IDC_STATIC,161,99,92,62
+    LTEXT           "Rows / Columns",IDC_STATIC,190,115,57,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX_TMTOOL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_PROPPAGE_TMTOOL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_CONFIGURE_TMTOOL, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 253
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 181
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_TMTOOL              "TMTool 6 Control"
+    IDS_TMTOOL_PPG          "TMTool 6 Property Page"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TMTOOL_PPG_CAPTION  "General"
+    IDS_TMTB_CREATEBARFAILED "Unable to create the toolbar."
+    IDS_TMTB_BUTTONNOTFOUND "The requested button is not on the toolbar."
+    IDS_TMTB_NOTINITIALIZED "The toolbar has not been properly initialized."
+    IDS_TMTB_INVALIDBUTTONID "%1 is not a valid button identifier."
+    IDS_TMTB_FIRSTZAP       "First Zap"
+    IDS_TMTB_NEXTZAP        "Next Zap"
+    IDS_TMTB_BLUE           "Blue"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TMTB_CALLOUT        "Callout"
+    IDS_TMTB_ROTATECCW      "Counter Clockwise"
+    IDS_TMTB_CLEAR          "Clear"
+    IDS_TMTB_ROTATECW       "Clockwise"
+    IDS_TMTB_PAN            "Drag"
+    IDS_TMTB_DRAWTOOL       "Draw"
+    IDS_TMTB_ERASE          "Erase"
+    IDS_TMTB_EXIT           "Exit"
+    IDS_TMTB_GREEN          "Green"
+    IDS_TMTB_HIGHLIGHT      "Highlight"
+    IDS_TMTB_NEXTPAGE       "Next Page"
+    IDS_TMTB_NORMAL         "Normal"
+    IDS_TMTB_PAUSEMOVIE     "Pause Movie"
+    IDS_TMTB_PLAYMOVIE      "Play Movie"
+    IDS_TMTB_PREVPAGE       "Previous Page"
+    IDS_TMTB_RED            "Red"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TMTB_REDACT         "Redact"
+    IDS_TMTB_BACKMOVIE      "Step Movie Back"
+    IDS_TMTB_SAVEZAP        "Save Zap"
+    IDS_TMTB_SPLITHORIZONTAL "Split Horizontal"
+    IDS_TMTB_SPLITVERTICAL  "Split Vertical"
+    IDS_TMTB_CONFIG         "Configure Options"
+    IDS_TMTB_ZOOMWIDTH      "Zoom Full Width"
+    IDS_TMTB_YELLOW         "Yellow"
+    IDS_TMTB_ZOOM           "Zoom"
+    IDS_TMTB_PRINT          "Print"
+    IDS_TMTB_PREVZAP        "Previous Zap"
+    IDS_TMTB_LASTZAP        "Last Zap"
+    IDS_TMTB_STARTMOVIE     "Start of Movie"
+    IDS_TMTB_ENDMOVIE       "End of Movie"
+    IDS_TMTB_FWDMOVIE       "Step Movie Forward"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TMTB_FIRSTDESIGNATION "First Designation"
+    IDS_TMTB_LASTDESIGNATION "Last Designation"
+    IDS_TMTB_NEXTDESIGNATION "Next Designation"
+    IDS_TMTB_PREVDESIGNATION "Previous Designation"
+    IDS_TMTB_BACKDESIGNATION "Step Designation Back"
+    IDS_TMTB_FWDDESIGNATION "Step Designation Forward"
+    IDS_TMTB_STARTDESIGNATION "Start of Designation"
+    IDS_TMTB_CONFIGTOOLBARS "Configure Toolbars"
+    IDS_TMTB_DISABLELINKS   "Disable Links"
+    IDS_TMTB_BLACK          "Black"
+    IDS_TMTB_WHITE          "White"
+    IDS_TMTB_ENABLELINKS    "Enable Links"
+    IDS_TMTB_PAUSEDESIGNATION "Pause Designation"
+    IDS_TMTB_PLAYDESIGNATION "Play Designation"
+    IDS_TMTB_FIRSTPAGE      "First Page"
+    IDS_TMTB_LASTPAGE       "Last Page"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TMTB_PLAYTHROUGH    "Play Through"
+    IDS_TMTB_DELETEANN      "Delete Annotation"
+    IDS_TMTB_CUEPGLNNEXT    "Cue Page:Line Next"
+    IDS_TMTB_CUEPGLNCURRENT "Cue Page:Line Current"
+    IDS_TMTB_SELECT         "Select"
+    IDS_TMTB_FILLEDRECTANGLE "Filled Rectangle"
+    IDS_TMTB_FILLEDELLIPSE  "Filled Ellipse / Circle"
+    IDS_TMTB_ELLIPSE        "Ellipse/Circle"
+    IDS_TMTB_RECTANGLE      "Rectangle/Square"
+    IDS_TMTB_ARROW          "Arrow"
+    IDS_TMTB_LINE           "Line"
+    IDS_TMTB_FREEHAND       "Freehand"
+    IDS_TMTB_SELECTTOOL     "Choose Tool"
+    IDS_TMTB_TEXT           "Text Display"
+    IDS_TMTB_FULLSCREEN     "Full Screen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TMTB_STATUSBAR      "Status Bar"
+    IDS_TMTB_DARKRED        "Dark Red"
+    IDS_TMTB_DARKGREEN      "Dark Green"
+    IDS_TMTB_DARKBLUE       "Dark Blue"
+    IDS_TMTB_LIGHTRED       "Light Red"
+    IDS_TMTB_LIGHTGREEN     "Light Green"
+    IDS_TMTB_LIGHTBLUE      "Light Blue"
+    IDS_TMTB_POLYLINE       "Polyline"
+    IDS_TMTB_POLYGON        "Polygon"
+    IDS_TMTB_ANNTEXT        "Text"
+    IDS_TMTB_NOFILE         "Unable to save the configuration. The IniFile and IniSection properties must be set."
+    IDS_TMTB_UPDATEZAP      "Update Zap"
+    IDS_TMTB_DELETEZAP      "Delete Zap"
+    IDS_TMTB_ZOOMRESTRICTED "Restricted Zoom"
+    IDS_TMTB_SHADEDCALLOUTS "Shaded Callouts"
+    IDS_TMTB_SAVESPLITZAP   "Save Split Screen Zap"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "Tm_tool6.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

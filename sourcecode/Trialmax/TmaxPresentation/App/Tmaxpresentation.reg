@@ -1,0 +1,13 @@
+REGEDIT
+; This .REG file may be used by your SETUP program.
+;   If a SETUP program is not available, the entries below will be
+;   registered in your InitInstance automatically with a call to
+;   CWinApp::RegisterShellFileTypes and COleObjectFactory::UpdateRegistryAll.
+
+
+HKEY_CLASSES_ROOT\TmaxPresentation.Document = TmaxPresentation Document
+HKEY_CLASSES_ROOT\TmaxPresentation.Document\CLSID = {1639AC22-53BD-11D1-B0A9-008029EFD140}
+
+HKEY_CLASSES_ROOT\CLSID\{1639AC22-53BD-11D1-B0A9-008029EFD140} = TmaxPresentation Document
+HKEY_CLASSES_ROOT\CLSID\{1639AC22-53BD-11D1-B0A9-008029EFD140}\ProgId = TmaxPresentation.Document
+HKEY_CLASSES_ROOT\CLSID\{1639AC22-53BD-11D1-B0A9-008029EFD140}\LocalServer32 = TMAXPRESENTATION.EXE

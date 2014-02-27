@@ -1,0 +1,101 @@
+// Tm_share6.odl : type library source for ActiveX Control project.
+
+#include <olectl.h>
+#include <idispids.h>
+#include ".\include\dispid.h"
+
+[ uuid(30FF3A86-CCD7-474C-A706-CF89B021ACAE), version(6.3), /* Replace 1 */
+  helpfile("Tm_share6.hlp"),
+  helpstring("TMShare 6 ActiveX Control"),
+  control ]
+library TM_SHARE6Lib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	[ uuid(B3A5F2E5-42DD-4D3F-A7B5-F5A0B7693565), /* Replace 2 */
+	  helpstring("Dispatch interface for TMShare 6 Control"), hidden ]
+	dispinterface _DTMShare6
+	{
+
+		properties:
+			//{{AFX_ODL_PROP(CTMShareCtrl)
+			[id(1)] short VerBuild;
+			[id(2)] boolean EnableErrors;
+			[id(3)] short VerMajor;
+			[id(4)] short VerMinor;
+			[id(5)] BSTR VerTextLong;
+			[id(6)] short Owner;
+			[id(7)] long PeekPeriod;
+			[id(8)] long Command;
+			[id(9)] long Error;
+			[id(10)] BSTR MediaId;
+			[id(11)] boolean EnableAxErrors;
+			[id(12)] BSTR Barcode;
+			[id(13)] BSTR AppFolder;
+			[id(14)] long PrimaryId;
+			[id(15)] long SecondaryId;
+			[id(16)] long TertiaryId;
+			[id(17)] long QuaternaryId;
+			[id(18)] BSTR SourceFileName;
+			[id(19)] BSTR SourceFilePath;
+			[id(20)] BSTR CaseFolder;
+			[id(21)] long BarcodeId;
+			[id(22)] long DisplayOrder;
+			//}}AFX_ODL_PROP
+
+			//	These properties were added in rev 6.0
+			[id(DISPID_VERQEF)] short VerQEF;
+			[id(DISPID_VERTEXTSHORT)] BSTR VerTextShort;
+			[id(DISPID_VERBUILDDATE)] BSTR VerBuildDate;
+
+			[id(DISPID_PAGE_NUMBER)] long PageNumber;
+			[id(DISPID_LINE_NUMBER)] short LineNumber;
+
+		methods:
+			//{{AFX_ODL_METHOD(CTMShareCtrl)
+			[id(23)] BSTR GetRegisteredPath();
+			[id(24)] BSTR GetClassIdString();
+			[id(25)] boolean GetInitialized();
+			[id(26)] short GetResponse();
+			[id(27)] short GetRequest();
+			[id(28)] short SetResponse();
+			[id(29)] void Terminate();
+			[id(30)] boolean IsRunning();
+			[id(31)] BSTR GetSisterFileSpec();
+			[id(32)] short Initialize();
+			[id(33)] short SetRequest(long lWaitResponse);
+			[id(34)] short Execute();
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	[ uuid(3CA9FF70-E3F1-4CEE-954A-918400F0F7A6), /* Replace 3 */
+	  helpstring("Event interface for TMShare 6 Control") ]
+	dispinterface _DTMShare6Events
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			//{{AFX_ODL_EVENT(CTMShareCtrl)
+			[id(1)] void CommandRequest();
+			[id(2)] void AxError(BSTR lpszMessage);
+			[id(3)] void AxDiagnostic(BSTR lpszMethod, BSTR lpszMessage);
+			[id(4)] void CommandResponse();
+			//}}AFX_ODL_EVENT
+	};
+
+	[ uuid(CB5D5073-AB77-45F6-B728-1808DDC80026), /* Replace 4 */
+	  helpstring("TMShare 6 Control"), control ]
+	coclass TMShare6
+	{
+		[default] dispinterface _DTMShare6;
+		[default, source] dispinterface _DTMShare6Events;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

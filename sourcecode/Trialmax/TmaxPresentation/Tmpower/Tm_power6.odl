@@ -1,0 +1,136 @@
+// Tm_power6.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (Tm_power6.tlb) that will become a resource in
+// Tm_power6.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+#include ".\include\dispid.h"
+
+[ uuid(8C0F53CE-3087-4919-BDD6-DD28A7A6C2DC), version(6.3), /* Replace 1 */
+  helpfile("Tm_power6.hlp"),
+  helpstring("TMPower 6 ActiveX Control"),
+  control ]
+library TM_POWER6Lib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CTMPowerCtrl
+
+	[ uuid(0D6CBE90-9DD2-4AC9-91A7-199A3E5ED3F0), /* Replace 2 */
+	  helpstring("Dispatch interface for TMPower 6 Control"), hidden ]
+	dispinterface _DTMPower6
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTMPowerCtrl)
+			[id(1)] boolean AutoInit;
+			[id(DISPID_BACKCOLOR), bindable, requestedit] OLE_COLOR BackColor;
+			[id(2)] short VerBuild;
+			[id(3)] boolean EnableErrors;
+			[id(4)] short VerMajor;
+			[id(5)] short VerMinor;
+			[id(6)] BSTR VerTextLong;
+			[id(7)] boolean SplitScreen;
+			[id(8)] short SplitFrameThickness;
+			[id(9)] OLE_COLOR SplitFrameColor;
+			[id(10)] BSTR RightFile;
+			[id(11)] BSTR LeftFile;
+			[id(12)] boolean SyncViews;
+			[id(13)] short ActiveView;
+			[id(14)] long StartSlide;
+			[id(DISPID_BORDERSTYLE), bindable, requestedit] short BorderStyle;
+			[id(15)] boolean EnableAccelerators;
+			[id(16)] boolean UseSlideId;
+			[id(17)] short SaveFormat;
+			//}}AFX_ODL_PROP
+
+			//	These properties were added in rev 5.0
+			[id(DISPID_HIDE_TASK_BAR)] boolean HideTaskBar;
+			
+			//	These properties were added in rev 6.0
+			[id(DISPID_ENABLE_AX_ERRORS)] boolean EnableAxErrors;
+
+			//	These properties were added in rev 6.0
+			[id(DISPID_VERQEF)] short VerQEF;
+			[id(DISPID_VERTEXTSHORT)] BSTR VerTextShort;
+			[id(DISPID_VERBUILDDATE)] BSTR VerBuildDate;
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTMPowerCtrl)
+			[id(18)] short Initialize();
+			[id(19)] boolean IsInitialized();
+			[id(20)] BSTR GetPPVersion();
+			[id(21)] BSTR GetPPBuild();
+			[id(22)] short Next(short sView);
+			[id(23)] short Previous(short sView);
+			[id(24)] short First(short sView);
+			[id(25)] short Last(short sView);
+			[id(26)] long GetCurrentSlide(short sView);
+			[id(27)] long GetSlideCount(short sView);
+			[id(28)] short Close();
+			[id(29)] short Unload(short sView);
+			[id(30)] BSTR GetFilename(short sView);
+			[id(31)] long GetBitmap(long pWidth, long pHeight, short sView);
+			[id(32)] short ShowSnapshot(short sView);
+			[id(33)] short SaveSlide(BSTR lpFilename, short sView);
+			[id(34)] short CopySlide(short sView);
+			[id(35)] void SetData(short sView, long lData);
+			[id(36)] long GetData(short sView);
+			[id(37)] short SetFocusWnd(OLE_HANDLE hWnd);
+			[id(38)] short Show(short sShow);
+			[id(39)] short GetCurrentState(short sView);
+			[id(40)] short SetSlide(short sView, long lSlide, short bUseId);
+			[id(41)] short LoadFile(BSTR lpszFilename, long lSlide, short bUseId, short sView);
+			[id(42)] long GetSlideNumber(short sView, long lSlideId);
+			[id(43)] BSTR GetClassIdString();
+			[id(44)] BSTR GetRegisteredPath();
+			[id(45)] short GetAnimationCount(short sView);
+			[id(46)] short GetAnimationIndex(short sView);
+			//}}AFX_ODL_METHOD
+
+			[id(DISPID_ABOUTBOX)] void AboutBox();
+	};
+
+	//  Event dispatch interface for CTMPowerCtrl
+
+	[ uuid(BBFECF38-3DE1-498B-9D96-946C40ED2AC8), /* Replace 3 */
+	  helpstring("Event interface for TMPower 6 Control") ]
+	dispinterface _DTMPower6Events
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CTMPowerCtrl)
+			[id(1)] void SelectView(short sView);
+			[id(2)] void FileChanged(BSTR lpszFilename, short sView);
+			[id(3)] void SlideChanged(long lSlide, short sView);
+			[id(4)] void ViewFocus(short sView);
+			[id(5)] void StateChanged(short sState, short sView);
+			[id(6)] void AxError(BSTR lpszMessage);
+			[id(7)] void AxDiagnostic(BSTR lpszMethod, BSTR lpszMessage);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CTMPowerCtrl
+
+	[ uuid(BD138FDB-21B2-4CF1-8175-A94182FED781), /* Replace 4 */
+	  helpstring("TMPower 6 Control"), control ]
+	coclass TMPower6
+	{
+		[default] dispinterface _DTMPower6;
+		[default, source] dispinterface _DTMPower6Events;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

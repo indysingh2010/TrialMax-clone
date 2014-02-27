@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A4EDE59D-8491-4914-81E0-E7E1B80BC31A}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon>
+    </ApplicationIcon>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>Tmforms</AssemblyName>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FTI.Trialmax.Forms</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>..\Bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>..\Bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn>
+    </NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AxInterop.TM_BARS6Lib">
+      <Name>AxInterop.TM_BARS6Lib</Name>
+      <HintPath>..\Install\Tmactivex\AxInterop.TM_BARS6Lib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AxInterop.TM_SETUP6Lib">
+      <Name>AxInterop.TM_SETUP6Lib</Name>
+      <HintPath>..\Install\Tmactivex\AxInterop.TM_SETUP6Lib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Infragistics2.Shared.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Install\Infragistics\Infragistics2.Shared.v8.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.Misc.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Install\Infragistics\Infragistics2.Win.Misc.v8.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.UltraWinEditors.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Install\Infragistics\Infragistics2.Win.UltraWinEditors.v8.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.UltraWinGrid.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Install\Infragistics\Infragistics2.Win.UltraWinGrid.v8.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.UltraWinTabControl.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Install\Infragistics\Infragistics2.Win.UltraWinTabControl.v8.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.UltraWinToolbars.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Install\Infragistics\Infragistics2.Win.UltraWinToolbars.v8.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.UltraWinTree.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Install\Infragistics\Infragistics2.Win.UltraWinTree.v8.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics2.Win.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Install\Infragistics\Infragistics2.Win.v8.3.dll</HintPath>
+    </Reference>
+    <Reference Include="Interop.TM_BARS6Lib">
+      <Name>Interop.TM_BARS6Lib</Name>
+      <HintPath>..\Install\Tmactivex\Interop.TM_BARS6Lib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Interop.TM_SETUP6Lib">
+      <Name>Interop.TM_SETUP6Lib</Name>
+      <HintPath>..\Install\Tmactivex\Interop.TM_SETUP6Lib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic">
+      <Name>Microsoft.VisualBasic</Name>
+    </Reference>
+    <Reference Include="stdole">
+      <Name>stdole</Name>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Design">
+      <Name>System.Design</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap">
+      <Name>System.Runtime.Serialization.Formatters.Soap</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="Tmactx">
+      <Name>Tmactx</Name>
+      <HintPath>..\Bin\Debug\Tmactx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Tmctrls">
+      <Name>Tmctrls</Name>
+      <HintPath>..\Bin\Debug\Tmctrls.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Tmencode">
+      <Name>Tmencode</Name>
+      <HintPath>..\Bin\Debug\Tmencode.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Tmoffice">
+      <Name>Tmoffice</Name>
+      <HintPath>..\Bin\Debug\Tmoffice.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Tmshared">
+      <Name>Tmshared</Name>
+      <HintPath>..\Bin\Debug\Tmshared.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActivateProduct.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddBinder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddLink.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddObjections.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddPrimary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CaseCodeEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CaseOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GetConfirmation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfirmCodesDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConfirmMediaDelete.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditTranscript.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ErrorMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportCodes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportObjections.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportSlide.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportStatus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportVideo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportXml.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExportXmlCaseCodes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FastFilter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FilterBuilder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GoTranscript.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HideCaseCodes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportBinders.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportCodes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportCodesDatabase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportObjections.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportScripts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportStatus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportXmlCaseCodes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportXmlScripts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManagerOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NewCase.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PathMapEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PresentationOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PresentationToolbars.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Preview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CompactorStatus.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="RegGetTarget.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RegOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RegProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Reorder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ResolveConflict.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="RichLabel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SetPropsVisible.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TmaxForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Tmformsversion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TrimProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TrimProgress.Designer.cs">
+      <DependentUpon>TrimProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UpdateCodes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UpdateWizard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ValidateOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ValidateProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VersionWarnings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <EmbeddedResource Include="ActivateProduct.resx">
+      <DependentUpon>ActivateProduct.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddBinder.resx">
+      <DependentUpon>AddBinder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddCode.resx">
+      <DependentUpon>AddCode.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddLink.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AddLink.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddObjections.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AddObjections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddPrimary.resx">
+      <DependentUpon>AddPrimary.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CaseCodeEditor.resx">
+      <DependentUpon>CaseCodeEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CaseOptions.resx">
+      <DependentUpon>CaseOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CompactorStatus.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CompactorStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GetConfirmation.resx">
+      <DependentUpon>GetConfirmation.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConfirmCodesDelete.resx">
+      <DependentUpon>ConfirmCodesDelete.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConfirmMediaDelete.resx">
+      <DependentUpon>ConfirmMediaDelete.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EditTranscript.resx">
+      <DependentUpon>EditTranscript.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ErrorMessage.resx">
+      <DependentUpon>ErrorMessage.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportCodes.resx">
+      <DependentUpon>ExportCodes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportObjections.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ExportObjections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportSlide.resx">
+      <DependentUpon>ExportSlide.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportStatus.resx">
+      <DependentUpon>ExportStatus.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportText.resx">
+      <DependentUpon>ExportText.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportVideo.resx">
+      <DependentUpon>ExportVideo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportXml.resx">
+      <DependentUpon>ExportXml.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExportXmlCaseCodes.resx">
+      <DependentUpon>ExportXmlCaseCodes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FastFilter.resx">
+      <DependentUpon>FastFilter.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FilterBuilder.resx">
+      <DependentUpon>FilterBuilder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GoTranscript.resx">
+      <DependentUpon>GoTranscript.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HideCaseCodes.resx">
+      <DependentUpon>HideCaseCodes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportBinders.resx">
+      <DependentUpon>ImportBinders.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportCodes.resx">
+      <DependentUpon>ImportCodes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportCodesDatabase.resx">
+      <DependentUpon>ImportCodesDatabase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportObjections.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ImportObjections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportScripts.resx">
+      <DependentUpon>ImportScripts.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportStatus.resx">
+      <DependentUpon>ImportStatus.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportXmlCaseCodes.resx">
+      <DependentUpon>ImportXmlCaseCodes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportXmlScripts.resx">
+      <DependentUpon>ImportXmlScripts.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="licenses.licx" />
+    <EmbeddedResource Include="ManagerOptions.resx">
+      <DependentUpon>ManagerOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NewCase.resx">
+      <DependentUpon>NewCase.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PathMapEditor.resx">
+      <DependentUpon>PathMapEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PresentationOptions.resx">
+      <DependentUpon>PresentationOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PresentationToolbars.resx">
+      <DependentUpon>PresentationToolbars.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Preview.resx">
+      <DependentUpon>Preview.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RegGetTarget.resx">
+      <DependentUpon>RegGetTarget.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RegOptions.resx">
+      <DependentUpon>RegOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RegProgress.resx">
+      <DependentUpon>RegProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reorder.resx">
+      <DependentUpon>Reorder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResolveConflict.resx">
+      <DependentUpon>ResolveConflict.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RichLabel.resx">
+      <DependentUpon>RichLabel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SetPropsVisible.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SetPropsVisible.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SplashScreen.resx">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TmaxForm.resx">
+      <DependentUpon>TmaxForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TrimProgress.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TrimProgress.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateCodes.resx">
+      <DependentUpon>UpdateCodes.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UpdateWizard.resx">
+      <DependentUpon>UpdateWizard.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ValidateOptions.resx">
+      <DependentUpon>ValidateOptions.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ValidateProgress.resx">
+      <DependentUpon>ValidateProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VersionWarnings.resx">
+      <DependentUpon>VersionWarnings.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>SET BaseName=%25date:~10,4%25%25date:~4,2%25%25date:~7,2%25_%25time:~0,2%25%25time:~3,2%25%25time:~6,2%25.%25time:~9,2%25 
+
+if exist "$(TargetPath).locked" move "$(TargetPath).locked" "$(SolutionDir)\build\trash\%25BaseName%25.locked" 
+
+if exist "$(TargetPath)" move /Y "$(TargetPath)" "$(SolutionDir)\build\trash\%25BaseName%25.exe"</PreBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

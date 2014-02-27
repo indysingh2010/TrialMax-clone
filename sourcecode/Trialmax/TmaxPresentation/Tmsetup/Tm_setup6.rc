@@ -1,0 +1,714 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "include\resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "include\\resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "1 TYPELIB ""Tm_setup6.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 7,0,18,9253
+ PRODUCTVERSION 7,0,18,9253
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "FTI Consulting"
+            VALUE "FileDescription", "TrialMax Presentation Configuration ActiveX Control"
+            VALUE "FileVersion", "7, 0, 18, 9253"
+            VALUE "InternalName", "TMSETUP"
+            VALUE "LegalCopyright", "Copyright (C) FTI Consulting 2004"
+            VALUE "OriginalFilename", "TM_SETUP6.OCX"
+            VALUE "ProductName", "TrialMax Presentation Configuration ActiveX Control"
+            VALUE "ProductVersion", "7, 0, 18, 9253"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ABOUTDLL            ICON                    "resource\\tm_setup.ico"
+IDR_MAINFRAME           ICON                    "Resource\\Tmax2.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TMSETUP             BITMAP                  "resource\\tmsetup.bmp"
+BLACKD                  BITMAP                  "..\\common\\resource\\colors\\blackf.bmp"
+BLACKF                  BITMAP                  "..\\common\\resource\\colors\\bmp00001.bmp"
+BLACKU                  BITMAP                  "..\\common\\resource\\colors\\blacku.bmp"
+BLUED                   BITMAP                  "..\\common\\resource\\colors\\bluef.bmp"
+BLUEF                   BITMAP                  "..\\common\\resource\\colors\\bmp00002.bmp"
+BLUEU                   BITMAP                  "..\\common\\resource\\colors\\blueu.bmp"
+BROWSED                 BITMAP                  "..\\common\\resource\\misc\\browsed.bmp"
+BROWSEF                 BITMAP                  "..\\common\\resource\\misc\\browsef.bmp"
+BROWSEU                 BITMAP                  "..\\common\\resource\\misc\\browseu.bmp"
+BROWSEX                 BITMAP                  "..\\common\\resource\\misc\\browsex.bmp"
+CYAND                   BITMAP                  "..\\common\\resource\\colors\\cyanf.bmp"
+CYANF                   BITMAP                  "..\\common\\resource\\colors\\bmp00003.bmp"
+CYANU                   BITMAP                  "..\\common\\resource\\colors\\cyanu.bmp"
+DARKBLUED               BITMAP                  "..\\Common\\Resource\\Colors\\dbluef.bmp"
+DARKBLUEF               BITMAP                  "..\\common\\resource\\colors\\darkblue.bmp"
+DARKBLUEU               BITMAP                  "..\\Common\\Resource\\Colors\\dblueu.bmp"
+DARKGREEND              BITMAP                  "..\\Common\\Resource\\Colors\\dgreenf.bmp"
+DARKGREENF              BITMAP                  "..\\common\\resource\\colors\\darkgree.bmp"
+DARKGREENU              BITMAP                  "..\\Common\\Resource\\Colors\\dgreenu.bmp"
+DARKREDD                BITMAP                  "..\\Common\\Resource\\Colors\\dredf.bmp"
+DARKREDF                BITMAP                  "..\\common\\resource\\colors\\darkredf.bmp"
+DARKREDU                BITMAP                  "..\\Common\\Resource\\Colors\\dredu.bmp"
+GREEND                  BITMAP                  "..\\common\\resource\\colors\\greenf.bmp"
+GREENF                  BITMAP                  "..\\common\\resource\\colors\\bmp00004.bmp"
+GREENU                  BITMAP                  "..\\common\\resource\\colors\\greenu.bmp"
+GREYD                   BITMAP                  "..\\common\\resource\\colors\\greyf.bmp"
+GREYF                   BITMAP                  "..\\common\\resource\\colors\\bmp00005.bmp"
+GREYU                   BITMAP                  "..\\common\\resource\\colors\\greyu.bmp"
+LIGHTBLUED              BITMAP                  "..\\Common\\Resource\\Colors\\lbluef.bmp"
+LIGHTBLUEF              BITMAP                  "..\\common\\resource\\colors\\lightblu.bmp"
+LIGHTBLUEU              BITMAP                  "..\\Common\\Resource\\Colors\\lblueu.bmp"
+LIGHTGREEND             BITMAP                  "..\\Common\\Resource\\Colors\\lgreenf.bmp"
+LIGHTGREENF             BITMAP                  "..\\common\\resource\\colors\\lightgre.bmp"
+LIGHTGREENU             BITMAP                  "..\\Common\\Resource\\Colors\\lgreenu.bmp"
+LIGHTREDD               BITMAP                  "..\\Common\\Resource\\Colors\\lredf.bmp"
+LIGHTREDF               BITMAP                  "..\\common\\resource\\colors\\lightred.bmp"
+LIGHTREDU               BITMAP                  "..\\Common\\Resource\\Colors\\lredu.bmp"
+MAGENTAD                BITMAP                  "..\\common\\resource\\colors\\magentaf.bmp"
+MAGENTAF                BITMAP                  "..\\common\\resource\\colors\\bmp00006.bmp"
+MAGENTAU                BITMAP                  "..\\common\\resource\\colors\\magentau.bmp"
+REDD                    BITMAP                  "..\\common\\resource\\colors\\redf.bmp"
+REDF                    BITMAP                  "..\\common\\resource\\colors\\bmp00007.bmp"
+REDU                    BITMAP                  "..\\common\\resource\\colors\\redu.bmp"
+WHITED                  BITMAP                  "..\\common\\resource\\colors\\whitef.bmp"
+WHITEF                  BITMAP                  "..\\common\\resource\\colors\\bmp00008.bmp"
+WHITEU                  BITMAP                  "..\\common\\resource\\colors\\whiteu.bmp"
+YELLOWD                 BITMAP                  "..\\common\\resource\\colors\\yellowf.bmp"
+YELLOWF                 BITMAP                  "..\\common\\resource\\colors\\bmp00009.bmp"
+YELLOWU                 BITMAP                  "..\\common\\resource\\colors\\yellowu.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX_TMSETUP DIALOG  34, 22, 260, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About TMSetup Control"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ABOUTDLL,IDC_STATIC,10,10,20,20
+    LTEXT           "TMSetup Control, Version 6.0",IDC_STATIC,40,10,170,8
+    LTEXT           "Copyright (C) 2001",IDC_STATIC,40,25,170,8
+    DEFPUSHBUTTON   "OK",IDOK,221,7,32,14,WS_GROUP
+END
+
+IDD_PROPPAGE_TMSETUP DIALOG  0, 0, 250, 62
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "No custom properties available",IDC_STATIC,7,25,236,16
+END
+
+IDD_SIZE_DIALOG DIALOG  0, 0, 15, 13
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_GRAPHICS_PAGE DIALOG  0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Drawing Tool",IDC_DRAWTOOL,"Button",BS_AUTORADIOBUTTON | BS_NOTIFY | WS_GROUP | WS_TABSTOP,11,53,92,10
+    CONTROL         "Highlight",IDC_HIGHLIGHT,"Button",BS_AUTORADIOBUTTON | BS_NOTIFY | WS_TABSTOP,11,64,92,10
+    CONTROL         "Redact",IDC_REDACT,"Button",BS_AUTORADIOBUTTON | BS_NOTIFY | WS_TABSTOP,11,75,92,10
+    CONTROL         "Callout Highlights",IDC_CALLOUT,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,11,86,92,10
+    CONTROL         "Callout Frames",IDC_CALLOUTFRAME,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,11,97,92,10
+    CONTROL         "Callout Grab Handles",IDC_CALLOUTHANDLES,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,11,108,92,10
+    CONTROL         "Light Pen Controls",IDC_LIGHTPENRECT,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,11,119,92,10
+    CONTROL         "Split Screen Frame",IDC_USERSPLITFRAMECOLOR,"Button",BS_AUTORADIOBUTTON | WS_TABSTOP,11,130,115,10
+    CONTROL         "Split Screen Treatment Frame",IDC_ZAPSPLITFRAMECOLOR,
+                    "Button",BS_AUTORADIOBUTTON | WS_TABSTOP,11,141,124,10
+    EDITTEXT        IDC_SHADE_GRAYSCALE,123,159,25,13,ES_AUTOHSCROLL | WS_GROUP
+    COMBOBOX        IDC_ANNTOOL,11,194,134,68,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Scale All Graphics",IDC_SCALEGRAPHICS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,162,14,141,10
+    CONTROL         "Scale All Documents",IDC_SCALEDOCS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,162,26,141,10
+    CONTROL         "Enable Light Pen Controls",IDC_LIGHTPENCONTROLS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,162,38,141,10
+    CONTROL         "Resizable Callouts",IDC_RESIZABLE_CALLOUTS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,162,50,141,10
+    CONTROL         "Shade Image On Callout",IDC_SHADE_CALLOUTS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,162,62,141,10
+    CONTROL         "Allow Pan Callout Images",IDC_PAN_CALLOUTS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,162,76,141,10
+    EDITTEXT        IDC_THICKNESS,279,90,25,13,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin1",IDC_SPINTHICK,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,296,90,7,13
+    EDITTEXT        IDC_ZOOMFACTOR,279,107,25,13,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin2",IDC_SPINZOOM,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,296,107,7,13
+    EDITTEXT        IDC_CALLFRAMETHICK,279,124,25,13,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin1",IDC_CALLFRAMETHICKSPIN,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,296,124,7,13
+    EDITTEXT        IDC_LIGHTPENSIZE,279,141,25,13,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin2",IDC_LIGHTPENSIZESPIN,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,296,141,7,13
+    COMBOBOX        IDC_BITONAL,224,160,80,56,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Font",IDC_CHANGEFONT,264,193,38,14
+    CONTROL         "Red",IDC_RED,"Button",BS_OWNERDRAW | BS_NOTIFY,10,18,20,20
+    CONTROL         "Green",IDC_GREEN,"Button",BS_OWNERDRAW | BS_NOTIFY,26,18,20,20
+    CONTROL         "Blue",IDC_BLUE,"Button",BS_OWNERDRAW | BS_NOTIFY,42,18,20,20
+    CONTROL         "Magenta",IDC_MAGENTA,"Button",BS_OWNERDRAW | BS_NOTIFY,58,18,20,20
+    CONTROL         "Yellow",IDC_YELLOW,"Button",BS_OWNERDRAW | BS_NOTIFY,74,18,20,20
+    CONTROL         "Cyan",IDC_CYAN,"Button",BS_OWNERDRAW | BS_NOTIFY,90,18,20,20
+    CONTROL         "Black",IDC_BLACK,"Button",BS_OWNERDRAW | BS_NOTIFY,106,18,20,20
+    CONTROL         "Grey",IDC_GREY,"Button",BS_OWNERDRAW | BS_NOTIFY,122,18,20,20
+    CONTROL         "White",IDC_WHITE,"Button",BS_OWNERDRAW | BS_NOTIFY,106,32,20,20
+    CONTROL         "DarkRed",IDC_DARKRED,"Button",BS_OWNERDRAW | BS_NOTIFY,10,32,20,20
+    CONTROL         "DarkBlue",IDC_DARKBLUE,"Button",BS_OWNERDRAW | BS_NOTIFY,26,32,20,20
+    CONTROL         "DarkGreen",IDC_DARKGREEN,"Button",BS_OWNERDRAW | BS_NOTIFY,42,32,20,20
+    CONTROL         "LightRed",IDC_LIGHTRED,"Button",BS_OWNERDRAW | BS_NOTIFY,58,32,20,20
+    CONTROL         "LightBlue",IDC_LIGHTBLUE,"Button",BS_OWNERDRAW | BS_NOTIFY,74,32,20,20
+    CONTROL         "LightGreen",IDC_LIGHTGREEN,"Button",BS_OWNERDRAW | BS_NOTIFY,90,32,20,20
+    LTEXT           "Font Name",IDC_FONTNAME,162,196,99,8
+    GROUPBOX        "&Drawing Tools",IDC_STATIC,3,181,151,31
+    GROUPBOX        "&Colors",IDC_STATIC,3,3,151,175
+    LTEXT           "Callout Frame Thickness",IDC_STATIC,163,127,78,8
+    LTEXT           "Light Pen Pane Selector Size",IDC_STATIC,163,144,105,8
+    GROUPBOX        "&Options",IDC_STATIC,157,3,151,175
+    LTEXT           "Drawing Tool Thickness",IDC_STATIC,163,93,78,8
+    LTEXT           "Maximum Zoom Factor",IDC_STATIC,163,110,78,8
+    LTEXT           "Bitonal Scaling",IDC_STATIC,164,162,60,8
+    GROUPBOX        "Text Annotations",IDC_STATIC,157,181,151,31
+    LTEXT           "Callout Shade Grayscale (0 - 255)",IDC_STATIC,9,162,107,8
+END
+
+IDD_VIDEO_PAGE DIALOG  0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Quarter Screen",IDC_VIDEO4,"Button",BS_AUTORADIOBUTTON | WS_GROUP,86,14,73,10
+    CONTROL         "Sixth Screen",IDC_VIDEO6,"Button",BS_AUTORADIOBUTTON,86,25,73,10
+    CONTROL         "Eighth Screen",IDC_VIDEO8,"Button",BS_AUTORADIOBUTTON,86,37,73,10
+    CONTROL         "Invisible",IDC_VIDEO0,"Button",BS_AUTORADIOBUTTON,86,48,73,10
+    CONTROL         "Upper Left",IDC_UPPERLEFT,"Button",BS_AUTORADIOBUTTON | WS_GROUP,86,70,55,10
+    CONTROL         "Upper Right",IDC_UPPERRIGHT,"Button",BS_AUTORADIOBUTTON,86,80,55,10
+    CONTROL         "Lower Left",IDC_LOWERLEFT,"Button",BS_AUTORADIOBUTTON,86,91,55,10
+    CONTROL         "Lower Right",IDC_LOWERRIGHT,"Button",BS_AUTORADIOBUTTON,86,103,55,10
+    EDITTEXT        IDC_PLAYLISTSTEP,271,12,31,14,ES_AUTOHSCROLL | ES_NUMBER
+    EDITTEXT        IDC_FRAMERATE,271,30,31,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Clear Screen When Finished",IDC_CLEARPLAYLIST,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,48,120,10
+    CONTROL         "Resume Playback After Stepping",IDC_RESUMEPLAYLIST,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,61,120,10
+    CONTROL         "Always Play Through To End",IDC_RUNTOEND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,74,120,10
+    CONTROL         "Split Screen Document Links",IDC_SPLITDOCUMENTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,88,120,10
+    CONTROL         "Split Screen Graphic Links",IDC_SPLITGRAPHICS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,101,120,10
+    CONTROL         "Split Screen PowerPoint Links",IDC_SPLITPOWERPOINTS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,113,120,10
+    CONTROL         "Use Classic Links",IDC_CLASSIC_LINKS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,129,120,10
+    CONTROL         "Scale Video To Window",IDC_SCALEAVICLIPS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,183,130,10
+    CONTROL         "Clear Screen When Finished",IDC_CLEARCLIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,11,196,130,10
+    EDITTEXT        IDC_CLIPSTEP,239,166,33,14,ES_AUTOHSCROLL | ES_NUMBER
+    CONTROL         "Resume Playback After Stepping",IDC_RESUMECLIP,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,183,130,10
+    CONTROL         "Convert Clips To Playlists",IDC_CLIPSASPLAYLISTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,168,196,130,10
+    LTEXT           "Cue Step (sec)",IDC_STATIC,168,15,91,8
+    GROUPBOX        "Playlists",IDC_STATIC,3,3,305,144
+    LTEXT           "Cue Step (sec)",IDC_STATIC,168,169,67,8
+    GROUPBOX        "Movie Clips (Animations)",IDC_STATIC,3,154,305,58
+    LTEXT           "Linked Video Size",IDC_STATIC,9,14,58,8
+    LTEXT           "Default Frame Rate (frame/sec)",IDC_STATIC,168,32,101,8
+    LTEXT           "Linked Video Position",IDC_STATIC,10,70,73,8
+END
+
+IDD_TEXT_PAGE DIALOG  0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Disable Scrolling Text",IDC_TEXT_DISABLESCROLLTEXT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,17,141,10
+    CONTROL         "Enable Smooth Scrolling",IDC_TEXT_SMOOTHSCROLL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,31,141,10
+    CONTROL         "Use Average Character Width",IDC_TEXT_AVGCHARWIDTH,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,45,141,10
+    CONTROL         "Show Transcript Text",IDC_TEXT_SHOWTEXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,59,141,10
+    CONTROL         "Show Page and Line Numbers",IDC_TEXT_SHOWPAGELINE,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,73,141,10
+    CONTROL         "Center Video Over Text",IDC_TEXT_CENTERVIDEO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,87,141,10
+    CONTROL         "Merge Text If Playing From Start",IDC_COMBINETEXT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,101,141,10
+    CONTROL         "Use Database Highlighters",IDC_USEMANAGERHIGHLIGHTERS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,115,132,10
+    COMBOBOX        IDC_BULLET_STYLE,61,131,82,83,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "BC",IDC_TEXT_BACKCOLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,98,151,46,12
+    CONTROL         "FC",IDC_TEXT_FORECOLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,98,165,46,12
+    CONTROL         "HC",IDC_TEXT_HIGHLIGHTCOLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,98,179,46,12
+    CONTROL         "HTC",IDC_TEXT_HIGHTEXTCOLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,98,193,46,12
+    EDITTEXT        IDC_TEXT_SCROLLSTEPS,261,13,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXT_SCROLLTIME,261,32,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXT_DISPLAYLINES,261,51,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXT_HIGHLIGHTLINES,261,70,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXT_MAXCHARSPERLINE,261,89,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXT_LEFT_MARGIN,261,108,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXT_TOP_MARGIN,261,127,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXT_RIGHT_MARGIN,261,146,41,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TEXT_BOTTOM_MARGIN,261,165,41,14,ES_AUTOHSCROLL
+    COMBOBOX        IDC_TEXT_FONTS,193,190,109,83,CBS_DROPDOWNLIST | CBS_SORT | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Text Display Options",IDC_STATIC,3,3,305,208
+    LTEXT           "Font",IDC_STATIC,161,192,20,8
+    LTEXT           "Background Color",IDC_BACKCOLOR_LABEL,10,153,84,8
+    LTEXT           "Foreground Color",IDC_FORECOLOR_LABEL,10,166,84,8
+    LTEXT           "Highlight Color",IDC_HIGHCOLOR_LABEL,10,180,84,8
+    LTEXT           "Highlighted Text Color",IDC_HIGHTEXTCOLOR_LABEL,10,194,84,8
+    LTEXT           "Display Lines",IDC_STATIC,161,54,93,8
+    LTEXT           "Highlight Lines",IDC_STATIC,161,73,93,8
+    LTEXT           "Max Characters Per Line",IDC_STATIC,161,92,93,8
+    LTEXT           "Scroll Steps",IDC_STATIC,161,16,93,8
+    LTEXT           "Scroll Time (msec)",IDC_STATIC,161,35,93,8
+    LTEXT           "Left Margin (pixels)",IDC_STATIC,161,111,93,8
+    LTEXT           "Top Margin (pixels)",IDC_STATIC,161,130,93,8
+    LTEXT           "Right Margin (pixels)",IDC_STATIC,161,148,93,8
+    LTEXT           "Bottom Margin (pixels)",IDC_STATIC,161,167,93,8
+    LTEXT           "Bullets",IDC_BULLETS_LABEL,11,134,36,8
+END
+
+IDD_ABOUT_PAGE DIALOG  0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CTEXT           "Version",IDC_VERSION,43,45,229,8,SS_NOPREFIX
+    CTEXT           "Name",IDC_NAME,41,31,229,8
+    CTEXT           "Copyright (C)",IDC_COPYRIGHT,7,76,301,8
+    CTEXT           "Email",IDC_EMAIL,7,89,301,8
+END
+
+IDD_DATABASE_PAGE DIALOG  0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Enable Error Messages",IDC_ENABLEERRORS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,183,167,10
+    CONTROL         "Enable Power Point",IDC_ENABLEPOWERPOINT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,197,167,10
+    CONTROL         "Browse",IDC_BROWSEFOLDER,"Button",BS_OWNERDRAW | WS_TABSTOP,288,13,16,14
+    LISTBOX         IDC_CASES,7,44,296,112,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Previous Case Selections",IDC_STATIC,3,33,305,129
+    LTEXT           "",IDC_CURRENT,8,14,277,8
+    GROUPBOX        "Current Case",IDC_STATIC,3,3,305,26
+    GROUPBOX        "Options",IDC_STATIC,3,168,305,44
+END
+
+IDD_DIAGNOSTIC_PAGE DIALOGEX 0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "List1",IDC_LIST,"SysListView32",LVS_REPORT | LVS_NOSORTHEADER | WS_TABSTOP,3,3,305,209,WS_EX_CLIENTEDGE
+END
+
+IDD_DIRECTX_PAGE DIALOGEX 0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "List3",IDC_REGISTERED,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_SORTASCENDING | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,3,13,151,199,WS_EX_CLIENTEDGE
+    CONTROL         "List2",IDC_ACTIVE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOCOLUMNHEADER | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,157,13,151,172,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "&Active Filter Properties",IDC_PROPERTIES,198,196,81,14
+    LTEXT           "Registered Multimedia Filters",IDC_STATIC,3,3,88,8
+    LTEXT           "Active Multimedia Filters",IDC_STATIC,159,3,73,8
+    CONTROL         "",IDC_TMMOVIE,"{D71D2494-B9CA-401F-8E24-1815E077CE64}",NOT WS_VISIBLE,125,195,64,17
+END
+
+IDD_SYSTEM_PAGE DIALOGEX 0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "Database Id",IDC_IMAGE_ID,"Button",BS_AUTORADIOBUTTON | WS_GROUP,103,19,53,10
+    CONTROL         "Playback Order",IDC_IMAGE_ORDER,"Button",BS_AUTORADIOBUTTON,160,19,63,10
+    CONTROL         "Database Id",IDC_ANIMATION_ID,"Button",BS_AUTORADIOBUTTON | WS_GROUP,103,36,53,10
+    CONTROL         "Playback Order",IDC_ANIMATION_ORDER,"Button",BS_AUTORADIOBUTTON,160,36,63,10
+    CONTROL         "Database Id",IDC_PLAYLIST_ID,"Button",BS_AUTORADIOBUTTON | WS_GROUP,103,53,53,10
+    CONTROL         "Playback Order",IDC_PLAYLIST_ORDER,"Button",BS_AUTORADIOBUTTON,160,53,63,10
+    CONTROL         "Database Id",IDC_SHOW_ID,"Button",BS_AUTORADIOBUTTON | WS_GROUP,103,70,53,10
+    CONTROL         "Playback Order",IDC_SHOW_ORDER,"Button",BS_AUTORADIOBUTTON,160,70,63,10
+    CONTROL         "Database Id",IDC_POWERPOINT_ID,"Button",BS_AUTORADIOBUTTON | WS_GROUP,103,87,53,10
+    CONTROL         "Playback Order",IDC_POWERPOINT_ORDER,"Button",BS_AUTORADIOBUTTON,160,87,63,10
+    CONTROL         "Slide Index",IDC_POWERPOINT_INDEX,"Button",BS_AUTORADIOBUTTON,231,87,49,10
+    CONTROL         "Database Id",IDC_TREATMENT_ID,"Button",BS_AUTORADIOBUTTON | WS_GROUP,103,137,53,10
+    CONTROL         "Playback Order",IDC_TREATMENT_ORDER,"Button",BS_AUTORADIOBUTTON,160,137,63,10
+    GROUPBOX        "Use Secondary Identifiers As",IDC_STATIC,3,3,305,113
+    LTEXT           "Images:",IDC_STATIC,10,19,83,8
+    LTEXT           "Animations:",IDC_STATIC,10,36,83,8
+    LTEXT           "Playlists:",IDC_STATIC,10,53,83,8
+    LTEXT           "PowerPoint Presentations:",IDC_STATIC,10,87,83,8
+    GROUPBOX        "Use Tertiary Identifiers As",IDC_STATIC,3,122,305,38
+    LTEXT           "Treatments:",IDC_STATIC,10,138,83,8
+    LTEXT           "Custom Shows:",IDC_STATIC,10,70,83,8
+    GROUPBOX        "",IDC_STATIC,3,162,305,50
+    CONTROL         "Optimize For S3 Video Adapter",IDC_OPTIMIZE_VIDEO,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,170,209,10
+    CONTROL         "Run Presentation on Secondary Monitor",IDC_DUAL_MONITORS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,179,209,10
+    CONTROL         "Optimize For Tablet",IDC_OPTIMIZE_TABLET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,190,209,10
+END
+
+IDD_CAPTURE_PAGE DIALOG  0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Silent Mode - (automatically send the image to the clipboard)",IDC_SILENT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,3,44,239,10
+    LTEXT           "Hotkey - Multiple Captures",IDC_STATIC,3,22,86,8
+    LTEXT           "Capture Area",IDC_STATIC,3,5,86,8
+    COMBOBOX        IDC_AREA,93,3,84,40,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_HOTKEY,93,20,84,98,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_RINGTAIL_PAGE DIALOGEX 0, 0, 311, 215
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    CONTROL         "Show Redactions",IDC_RINGTAIL_SHOWREDACTIONS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,16,141,10
+    EDITTEXT        IDC_RINGTAIL_REDACTLABELSIZE,110,104,41,14,ES_AUTOHSCROLL
+    CONTROL         "RC",IDC_RINGTAIL_REDACTCOLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,254,125,46,12
+    CONTROL         "LC",IDC_RINGTAIL_REDACTLABELCOLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,254,139,46,12
+    GROUPBOX        "Ringtail Display Options",IDC_STATIC,3,3,305,209
+    LTEXT           "Redact Color",IDC_STATIC,166,127,84,8
+    LTEXT           "Redact Label Color",IDC_STATIC,166,141,84,8
+    LTEXT           "Redact Label Size",IDC_STATIC,10,107,93,8
+    LISTBOX         IDC_REDACTLABEL_FONTS,161,21,147,96,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP,WS_EX_CLIENTEDGE
+    LTEXT           "Redact Label Font",IDC_STATIC,164,11,62,8
+    COMBOBOX        IDC_RINGTAIL_REDACTTRANSPARENCY,17,55,64,45,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX_TMSETUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_PROPPAGE_TMSETUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 55
+    END
+
+    IDD_SIZE_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 8
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 6
+    END
+
+    IDD_GRAPHICS_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        VERTGUIDE, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_VIDEO_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        VERTGUIDE, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_TEXT_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 211
+    END
+
+    IDD_ABOUT_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        VERTGUIDE, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_DATABASE_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_DIAGNOSTIC_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        VERTGUIDE, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_DIRECTX_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        VERTGUIDE, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_SYSTEM_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        VERTGUIDE, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_CAPTURE_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        VERTGUIDE, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_RINGTAIL_PAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 308
+        VERTGUIDE, 308
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 212
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_GRAPHICS_PAGE DLGINIT
+BEGIN
+    IDC_ANNTOOL, 0x403, 9, 0
+0x7246, 0x6565, 0x6168, 0x646e, "\000" 
+    IDC_ANNTOOL, 0x403, 5, 0
+0x694c, 0x656e, "\000" 
+    IDC_ANNTOOL, 0x403, 6, 0
+0x7241, 0x6f72, 0x0077, 
+    IDC_ANNTOOL, 0x403, 15, 0
+0x6c45, 0x696c, 0x7370, 0x2f65, 0x6943, 0x6372, 0x656c, "\000" 
+    IDC_ANNTOOL, 0x403, 17, 0
+0x6552, 0x7463, 0x6e61, 0x6c67, 0x2f65, 0x7153, 0x6175, 0x6572, "\000" 
+    IDC_ANNTOOL, 0x403, 24, 0
+0x6c45, 0x696c, 0x7370, 0x2f65, 0x6943, 0x6372, 0x656c, 0x2820, 0x6966, 
+0x6c6c, 0x6465, 0x0029, 
+    IDC_ANNTOOL, 0x403, 26, 0
+0x6552, 0x7463, 0x6e61, 0x6c67, 0x2f65, 0x7153, 0x6175, 0x6572, 0x2820, 
+0x6966, 0x6c6c, 0x6465, 0x0029, 
+    IDC_ANNTOOL, 0x403, 9, 0
+0x6f50, 0x796c, 0x696c, 0x656e, "\000" 
+    IDC_ANNTOOL, 0x403, 8, 0
+0x6f50, 0x796c, 0x6f67, 0x006e, 
+    IDC_ANNTOOL, 0x403, 9, 0
+0x6554, 0x7478, 0x4220, 0x786f, "\000" 
+    IDC_BITONAL, 0x403, 7, 0
+0x6f4e, 0x6d72, 0x6c61, "\000" 
+    IDC_BITONAL, 0x403, 12, 0
+0x6146, 0x6f76, 0x2072, 0x6c42, 0x6361, 0x006b, 
+    IDC_BITONAL, 0x403, 14, 0
+0x6353, 0x6c61, 0x2065, 0x6f54, 0x4720, 0x6172, 0x0079, 
+    0
+END
+
+IDD_CAPTURE_PAGE DLGINIT
+BEGIN
+    IDC_AREA, 0x403, 12, 0
+0x7546, 0x6c6c, 0x5320, 0x7263, 0x6565, 0x006e, 
+    IDC_AREA, 0x403, 14, 0
+0x6341, 0x6974, 0x6576, 0x5720, 0x6e69, 0x6f64, 0x0077, 
+    IDC_AREA, 0x403, 14, 0
+0x6553, 0x656c, 0x7463, 0x6465, 0x4120, 0x6572, 0x0061, 
+    IDC_HOTKEY, 0x403, 16, 0
+0x6f4e, 0x656e, 0x2d20, 0x4f20, 0x656e, 0x7320, 0x6f68, 0x0074, 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3146, "\000" 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3246, "\000" 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3346, "\000" 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3446, "\000" 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3546, "\000" 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3646, "\000" 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3746, "\000" 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3846, "\000" 
+    IDC_HOTKEY, 0x403, 3, 0
+0x3946, "\000" 
+    IDC_HOTKEY, 0x403, 4, 0
+0x3146, 0x0030, 
+    IDC_HOTKEY, 0x403, 4, 0
+0x3146, 0x0031, 
+    IDC_HOTKEY, 0x403, 4, 0
+0x3146, 0x0032, 
+    0
+END
+
+IDD_RINGTAIL_PAGE DLGINIT
+BEGIN
+    IDC_RINGTAIL_REDACTTRANSPARENCY, 0x403, 7, 0
+0x704f, 0x7161, 0x6575, "\000" 
+    IDC_RINGTAIL_REDACTTRANSPARENCY, 0x403, 12, 0
+0x7254, 0x6e61, 0x6c73, 0x6375, 0x6e65, 0x0074, 
+    IDC_RINGTAIL_REDACTTRANSPARENCY, 0x403, 12, 0
+0x7254, 0x6e61, 0x7073, 0x7261, 0x6e65, 0x0074, 
+    0
+END
+
+IDD_DIRECTX_PAGE DLGINIT
+BEGIN
+    IDC_TMMOVIE, 0x376, 74, 0
+0x0000, 0x0000, 0x0003, 0x0006, 0x09ec, 0x0000, 0x02e5, 0x0000, 0x0021, 
+0x0000, 0xc0c0, 0x00c0, 0x0000, 0x0101, 0x0101, 0x0101, 0x0000, 0x4607, 
+0x6974, 0x692e, 0x696e, 0x0000, 0x0000, 0x0000, 0x0000, 0xc800, 0x0000, 
+0x3200, 0x0000, 0x0000, 0x0000, 0x3200, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_TEXT_PAGE DLGINIT
+BEGIN
+    IDC_BULLET_STYLE, 0x403, 5, 0
+0x6f4e, 0x656e, "\000" 
+    IDC_BULLET_STYLE, 0x403, 8, 0
+0x7153, 0x6175, 0x6572, 0x0073, 
+    IDC_BULLET_STYLE, 0x403, 8, 0
+0x6943, 0x6372, 0x656c, 0x0073, 
+    IDC_BULLET_STYLE, 0x403, 9, 0
+0x6944, 0x6d61, 0x6e6f, 0x7364, "\000" 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_TMSETUP             "TMSetup 6 Control"
+    IDS_TMSETUP_PPG         "TMSetup 6 Property Page"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TMSETUP_PPG_CAPTION "General"
+    IDS_TMSETUP_NOTINITIALIZED "The control has not been initialized."
+    IDS_TMSETUP_INVALIDTHICKNESS 
+                            "You must supply a drawing thickness between %1. The graphics options have not been saved."
+    IDS_TMSETUP_INVALIDZOOMFACTOR 
+                            "You must supply a zoom factor between %1. The graphics options have not been saved."
+    IDS_TMSETUP_INVALIDCHARSPERLINE 
+                            "You must supply a maximum characters per line value  between %1. The text options have not been saved."
+    IDS_TMSETUP_INVALIDHIGHLIGHTLINES 
+                            "You must supply a highlight lines  value  between %1. The text options have not been saved."
+    IDS_TMSETUP_INVALIDDISPLAYLINES 
+                            "You must supply a display lines  value  between %1. The text options have not been saved."
+    IDS_TMSETUP_INVALIDFRAMERATE 
+                            "You must supply a frame rate  value  between %1. The video options have not been saved."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "Tm_setup6.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

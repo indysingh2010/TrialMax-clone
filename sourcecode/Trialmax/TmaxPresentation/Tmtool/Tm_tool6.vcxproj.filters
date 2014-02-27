@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{c7375b23-2977-412d-bfc5-9c54af78ef12}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{5651dba8-0337-4a98-b4c5-5e3a3daa39ff}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{a97b42cd-8f8c-4294-9310-f49b17a46496}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;cnt;rtf;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Filever.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Handler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Regcats.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Tmini.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tmtool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tmtoolap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tmtoolpg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Tmver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Source\Toolbox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tm_tool6.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="Tm_tool6.odl">
+      <Filter>Source Files</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Tm_tool6.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Tables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Include\Tmini.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Include\Tmtool\Tmtbdefs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Tmtool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Tmtoolap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Tmtoolpg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\Common\Resources\Strips\ColorTblarge.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Common\Resources\Strips\Tblarge.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Tblarge.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Common\Resources\Strips\Tbmedium.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Tbmedium.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Common\Resources\Strips\Tbsmall.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Tbsmall.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Tbtiny.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Tdlarge.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Common\Resources\Strips\Tdlarge.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Tdmedium.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Common\Resources\Strips\Tdmedium.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\..\Common\Resources\Strips\Tdsmall.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Tdsmall.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\Tmtool.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Resource\Tmtool.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Toobar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toobar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Toolbarl.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Toolbarm.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\Common\Resource\Toolbar\Toolbars.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

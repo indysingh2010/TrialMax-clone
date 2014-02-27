@@ -1,0 +1,41 @@
+// TmaxPresentation.odl : type library source for TmaxPresentation.exe
+
+// This file will be processed by the MIDL compiler to produce the
+// type library (TmaxPresentation.tlb).
+
+[ uuid(1639AC23-53BD-11D1-B0A9-008029EFD140), version(4.0) ]
+library TmaxPresentation
+{
+	importlib("stdole32.tlb");
+	
+
+	//  Primary dispatch interface for CTMDocument
+	
+	[ uuid(1639AC24-53BD-11D1-B0A9-008029EFD140) ]
+	dispinterface ITmaxPresentation
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTMDocument)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTMDocument)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CTMDocument
+	
+	[ uuid(1639AC22-53BD-11D1-B0A9-008029EFD140) ]
+	coclass Document
+	{
+		[default] dispinterface ITmaxPresentation;
+	};
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};
