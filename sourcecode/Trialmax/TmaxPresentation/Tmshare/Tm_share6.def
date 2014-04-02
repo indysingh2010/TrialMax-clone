@@ -1,9 +1,0 @@
-; Tm_share6.def : Declares the module parameters.
-
-LIBRARY      "TM_SHARE6.OCX"
-
-EXPORTS
-	DllCanUnloadNow     PRIVATE
-	DllGetClassObject   PRIVATE
-	DllRegisterServer   PRIVATE
-	DllUnregisterServer PRIVATE

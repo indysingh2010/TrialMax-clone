@@ -1,9 +1,0 @@
-; Tm_xml6.def : Declares the module parameters.
-
-LIBRARY      "TM_XML6.OCX"
-
-EXPORTS
-	DllCanUnloadNow     PRIVATE
-	DllGetClassObject   PRIVATE
-	DllRegisterServer   PRIVATE
-	DllUnregisterServer PRIVATE

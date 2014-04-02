@@ -1,9 +1,0 @@
-; Tmaxdemo.def : Declares the module parameters for the DLL.
-
-LIBRARY      "Tmaxdemo"
-DESCRIPTION  'Tmaxdemo Windows Dynamic Link Library'
-
-EXPORTS
-	CopyDatabase @1
-    CopyVideos @2
-	CopyIfConfirmed @3
