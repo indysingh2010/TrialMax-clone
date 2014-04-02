@@ -1,0 +1,10 @@
+<FTIP2I>
+	<timestarted>Fri Jul 23 17:34:55 2004  </timestarted>
+	<program>AFPL Ghostscript</program>
+	<version>8.14 (2004-02-20)</version>
+	<pages>3</pages>
+	<timecompleted>Fri Jul 23 17:35:04 2004  </timecompleted>
+	<warning>Example FTIP2I warning message </warning>
+	<error>Example FTIP2I error message </error>
+	<fatalerror>Example FTIP2I fatal error message </fatalerror>
+</FTIP2I>
