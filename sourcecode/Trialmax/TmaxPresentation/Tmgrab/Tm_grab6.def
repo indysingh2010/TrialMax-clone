@@ -1,0 +1,9 @@
+; Tm_grab6.def : Declares the module parameters.
+
+LIBRARY      "TM_GRAB6.OCX"
+
+EXPORTS
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer PRIVATE

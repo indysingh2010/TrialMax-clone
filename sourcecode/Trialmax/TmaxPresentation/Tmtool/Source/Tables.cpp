@@ -1,0 +1,220 @@
+//==============================================================================
+//
+// File Name:   tables.cpp
+//
+// Description: This file contains the table used to translate button
+//				identifiers to their position in the image strip
+//
+// Functions:   
+//              
+// See Also:    tables.h
+//
+// Copyright	FTI Consulting 1997-1999
+//
+//==============================================================================
+//  Date        Revision    Description
+//  09-26-98    1.00        Original Release
+//==============================================================================
+
+//------------------------------------------------------------------------------
+//  INCLUDES
+//------------------------------------------------------------------------------
+#include <stdafx.h>
+#include <tables.h>
+#include <tmtbdefs.h>
+
+//------------------------------------------------------------------------------
+//  DEFINES
+//------------------------------------------------------------------------------
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+
+//------------------------------------------------------------------------------
+//  GLOBALS
+//------------------------------------------------------------------------------
+
+//	This array allows us to retrieve the index of a button image in the image
+//	strip given it's command identifier. The command id is the index into the
+//	array and the image index is the value at the desired position.
+const short ImageMap[TMTB_MAXBUTTONS] =
+{
+	TMTB_IMAGE_CONFIG,
+	TMTB_IMAGE_UNUSED1,
+	TMTB_IMAGE_CONFIGTOOLBARS,
+	TMTB_IMAGE_CLEAR,
+	TMTB_IMAGE_ROTATECW,
+	TMTB_IMAGE_ROTATECCW,
+	TMTB_IMAGE_NORMAL,
+	TMTB_IMAGE_ZOOM,
+	TMTB_IMAGE_ZOOMWIDTH,
+	TMTB_IMAGE_PAN,
+	TMTB_IMAGE_CALLOUT,
+	TMTB_IMAGE_DRAWTOOL,
+	TMTB_IMAGE_HIGHLIGHT,
+	TMTB_IMAGE_REDACT,
+	TMTB_IMAGE_ERASE,
+	TMTB_IMAGE_FIRSTPAGE,
+	TMTB_IMAGE_PREVPAGE,
+	TMTB_IMAGE_NEXTPAGE,
+	TMTB_IMAGE_LASTPAGE,
+	TMTB_IMAGE_SAVEZAP,
+	TMTB_IMAGE_FIRSTZAP,
+	TMTB_IMAGE_PREVZAP,
+	TMTB_IMAGE_NEXTZAP,
+	TMTB_IMAGE_LASTZAP,
+	TMTB_IMAGE_STARTMOVIE,
+	TMTB_IMAGE_BACKMOVIE,
+	TMTB_IMAGE_PAUSEMOVIE,
+	TMTB_IMAGE_PLAYMOVIE,
+	TMTB_IMAGE_FWDMOVIE,
+	TMTB_IMAGE_ENDMOVIE,
+	TMTB_IMAGE_FIRSTDESIGNATION,
+	TMTB_IMAGE_BACKDESIGNATION,
+	TMTB_IMAGE_PREVDESIGNATION,
+	TMTB_IMAGE_STARTDESIGNATION,
+	TMTB_IMAGE_PAUSEDESIGNATION,
+	TMTB_IMAGE_PLAYDESIGNATION,
+	TMTB_IMAGE_NEXTDESIGNATION,
+	TMTB_IMAGE_FWDDESIGNATION,
+	TMTB_IMAGE_LASTDESIGNATION,
+	TMTB_IMAGE_PRINT,
+	TMTB_IMAGE_SPLITVERTICAL,
+	TMTB_IMAGE_SPLITHORIZONTAL,
+	TMTB_IMAGE_DISABLELINKS,
+	TMTB_IMAGE_ENABLELINKS,
+	TMTB_IMAGE_EXIT,
+	TMTB_IMAGE_RED,
+	TMTB_IMAGE_GREEN,
+	TMTB_IMAGE_BLUE,
+	TMTB_IMAGE_YELLOW,
+	TMTB_IMAGE_BLACK,
+	TMTB_IMAGE_WHITE,
+	TMTB_IMAGE_PLAYTHROUGH,
+	TMTB_IMAGE_CUEPGLNCURRENT,
+	TMTB_IMAGE_CUEPGLNNEXT,
+	TMTB_IMAGE_DELETEANN,
+	TMTB_IMAGE_SELECT,
+	TMTB_IMAGE_TEXT,
+	TMTB_IMAGE_SELECTTOOL,
+	TMTB_IMAGE_FREEHAND,
+	TMTB_IMAGE_LINE,
+	TMTB_IMAGE_ARROW,
+	TMTB_IMAGE_ELLIPSE,
+	TMTB_IMAGE_RECTANGLE,
+	TMTB_IMAGE_FILLEDELLIPSE,
+	TMTB_IMAGE_FILLEDRECTANGLE,
+	TMTB_IMAGE_FULLSCREEN,
+	TMTB_IMAGE_STATUSBAR,
+	TMTB_IMAGE_SHADEDCALLOUTS,
+	TMTB_IMAGE_DARKRED,
+	TMTB_IMAGE_DARKGREEN,
+	TMTB_IMAGE_DARKBLUE,
+	TMTB_IMAGE_LIGHTRED,
+	TMTB_IMAGE_LIGHTGREEN,
+	TMTB_IMAGE_LIGHTBLUE,
+	TMTB_IMAGE_POLYLINE,
+	TMTB_IMAGE_POLYGON,
+	TMTB_IMAGE_ANNTEXT,
+	TMTB_IMAGE_UPDATEZAP,
+	TMTB_IMAGE_DELETEZAP,
+	TMTB_IMAGE_ZOOMRESTRICTED,
+	TMTB_IMAGE_SAVESPLITZAP,
+	TMTB_IMAGE_GESTUREPAN,
+	TMTB_IMAGE_BINDERLIST
+};
+
+//	This array is used by configuration panels to present the buttons
+//	in a logical order
+const short Sorted[TMTB_MAXBUTTONS] =
+{
+	SORTED_CONFIG,						
+	SORTED_UNUSED1,					
+	SORTED_CONFIGTOOLBARS,				
+	SORTED_CLEAR,						
+	SORTED_ROTATECW,					
+	SORTED_ROTATECCW,					
+	SORTED_NORMAL,						
+	SORTED_ZOOM,						
+	SORTED_ZOOMWIDTH,					
+	SORTED_PAN,						
+	SORTED_CALLOUT,					
+	SORTED_DRAWTOOL,					
+	SORTED_HIGHLIGHT,					
+	SORTED_REDACT,						
+	SORTED_ERASE,						
+	SORTED_FIRSTPAGE,					
+	SORTED_PREVPAGE,					
+	SORTED_NEXTPAGE,					
+	SORTED_LASTPAGE,					
+	SORTED_SAVEZAP,					
+	SORTED_FIRSTZAP,					
+	SORTED_PREVZAP,					
+	SORTED_NEXTZAP,					
+	SORTED_LASTZAP,					
+	SORTED_STARTMOVIE,					
+	SORTED_BACKMOVIE,					
+	SORTED_PAUSEMOVIE,					
+	SORTED_PLAYMOVIE,					
+	SORTED_FWDMOVIE,					
+	SORTED_ENDMOVIE,					
+	SORTED_FIRSTDESIGNATION,			
+	SORTED_BACKDESIGNATION,			
+	SORTED_PREVDESIGNATION,			
+	SORTED_STARTDESIGNATION,			
+	SORTED_PAUSEDESIGNATION,			
+	SORTED_PLAYDESIGNATION,			
+	SORTED_NEXTDESIGNATION,			
+	SORTED_FWDDESIGNATION,				
+	SORTED_LASTDESIGNATION,			
+	SORTED_PRINT,						
+	SORTED_SPLITVERTICAL,				
+	SORTED_SPLITHORIZONTAL,			
+	SORTED_DISABLELINKS,				
+	SORTED_ENABLELINKS,				
+	SORTED_EXIT,						
+	//SORTED_RED,						
+	SORTED_GREEN,						
+	SORTED_BLUE,						
+	SORTED_YELLOW,						
+	SORTED_BLACK,						
+	SORTED_WHITE,						
+	SORTED_PLAYTHROUGH,				
+	SORTED_CUEPGLNCURRENT,				
+	SORTED_CUEPGLNNEXT,				
+	SORTED_DELETEANN,					
+	SORTED_SELECT,						
+	SORTED_TEXT,						
+	SORTED_SELECTTOOL,					
+	SORTED_FREEHAND,					
+	SORTED_LINE,						
+	SORTED_ARROW,						
+	SORTED_ELLIPSE,					
+	SORTED_RECTANGLE,					
+	SORTED_FILLEDELLIPSE,				
+	SORTED_FILLEDRECTANGLE,			
+	SORTED_FULLSCREEN,					
+	SORTED_STATUSBAR,					
+	SORTED_SHADEDCALLOUTS,					
+	SORTED_DARKRED,					
+	SORTED_DARKGREEN,					
+	SORTED_DARKBLUE,					
+	SORTED_LIGHTRED,					
+	SORTED_LIGHTGREEN,					
+	SORTED_LIGHTBLUE,					
+	SORTED_POLYLINE,					
+	SORTED_POLYGON,					
+	SORTED_ANNTEXT,					
+	SORTED_UPDATEZAP,					
+	SORTED_DELETEZAP,					
+	SORTED_ZOOMRESTRICTED,				
+	SORTED_SAVESPLITZAP,
+	SORTED_GESTUREPAN,
+	SORTED_BINDERLIST
+};
+
+
+
+

@@ -1,0 +1,10 @@
+#define Welcome	501
+#define What_s_New	502
+#define TMax_Graphics_options	504
+#define TMax_Video_options	505
+#define TMax_Diagnostics_options	506
+#define TMax_About_options	507
+#define TrialMax_Command_Line_Options	503
+#define Revision_History_2_1	508
+#define Revision_History_3_0	509
+#define Hidden_System_Options	511

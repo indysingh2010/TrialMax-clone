@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmaxManager", "TmaxManager.csproj", "{A7F6C20D-7C1D-4EE1-8E7E-3CD1919F8A1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A7F6C20D-7C1D-4EE1-8E7E-3CD1919F8A1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7F6C20D-7C1D-4EE1-8E7E-3CD1919F8A1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7F6C20D-7C1D-4EE1-8E7E-3CD1919F8A1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7F6C20D-7C1D-4EE1-8E7E-3CD1919F8A1B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,634 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\Tprintvc.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\Tprintvc.ico"
+IDR_TPRINTTYPE          ICON    DISCARDABLE     "res\\Printdoc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Test Mode",                   ID_FILE_TESTMODE
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About Tprintvc...",          ID_APP_ABOUT
+    END
+END
+
+IDR_TPRINTTYPE MENU PRELOAD DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "Test Mode",                   ID_METHOD_TESTMODE
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Properties"
+    BEGIN
+        MENUITEM "Show Options Dialog",         ID_PROP_SHOWOPTIONS
+        MENUITEM "Copies...",                   ID_PROP_COPIES
+        MENUITEM "Collate",                     ID_PROP_COLLATE
+        MENUITEM "Include Path In File Name",   ID_PROP_INCLUDEPATH
+        MENUITEM "Include Page Total",          ID_PROP_INCLUDEPAGETOTAL
+        MENUITEM "Print Barcode Graphic",       ID_PROP_PRINTBARCODEGRAPHIC
+        MENUITEM "Print Barcode Text",          ID_PROP_PRINTBARCODETEXT
+        MENUITEM "Print Image",                 ID_PROP_PRINTIMAGE
+        MENUITEM "Print Name",                  ID_PROP_PRINTNAME
+        MENUITEM "Print Filename",              ID_PROP_PRINTFILENAME
+        MENUITEM "Print Deponent",              ID_PROP_PRINTDEPONENT
+        MENUITEM "Print Page Number",           ID_PROP_PRINTPAGENUMBER
+        MENUITEM "Print Cell Border",           ID_PROP_PRINTCELLBORDER
+        MENUITEM "Force New Page",              ID_PROP_FORCENEWPAGE
+        MENUITEM "Use PowerPoint Slide IDs",    ID_PROP_USESLIDEIDS
+        MENUITEM "Template Name ...",           ID_PROP_TEMPLATENAME
+        MENUITEM "&Printer...",                 ID_PROP_PRINTER
+    END
+    POPUP "&Methods"
+    BEGIN
+        MENUITEM "&Print Queue",                ID_QUEUE_PRINT
+        MENUITEM "&Add To Queue",               ID_QUEUE_ADD
+        MENUITEM "&Clear Queue",                ID_QUEUE_FLUSH
+        MENUITEM "&Get Count",                  ID_QUEUE_GETCOUNT
+        MENUITEM "&Refresh Templates",          ID_QUEUE_REFRESH
+        MENUITEM SEPARATOR
+        MENUITEM "Selec&t Printer",             ID_SELECT_PRINTER
+        MENUITEM "Get &Default Printer",        ID_GET_PRINTER
+        MENUITEM SEPARATOR
+        MENUITEM "Add From &Ini",               ID_QUEUE_ADDFROMINI
+        MENUITEM "Open Invisible",              ID_INVISIBLE
+        MENUITEM SEPARATOR
+        MENUITEM "View Registered Path",        ID_REGISTERED_PATH
+        MENUITEM "View Class Id",               ID_CLASS_ID
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About Tprintvc...",          ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE 
+BEGIN
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY 
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Tprintvc"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Tprintvc Version 1.0",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 1999",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+END
+
+IDD_TPRINTVC_FORM DIALOG DISCARDABLE  0, 0, 398, 247
+STYLE WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDC_TMPRINTCTRL1,
+                    "{2B6165A5-C1FC-463E-9B56-20143BF4F627}",WS_TABSTOP,1,1,
+                    396,244
+END
+
+IDD_ADD DIALOG DISCARDABLE  0, 0, 187, 65
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_STRING,7,17,173,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,40,44,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,97,44,50,14
+    LTEXT           "Parameter String",IDC_STATIC,7,7,110,8
+END
+
+IDD_ADDFROMINI DIALOG DISCARDABLE  0, 0, 187, 121
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add From Ini"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_FILENAME,7,17,173,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_SECTION,7,44,173,14,ES_AUTOHSCROLL
+    CONTROL         "Flush queue before adding new specifications",IDC_FLUSH,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,68,173,10
+    DEFPUSHBUTTON   "OK",IDOK,40,100,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,97,100,50,14
+    LTEXT           "Ini Filename (Include path)",IDC_STATIC,7,7,110,8
+    LTEXT           "Ini Section",IDC_STATIC,7,33,110,8
+END
+
+IDD_COPIES DIALOG DISCARDABLE  0, 0, 121, 54
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Copies"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_COPIES,43,7,38,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,33,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,64,33,50,14
+    LTEXT           "Copies",IDC_STATIC,7,9,30,8
+END
+
+IDD_TEMPLATES DIALOG DISCARDABLE  0, 0, 187, 91
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Templates"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_TEMPLATES,7,7,173,57,NOT LBS_NOTIFY | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,42,70,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,109,70,50,14
+END
+
+IDD_PRINTERS DIALOG DISCARDABLE  0, 0, 187, 91
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Printers"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_PRINTERS,7,7,173,57,NOT LBS_NOTIFY | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,42,70,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,109,70,50,14
+END
+
+IDD_INVISIBLE DIALOG DISCARDABLE  0, 0, 187, 98
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Test Invisible"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,82,81,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,134,81,50,14
+    CONTROL         "",IDC_TMPRINT,"{2B6165A5-C1FC-463E-9B56-20143BF4F627}",
+                    WS_TABSTOP,3,3,181,60
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "\0"
+            VALUE "FileDescription", "Tprintvc MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "Tprintvc\0"
+            VALUE "LegalCopyright", "Copyright (C) 1999\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "Tprintvc.EXE\0"
+            VALUE "ProductName", "Tprintvc Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_TPRINTVC_FORM, DIALOG
+    BEGIN
+        LEFTMARGIN, 1
+        RIGHTMARGIN, 397
+        TOPMARGIN, 1
+        BOTTOMMARGIN, 246
+    END
+
+    IDD_ADD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 58
+    END
+
+    IDD_ADDFROMINI, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 114
+    END
+
+    IDD_COPIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 114
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 47
+    END
+
+    IDD_TEMPLATES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 84
+    END
+
+    IDD_PRINTERS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 84
+    END
+
+    IDD_INVISIBLE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 184
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 95
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_TPRINTVC_FORM DLGINIT
+BEGIN
+    IDC_TMPRINTCTRL1, 0x376, 92, 0
+0x0000, 0x0000, 0x0002, 0x0006, 0x3d64, 0x0000, 0x2908, 0x0000, 0x0001, 
+0x0000, 0xc0c0, 0x00c0, 0x0100, 0x540b, 0x706d, 0x6972, 0x746e, 0x692e, 
+0x696e, 0x4f07, 0x5450, 0x4f49, 0x534e, 0x0001, 0x0001, 0x0101, 0x0101, 
+0x0101, 0x0101, 0x0001, 0x0000, 0x0000, 0x0001, 0x0046, 0x8000, 0x00bf, 
+0x8000, 0x01bf, 0x0001, 0x0000, 0xcd00, 0xcccc, 0xcd3c, 0x00cc, 0x0000, 
+0x0000, 
+    0
+END
+
+IDD_INVISIBLE DLGINIT
+BEGIN
+    IDC_TMPRINT, 0x376, 84, 0
+0x0000, 0x0000, 0x0000, 0x0005, 0x1dee, 0x0000, 0x09ec, 0x0000, 0x0001, 
+0x0000, 0xc0c0, 0x00c0, 0x0101, 0x4607, 0x6974, 0x692e, 0x696e, 0x540d, 
+0x504d, 0x4952, 0x544e, 0x5320, 0x5445, 0x5055, 0x0001, 0x0001, 0x0101, 
+0x0101, 0x0101, 0x0101, 0x0001, 0x0000, 0x0100, 0x0078, 0x530d, 0x414b, 
+0x444e, 0x5441, 0x2041, 0x3343, 0x5739, 0xa043, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDR_MAINFRAME           "Tprintvc"
+    IDR_TPRINTTYPE          "\nTprint\nTprint\n\n\nTprintvc.Document\nTprint Document"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "Tprintvc"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+    AFX_IDS_MDICHILD        "Activate this window"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_QUEUE_FLUSH          "Flush the print queue"
+    ID_QUEUE_ADD            "Add a cell to the print queue"
+    ID_QUEUE_ADDFROMINI     "Add to the print queue from an ini file"
+    ID_QUEUE_GETCOUNT       "Get the current queue count"
+    ID_QUEUE_PRINT          "Print the contents of the queue"
+    ID_QUEUE_REFRESH        "Refresh the list of templates"
+    ID_PROP_INCLUDEPATH     "Include the full path when printing the file name"
+    ID_PROP_INCLUDEPAGETOTAL 
+                            "Include the page total when printing the page number"
+    ID_PROP_COPIES          "Set the number of copies to print"
+    ID_PROP_COLLATE         "Collate multiple copies"
+    ID_PROP_PRINTBARCODEGRAPHIC "Print the barcode graphic"
+    ID_PROP_PRINTBARCODETEXT "Print the barcode text"
+    ID_PROP_PRINTIMAGE      "Print the image"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    ID_PROP_PRINTNAME       "Print the name"
+    ID_PROP_PRINTFILENAME   "Print the file name"
+    ID_PROP_PRINTDEPONENT   "Print the deponent name"
+    ID_PROP_PRINTPAGENUMBER "Print the page number"
+    ID_PROP_PRINTCELLBORDER "Print the cell border"
+    ID_PROP_TEMPLATENAME    "Set the template name"
+    ID_PROP_PRINTER         "Set the active printer"
+    ID_GET_PRINTER          "Retrieve the name of the default printer device"
+    ID_PROP_FORCENEWPAGE    "Force page break between documents"
+    ID_PROP_USESLIDEIDS     "Use PowerPoint slide identifiers instead of numbers"
+    ID_PROP_SHOWOPTIONS     "Show / Hide the options dialog"
+    ID_INVISIBLE            "Open a dialog box containing an invisible TMPrint control"
+    ID_SELECT_PRINTER       "Select the active printer"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\Tprintvc.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#include "afxprint.rc"       // printing/print preview resources
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

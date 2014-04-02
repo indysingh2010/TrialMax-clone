@@ -1,0 +1,675 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "include\resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "include\\resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "1 TYPELIB ""Tm_view6.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 7,0,19,1314
+ PRODUCTVERSION 7,0,19,1314
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "FTI Consulting"
+            VALUE "FileDescription", "TrialMax Image Viewer ActiveX Control"
+            VALUE "FileVersion", "7.0.19.1314"
+            VALUE "InternalName", "TMVIEW"
+            VALUE "LegalCopyright", "Copyright (C) FTI Consulting"
+            VALUE "OriginalFilename", "TM_VIEW6.OCX"
+            VALUE "ProductName", "TrialMax Image Viewer ActiveX Control"
+            VALUE "ProductVersion", "7.0.19.1314"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ABOUTDLL            ICON                    "Resource\\Tmview.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TM_VIEW6            BITMAP                  "Resource\\Tmview.bmp"
+REDU                    BITMAP                  "..\\Common\\Resource\\Colors\\redu.bmp"
+REDF                    BITMAP                  "..\\Common\\Resource\\Colors\\redf.bmp"
+REDD                    BITMAP                  "..\\Common\\Resource\\Colors\\redf.bmp"
+GREENU                  BITMAP                  "..\\Common\\Resource\\Colors\\greenu.bmp"
+GREENF                  BITMAP                  "..\\Common\\Resource\\Colors\\greenf.bmp"
+GREEND                  BITMAP                  "..\\Common\\Resource\\Colors\\greenf.bmp"
+BLUEU                   BITMAP                  "..\\Common\\Resource\\Colors\\blueu.bmp"
+BLUEF                   BITMAP                  "..\\Common\\Resource\\Colors\\bluef.bmp"
+BLUED                   BITMAP                  "..\\Common\\Resource\\Colors\\bluef.bmp"
+MAGENTAU                BITMAP                  "..\\Common\\Resource\\Colors\\magentau.bmp"
+MAGENTAF                BITMAP                  "..\\Common\\Resource\\Colors\\magentaf.bmp"
+MAGENTAD                BITMAP                  "..\\Common\\Resource\\Colors\\magentaf.bmp"
+YELLOWU                 BITMAP                  "..\\Common\\Resource\\Colors\\yellowu.bmp"
+YELLOWF                 BITMAP                  "..\\Common\\Resource\\Colors\\yellowf.bmp"
+YELLOWD                 BITMAP                  "..\\Common\\Resource\\Colors\\yellowf.bmp"
+CYANU                   BITMAP                  "..\\Common\\Resource\\Colors\\cyanu.bmp"
+CYANF                   BITMAP                  "..\\Common\\Resource\\Colors\\cyanf.bmp"
+CYAND                   BITMAP                  "..\\Common\\Resource\\Colors\\cyanf.bmp"
+BLACKU                  BITMAP                  "..\\Common\\Resource\\Colors\\blacku.bmp"
+BLACKF                  BITMAP                  "..\\Common\\Resource\\Colors\\blackf.bmp"
+BLACKD                  BITMAP                  "..\\Common\\Resource\\Colors\\blackf.bmp"
+GREYU                   BITMAP                  "..\\Common\\Resource\\Colors\\greyu.bmp"
+GREYF                   BITMAP                  "..\\Common\\Resource\\Colors\\greyf.bmp"
+GREYD                   BITMAP                  "..\\Common\\Resource\\Colors\\greyf.bmp"
+WHITEU                  BITMAP                  "..\\Common\\Resource\\Colors\\whiteu.bmp"
+WHITEF                  BITMAP                  "..\\Common\\Resource\\Colors\\whitef.bmp"
+WHITED                  BITMAP                  "..\\Common\\Resource\\Colors\\whitef.bmp"
+DARKREDU                BITMAP                  "..\\Common\\Resource\\Colors\\dredu.bmp"
+DARKREDF                BITMAP                  "..\\Common\\Resource\\Colors\\dredf.bmp"
+DARKREDD                BITMAP                  "..\\Common\\Resource\\Colors\\dredf.bmp"
+LIGHTREDU               BITMAP                  "..\\Common\\Resource\\Colors\\lredu.bmp"
+LIGHTREDF               BITMAP                  "..\\Common\\Resource\\Colors\\lredf.bmp"
+LIGHTREDD               BITMAP                  "..\\Common\\Resource\\Colors\\lredf.bmp"
+DARKBLUEU               BITMAP                  "..\\Common\\Resource\\Colors\\dblueu.bmp"
+DARKBLUEF               BITMAP                  "..\\Common\\Resource\\Colors\\dbluef.bmp"
+DARKBLUED               BITMAP                  "..\\Common\\Resource\\Colors\\dbluef.bmp"
+LIGHTBLUEU              BITMAP                  "..\\Common\\Resource\\Colors\\lblueu.bmp"
+LIGHTBLUEF              BITMAP                  "..\\Common\\Resource\\Colors\\lbluef.bmp"
+LIGHTBLUED              BITMAP                  "..\\Common\\Resource\\Colors\\lbluef.bmp"
+DARKGREENU              BITMAP                  "..\\Common\\Resource\\Colors\\dgreenu.bmp"
+DARKGREENF              BITMAP                  "..\\Common\\Resource\\Colors\\dgreenf.bmp"
+DARKGREEND              BITMAP                  "..\\Common\\Resource\\Colors\\dgreenf.bmp"
+LIGHTGREENU             BITMAP                  "..\\Common\\Resource\\Colors\\lgreenu.bmp"
+LIGHTGREENF             BITMAP                  "..\\Common\\Resource\\Colors\\lgreenf.bmp"
+LIGHTGREEND             BITMAP                  "..\\Common\\Resource\\Colors\\lgreenf.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ANNTEXT DIALOG 34, 22, 177, 102
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_ANNTEXT,7,5,163,32,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN
+    LISTBOX         IDC_FONTNAME,7,43,95,34,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_FONTSIZE,44,81,58,14,ES_AUTOHSCROLL
+    CONTROL         "Bold",IDC_BOLD,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,107,42,30,10
+    CONTROL         "Underline",IDC_UNDERLINE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,107,52,45,10
+    CONTROL         "Strike Through",IDC_STRIKETHROUGH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,107,63,60,10
+    PUSHBUTTON      "OK",IDOK,128,81,42,14,WS_GROUP
+    LTEXT           "Point Size",IDC_STATIC,7,84,31,8
+END
+
+IDD_PROPPAGE_TM_VIEW6 DIALOGEX 0, 0, 250, 110
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+END
+
+IDD_CALLOUT DIALOG 0, 0, 187, 95
+STYLE DS_SETFONT | WS_POPUP | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_ANNOTATION DIALOG 0, 0, 410, 214
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "TMView Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Scale Image To Window",IDC_SCALEIMAGE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,10,18,94,10
+    CONTROL         "Keep Aspect Ratio",IDC_KEEPASPECT,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,10,29,94,10
+    CONTROL         "Fit Window To Image",IDC_FITTOIMAGE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,40,83,10
+    CONTROL         "Hide Scroll Bars",IDC_HIDESCROLLBARS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,51,44,10
+    CONTROL         "Pan On Right Click",IDC_RIGHTCLICKPAN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,62,89,10
+    CONTROL         "Split Screen",IDC_SPLITSCREEN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,73,52,10
+    CONTROL         "Sync Pane Properties",IDC_SYNCPANES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,84,81,10
+    CONTROL         "Sync Callout Annotations",IDC_SYNCCALLOUTANN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,95,93,10
+    CONTROL         "Pen Selector Visible",IDC_SELECTVISIBLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,106,93,10
+    CONTROL         "Zoom To Rectangle",IDC_ZOOMTORECT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,117,93,10
+    CONTROL         "16-bit Annotation Color Depth",IDC_SIXTEEN_COLOR,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,128,107,10
+    CONTROL         "Resizeable Callouts",IDC_RESIZEABLE_CALLOUTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,139,97,10
+    CONTROL         "Shade On Callout",IDC_SHADEONCALLOUT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,151,105,10
+    CONTROL         "Red",IDC_RED,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,131,15,20,20
+    CONTROL         "Green",IDC_GREEN,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,146,15,20,20
+    CONTROL         "Blue",IDC_BLUE,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,161,15,20,20
+    CONTROL         "Magenta",IDC_MAGENTA,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,131,28,20,20
+    CONTROL         "Yellow",IDC_YELLOW,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,146,28,20,20
+    CONTROL         "Cyan",IDC_CYAN,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,161,28,20,20
+    CONTROL         "Black",IDC_BLACK,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,131,41,20,20
+    CONTROL         "Grey",IDC_GREY,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,146,41,20,20
+    CONTROL         "White",IDC_WHITE,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,161,41,20,20
+    CONTROL         "DarkRed",IDC_DARKRED,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,131,54,20,20
+    CONTROL         "DarkBlue",IDC_DARKBLUE,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,146,54,20,20
+    CONTROL         "DarkGreen",IDC_DARKGREEN,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,161,54,20,20
+    CONTROL         "LightRed",IDC_LIGHTRED,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,131,67,20,20
+    CONTROL         "LightBlue",IDC_LIGHTBLUE,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,146,67,20,20
+    CONTROL         "LightGreen",IDC_LIGHTGREEN,"Button",BS_OWNERDRAW | BS_NOTIFY | WS_TABSTOP,161,67,20,20
+    CONTROL         "Drawing Tool",IDC_DRAWTOOL,"Button",BS_AUTORADIOBUTTON | BS_NOTIFY | WS_GROUP | WS_TABSTOP,186,13,79,10
+    CONTROL         "Highlight",IDC_HIGHLIGHT,"Button",BS_AUTORADIOBUTTON | BS_NOTIFY,186,23,79,10
+    CONTROL         "Redact",IDC_REDACT,"Button",BS_AUTORADIOBUTTON | BS_NOTIFY,186,33,79,10
+    CONTROL         "Callout Highlights",IDC_CALLOUT,"Button",BS_AUTORADIOBUTTON,186,43,79,10
+    CONTROL         "Callout Frames",IDC_FRAMECOLOR,"Button",BS_AUTORADIOBUTTON,186,53,79,10
+    CONTROL         "Callout Handles",IDC_HANDLECOLOR,"Button",BS_AUTORADIOBUTTON,186,63,79,10
+    CONTROL         "Background",IDC_BACKGROUND,"Button",BS_AUTORADIOBUTTON,186,73,79,10
+    CONTROL         "Split Frames",IDC_SPLITFRAME,"Button",BS_AUTORADIOBUTTON,186,83,79,10
+    CONTROL         "Pen Selector",IDC_SELECTCOLOR,"Button",BS_AUTORADIOBUTTON,186,93,79,10
+    EDITTEXT        IDC_SHADE_GRAYSCALE,227,111,35,12,ES_AUTOHSCROLL | WS_GROUP
+    COMBOBOX        IDC_ANNTOOL,130,142,135,54,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Font",IDC_FONT,228,172,35,14
+    EDITTEXT        IDC_THICKNESS,367,13,35,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin1",IDC_SPINTHICK,"msctls_updown32",UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,391,13,11,12
+    EDITTEXT        IDC_ZOOMFACTOR,367,27,35,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin2",IDC_SPINZOOM,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,387,27,11,12
+    EDITTEXT        IDC_PANPERCENTAGE,367,41,35,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin2",IDC_SPINPAN,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,387,41,11,12
+    EDITTEXT        IDC_ROTATION,367,55,35,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin1",IDC_SPINROTATION,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,387,55,11,12
+    EDITTEXT        IDC_FRAMETHICK,367,69,35,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin1",IDC_SPINFRAMETHICK,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,389,69,11,12
+    EDITTEXT        IDC_SPLITTHICK,367,84,35,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin1",IDC_SPINSPLITTHICK,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,389,84,11,12
+    EDITTEXT        IDC_SELECTSIZE,367,98,35,12,ES_AUTOHSCROLL | WS_GROUP
+    CONTROL         "Spin1",IDC_SPINSELECT,"msctls_updown32",UDS_WRAP | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS,389,98,11,12
+    COMBOBOX        IDC_BITONAL,331,113,71,33,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Do Not Zoom",IDC_INITIALNONE,"Button",BS_AUTORADIOBUTTON | WS_GROUP,283,154,56,10
+    CONTROL         "Zoom To Full Width",IDC_INITIALWIDTH,"Button",BS_AUTORADIOBUTTON,283,165,74,10
+    CONTROL         "Zoom To Full Height",IDC_INITIALHEIGHT,"Button",BS_AUTORADIOBUTTON,283,176,77,10
+    DEFPUSHBUTTON   "OK",IDOK,107,197,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,179,197,50,14
+    PUSHBUTTON      "Defaults",IDC_DEFAULTS,251,197,50,14
+    GROUPBOX        "&Drawing Tools",IDC_STATIC,125,130,147,30
+    GROUPBOX        "&Colors",IDC_STATIC,125,5,147,123
+    GROUPBOX        "Options",IDC_STATIC,5,5,116,185
+    GROUPBOX        "Text Font",IDC_STATIC,125,163,147,27
+    LTEXT           "Font Name Here",IDC_FONTNAME,131,175,82,8
+    LTEXT           "Drawing Tool Thickness",IDC_STATIC,283,15,78,8
+    LTEXT           "Maximum Zoom Factor",IDC_STATIC,283,29,82,8
+    GROUPBOX        "&Limits",IDC_STATIC,277,5,128,132
+    LTEXT           "Rotation",IDC_ROTATIONLABEL,283,58,81,8
+    LTEXT           "Pan Percentage",IDC_PANPERCENTAGELABEL,283,44,82,8
+    GROUPBOX        "Initial Zoom State",IDC_STATIC,277,142,128,48
+    LTEXT           "Callout Frame Thickness",IDC_STATIC,283,72,78,8
+    LTEXT           "Split Frame Thickness",IDC_STATIC,283,87,78,8
+    LTEXT           "Pen Selector Size",IDC_STATIC,283,100,78,8
+    LTEXT           "Bitonal Scaling",IDC_STATIC,283,114,47,8
+    LTEXT           "Callout Shade Grayscale",IDC_STATIC,133,113,87,8
+    CONTROL         "Allow Pan Callouts",IDC_PAN_CALLOUTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,163,97,10
+    CONTROL         "Allow Zoom Callouts",IDC_ZOOM_CALLOUTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,175,105,10
+END
+
+IDD_ABOUTBOX_TMVIEW DIALOG 34, 22, 260, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About TMView Control"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ABOUTDLL,IDC_STATIC,10,10,20,20
+    LTEXT           "Trialmax TMView Control",IDC_STATIC,40,10,170,8
+    LTEXT           "Copyright (C) FTI Consulting",IDC_STATIC,40,25,170,8
+    DEFPUSHBUTTON   "OK",IDOK,221,7,32,14,WS_GROUP
+END
+
+IDD_IMAGE_PROPERTIES DIALOG 34, 22, 260, 142
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Image Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_ABOUTDLL,IDC_STATIC,5,5,20,20
+    LTEXT           "Filename:",IDC_STATIC,25,9,51,8
+    DEFPUSHBUTTON   "OK",IDOK,105,123,50,14,WS_GROUP
+    CONTROL         "path",IDC_FILENAME,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,80,9,175,8
+    LTEXT           "Dimensions:",IDC_STATIC,25,33,51,8
+    LTEXT           "Bits per Pixel:",IDC_STATIC,25,57,51,8
+    LTEXT           "pixel dimensions",IDC_DIM_PIXELS,80,33,175,8
+    LTEXT           "inches dimensions",IDC_DIM_INCHES,80,45,175,8
+    LTEXT           "bits",IDC_BITSPERPIXEL,80,57,175,8
+    LTEXT           "Size (disk):",IDC_STATIC,25,69,51,8
+    LTEXT           "Size (ram):",IDC_STATIC,25,81,51,8
+    LTEXT           "disk size",IDC_SIZEDISK,80,69,175,8
+    LTEXT           "ram size",IDC_SIZERAM,80,81,175,8
+    LTEXT           "Page:",IDC_STATIC,25,93,51,8
+    LTEXT           "page",IDC_PAGE,80,93,175,8
+    LTEXT           "Compression:",IDC_STATIC,25,105,51,8
+    LTEXT           "compression",IDC_COMPRESSION,80,105,175,8
+    LTEXT           "Image Type:",IDC_STATIC,25,21,51,8
+    LTEXT           "image type",IDC_IMAGE_TYPE,80,21,175,8
+END
+
+IDD_CLEANUP DIALOG 0, 0, 318, 174
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Clean Up"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Deskew",IDC_DESKEW,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,14,87,10
+    CONTROL         "Despeckle",IDC_DESPECKLE,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,25,87,10
+    CONTROL         "Smooth",IDC_SMOOTH,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,36,87,10
+    CONTROL         "Remove Hole Punches",IDC_REMOVEHOLES,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,47,87,10
+    CONTROL         "Remove Dots",IDC_REMOVEDOTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,58,87,10
+    CONTROL         "Remove Borders",IDC_REMOVEBORDERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,69,87,10
+    EDITTEXT        IDC_DOTS_MIN_WIDTH,74,97,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_DOTS_MIN_HEIGHT,74,114,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_DOTS_MAX_WIDTH,74,131,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_DOTS_MAX_HEIGHT,74,148,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_HOLES_MIN_WIDTH,179,16,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_HOLES_MIN_HEIGHT,179,32,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_HOLES_MAX_WIDTH,179,48,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_HOLES_MAX_HEIGHT,179,64,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "Left",IDC_HOLES_LEFT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,114,79,39,10
+    CONTROL         "Top",IDC_HOLES_TOP,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,166,79,39,10
+    CONTROL         "Right",IDC_HOLES_RIGHT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,114,90,39,10
+    CONTROL         "Bottom",IDC_HOLES_BOTTOM,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,166,90,39,10
+    CONTROL         "&Background Color",IDC_DESKEW_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,179,115,26,15
+    EDITTEXT        IDC_SMOOTH_LENGTH,179,146,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "Favor Long",IDC_SMOOTH_LONG,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,114,159,50,10
+    EDITTEXT        IDC_BORDERS_PERCENT,284,16,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_BORDERS_NOISE,284,32,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    EDITTEXT        IDC_BORDERS_VARIANCE,284,48,26,12,ES_AUTOHSCROLL | ES_NUMBER | WS_GROUP
+    CONTROL         "Left",IDC_BORDERS_LEFT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,219,79,39,10
+    CONTROL         "Right",IDC_BORDERS_RIGHT,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,219,90,39,10
+    CONTROL         "Top",IDC_BORDERS_TOP,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,271,79,39,10
+    CONTROL         "Bottom",IDC_BORDERS_BOTTOM,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,271,90,39,10
+    PUSHBUTTON      "&Clean",IDC_CLEAN,215,137,48,15
+    PUSHBUTTON      "&Undo",IDUNDO,267,137,48,15,WS_DISABLED
+    PUSHBUTTON      "&Save",IDC_SAVE,215,156,48,15,WS_DISABLED
+    PUSHBUTTON      "&Done",IDOK,267,156,48,15
+    GROUPBOX        "Smooth",IDC_SMOOTH_GROUP,108,137,102,34
+    LTEXT           "Length (pixels)",IDC_SMOOTH_LENGTH_LABEL,114,148,63,8
+    GROUPBOX        "Remove Borders",IDC_BORDERS_GROUP,213,3,102,101
+    LTEXT           "Percent",IDC_BORDERS_PERCENT_LABEL,219,18,49,8
+    LTEXT           "White Noise (pixels)",IDC_BORDERS_NOISE_LABEL,219,34,64,8
+    LTEXT           "Variance",IDC_BORDERS_VARIANCE_LABEL,219,50,49,8
+    LTEXT           "Min Width (.001"")",IDC_HOLES_MIN_WIDTH_LABEL,114,18,63,8
+    LTEXT           "Max Width (.001"")",IDC_HOLES_MAX_WIDTH_LABEL,114,50,63,8
+    LTEXT           "Min Height (.001"")",IDC_HOLES_MIN_HEIGHT_LABEL,114,34,63,8
+    LTEXT           "Max Height (.001"")",IDC_HOLES_MAX_HEIGHT_LABEL,114,66,63,8
+    GROUPBOX        "Remove Hole Punches",IDC_HOLES_GROUP,108,3,102,101
+    LTEXT           "Min Width (.001"")",IDC_DOTS_MIN_WIDTH_LABEL,9,99,63,8
+    GROUPBOX        "Operations",IDC_STATIC,3,3,102,79
+    LTEXT           "Max Width (.001"")",IDC_DOTS_MAX_WIDTH_LABEL,9,132,63,8
+    LTEXT           "Min Height (.001"")",IDC_DOTS_MIN_HEIGHT_LABEL,9,116,63,8
+    LTEXT           "Max Height (.001"")",IDC_DOTS_MAX_HEIGHT_LABEL,9,149,63,8
+    GROUPBOX        "Remove Dots",IDC_DOTS_GROUP,3,90,102,81
+    GROUPBOX        "Deskew",IDC_DESKEW_GROUP,108,106,102,28
+    LTEXT           "Background Color",IDC_DESKEW_COLOR_LABEL,114,118,62,8
+    CONTROL         "",IDC_LEAD,"{00120000-B1BA-11CE-ABC6-F5B2E79D9E3F}",NOT WS_VISIBLE,215,107,100,25
+END
+
+IDD_PRINTPAGE DIALOG 0, 0, 213, 108
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Print Page Setup"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Print Callouts",IDC_PRINT_CALLOUTS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,15,81,10
+    CONTROL         "Print Image Border",IDC_PRINT_BORDER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,27,81,10
+    CONTROL         "Print Callout Borders",IDC_PRINT_CALLOUT_BORDERS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,8,39,81,10
+    EDITTEXT        IDC_BORDER_THICKNESS,79,54,22,12,ES_AUTOHSCROLL
+    CONTROL         "&Border Color",IDC_BORDER_COLOR,"Button",BS_OWNERDRAW | WS_TABSTOP,75,70,26,15
+    COMBOBOX        IDC_ORIENTATION,48,89,53,37,CBS_DROPDOWNLIST | WS_VSCROLL | WS_GROUP | WS_TABSTOP
+    EDITTEXT        IDC_LEFT_MARGIN,162,18,45,12,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_RIGHT_MARGIN,162,34,45,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TOP_MARGIN,162,50,45,12,ES_AUTOHSCROLL | WS_GROUP
+    EDITTEXT        IDC_BOTTOM_MARGIN,162,66,45,12,ES_AUTOHSCROLL | WS_GROUP
+    PUSHBUTTON      "&Cancel",IDCANCEL,108,90,48,15
+    PUSHBUTTON      "&Ok",IDOK,162,90,48,15
+    LTEXT           "Orientation",IDC_STATIC,9,91,38,8
+    LTEXT           "Border Thickness (in)",IDC_STATIC,9,56,68,8
+    GROUPBOX        "Options",IDC_STATIC,3,4,102,101
+    LTEXT           "Border Color",IDC_STATIC,9,73,62,8
+    LTEXT           "Left:",IDC_STATIC,116,20,43,8
+    LTEXT           "Top:",IDC_STATIC,116,51,43,8
+    LTEXT           "Right:",IDC_STATIC,116,35,43,8
+    LTEXT           "Bottom:",IDC_STATIC,116,67,43,8
+    GROUPBOX        "Margins (inches)",IDC_STATIC,108,4,102,80
+END
+
+IDD_DIAGNOSTICS DIALOG 0, 0, 147, 71
+STYLE DS_SETFONT | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Diagnostics"
+FONT 10, "Courier"
+BEGIN
+    LISTBOX         IDC_LIST,2,2,143,67,LBS_USETABSTOPS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_HSCROLL | WS_TABSTOP
+END
+
+IDD_PRINTER_CAPS DIALOG 34, 22, 423, 242
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Printer Capabilities"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Printers",IDC_STATIC,5,5,51,8
+    DEFPUSHBUTTON   "OK",IDOK,368,223,50,14,WS_GROUP
+    LISTBOX         IDC_PRINTERS,5,17,203,50,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "List1",IDC_DEVMODE,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,5,81,203,156
+    LTEXT           "DEVMODE",IDC_STATIC,6,70,51,8
+    CONTROL         "Capabilities",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,216,5,119,8
+    CONTROL         "List1",IDC_DEVICE_CAPS,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,215,14,203,202
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ANNTEXT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 170
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 95
+    END
+
+    IDD_PROPPAGE_TM_VIEW6, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 243
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 103
+    END
+
+    IDD_CALLOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_ANNOTATION, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 405
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 211
+    END
+
+    IDD_ABOUTBOX_TMVIEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 253
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_IMAGE_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 255
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 137
+    END
+
+    IDD_CLEANUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 315
+        TOPMARGIN, 3
+        BOTTOMMARGIN, 171
+    END
+
+    IDD_PRINTPAGE, DIALOG
+    BEGIN
+        LEFTMARGIN, 3
+        RIGHTMARGIN, 210
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 105
+    END
+
+    IDD_DIAGNOSTICS, DIALOG
+    BEGIN
+        LEFTMARGIN, 2
+        RIGHTMARGIN, 145
+        TOPMARGIN, 2
+        BOTTOMMARGIN, 69
+    END
+
+    IDD_PRINTER_CAPS, DIALOG
+    BEGIN
+        LEFTMARGIN, 5
+        RIGHTMARGIN, 418
+        TOPMARGIN, 5
+        BOTTOMMARGIN, 237
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_PANCURSOR           CURSOR                  "resource\\pancurso.cur"
+IDC_ZOOMCURSOR          CURSOR                  "resource\\zoom.cur"
+IDC_SELECTCURSOR        CURSOR                  "resource\\select.cur"
+IDC_LINECURSOR          CURSOR                  "resource\\line.cur"
+IDC_RECTANGLECURSOR     CURSOR                  "resource\\rect.cur"
+IDC_CIRCLECURSOR        CURSOR                  "resource\\circle.cur"
+IDC_CALLOUTCURSOR       CURSOR                  "resource\\callout.cur"
+IDC_HIGHLIGHTCURSOR     CURSOR                  "resource\\high.cur"
+IDC_REDACTCURSOR        CURSOR                  "resource\\redact.cur"
+IDC_PLUS                CURSOR                  "Resource\\Plus.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_ANNOTATION DLGINIT
+BEGIN
+    IDC_ANNTOOL, 0x403, 9, 0
+0x7246, 0x6565, 0x6168, 0x646e, "\000" 
+    IDC_ANNTOOL, 0x403, 5, 0
+0x694c, 0x656e, "\000" 
+    IDC_ANNTOOL, 0x403, 6, 0
+0x7241, 0x6f72, 0x0077, 
+    IDC_ANNTOOL, 0x403, 15, 0
+0x6c45, 0x696c, 0x7370, 0x2f65, 0x6943, 0x6372, 0x656c, "\000" 
+    IDC_ANNTOOL, 0x403, 17, 0
+0x6552, 0x7463, 0x6e61, 0x6c67, 0x2f65, 0x7153, 0x6175, 0x6572, "\000" 
+    IDC_ANNTOOL, 0x403, 24, 0
+0x6c45, 0x696c, 0x7370, 0x2f65, 0x6943, 0x6372, 0x656c, 0x2820, 0x6966, 
+0x6c6c, 0x6465, 0x0029, 
+    IDC_ANNTOOL, 0x403, 26, 0
+0x6552, 0x7463, 0x6e61, 0x6c67, 0x2f65, 0x7153, 0x6175, 0x6572, 0x2820, 
+0x6966, 0x6c6c, 0x6465, 0x0029, 
+    IDC_ANNTOOL, 0x403, 9, 0
+0x6f50, 0x796c, 0x696c, 0x656e, "\000" 
+    IDC_ANNTOOL, 0x403, 8, 0
+0x6f50, 0x796c, 0x6f67, 0x006e, 
+    IDC_ANNTOOL, 0x403, 5, 0
+0x6554, 0x7478, "\000" 
+    IDC_BITONAL, 0x403, 7, 0
+0x6f4e, 0x6d72, 0x6c61, "\000" 
+    IDC_BITONAL, 0x403, 12, 0
+0x6146, 0x6f76, 0x2072, 0x6c42, 0x6361, 0x006b, 
+    IDC_BITONAL, 0x403, 14, 0
+0x6353, 0x6c61, 0x2065, 0x6f54, 0x4720, 0x6172, 0x0079, 
+    0
+END
+
+IDD_CLEANUP DLGINIT
+BEGIN
+    IDC_LEAD, 0x376, 504, 0
+0x003e, 0x0000, 0x004c, 0x0045, 0x0041, 0x0044, 0x0054, 0x004f, 0x004f, 
+0x004c, 0x0053, 0x0020, 0x004f, 0x0043, 0x0058, 0x0020, 0x0043, 0x006f, 
+0x0070, 0x0079, 0x0072, 0x0069, 0x0067, 0x0068, 0x0074, 0x0020, 0x0028, 
+0x0063, 0x0029, 0x0020, 0x0031, 0x0039, 0x0039, 0x0031, 0x002d, 0x0032, 
+0x0030, 0x0030, 0x0030, 0x0020, 0x004c, 0x0045, 0x0041, 0x0044, 0x0020, 
+0x0054, 0x0065, 0x0063, 0x0068, 0x006e, 0x006f, 0x006c, 0x006f, 0x0067, 
+0x0069, 0x0065, 0x0073, 0x002c, 0x0020, 0x0049, 0x006e, 0x0063, 0x002e, 
+0x000d, 0x0003, 0x0001, 0x1089, 0x0000, 0x0422, 0x0000, 0x00e5, 0x0000, 
+0x0000, 0x0000, 0x00ff, 0x0000, 0x0000, 0x0101, 0x0001, 0x0000, 0x0001, 
+0x0000, 0x00ff, 0x0000, 0xe800, 0x0003, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0003, 0x0000, 0x0000, 0x0000, 0x0000, 0x1800, 0x1800, 0x0500, 
+0xff00, 0x00ff, 0x0000, 0x0000, 0xc800, 0x0042, 0x0000, 0x0000, 0x0000, 
+0x000d, 0x0000, 0x0001, 0x0001, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0064, 0x0000, 0x0100, 0x0000, 0x03e8, 0x0000, 0x0000, 
+0x00ff, 0x0000, 0x0000, 0x0010, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0001, 0x0001, 0x0005, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xff00, 
+0xffff, 0x8000, 0x8080, 0x0000, 0x0000, 0xff00, 0xffff, 0x8000, 0x8080, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0xff00, 0xffff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
+0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xffff, 0x00ff, 0x8080, 
+0x0080, 0x0000, 0x0000, 0xffff, 0x00ff, 0x8080, 0x0080, 0x0000, 0x0100, 
+0x0100, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x4316, 0x0000, 0x4316, 
+0x00ff, 0x0000, 0x5009, 0x6e61, 0x6957, 0x646e, 0x776f, 0x0001, 0x0000, 
+0x0000, 0xff00, 0x0000, 0x00ff, 0x0000, 0x0100, 0x0000, 0x0100, 0x0000, 
+0x0000, 0x0100, 0x0000, 0x0100, 0x0000, 0x0000, 0x0001, 0x00ff, 0x0000, 
+0x0000, 0x0000, 0x0100, 0x6000, 0x0000, 0x6000, 0x0000, 0x1800, 0x0000, 
+0x0400, 0x0000, 0x0100, 0x0000, 0x0100, 0x0280, 0x01e0, 0x0000, 0x0101, 
+
+    0
+END
+
+IDD_PRINTPAGE DLGINIT
+BEGIN
+    IDC_ORIENTATION, 0x403, 5, 0
+0x7541, 0x6f74, "\000" 
+    IDC_ORIENTATION, 0x403, 9, 0
+0x6f50, 0x7472, 0x6172, 0x7469, "\000" 
+    IDC_ORIENTATION, 0x403, 10, 0
+0x614c, 0x646e, 0x6373, 0x7061, 0x0065, 
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDS_TM_VIEW6            "TMView 6 Control"
+    IDS_TM_VIEW6_PPG        "TMView 6 Property Page"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_TM_VIEW6_PPG_CAPTION "General"
+    IDS_TMV_FILENOTFOUND    "Unable to load %1. The file does not exist."
+    IDS_TMV_UNKNOWNERROR    "An unknown error occurred during the operation. Error level = %1"
+    IDS_TMV_NOIMAGE         "An image must be loaded to perform this operation."
+    IDS_TMV_PAGEBOUNDRYEXCEEDED 
+                            "Unable to load the requested page. The boundry has been reached."
+    IDS_TMV_LOWMEMORY       "There is insufficient memory to load %1. Try closing some applications first."
+    IDS_TMV_FILEREAD        "Unable to load %1. An error occurred while reading the file. It appears to be corrupt."
+    IDS_TMV_INVALIDNAME     "%1 is not a valid filename."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_TMV_FILEFORMAT      "Unable to load %1. This format is not supported."
+    IDS_TMV_INVALIDSUBTYPE  "Unable to load %1. The subtype of this file format is not supported."
+    IDS_TMV_FILEOPEN        "An error occurred while trying to open %1. Make sure it is not in use by another application."
+    IDS_TMV_COMPRESSION     "Unable to load %1. This file's compression format is not supported."
+    IDS_TMV_NOTANIMATION    "%1 is not an animation."
+    IDS_TMV_STARTJOBFAILED  "Unable to start the print job. Make sure the printer is connected."
+    IDS_TMV_NODEFAULTPRINTER 
+                            "Unable to retrieve information for the default printer."
+    IDS_TMV_ZAPNOTFOUND     "Unable to locate %1 to load zap."
+    IDS_TMV_INVALIDZAP      "%1 is not a valid zap file."
+    IDS_TMV_NOCALLOUTWND    "Unable to create a window for the callout."
+    IDS_TMV_NOCONTAINER     "Unable to create root container for annotations."
+    IDS_TMV_CREATEANNFAILED "Unable to create the annotation object."
+    IDS_TMV_ANNCOPYFAILED   "Unable to copy annotation object."
+    IDS_TMV_INSERTCOPYFAILED "Unable to insert copy of annotation object."
+    IDS_TMV_INVALIDZAPVIEW  "The zap file contains an invalid viewport descriptor."
+    IDS_TMV_LZWLOCKED       "Unable to load %1. LZW compression is locked."
+END
+
+STRINGTABLE
+BEGIN
+    IDS_TMV_PASTEFAILED     "Unable to paste image to the clipboard."
+    IDS_TMV_COPYFAILED      "Unable to copy image from the clipboard"
+    IDS_TMV_INVALIDCLIPBOARD 
+                            "The data contained in the clipboard is not valid."
+    IDS_TMV_NOBACKUP        "Unable to create the object used to perform backup operations."
+    IDS_TMV_ANNNOTFOUND     "Unable to locate the specified annotation."
+    IDS_TMV_ANNLOCKED       "Unable to perform the operation. The specified annotation is locked."
+    IDS_TMV_OPENINIFAILED   "Unable to open %1 to retrieve the property values."
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+1 TYPELIB "Tm_view6.tlb"
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

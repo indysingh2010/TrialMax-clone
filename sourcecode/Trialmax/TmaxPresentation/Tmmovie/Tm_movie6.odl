@@ -1,0 +1,186 @@
+// Tm_movie6.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (Tm_movie6.tlb) that will become a resource in
+// Tm_movie6.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+#include ".\include\dispid.h"
+
+[ uuid(49546D45-8119-41A2-9D38-316FC748C81C), version(6.3), /* Replace 1 */
+  helpfile("Tm_movie6.hlp"),
+  helpstring("TMMovie 6 ActiveX Control"),
+  control ]
+library TM_MOVIE6Lib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CTMMovieCtrl
+
+	[ uuid(2199ECB7-D80F-4188-9F90-929320B77E5C), /* Replace 2 */
+	  helpstring("Dispatch interface for TMMovie 6 Control"), hidden ]
+	dispinterface _DTMMovie6
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTMMovieCtrl)
+			[id(5)] boolean AutoInit;
+			[id(6)] boolean EnableErrors;
+			[id(7)] BSTR IniFile;
+			[id(8)] boolean AutoPlay;
+			[id(9)] boolean ScaleVideo;
+			[id(DISPID_BACKCOLOR), bindable, requestedit] OLE_COLOR BackColor;
+			[id(DISPID_BORDERSTYLE), bindable, requestedit] short BorderStyle;
+			[id(10)] BSTR Filename;
+			[id(11)] short UpdateRate;
+			[id(12)] boolean AutoShow;
+			[id(13)] boolean KeepAspect;
+			[id(14)] short Balance;
+			[id(15)] short Rate;
+			[id(16)] short Volume;
+			[id(17)] boolean UseSnapshots;
+			[id(18)] BSTR OverlayFile;
+			[id(19)] boolean OverlayVisible;
+			[id(23)] BSTR VerTextLong;
+			[id(1)] double PlaylistTime;
+			[id(2)] double ElapsedDesignation;
+			[id(3)] double ElapsedPlaylist;
+			[id(4)] double DesignationTime;
+			[id(20)] double StartPosition;
+			[id(21)] double StopPosition;
+			[id(22)] boolean EnableAxErrors;
+			//}}AFX_ODL_PROP
+
+			//	These properties were added in rev 5.1
+			[id(DISPID_DETACH_BEFORE_LOAD)] boolean DetachBeforeLoad;
+
+			//	These properties were added in rev 6.0
+			[id(DISPID_HIDE_TASK_BAR)] boolean HideTaskBar;
+
+			//	These properties were added in rev 6
+			[id(DISPID_ENABLE_SIMULATION)] boolean EnableSimulation;
+			[id(DISPID_SIMULATION_TEXT)] BSTR SimulationText;
+
+			//	These properties were added in rev 6.0
+			[id(DISPID_VERMAJOR)] short VerMajor;
+			[id(DISPID_VERMINOR)] short VerMinor;
+			[id(DISPID_VERQEF)] short VerQEF;
+			[id(DISPID_VERBUILD)] short VerBuild;
+			[id(DISPID_VERTEXTSHORT)] BSTR VerTextShort;
+			[id(DISPID_VERBUILDDATE)] BSTR VerBuildDate;
+			[id(DISPID_SHOWAUDIOIMAGE)] boolean ShowAudioImage;
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTMMovieCtrl)
+			[id(24)] short Unload();
+			[id(25)] short Initialize();
+			[id(26)] short Play();
+			[id(27)] short Pause();
+			[id(28)] short Stop();
+			[id(29)] short Resume();
+			[id(30)] boolean IsReady();
+			[id(31)] short GetState();
+			[id(32)] float GetFrameRate();
+			[id(33)] short GetSrcWidth();
+			[id(34)] short GetSrcHeight();
+			[id(35)] short ShowVideoProps();
+			[id(36)] short CheckType(BSTR lpFilename);
+			[id(37)] short GetPlaylistState();
+			[id(38)] short GetType();
+			[id(39)] void ShowVideo(boolean bShow);
+			[id(40)] boolean IsVideoVisible();
+			[id(41)] boolean CanSetVolume();
+			[id(42)] boolean CanSetBalance();
+			[id(43)] boolean CanSetRate();
+			[id(44)] boolean IsLoaded();
+			[id(45)] short Update();
+			[id(46)] short GetResolution();
+			[id(47)] OLE_HANDLE ShowSnapshot();
+			[id(48)] short Capture(BSTR lpFilespec, boolean bResume);
+			[id(49)] BSTR GetRegFilters(long* pCount);
+			[id(50)] void ShowFilterInfo();
+			[id(51)] BSTR GetActFilters(boolean bVendorInfo, long* pCount);
+			[id(52)] IUnknown* GetInterface(short sInterface);
+			[id(53)] void SetDefaultRate(double dFrameRate);
+			[id(54)] double GetDefaultRate();
+			[id(55)] short SetPlaylistRange(long lStart, long lStop);
+			[id(56)] BSTR GetClassIdString();
+			[id(57)] BSTR GetRegisteredPath();
+			[id(58)] short AddFilter(BSTR lpszName);
+			[id(59)] short RemoveFilter(BSTR lpszName);
+			[id(60)] BSTR GetUserFilters(long* pCount);
+			[id(61)] double GetMinTime();
+			[id(62)] double GetMaxTime();
+			[id(63)] double GetPosition();
+			[id(64)] long ConvertToFrames(double dSeconds);
+			[id(65)] short SetMaxCuePosition(double dPosition);
+			[id(66)] short SetMinCuePosition(double dPosition);
+			[id(67)] short SetRange(double dStart, double dStop);
+			[id(68)] short Cue(short sType, double dSeconds, boolean bResume);
+			[id(69)] short Load(BSTR lpszFilename, double dStart, double dStop, boolean bPlay);
+			[id(70)] short Step(double dFrom, double dTo);
+			[id(71)] double ConvertToTime(long lFrame);
+			[id(72)] short CuePlaylist(short sType, double dSeconds, boolean bResume, boolean bPlayToEnd);
+			[id(73)] short PlayPlaylist(long pPlaylist, long lStart, long lStop, double dPosition);
+			[id(74)] short CueDesignation(long lDesignation, double dPosition, short bResume);
+			[id(75)] double GetDuration(BSTR lpszFilename);
+			[id(76)] short UpdateScreenPosition();
+			[id(77)] boolean GetIsAudio();
+			//}}AFX_ODL_METHOD
+	};
+
+	//  Event dispatch interface for CTMMovieCtrl
+
+	[ uuid(3084C1B8-A25F-4923-9B54-D73DEB761780), /* Replace 3 */
+	  helpstring("Event interface for TMMovie 6 Control") ]
+	dispinterface _DTMMovie6Events
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CTMMovieCtrl)
+			[id(1)] void FileChange(BSTR lpFilename);
+			[id(2)] void StateChange(short sState);
+			[id(3)] void PlaylistState(short sState);
+			[id(4)] void PlaybackError(long lError, boolean bStopped);
+			[id(5)] void PlaybackComplete();
+			[id(6)] void DebugMessage(BSTR lpMsg1, BSTR lpMsg2);
+			[id(7)] void LineChange(long pLine);
+			[id(8)] void PlaylistTime(double dTime);
+			[id(9)] void DesignationTime(double dTime);
+			[id(10)] void ElapsedTimes(double dPlaylist, double dDesignation);
+			[id(11)] void DesignationChange(long lId, long lOrder);
+			[id(12)] void LinkChange(BSTR lpszBarcode, long lId, long lFlags);
+			[id(DISPID_MOUSEDOWN)] void MouseDown(short Button, short Shift, OLE_XPOS_PIXELS x, OLE_YPOS_PIXELS y);
+			[id(DISPID_MOUSEMOVE)] void MouseMove(short Button, short Shift, OLE_XPOS_PIXELS x, OLE_YPOS_PIXELS y);
+			[id(DISPID_MOUSEUP)] void MouseUp(short Button, short Shift, OLE_XPOS_PIXELS x, OLE_YPOS_PIXELS y);
+			[id(13)] void MouseDblClick(short sButton, OLE_XPOS_PIXELS x, OLE_YPOS_PIXELS y);
+			[id(DISPID_DBLCLICK)] void DblClick();
+			[id(14)] void PositionChange(double dPosition);
+			[id(15)] void AxError(BSTR lpszMessage);
+			[id(16)] void AxDiagnostic(BSTR lpszMethod, BSTR lpszMessage);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CTMMovieCtrl
+
+	[ uuid(D71D2494-B9CA-401F-8E24-1815E077CE64), /* Replace 4 */
+	  helpstring("TMMovie 6 Control"), control ]
+	coclass TMMovie6
+	{
+		[default] dispinterface _DTMMovie6;
+		[default, source] dispinterface _DTMMovie6Events;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

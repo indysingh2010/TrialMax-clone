@@ -1,0 +1,41 @@
+// Tmviewvc.odl : type library source for Tmviewvc.exe
+
+// This file will be processed by the MIDL compiler to produce the
+// type library (Tmviewvc.tlb).
+
+[ uuid(CAEBF17F-FABA-11D0-B003-008029EFD140), version(1.0) ]
+library Tmviewvc
+{
+	importlib("stdole32.tlb");
+	
+
+	//  Primary dispatch interface for CTmviewvcDoc
+	
+	[ uuid(CAEBF180-FABA-11D0-B003-008029EFD140) ]
+	dispinterface ITmviewvc
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTmviewvcDoc)
+			//}}AFX_ODL_PROP
+			
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTmviewvcDoc)
+			//}}AFX_ODL_METHOD
+
+	};
+
+	//  Class information for CTmviewvcDoc
+	
+	[ uuid(CAEBF17E-FABA-11D0-B003-008029EFD140) ]
+	coclass Document
+	{
+		[default] dispinterface ITmviewvc;
+	};
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

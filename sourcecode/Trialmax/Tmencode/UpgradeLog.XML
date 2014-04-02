@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="Tmencode">
+</Property><Property Name="Solution File" Value="F:\Trialmax_640\Tmencode\Tmencode.sln">
+</Property><Property Name="Date" Value="Sunday, August 22, 2010">
+</Property><Property Name="Time" Value="15:55 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="Tmencode.sln" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\Tmencode.sln">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Tmencode.csproj" Description="Project file successfully backed up as F:\Trialmax_640\Tmencode\Backup\Tmencode.csproj">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="AssemblyInfo.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="EncoderStatus.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\EncoderStatus.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Enumcodecs.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\Enumcodecs.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="TmencodeVersion.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\TmencodeVersion.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Wmencoder.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\Wmencoder.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="WMProfile.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\WMProfile.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Wmsami.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\Wmsami.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="WMSamiLine.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\WMSamiLine.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Wmsamisource.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\Wmsamisource.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Wmsource.cs" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\Wmsource.cs">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="EncoderStatus.resx" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\EncoderStatus.resx">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Enumcodecs.resx" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\Enumcodecs.resx">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Wmencoder.resx" Description="File successfully backed up as F:\Trialmax_640\Tmencode\Backup\Wmencoder.resx">
+</Event><Event ErrorLevel="0" Project="Tmencode" Source="Tmencode.csproj" Description="The project file does not require conversion.">
+</Event><Event ErrorLevel="3" Project="Tmencode" Source="Tmencode.csproj" Description="No Conversion Required">
+</Event><Event ErrorLevel="0" Project="" Source="Tmencode.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="Tmencode.sln" Description="Converted">
+</Event></UpgradeLog>

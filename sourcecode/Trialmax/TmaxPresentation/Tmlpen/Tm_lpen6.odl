@@ -1,0 +1,88 @@
+// Tm_lpen6.odl : type library source for ActiveX Control project.
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (Tm_lpen6.tlb) that will become a resource in
+// Tm_lpen6.ocx.
+
+#include <olectl.h>
+#include <idispids.h>
+#include ".\include\dispid.h"
+
+[ uuid(EDB528B1-C322-46F8-A950-BF90643BC963), version(6.3), /* Replace 1 */
+  helpfile("Tm_lpen6.hlp"),
+  helpstring("TMLpen 6 ActiveX Control"),
+  control ]
+library TM_LPEN6Lib
+{
+	importlib(STDOLE_TLB);
+	importlib(STDTYPE_TLB);
+
+	//  Primary dispatch interface for CTMLpenCtrl
+
+	[ uuid(32470B00-8288-4443-AAE1-426DC93FFAA5), /* Replace 2 */
+	  helpstring("Dispatch interface for TMLpen 6 Control"), hidden ]
+	dispinterface _DTMLpen6
+	{
+		properties:
+			// NOTE - ClassWizard will maintain property information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_PROP(CTMLpenCtrl)
+			[id(1)] short VerBuild;
+			[id(2)] short VerMajor;
+			[id(3)] short VerMinor;
+			[id(4)] boolean AutoInit;
+			[id(5)] boolean EnableErrors;
+			[id(DISPID_BACKCOLOR), bindable, requestedit] OLE_COLOR BackColor;
+			[id(DISPID_FORECOLOR), bindable, requestedit] OLE_COLOR ForeColor;
+			[id(DISPID_APPEARANCE), bindable, requestedit] short Appearance;
+			[id(DISPID_BORDERSTYLE), bindable, requestedit] short BorderStyle;
+			[id(6)] boolean AlwaysOnTop;
+			[id(7)] BSTR VerTextLong;
+			//}}AFX_ODL_PROP
+
+			//	These properties were added in rev 6.0
+			[id(DISPID_VERQEF)] short VerQEF;
+			[id(DISPID_VERTEXTSHORT)] BSTR VerTextShort;
+			[id(DISPID_VERBUILDDATE)] BSTR VerBuildDate;
+
+		methods:
+			// NOTE - ClassWizard will maintain method information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_METHOD(CTMLpenCtrl)
+			[id(8)] short Initialize();
+			[id(9)] BSTR GetRegisteredPath();
+			[id(10)] BSTR GetClassIdString();
+			//}}AFX_ODL_METHOD
+	};
+
+	//  Event dispatch interface for CTMLpenCtrl
+
+	[ uuid(33D55C15-0F74-45EC-80F9-BF9A9CD3FA62), /* Replace 3 */
+	  helpstring("Event interface for TMLpen 6 Control") ]
+	dispinterface _DTMLpen6Events
+	{
+		properties:
+			//  Event interface has no properties
+
+		methods:
+			// NOTE - ClassWizard will maintain event information here.
+			//    Use extreme caution when editing this section.
+			//{{AFX_ODL_EVENT(CTMLpenCtrl)
+			[id(1)] void MouseClick(short sButton, short sKeyState);
+			//}}AFX_ODL_EVENT
+	};
+
+	//  Class information for CTMLpenCtrl
+
+	[ uuid(7EFCBDC0-F749-4574-8DC1-2E5575DD9808), /* Replace 4 */
+	  helpstring("TMLpen 6 Control"), control ]
+	coclass TMLpen6
+	{
+		[default] dispinterface _DTMLpen6;
+		[default, source] dispinterface _DTMLpen6Events;
+	};
+
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};
