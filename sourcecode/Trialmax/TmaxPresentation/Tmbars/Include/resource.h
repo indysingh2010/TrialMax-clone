@@ -1,5 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
+// Used by D:\Projects\TrialMax\sourcecode\Trialmax\TmaxPresentation\Tmbars\Tm_bars6.rc
 //
 #define IDS_TMBARS                      1
 #define IDB_TMBARS                      1

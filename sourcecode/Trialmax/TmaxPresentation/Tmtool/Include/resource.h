@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by D:\TrialMax-SVN\trunk\Source Code\Trialmax\TmaxPresentation\Tmtool\Tm_tool6.rc
+// Used by D:\Projects\TrialMax\sourcecode\Trialmax\TmaxPresentation\Tmtool\Tm_tool6.rc
 //
 #define IDS_TMTOOL                      1
 #define IDD_ABOUTBOX_TMTOOL             1

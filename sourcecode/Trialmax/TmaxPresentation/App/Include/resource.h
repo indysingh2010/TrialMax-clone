@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by E:\10Pearls Projects\Trail Max\Repository\trunk\SourceCode\Trialmax\TmaxPresentation\App\TmaxPresentation.rc
+// Used by D:\Projects\TrialMax\sourcecode\Trialmax\TmaxPresentation\App\TmaxPresentation.rc
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100

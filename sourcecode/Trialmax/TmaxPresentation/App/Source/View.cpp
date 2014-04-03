@@ -13607,24 +13607,9 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	int					iDistY;
 	DWORD               dwCurrentTime;
 	long                lTimeInterval;
-	short               sIconHeight;
-	CBitmap             cbm;
-	HBITMAP             hBitmap;
-	BITMAP              bitmap;
 
 	if (m_bGestureHandled)
-		return;
-
-	// find height for of keyboard icon to set area of touch for hide and display icon/toolbar
-	cbm.LoadBitmapA(IDB_VKB);
-	hBitmap = (HBITMAP) cbm;
-	if (hBitmap == NULL) {
-		sIconHeight = iMonitor_height/5;
-	} else {
-		GetObject(hBitmap, sizeof(bitmap), &bitmap);
-		sIconHeight = bitmap.bmHeight;
-	}
-	
+		return;	
 
 	pCurrent.x = gi.ptsLocation.x;
 	pCurrent.y = gi.ptsLocation.y;
@@ -13644,9 +13629,9 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	// 4. Swipe down from top of the screen to bring up the keyboard icon; opposite gesture hides keyboard
 
 	// gesture starts at top of monitor. that mean y should be around 0
-	// we setting the limit for this gesture within the top 20% of screen
-	if (m_gestureStartPoint.y <= sIconHeight*2) {
-		if (abs(iDistY) < sIconHeight*2) {
+	// we setting the limit for this gesture within the top 12% of screen
+	if (m_gestureStartPoint.y <= iMonitor_width/8) {
+		if (abs(iDistY) < iMonitor_width/8) {
 			DisplayKeyboardIconGesture(pCurrent);
 		}
 		//m_bGestureHandled = TRUE;
@@ -13659,9 +13644,9 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	// 5. Swipe up from the bottom of the screen to bring up tool bar; opposite gesture hides toolbar
 
 	// gesture starts at bottom of monitor. that mean y should be around monitor height
-	// we setting the limit for this gesture within the bottom 20% of screen
-	if (m_gestureStartPoint.y >= (iMonitor_height - sIconHeight*2)) {
-		if (abs(iDistY) < sIconHeight*2) {
+	// we setting the limit for this gesture within the bottom 12% of screen
+	if (m_gestureStartPoint.y >= (iMonitor_height - iMonitor_width/8)) {
+		if (abs(iDistY) < iMonitor_width/8) {
 			DisplayToolbarGesture(pCurrent);
 		}
 		//m_bGestureHandled = TRUE;
