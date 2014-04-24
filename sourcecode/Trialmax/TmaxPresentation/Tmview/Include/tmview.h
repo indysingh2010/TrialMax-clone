@@ -36,7 +36,8 @@
 #include <objsafe.h>
 #include <diagnose.h>
 #include <tmver.h>
-
+using namespace std;
+#include <vector>
 //------------------------------------------------------------------------------
 //	DEFINES
 //------------------------------------------------------------------------------
@@ -64,28 +65,34 @@
 class CTMViewCtrl : public COleControl
 {
 	private:
-
 		CTMPrinter			m_Printer;
 		CTMVersion			m_tmVersion;
 		CErrorHandler		m_Errors;
 		CCallouts			m_Callouts;
 		CCallout*			m_pCallout;
-		CTMLead				m_PaneA;
-		CTMLead				m_PaneB;
+		vector<CTMLead*>     m_Panes;
+		//CTMLead				m_PaneA;
+		//CTMLead				m_PaneB;
+		//CTMLead             m_Panes[2];
 		CTMLead				m_Scratch;
 		CTMLead*			m_pActive;
-		CTMLead*			m_pLeft;
-		CTMLead*			m_pRight;
+		//CTMLead*			m_pLeft;
+		//CTMLead*			m_pRight;
+		//CTMLead*            m_pPanes[2];
 		CTMIni				m_Zap;
 		short				m_sButton;
 		short				m_sKey;
 		int					m_iWidth;
 		int					m_iHeight;
 		int					m_iTextOpen;
-		RECT				m_rcLPane;
-		RECT				m_rcRPane;
-		RECT				m_rcRFrame;
-		RECT				m_rcLFrame;
+		//RECT				m_rcLPane;
+		//RECT				m_rcRPane;
+		//RECT				m_rcPane[2];
+		vector<RECT*>       m_rcPanes;
+		//RECT				m_rcRFrame;
+		//RECT				m_rcLFrame;
+		//RECT				m_rcFrame[2];
+		vector<RECT*>       m_rcFrames;
 		RECT				m_rcMax;
 		BOOL				m_bRedraw;
 		BOOL				m_bParentNotify;
@@ -765,7 +772,7 @@ class CTMViewCtrl : public COleControl
 	//}}AFX_DISP_ID
 	};
 public:
-	void DoGesturePan(LONG lX, LONG lY);
+	void DoGesturePan(LONG lCurrentX, LONG lCurrentY, LONG lLastX, LONG lLastY, bool* bSmooth);
 protected:
 	void DoGestureZoom(FLOAT zoomFactor);
 	void SetZoomedNextPage(BOOL bZoomed);

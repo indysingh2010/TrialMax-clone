@@ -5150,6 +5150,12 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		// Sorry, no hook for you...
 	}	
 
+	//CRect rect2 = m_ScreenResolution;
+	//rect2.bottom = 2 * m_ScreenResolution.bottom;
+
+	//MoveWindow(&rect2);
+	//SetWindowPos(NULL, 0,0,m_ScreenResolution.right*2, 2 * m_ScreenResolution.bottom, 0);
+
 	return 0;
 }
 
@@ -9505,10 +9511,10 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 					m_ctrlTMView.SetScaleImage(m_bScaleGraphics);
 
 				//	Force single pane mode if running a custom show
-				if(m_bLoadingShowItem == TRUE)
-					SetSinglePaneMode();
-				else
-					SetZapSplitScreen(FALSE);
+				//if(m_bLoadingShowItem == TRUE)
+				//	SetSinglePaneMode();
+				//else
+				//	SetZapSplitScreen(FALSE);
 				
 				//	Do we need to change the screen state?
 				if(sNextState != m_sState)
@@ -13715,7 +13721,28 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	}
 
 	// 1. Moving the page with your finger on the screen; similar to what happens now when grabbing and moving the page with the mouse button
-	m_ctrlTMView.DoGesturePan(pCurrent.x - m_gestureLastPoint.x, pCurrent.y - m_gestureLastPoint.y);
+	//CRect myRect;
+	//GetClientRect(&myRect);
+	//myRect.top = pCurrent.y - m_gestureLastPoint.y;
+	//MoveWindow(myRect);
+	//RedrawWindow();
+	//ScrollWindow(0, pCurrent.y - m_gestureLastPoint.y);
+	//CScrollView *pScrollView = (CScrollView *)m_pFrame->GetActiveView();
+	//CRect rectClient, rectWindow;
+
+       //     pScrollView->GetClientRect(&rectClient);
+      //      this->GetWindowRect(&rectWindow);
+
+	bool *bSmooth = (bool *)malloc(sizeof(bool));
+	*bSmooth = false;
+	
+	m_ctrlTMView.DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth);
+	if (*bSmooth == true)
+		m_bGestureHandled = TRUE;
+
+	free(bSmooth);
+	bSmooth = NULL;
+	
 
 	// update last location
 	m_gestureLastPoint = pCurrent;

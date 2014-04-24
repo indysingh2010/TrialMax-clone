@@ -280,7 +280,7 @@ public:
 	short SwapPanes();
 	short SaveSplitZap(LPCTSTR lpszTLFilename, LPCTSTR lpszBRFilename);
 	void AboutBox();
-	void DoGesturePan(long lX, long lY);
+	void DoGesturePan(long lCurrentX, long lCurrentY, long lLastX, long lLastY, bool* bSmooth);
 	void DoGestureZoom(float zoomFactor);
 	void SetZoomedNextPage(bool bZoomed);
 };

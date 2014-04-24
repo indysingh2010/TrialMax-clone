@@ -157,6 +157,9 @@ echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>.\..\..\Bin\Debug/Tm_view6.bsc</OutputFile>
     </Bscmake>
+    <Manifest>
+      <EnableDPIAwareness>true</EnableDPIAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Annotate.cpp" />

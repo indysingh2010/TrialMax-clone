@@ -7604,10 +7604,10 @@ void CTMLead::RedrawZoomed()
 			fDstHeight += ((float)m_iHeight - (fDstHeight + fDstTop));
 
 		//	This should never happen but just in case it does
-		if(fDstLeft > 0)
+		/*if(fDstLeft > 0)
 			fDstLeft = 0;
 		if(fDstTop > 0)
-			fDstTop = 0;
+			fDstTop = 0;*/
 
 		//	We reset the destination rectangle once again because the call to
 		//	ResizeToDestination() may inadvertently reset the rectangle when
@@ -11387,7 +11387,84 @@ void CTMLead::ZoomUnrestricted(RECT* pRect)
 //==============================================================================
 void CTMLead::GesturePan(long lX, long lY)
 {
-	Pan(lX, lY);
+	//Pan(lX, lY);
+
+	float	fDstTop;
+	float	fDstLeft;
+	float	fDstHeight;
+	float	fDstWidth;
+	float	fDeltaX;
+	float	fDeltaY;
+	float	fNewLeft;
+	float	fNewTop;
+	short	sStates;
+
+	//  Find the current size and position of the destination rectangle.
+	fDstLeft   = GetDstLeft();
+	fDstTop	   = GetDstTop();
+	fDstWidth  = GetDstWidth();
+	fDstHeight = GetDstHeight();
+
+	//	How big a step are we taking?
+	fDeltaX = (float)lX;
+	fDeltaY = (float)lY;
+
+	//	Get the directional states
+	sStates = GetPanStates();
+
+	//	Are we trying to pan right?
+	if(lX < 0 && (sStates & ENABLE_PANRIGHT))
+	{
+		//	What is the new left hand coordinate?
+		fNewLeft = fDstLeft + fDeltaX;
+		if(fNewLeft < ((float)m_iWidth - fDstWidth))
+			fNewLeft = ((float)m_iWidth - fDstWidth);
+	}
+	//	Are we trying to pan left?
+	else if(lX > 0 && (sStates & ENABLE_PANLEFT))
+	{
+		//	What is the new left hand coordinate?
+		fNewLeft = fDstLeft + fDeltaX;
+		if(fNewLeft > 0)
+			fNewLeft = 0.0;
+	}
+	//	We are not panning left or right
+	else
+	{
+		fNewLeft = fDstLeft;
+	}
+
+	//	Are we trying to pan down?
+	if(lY < 0 && (sStates & ENABLE_PANDOWN))
+	{
+		//	What is the new top coordinate?
+		fNewTop = fDstTop + fDeltaY;
+		if(fNewTop < ((float)m_iHeight - fDstHeight))
+			fNewTop = ((float)m_iHeight - fDstHeight);
+	}
+	//	Are we trying to pan up?
+	else if(lY > 0 && (sStates & ENABLE_PANUP))
+	{
+		//	What is the new top coordinate?
+		fNewTop = fDstTop + fDeltaY;
+		if(fNewTop > 0)
+			fNewTop = 0.0;
+	}
+	//	We are not panning up or down
+	else
+	{
+		fNewTop = fDstTop;
+	}
+		
+	//	Move the destination rectangles
+	SetDstRect(fNewLeft, fNewTop, fDstWidth, fDstHeight);
+	SetDstClipRect(fNewLeft, fNewTop, fDstWidth, fDstHeight);
+
+	//	Notify the parent if this is a callout
+	if(m_pOwner != 0)
+		m_pOwner->OnPanComplete();
+	
+	ForceRepaint();
 }
 
 //==============================================================================

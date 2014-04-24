@@ -347,6 +347,8 @@ class CTMLead : public CLead
 		float			m_fMaxZoom;
 		float			m_fPanPercent;
 		BOOL            m_bZoomedSwipe;
+		long            m_lTop;
+		long            m_lBottom;
 
 						CTMLead();
 					   ~CTMLead();
