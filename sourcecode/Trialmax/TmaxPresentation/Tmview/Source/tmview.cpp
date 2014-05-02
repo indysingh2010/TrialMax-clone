@@ -1308,7 +1308,7 @@ void CTMViewCtrl::DrawPenSelector()
 		return;
 
 	//	Create the brush we need to draw the selector
-	brSelector.CreateSolidBrush(m_Panes[0]->GetColorRef(m_sPenSelectorColor));
+	brSelector.CreateSolidBrush(m_pActive->GetColorRef(m_sPenSelectorColor));
 
 	//	Is the left pane empty?
 	if(!GetPane(TMV_LEFTPANE)->IsLoaded())
@@ -1495,7 +1495,7 @@ void CTMViewCtrl::DrawSplitFrame(RECT* pRect)
 
 	//	Create the pens used to draw the frames
 	FramePen.CreatePen(PS_INSIDEFRAME, m_sSplitFrameThickness, 
-					   m_Panes[0]->GetColorRef(m_sSplitFrameColor));
+					   m_pActive->GetColorRef(m_sSplitFrameColor));
 
 	//	Set up the array of points
 	Points[0].x = pRect->left;
@@ -1631,8 +1631,8 @@ short CTMViewCtrl::DrawTmaxRedactions(long paRedactions, short sPane)
 //==============================================================================
 void CTMViewCtrl::EnableDIBPrinting(short bEnable) 
 {
-	m_Panes[0]->EnableDIBPrinting(bEnable != 0);
-	m_Panes[1]->EnableDIBPrinting(bEnable != 0);
+	for(int i=0; i < m_Panes.size(); i++)
+		m_Panes[i]->EnableDIBPrinting(bEnable != 0);
 	m_Scratch.EnableDIBPrinting(bEnable != 0);
 }
 
@@ -2140,13 +2140,9 @@ short CTMViewCtrl::GetPageCount(short sPane)
 CTMLead* CTMViewCtrl::GetPane(short sPane) 
 {
 	//	Are we looking for the left pane?
-	if(sPane == TMV_LEFTPANE)
+	if(sPane >= 0 && sPane < m_Panes.size())
 	{
-		return (m_Panes[0]) ? m_Panes[0] : m_Panes[0];
-	}
-	else if(sPane == TMV_RIGHTPANE)
-	{
-		return (m_Panes[1]) ? m_Panes[1] : m_Panes[1];
+		return m_Panes[sPane];
 	}
 	else
 	{
@@ -2169,19 +2165,12 @@ CTMLead* CTMViewCtrl::GetPane(short sPane)
 short CTMViewCtrl::GetPaneId(CTMLead* pPane) 
 {
 	//	Are we looking for the left pane?
-	if(pPane == m_Panes[0])
-	{
-		return TMV_LEFTPANE;
-	}
-	else if(pPane == m_Panes[1])
-	{
-		return TMV_RIGHTPANE;
-	}
-	else
-	{
-		//	Return the active pane
-		return m_sActivePane;
-	}
+	for(int i=0; i < m_Panes.size(); i++)
+		if(m_Panes[i] == pPane)
+			return i;
+
+	//	Return the active pane
+	return m_sActivePane;
 }
 
 //==============================================================================
@@ -4986,81 +4975,69 @@ int CTMViewCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_Errors.SetTitle(TMVERRORS_TITLE);
 	m_Errors.SetMessageId(m_bEnableAxErrors == TRUE ? WM_ERROR_EVENT : 0);
 	
-	//	Create the left and right panes
-	if(!m_Panes[0]->Create(this, IDC_PANEA))
-		return -1;
-	if(!m_Panes[1]->Create(this, IDC_PANEB))
-		return -1;
+	for(int i=0; i < m_Panes.size(); i++) {
+
+		//	Create the left and right panes
+		if(!m_Panes[i]->Create(this, IDC_PANEA + i))
+			return -1;
 	
+
+		//	Make visibility for each pane
+		m_Panes[i]->ShowWindow(SW_SHOW);
+
+		//	Set the pointer to the control window. We have to do this as a separate
+		//	operation because not all parents of CTMLead will be TMView controls
+		m_Panes[i]->SetControl(this, &m_Errors);
+
+		//	Set these properties
+		m_Panes[i]->SetEnabled(GetEnabled());
+		m_Panes[i]->SetBackColor(GetBackColor(), TranslateColor(GetBackColor()));
+
+		//	Initialize the asynchronous file loading parameters
+		m_Panes[i]->m_AsyncParams.bCallouts = FALSE;
+		m_Panes[i]->m_AsyncParams.bScaleView = FALSE;
+		m_Panes[i]->m_AsyncParams.bUseView = FALSE;
+		m_Panes[i]->m_AsyncParams.iTimerId = ASYNC_TIMER_PANEA;
+		m_Panes[i]->m_AsyncParams.uTimer = 0;
+		m_Panes[i]->m_AsyncParams.strFilename.Empty();
+		m_Panes[i]->m_AsyncParams.strSourceFilename.Empty();
+
+			//	Only set these properties if we are in user mode
+		if(AmbientUserMode())
+		{
+			//	Set the top/left pane properties
+			SetPaneProps(m_Panes[i]);
+		}
+
+		//	Load the files if any are specified
+		//if(!m_strLeftFile.IsEmpty())
+			//m_Panes[0]->SetFilename(m_strLeftFile);
+
+	}
+
 	//	Create the scratch pane
 	if(!m_Scratch.Create(this, IDC_BACKUP))
 	{
 		m_Errors.Handle(0, IDS_TMV_NOBACKUP);
 	}
-
-	//	Set the pointer to the control window. We have to do this as a separate
-	//	operation because not all parents of CTMLead will be TMView controls
-	m_Panes[0]->SetControl(this, &m_Errors);
-	m_Panes[1]->SetControl(this, &m_Errors);
 	m_Scratch.SetControl(this, &m_Errors);
-
-	//	Make visibility for each pane
-	m_Panes[0]->ShowWindow(SW_SHOW);
-	m_Panes[1]->ShowWindow(SW_HIDE);
-
 	//	Initialize the scratch pane
 	m_Scratch.ShowWindow(SW_HIDE);
 	m_Scratch.MoveWindow(0,0,1,1);
 	m_Scratch.SetAction(NONE);
-
-	//	Set these properties
-	m_Panes[0]->SetEnabled(GetEnabled());
-	m_Panes[0]->SetBackColor(GetBackColor(), TranslateColor(GetBackColor()));
-	m_Panes[1]->SetEnabled(GetEnabled());
-	m_Panes[1]->SetBackColor(GetBackColor(), TranslateColor(GetBackColor()));
 	m_Scratch.SetBackColor(GetBackColor(), TranslateColor(GetBackColor()));
-
-	//	Initialize the asynchronous file loading parameters
-	m_Panes[0]->m_AsyncParams.bCallouts = FALSE;
-	m_Panes[0]->m_AsyncParams.bScaleView = FALSE;
-	m_Panes[0]->m_AsyncParams.bUseView = FALSE;
-	m_Panes[0]->m_AsyncParams.iTimerId = ASYNC_TIMER_PANEA;
-	m_Panes[0]->m_AsyncParams.uTimer = 0;
-	m_Panes[0]->m_AsyncParams.strFilename.Empty();
-	m_Panes[0]->m_AsyncParams.strSourceFilename.Empty();
-
-	m_Panes[1]->m_AsyncParams.bCallouts = FALSE;
-	m_Panes[1]->m_AsyncParams.bScaleView = FALSE;
-	m_Panes[1]->m_AsyncParams.bUseView = FALSE;
-	m_Panes[1]->m_AsyncParams.iTimerId = ASYNC_TIMER_PANEB;
-	m_Panes[1]->m_AsyncParams.uTimer = 0;
-	m_Panes[1]->m_AsyncParams.strFilename.Empty();
-	m_Panes[1]->m_AsyncParams.strSourceFilename.Empty();
-
 
 	//	Only set these properties if we are in user mode
 	if(AmbientUserMode())
 	{
-		//	Set the top/left pane properties
-		SetPaneProps(m_Panes[0]);
-
-		//	Set the bottom/right pane properties
-		SetPaneProps(m_Panes[1]);
-
 		//	Set the properties for the scratch pane
 		SetPaneProps(&m_Scratch);
 	}
 
 	//	Set up the split screen mode
 	OnSplitScreenChanged();
-	
-	//	Load the files if any are specified
-	if(!m_strLeftFile.IsEmpty())
-		m_Panes[0]->SetFilename(m_strLeftFile);
-	if(!m_strRightFile.IsEmpty())
-		m_Panes[1]->SetFilename(m_strRightFile);
-	
-//ShowDiagnostics(TRUE);
+		
+	//ShowDiagnostics(TRUE);
 	return 0;
 }
 
