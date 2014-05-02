@@ -349,27 +349,28 @@ BEGIN_EVENTSINK_MAP(CTMViewCtrl, COleControl)
 	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_MOUSEMOVE /* MouseMove */, OnAMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
 	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_MOUSEUP /* MouseUp */, OnAMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
 	ON_EVENT(CTMViewCtrl, IDC_PANEA, 15/* RubberBand */, OnARubberBand, VTS_NONE)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 14 /* Animate */, OnBAnimate, VTS_BOOL)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 12 /* AnnChange */, OnBAnnChange, VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 9 /* AnnClicked */, OnBAnnClicked, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 7 /* AnnCreate */, OnBAnnCreate, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 8 /* AnnDestroy */, OnBAnnDestroy, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 10 /* AnnDrawn */, OnBAnnDrawn, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 31 /* AnnMenu */, OnBAnnMenu, VTS_DISPATCH)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 28 /* AnnMouseDown */, OnBAnnMouseDown, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 29 /* AnnMouseMove */, OnBAnnMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 30 /* AnnMouseUp */, OnBAnnMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 16 /* AnnSelect */, OnBAnnSelect, VTS_VARIANT VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 38 /* AnnUserMenu */, OnBAnnUserMenu, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_CLICK/* Click */, OnBMouseClick, VTS_NONE)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_DBLCLICK /* DblClick */, OnBMouseDblClick, VTS_NONE)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYDOWN /* KeyDown */, OnBKeyDown, VTS_PI2 VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYPRESS /* KeyPress */, OnBKeyPress, VTS_PI2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYUP /* KeyUp */, OnBKeyUp, VTS_PI2 VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEDOWN /* MouseDown */, OnBMouseDown, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEMOVE /* MouseMove */, OnBMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEUP /* MouseUp */, OnBMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 15/* RubberBand */, OnBRubberBand, VTS_NONE)
+
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 14 /* Animate */, OnAAnimate, VTS_BOOL)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 12 /* AnnChange */, OnAAnnChange, VTS_I4 VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 9 /* AnnClicked */, OnAAnnClicked, VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 7 /* AnnCreate */, OnAAnnCreate, VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 8 /* AnnDestroy */, OnAAnnDestroy, VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 10 /* AnnDrawn */, OnAAnnDrawn, VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 31 /* AnnMenu */, OnAAnnMenu, VTS_DISPATCH)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 28 /* AnnMouseDown */, OnAAnnMouseDown, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 29 /* AnnMouseMove */, OnAAnnMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 30 /* AnnMouseUp */, OnAAnnMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 16 /* AnnSelect */, OnAAnnSelect, VTS_VARIANT VTS_I2)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 38 /* AnnUserMenu */, OnAAnnUserMenu, VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_CLICK/* Click */, OnAMouseClick, VTS_NONE)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_DBLCLICK /* DblClick */, OnAMouseDblClick, VTS_NONE)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYDOWN /* KeyDown */, OnAKeyDown, VTS_PI2 VTS_I2)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYPRESS /* KeyPress */, OnAKeyPress, VTS_PI2)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYUP /* KeyUp */, OnAKeyUp, VTS_PI2 VTS_I2)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEDOWN /* MouseDown */, OnAMouseDown, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEMOVE /* MouseMove */, OnAMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEUP /* MouseUp */, OnAMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
+	ON_EVENT(CTMViewCtrl, IDC_PANEB, 15/* RubberBand */, OnARubberBand, VTS_NONE)
 	//}}AFX_EVENTSINK_MAP
 END_EVENTSINK_MAP()
 
@@ -2866,7 +2867,7 @@ short CTMViewCtrl::NextPage(short sPane)
 void CTMViewCtrl::OnAAnimate(BOOL bEnable) 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		CString Msg;
@@ -2874,7 +2875,7 @@ void CTMViewCtrl::OnAAnimate(BOOL bEnable)
 		m_Diagnostics.Report("A", Msg);
 	#endif
 
-	m_Panes[0]->OnAnimate(bEnable);
+	m_pActive->OnAnimate(bEnable);
 
 }
 
@@ -2893,7 +2894,7 @@ void CTMViewCtrl::OnAAnimate(BOOL bEnable)
 void CTMViewCtrl::OnAAnnChange(long hObject, long uType) 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		CString Msg;
@@ -2901,7 +2902,7 @@ void CTMViewCtrl::OnAAnnChange(long hObject, long uType)
 		m_Diagnostics.Report("A", Msg);
 	#endif
 
-	m_Panes[0]->OnAnnChange(hObject, uType);
+	m_pActive->OnAnnChange(hObject, uType);
 }
 
 //==============================================================================
@@ -2919,7 +2920,7 @@ void CTMViewCtrl::OnAAnnChange(long hObject, long uType)
 void CTMViewCtrl::OnAAnnClicked(long hObject) 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		CString Msg;
@@ -2943,7 +2944,7 @@ void CTMViewCtrl::OnAAnnClicked(long hObject)
 void CTMViewCtrl::OnAAnnCreate(long hObject) 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		CString Msg;
@@ -2951,7 +2952,7 @@ void CTMViewCtrl::OnAAnnCreate(long hObject)
 		m_Diagnostics.Report("A", Msg);
 	#endif
 
-	m_Panes[0]->OnAnnCreate(hObject);
+	m_pActive->OnAnnCreate(hObject);
 }
 
 //==============================================================================
@@ -2974,7 +2975,7 @@ void CTMViewCtrl::OnAAnnDestroy(long hObject)
 		m_Diagnostics.Report("A", Msg);
 	#endif
 
-	m_Panes[0]->OnAnnDestroy(hObject);
+	m_pActive->OnAnnDestroy(hObject);
 }
 
 //==============================================================================
@@ -2992,7 +2993,7 @@ void CTMViewCtrl::OnAAnnDestroy(long hObject)
 void CTMViewCtrl::OnAAnnDrawn(long hObject) 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		CString Msg;
@@ -3000,7 +3001,7 @@ void CTMViewCtrl::OnAAnnDrawn(long hObject)
 		m_Diagnostics.Report("A", Msg);
 	#endif
 
-	m_Panes[0]->OnAnnDrawn(hObject);
+	m_pActive->OnAnnDrawn(hObject);
 }
 
 //==============================================================================
@@ -3042,17 +3043,17 @@ void CTMViewCtrl::OnAAnnMouseDown(short Button, short Shift, long X, long Y)
 	#endif
 
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	//	Let the TMLead handle the event
-	if(IsWindow(m_Panes[0]->m_hWnd))
-		m_Panes[0]->OnAnnMouseDown(Button, Shift, X, Y);
+	if(IsWindow(m_pActive->m_hWnd))
+		m_pActive->OnAnnMouseDown(Button, Shift, X, Y);
 
 	//	Notify the container
 	POINT Screen;
 	Screen.x = X;
 	Screen.y = Y;
-	m_Panes[0]->ClientToScreen(&Screen);
+	m_pActive->ClientToScreen(&Screen);
 	FireMouseDown(Button, Shift, Screen.x, Screen.y);
 }
 
@@ -3080,7 +3081,7 @@ void CTMViewCtrl::OnAAnnMouseMove(short Button, short Shift, long X, long Y)
 	POINT Screen;
 	Screen.x = X;
 	Screen.y = Y;
-	m_Panes[0]->ClientToScreen(&Screen);
+	m_pActive->ClientToScreen(&Screen);
 	FireMouseMove(Button, Shift, Screen.x, Screen.y);
 }
 
@@ -3105,15 +3106,15 @@ void CTMViewCtrl::OnAAnnMouseUp(short Button, short Shift, long X, long Y)
 	#endif
 
 	//	Let the TMLead handle the event
-	if(IsWindow(m_Panes[0]->m_hWnd))
-		m_Panes[0]->OnAnnMouseUp(Button, Shift, X, Y);
+	if(IsWindow(m_pActive->m_hWnd))
+		m_pActive->OnAnnMouseUp(Button, Shift, X, Y);
 
 
 	//	Notify the container
 	POINT Screen;
 	Screen.x = X;
 	Screen.y = Y;
-	m_Panes[0]->ClientToScreen(&Screen);
+	m_pActive->ClientToScreen(&Screen);
 	FireMouseUp(Button, Shift, Screen.x, Screen.y);
 }
 
@@ -3132,7 +3133,7 @@ void CTMViewCtrl::OnAAnnMouseUp(short Button, short Shift, long X, long Y)
 void CTMViewCtrl::OnAAnnSelect(const VARIANT FAR& aObjects, short uCount) 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		CString Msg;
@@ -3140,7 +3141,7 @@ void CTMViewCtrl::OnAAnnSelect(const VARIANT FAR& aObjects, short uCount)
 		m_Diagnostics.Report("A", Msg);
 	#endif
 
-	m_Panes[0]->OnAnnSelect();
+	m_pActive->OnAnnSelect();
 }
 
 //==============================================================================
@@ -3294,8 +3295,8 @@ void CTMViewCtrl::OnAKeyUp(short* KeyCode, short Shift)
 	#endif
 
 	//	Let the TMLead handle the event
-	if(IsWindow(m_Panes[0]->m_hWnd))
-		m_Panes[0]->OnKeyUp(KeyCode, Shift);
+	if(IsWindow(m_pActive->m_hWnd))
+		m_pActive->OnKeyUp(KeyCode, Shift);
 }
 
 //==============================================================================
@@ -3314,17 +3315,17 @@ void CTMViewCtrl::OnAKeyUp(short* KeyCode, short Shift)
 void CTMViewCtrl::OnAMouseClick() 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		m_Diagnostics.Report("A", "MouseClick");
 	#endif
 
-	if(!IsWindow(m_Panes[0]->m_hWnd))
+	if(!IsWindow(m_pActive->m_hWnd))
 		return;
 
 	//	Don't fire an event if the TMLead is zooming the image
-	if(m_Panes[0]->m_sAction == ZOOM && m_sButton == LEFT_MOUSEBUTTON)
+	if(m_pActive->m_sAction == ZOOM && m_sButton == LEFT_MOUSEBUTTON)
 		return;
 
 	//	Is this one of the unwanted LeadTools events?
@@ -3350,18 +3351,18 @@ void CTMViewCtrl::OnAMouseClick()
 //==============================================================================
 void CTMViewCtrl::OnAMouseDblClick() 
 {
-	if(!IsWindow(m_Panes[0]->m_hWnd))
+	if(!IsWindow(m_pActive->m_hWnd))
 		return;
 
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		m_Diagnostics.Report("A", "MouseDblClick");
 	#endif
 
 	//	Let the TMLead handle the event
-	m_Panes[0]->OnMouseDblClick();
+	m_pActive->OnMouseDblClick();
 
 	//	Fire an event
 	FireMouseDblClick(m_sButton, m_sKey);
@@ -3392,17 +3393,17 @@ void CTMViewCtrl::OnAMouseDown(short Button, short Shift, long X, long Y)
 	#endif
 
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	//	Let the TMLead handle the event
-	if(IsWindow(m_Panes[0]->m_hWnd))
-		m_Panes[0]->OnMouseDown(Button, Shift, X, Y);
+	if(IsWindow(m_pActive->m_hWnd))
+		m_pActive->OnMouseDown(Button, Shift, X, Y);
 
 	//	Notify the container
 	POINT point;
 	point.x = X;
 	point.y = Y;
-	m_Panes[0]->ClientToScreen(&point);
+	m_pActive->ClientToScreen(&point);
 	ScreenToClient(&point);
 	FireMouseDown(Button, Shift, point.x, point.y);
 }
@@ -3432,16 +3433,16 @@ void CTMViewCtrl::OnAMouseMove(short Button, short Shift, long X, long Y)
 	#endif
 
 	//	Let the TMLead handle the event
-	if(IsWindow(m_Panes[0]->m_hWnd))
-		m_Panes[0]->OnMouseMove(Button, Shift, X, Y);
+	if(IsWindow(m_pActive->m_hWnd))
+		m_pActive->OnMouseMove(Button, Shift, X, Y);
 
 	//	Don't fire an event if the TMLead is zooming the image
-	if(m_Panes[0]->GetAction() != ZOOM)
+	if(m_pActive->GetAction() != ZOOM)
 	{
 		POINT point;
 		point.x = X;
 		point.y = Y;
-		m_Panes[0]->ClientToScreen(&point);
+		m_pActive->ClientToScreen(&point);
 		ScreenToClient(&point);
 		FireMouseMove(Button, Shift, point.x, point.y);
 	}
@@ -3462,7 +3463,7 @@ void CTMViewCtrl::OnAMouseMove(short Button, short Shift, long X, long Y)
 void CTMViewCtrl::OnAMouseUp(short Button, short Shift, long X, long Y) 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		CString Msg;
@@ -3471,14 +3472,14 @@ void CTMViewCtrl::OnAMouseUp(short Button, short Shift, long X, long Y)
 	#endif
 
 	//	Let the TMLead handle the event
-	if(IsWindow(m_Panes[0]->m_hWnd))
-		m_Panes[0]->OnMouseUp(Button, Shift, X, Y);
+	if(IsWindow(m_pActive->m_hWnd))
+		m_pActive->OnMouseUp(Button, Shift, X, Y);
 
 	//	Notify the container
 	POINT point;
 	point.x = X;
 	point.y = Y;
-	m_Panes[0]->ClientToScreen(&point);
+	m_pActive->ClientToScreen(&point);
 	ScreenToClient(&point);
 	FireMouseUp(Button, Shift, point.x, point.y);
 }
@@ -3923,13 +3924,13 @@ void CTMViewCtrl::OnAnnToolChanged()
 void CTMViewCtrl::OnARubberBand() 
 {
 	//	Set the active pane
-	SetPane(m_Panes[0]);
+	//SetPane(m_Panes[0]);
 
 	#if defined _EVENT_DIAGNOSTICS
 		m_Diagnostics.Report("A", "RubberBand");
 	#endif
 
-	m_Panes[0]->OnRubberBand();
+	m_pActive->OnRubberBand();
 }
 
 //==============================================================================
@@ -4616,6 +4617,7 @@ void CTMViewCtrl::OnBMouseUp(short Button, short Shift, long X, long Y)
 //==============================================================================
 void CTMViewCtrl::OnBRubberBand() 
 {
+	AfxMessageBox("OnBRubberBand()");
 	//	Set the active pane
 	SetPane(m_Panes[1]);
 
