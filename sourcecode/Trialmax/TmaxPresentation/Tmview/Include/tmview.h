@@ -44,8 +44,12 @@ using namespace std;
 
 //	Control identifiers for left and right panes
 #define IDC_PANEA			200
-#define IDC_PANEB			300
-#define IDC_BACKUP			400
+#define IDC_PANEB			201
+#define IDC_BACKUP			4000
+
+// panes control range
+#define IDC_PANE_RANGE_START			IDC_PANEA
+#define IDC_PANE_RANGE_END			    IDC_PANEB
 
 //	Timer identifiers used for asynchronous file loading
 #define ASYNC_TIMER_PANEA	1
@@ -260,6 +264,30 @@ class CTMViewCtrl : public COleControl
 	afx_msg void OnBMouseMove(short Button, short Shift, long x, long y);
 	afx_msg void OnBMouseUp(short Button, short Shift, long x, long y);
 	afx_msg void OnBRubberBand();
+
+	// smooooooooooooootttttthhhh
+	afx_msg void OnPaneAnimate(BOOL bEnable);
+	afx_msg void OnPaneAnnChange(long hObject, long uType);
+	afx_msg void OnPaneAnnClicked(long hObject);
+	afx_msg void OnPaneAnnCreate(long hObject);
+	afx_msg void OnPaneAnnDestroy(long hObject);
+	afx_msg void OnPaneAnnDrawn(long hObject);
+	afx_msg void OnPaneAnnMenu(LPDISPATCH AnnMenu);
+	afx_msg void OnPaneAnnMouseDown(short Button, short Shift, long x, long y);
+	afx_msg void OnPaneAnnMouseMove(short Button, short Shift, long x, long y);
+	afx_msg void OnPaneAnnMouseUp(short Button, short Shift, long x, long y);
+	afx_msg void OnPaneAnnSelect(const VARIANT& aObjects, short uCount);
+	afx_msg void OnPaneAnnUserMenu(long nID);
+	afx_msg void OnPaneKeyDown(short FAR* KeyCode, short Shift);
+	afx_msg void OnPaneKeyPress(short FAR* KeyAscii);
+	afx_msg void OnPaneKeyUp(short FAR* KeyCode, short Shift);
+	afx_msg void OnPaneMouseClick();
+	afx_msg void OnPaneMouseDblClick();
+	afx_msg void OnPaneMouseDown(short Button, short Shift, long X, long Y);
+	afx_msg void OnPaneMouseMove(short Button, short Shift, long x, long y);
+	afx_msg void OnPaneMouseUp(short Button, short Shift, long x, long y);
+	afx_msg void OnPaneRubberBand();
+	////////////////////////////////////
 	
 	DECLARE_EVENTSINK_MAP()
 	//}}AFX_MSG

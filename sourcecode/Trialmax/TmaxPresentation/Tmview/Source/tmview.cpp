@@ -326,53 +326,7 @@ BEGIN_EVENT_MAP(CTMViewCtrl, COleControl)
 	//}}AFX_EVENT_MAP
 END_EVENT_MAP()
 
-BEGIN_EVENTSINK_MAP(CTMViewCtrl, COleControl)
-    //{{AFX_EVENTSINK_MAP(CTMViewCtrl)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 14 /* Animate */, OnAAnimate, VTS_BOOL)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 12 /* AnnChange */, OnAAnnChange, VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 9 /* AnnClicked */, OnAAnnClicked, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 7 /* AnnCreate */, OnAAnnCreate, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 8 /* AnnDestroy */, OnAAnnDestroy, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 10 /* AnnDrawn */, OnAAnnDrawn, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 31 /* AnnMenu */, OnAAnnMenu, VTS_DISPATCH)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 28 /* AnnMouseDown */, OnAAnnMouseDown, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 29 /* AnnMouseMove */, OnAAnnMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 30 /* AnnMouseUp */, OnAAnnMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 16 /* AnnSelect */, OnAAnnSelect, VTS_VARIANT VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 38 /* AnnUserMenu */, OnAAnnUserMenu, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_CLICK/* Click */, OnAMouseClick, VTS_NONE)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_DBLCLICK /* DblClick */, OnAMouseDblClick, VTS_NONE)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_KEYDOWN /* KeyDown */, OnAKeyDown, VTS_PI2 VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_KEYPRESS /* KeyPress */, OnAKeyPress, VTS_PI2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_KEYUP /* KeyUp */, OnAKeyUp, VTS_PI2 VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_MOUSEDOWN /* MouseDown */, OnAMouseDown, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_MOUSEMOVE /* MouseMove */, OnAMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, DISPID_MOUSEUP /* MouseUp */, OnAMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEA, 15/* RubberBand */, OnARubberBand, VTS_NONE)
-
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 14 /* Animate */, OnAAnimate, VTS_BOOL)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 12 /* AnnChange */, OnAAnnChange, VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 9 /* AnnClicked */, OnAAnnClicked, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 7 /* AnnCreate */, OnAAnnCreate, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 8 /* AnnDestroy */, OnAAnnDestroy, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 10 /* AnnDrawn */, OnAAnnDrawn, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 31 /* AnnMenu */, OnAAnnMenu, VTS_DISPATCH)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 28 /* AnnMouseDown */, OnAAnnMouseDown, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 29 /* AnnMouseMove */, OnAAnnMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 30 /* AnnMouseUp */, OnAAnnMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 16 /* AnnSelect */, OnAAnnSelect, VTS_VARIANT VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 38 /* AnnUserMenu */, OnAAnnUserMenu, VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_CLICK/* Click */, OnAMouseClick, VTS_NONE)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_DBLCLICK /* DblClick */, OnAMouseDblClick, VTS_NONE)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYDOWN /* KeyDown */, OnAKeyDown, VTS_PI2 VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYPRESS /* KeyPress */, OnAKeyPress, VTS_PI2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_KEYUP /* KeyUp */, OnAKeyUp, VTS_PI2 VTS_I2)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEDOWN /* MouseDown */, OnAMouseDown, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEMOVE /* MouseMove */, OnAMouseMove, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, DISPID_MOUSEUP /* MouseUp */, OnAMouseUp, VTS_I2 VTS_I2 VTS_I4 VTS_I4)
-	ON_EVENT(CTMViewCtrl, IDC_PANEB, 15/* RubberBand */, OnARubberBand, VTS_NONE)
-	//}}AFX_EVENTSINK_MAP
-END_EVENTSINK_MAP()
+#include "..\Include\EventSinkMap.h"
 
 
 /*--------------------------------------------------------------------------------------------------------------------------
@@ -5143,13 +5097,10 @@ void CTMViewCtrl::OnDraw(CDC* pdc, const CRect& rcBounds,const CRect& rcInvalid)
 			DrawPenSelector();
 		}
 
-		//	Redraw the left pane
-		if(m_Panes[0] && m_Panes[0]->IsLoaded() && IsWindow(m_Panes[0]->m_hWnd))
-			m_Panes[0]->ForceRepaint();
-
-		//	Redraw the right pane
-		if(m_bSplitScreen && m_Panes[1] && m_Panes[1]->IsLoaded() && IsWindow(m_Panes[1]->m_hWnd))
-			m_Panes[1]->ForceRepaint();
+		for(int i=0; i < m_Panes.size(); i++)
+			//	Redraw the left pane
+			if(m_Panes[i] && m_Panes[i]->IsLoaded() && IsWindow(m_Panes[i]->m_hWnd))
+				m_Panes[i]->ForceRepaint();
 	}
 	else
 	{
@@ -5166,9 +5117,10 @@ void CTMViewCtrl::OnDraw(CDC* pdc, const CRect& rcBounds,const CRect& rcInvalid)
 									 RGB(0xFF,0xFF,0xFF));
 
 		pdc->SetBkMode(TRANSPARENT);
+
 		pdc->SetTextColor(RGB(0x00,0x00,0x00));
 		pdc->DrawText(strText, ControlRect, 
-					  DT_CENTER | DT_VCENTER | DT_SINGLELINE); 
+					  DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 	}
 }
 
@@ -5615,8 +5567,8 @@ void CTMViewCtrl::OnOpenTextBox(CTMLead* pTMLead)
 void CTMViewCtrl::OnPaletteChanged(CWnd* pFocusWnd) 
 {
 	COleControl::OnPaletteChanged(pFocusWnd);
-	m_Panes[0]->SendMessage(WM_PALETTECHANGED, (WPARAM)pFocusWnd->m_hWnd);
-	m_Panes[1]->SendMessage(WM_PALETTECHANGED, (WPARAM)pFocusWnd->m_hWnd);
+	for(int i = 0; i < m_Panes.size(); i++)
+		m_Panes[i]->SendMessage(WM_PALETTECHANGED, (WPARAM)pFocusWnd->m_hWnd);
 }
 
 //==============================================================================
@@ -5717,10 +5669,10 @@ void CTMViewCtrl::OnParentNotify(UINT message, LPARAM lParam)
 				//	What pane is the user in?
 				if(m_bSplitHorizontal)
 				{
-					if(Pt.y <= m_rcFrames[0]->bottom)
+					/*if(Pt.y <= m_rcFrames[0]->bottom)
 						sPane = TMV_LEFTPANE;
 					else
-						sPane = TMV_RIGHTPANE;
+						sPane = TMV_RIGHTPANE;*/
 				}
 				else
 				{
@@ -6085,8 +6037,9 @@ void CTMViewCtrl::OnQFactorChanged()
 //==============================================================================
 BOOL CTMViewCtrl::OnQueryNewPalette() 
 {
-	m_Panes[0]->SendMessage(WM_QUERYNEWPALETTE);
-	m_Panes[1]->SendMessage(WM_QUERYNEWPALETTE);
+	for(int i =0; i < m_Panes.size(); i++)
+		m_Panes[i]->SendMessage(WM_QUERYNEWPALETTE);
+
 	return COleControl::OnQueryNewPalette();
 }
 
@@ -6431,8 +6384,9 @@ void CTMViewCtrl::OnSize(UINT nType, int cx, int cy)
 		}
 
 		//	Size the right pane if it's visible
-		if(m_Panes[1] && m_bSplitScreen)
-			m_Panes[1]->SetMaxRect(m_rcPanes[1], TRUE, TRUE);
+		for(int i = 0; i < m_Panes.size(); i++)
+			if(m_Panes[i] && m_bSplitScreen)
+				m_Panes[i]->SetMaxRect(m_rcPanes[i], TRUE, TRUE);
 		
 		//	It's ok to draw now
 		m_bRedraw = TRUE;
@@ -6518,14 +6472,16 @@ void CTMViewCtrl::OnSplitHorizontalChanged()
 			//	Prevent attempts to redraw 
 			m_bRedraw = FALSE;
 
-			//	Make sure we have the correct panes
-			m_Panes[0] = GetPane(TMV_LEFTPANE);
-			m_Panes[1] = GetPane(TMV_RIGHTPANE);
+			//	Make sure we have the correct panes, its always correct
+			//m_Panes[0] = GetPane(TMV_LEFTPANE);
+			//m_Panes[1] = GetPane(TMV_RIGHTPANE);
 
 			//	Size the each pane
 			m_Panes[0]->SetMaxRect(m_rcPanes[0], TRUE, TRUE);
-			m_Panes[1]->UnloadImage();
-			m_Panes[1]->SetMaxRect(m_rcPanes[1], TRUE, TRUE);
+			for(int i=1; i < m_Panes.size(); i++) {
+				m_Panes[i]->UnloadImage();
+				m_Panes[i]->SetMaxRect(m_rcPanes[i], TRUE, TRUE);
+			}
 
 			//	Redraw the windows
 			m_bRedraw = TRUE;
@@ -6574,19 +6530,19 @@ void CTMViewCtrl::OnSplitScreenChanged()
 	{
 		//	Size each pane
 		m_Panes[0]->SetMaxRect(m_rcPanes[0], TRUE, TRUE);
-		m_Panes[1]->UnloadImage();
-		m_Panes[1]->SetMaxRect(m_rcPanes[1], TRUE, TRUE);
+		for(int i =0; i < m_Panes.size(); i++) {
+			if(i>0)
+				m_Panes[i]->UnloadImage();
+			m_Panes[i]->SetMaxRect(m_rcPanes[i], TRUE, TRUE);
+		}
 
 		//	Both panes should be visible if they are loaded
-		if(m_Panes[0]->IsLoaded())
-		{
-			m_Panes[0]->ShowWindow(SW_SHOW);
-			m_Panes[0]->ShowCallouts(TRUE);
-		}
-		if(m_Panes[1]->IsLoaded())
-		{
-			m_Panes[1]->ShowCallouts(TRUE);
-			m_Panes[1]->ShowWindow(SW_SHOW);
+		for(int i=0; i < m_Panes.size(); i++) {
+			if(m_Panes[i]->IsLoaded())
+			{
+				m_Panes[i]->ShowWindow(SW_SHOW);
+				m_Panes[i]->ShowCallouts(TRUE);
+			}
 		}
 	}
 	else
@@ -6699,15 +6655,13 @@ void CTMViewCtrl::OnSyncPanesChanged()
 void CTMViewCtrl::OnTimer(UINT nIDEvent) 
 {
 	CTMLead* pPane;
-
-	if(nIDEvent == (UINT)m_Panes[0]->m_AsyncParams.iTimerId)
-	{
-		pPane = m_Panes[0];	
-	}
-	else if(nIDEvent == (UINT)m_Panes[1]->m_AsyncParams.iTimerId)
-	{
-		pPane = m_Panes[1];
-	}
+	
+	for(int i =0; i < m_Panes.size(); i++)
+		if(nIDEvent == (UINT)m_Panes[i]->m_AsyncParams.iTimerId)
+		{
+			pPane = m_Panes[0];	
+			break;
+		}
 	
 	KillTimer(nIDEvent);
 
@@ -7376,10 +7330,13 @@ void CTMViewCtrl::RecalcLayout()
 		m_rcFrames[0]->bottom = m_iHeight;
 		
 		//	Calculate the right/bottom frame rectangle
-		m_rcFrames[1]->left   = 0;
-		m_rcFrames[1]->top    = m_rcFrames[0]->bottom;
-		m_rcFrames[1]->right  = m_iWidth;
-		m_rcFrames[1]->bottom = m_iHeight*2;
+		for(int i=1; i < m_Panes.size(); i++) {
+			m_rcFrames[i]->left   = 0;
+			m_rcFrames[i]->top    = m_rcFrames[i-1]->bottom;
+			m_rcFrames[i]->right  = m_iWidth;
+			m_rcFrames[i]->bottom = m_iHeight*(i+1);
+		}
+
 		bSmooth = true;
 	}
 	else
@@ -7408,10 +7365,12 @@ void CTMViewCtrl::RecalcLayout()
 	//	Calculate the right pane rectangle
 	//
 	//	Note: The bottom/right members are used for width/height
-	m_rcPanes[1]->left   = m_rcFrames[1]->left + m_sSplitFrameThickness;
-	m_rcPanes[1]->top    = m_rcFrames[1]->top + m_sSplitFrameThickness;
-	m_rcPanes[1]->right  = (m_rcFrames[1]->right - m_rcFrames[1]->left) - (2 * m_sSplitFrameThickness);
-	m_rcPanes[1]->bottom = (m_rcFrames[1]->bottom - m_rcFrames[1]->top) - (2 * m_sSplitFrameThickness);
+	for(int i=0; i < m_Panes.size(); i++) {
+		m_rcPanes[i]->left   = m_rcFrames[i]->left + m_sSplitFrameThickness;
+		m_rcPanes[i]->top    = m_rcFrames[i]->top + m_sSplitFrameThickness;
+		m_rcPanes[i]->right  = (m_rcFrames[i]->right - m_rcFrames[i]->left) - (2 * m_sSplitFrameThickness);
+		m_rcPanes[i]->bottom = (m_rcFrames[i]->bottom - m_rcFrames[i]->top) - (2 * m_sSplitFrameThickness);
+	}
 }
 
 //==============================================================================
@@ -7430,8 +7389,8 @@ void CTMViewCtrl::Redraw()
 {
 	if(m_bSplitScreen)
 	{
-		m_Panes[0]->Redraw();
-		m_Panes[1]->Redraw();
+		for(int i=0; i < m_Panes.size(); i++)
+			m_Panes[i]->Redraw();
 	}
 	else
 	{
@@ -7475,8 +7434,8 @@ short CTMViewCtrl::RescaleZapCallouts()
 {
 	if(m_bSplitScreen)
 	{
-		m_Panes[0]->RescaleZapCallouts();
-		m_Panes[1]->RescaleZapCallouts();
+		for(int i=0; i < m_Panes.size(); i++)
+			m_Panes[i]->RescaleZapCallouts();
 	}
 	else
 	{
@@ -7977,8 +7936,8 @@ void CTMViewCtrl::SetColor(short sColor)
 {
 	if(m_bSyncPanes)
 	{
-		m_Panes[0]->SetColor(sColor);
-		m_Panes[1]->SetColor(sColor);
+		for(int i=0; i < m_Panes.size(); i++)
+			m_Panes[i]->SetColor(sColor);
 	}
 	else
 	{
@@ -8026,7 +7985,12 @@ void CTMViewCtrl::SetPane(CTMLead* pPane)
 		return;
 
 	//	Update the pane identifier
-	m_sActivePane = (pPane == m_Panes[1]) ? TMV_RIGHTPANE : TMV_LEFTPANE;
+	for(int i =0; i < m_Panes.size(); i++)
+		if(pPane == m_Panes[i]) {
+			m_sActivePane = i;
+			break;
+		}
+
 	OnActivePaneChanged();
 }
 
@@ -8309,8 +8273,8 @@ short CTMViewCtrl::SetProperties(LPCTSTR lpszFilename, LPCTSTR lpszSection)
 	m_bAnnFontStrikeThrough = GO.bAnnFontStrikeThrough;
 	m_bAnnFontUnderline = GO.bAnnFontUnderline;
 
-	SetPaneProps(m_Panes[0]);
-	SetPaneProps(m_Panes[1]);
+	for(int i=0; i < m_Panes.size(); i++)
+		SetPaneProps(m_Panes[i]);
 
 	return TMV_NOERROR;
 }
