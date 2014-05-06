@@ -36,20 +36,15 @@
 #include <objsafe.h>
 #include <diagnose.h>
 #include <tmver.h>
-using namespace std;
-#include <vector>
+
 //------------------------------------------------------------------------------
 //	DEFINES
 //------------------------------------------------------------------------------
 
 //	Control identifiers for left and right panes
 #define IDC_PANEA			200
-#define IDC_PANEB			201
-#define IDC_BACKUP			4000
-
-// panes control range
-#define IDC_PANE_RANGE_START			IDC_PANEA
-#define IDC_PANE_RANGE_END			    IDC_PANEB
+#define IDC_PANEB			300
+#define IDC_BACKUP			400
 
 //	Timer identifiers used for asynchronous file loading
 #define ASYNC_TIMER_PANEA	1
@@ -69,34 +64,28 @@ using namespace std;
 class CTMViewCtrl : public COleControl
 {
 	private:
+
 		CTMPrinter			m_Printer;
 		CTMVersion			m_tmVersion;
 		CErrorHandler		m_Errors;
 		CCallouts			m_Callouts;
 		CCallout*			m_pCallout;
-		vector<CTMLead*>     m_Panes;
-		//CTMLead				m_PaneA;
-		//CTMLead				m_PaneB;
-		//CTMLead             m_Panes[2];
+		CTMLead				m_PaneA;
+		CTMLead				m_PaneB;
 		CTMLead				m_Scratch;
 		CTMLead*			m_pActive;
-		//CTMLead*			m_pLeft;
-		//CTMLead*			m_pRight;
-		//CTMLead*            m_pPanes[2];
+		CTMLead*			m_pLeft;
+		CTMLead*			m_pRight;
 		CTMIni				m_Zap;
 		short				m_sButton;
 		short				m_sKey;
 		int					m_iWidth;
 		int					m_iHeight;
 		int					m_iTextOpen;
-		//RECT				m_rcLPane;
-		//RECT				m_rcRPane;
-		//RECT				m_rcPane[2];
-		vector<RECT*>       m_rcPanes;
-		//RECT				m_rcRFrame;
-		//RECT				m_rcLFrame;
-		//RECT				m_rcFrame[2];
-		vector<RECT*>       m_rcFrames;
+		RECT				m_rcLPane;
+		RECT				m_rcRPane;
+		RECT				m_rcRFrame;
+		RECT				m_rcLFrame;
 		RECT				m_rcMax;
 		BOOL				m_bRedraw;
 		BOOL				m_bParentNotify;
@@ -264,30 +253,6 @@ class CTMViewCtrl : public COleControl
 	afx_msg void OnBMouseMove(short Button, short Shift, long x, long y);
 	afx_msg void OnBMouseUp(short Button, short Shift, long x, long y);
 	afx_msg void OnBRubberBand();
-
-	// smooooooooooooootttttthhhh
-	afx_msg void OnPaneAnimate(BOOL bEnable);
-	afx_msg void OnPaneAnnChange(long hObject, long uType);
-	afx_msg void OnPaneAnnClicked(long hObject);
-	afx_msg void OnPaneAnnCreate(long hObject);
-	afx_msg void OnPaneAnnDestroy(long hObject);
-	afx_msg void OnPaneAnnDrawn(long hObject);
-	afx_msg void OnPaneAnnMenu(LPDISPATCH AnnMenu);
-	afx_msg void OnPaneAnnMouseDown(short Button, short Shift, long x, long y);
-	afx_msg void OnPaneAnnMouseMove(short Button, short Shift, long x, long y);
-	afx_msg void OnPaneAnnMouseUp(short Button, short Shift, long x, long y);
-	afx_msg void OnPaneAnnSelect(const VARIANT& aObjects, short uCount);
-	afx_msg void OnPaneAnnUserMenu(long nID);
-	afx_msg void OnPaneKeyDown(short FAR* KeyCode, short Shift);
-	afx_msg void OnPaneKeyPress(short FAR* KeyAscii);
-	afx_msg void OnPaneKeyUp(short FAR* KeyCode, short Shift);
-	afx_msg void OnPaneMouseClick();
-	afx_msg void OnPaneMouseDblClick();
-	afx_msg void OnPaneMouseDown(short Button, short Shift, long X, long Y);
-	afx_msg void OnPaneMouseMove(short Button, short Shift, long x, long y);
-	afx_msg void OnPaneMouseUp(short Button, short Shift, long x, long y);
-	afx_msg void OnPaneRubberBand();
-	////////////////////////////////////
 	
 	DECLARE_EVENTSINK_MAP()
 	//}}AFX_MSG
@@ -800,7 +765,7 @@ class CTMViewCtrl : public COleControl
 	//}}AFX_DISP_ID
 	};
 public:
-	void DoGesturePan(LONG lCurrentX, LONG lCurrentY, LONG lLastX, LONG lLastY, bool* bSmooth);
+	void DoGesturePan(LONG lX, LONG lY);
 protected:
 	void DoGestureZoom(FLOAT zoomFactor);
 	void SetZoomedNextPage(BOOL bZoomed);

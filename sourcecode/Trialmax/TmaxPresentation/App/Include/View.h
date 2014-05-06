@@ -521,8 +521,8 @@ class CMainView : public CFormView
 		CBarcodeBuffer	m_aBarcodes;
 		CBarcode		m_Barcode;
 
-		SMultipageInfo	m_TMView1;
-		SMultipageInfo	m_TMView2;
+		vector<SMultipageInfo *> m_arrMultiPageInfo;
+
 		SMultipageInfo	m_TMPower1;
 		SMultipageInfo	m_TMPower2;
 		SMultipageInfo	m_TMMovie;
@@ -816,7 +816,8 @@ class CMainView : public CFormView
 	public:
 	//{{AFX_DATA(CMainView)
 	enum { IDD = IDD_TMAXPRESENTATION_FORM };
-	CTm_view	m_ctrlTMView;
+	CTm_view	*m_ctrlTMView;
+	vector<CTm_view *> m_arrTmView;
 	CTMTool	m_ctrlTBDocuments;
 	CTMTool	m_ctrlTBDocumentsLarge;
 	CTMTool	m_ctrlTBGraphics;
@@ -982,6 +983,7 @@ class CMainView : public CFormView
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
+public:
 };
 
 #ifndef _DEBUG  

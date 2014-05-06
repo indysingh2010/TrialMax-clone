@@ -187,19 +187,39 @@ BEGIN_MESSAGE_MAP(CMainView, CFormView)
 	ON_MESSAGE(WM_MOUSEMODE, OnWMMouseMode)
 	ON_MESSAGE(WM_GRABFOCUS, OnWMGrabFocus)
 	ON_MESSAGE(WM_GESTURE, OnGesture)
-END_MESSAGE_MAP()
+	ON_WM_PAINT()
+	END_MESSAGE_MAP()
 
 BEGIN_EVENTSINK_MAP(CMainView, CFormView)
     //{{AFX_EVENTSINK_MAP(CMainView)
 	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 3 /* CreateCallout */, OnAxCreateCallout, VTS_I4)
 	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 4 /* DestroyCallout */, OnAxDestroyCallout, VTS_I4)
-	ON_EVENT(CMainView, IDC_DOCUMENTS, 1 /* ButtonClick */, OnAxButtonClick, VTS_I2 VTS_BOOL)
-	ON_EVENT(CMainView, IDC_DOCUMENTS_LARGE, 1 /* ButtonClick */, OnAxButtonClickLarge, VTS_I2 VTS_BOOL)
 	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 5 /* SelectPane */, OnChangePane, VTS_I2)
-	ON_EVENT(CMainView, IDC_TMSTATCTRL, -600 /* Click */, OnAxClickStatusBar, VTS_NONE)
-	ON_EVENT(CMainView, IDC_TMLPENCTRL, 1 /* MouseClick */, OnAxClickLightPen, VTS_I2 VTS_I2)
 	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 6 /* OpenTextBox */, OnAxOpenTextBox, VTS_I2)
 	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 7 /* CloseTextBox */, OnAxCloseTextBox, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 9 /* StartTextEdit */, OnAxStartTextEdit, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 10 /* StopTextEdit */, OnAxStopTextEdit, VTS_I2)
+
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL2, 3 /* CreateCallout */, OnAxCreateCallout, VTS_I4)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL2, 4 /* DestroyCallout */, OnAxDestroyCallout, VTS_I4)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL2, 5 /* SelectPane */, OnChangePane, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL2, 6 /* OpenTextBox */, OnAxOpenTextBox, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL2, 7 /* CloseTextBox */, OnAxCloseTextBox, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL2, 9 /* StartTextEdit */, OnAxStartTextEdit, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL2, 10 /* StopTextEdit */, OnAxStopTextEdit, VTS_I2)
+
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL3, 3 /* CreateCallout */, OnAxCreateCallout, VTS_I4)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL3, 4 /* DestroyCallout */, OnAxDestroyCallout, VTS_I4)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL3, 5 /* SelectPane */, OnChangePane, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL3, 6 /* OpenTextBox */, OnAxOpenTextBox, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL3, 7 /* CloseTextBox */, OnAxCloseTextBox, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL3, 9 /* StartTextEdit */, OnAxStartTextEdit, VTS_I2)
+	ON_EVENT(CMainView, IDC_TMVIEWCTRL3, 10 /* StopTextEdit */, OnAxStopTextEdit, VTS_I2)
+
+	ON_EVENT(CMainView, IDC_DOCUMENTS, 1 /* ButtonClick */, OnAxButtonClick, VTS_I2 VTS_BOOL)
+	ON_EVENT(CMainView, IDC_DOCUMENTS_LARGE, 1 /* ButtonClick */, OnAxButtonClickLarge, VTS_I2 VTS_BOOL)
+	ON_EVENT(CMainView, IDC_TMSTATCTRL, -600 /* Click */, OnAxClickStatusBar, VTS_NONE)
+	ON_EVENT(CMainView, IDC_TMLPENCTRL, 1 /* MouseClick */, OnAxClickLightPen, VTS_I2 VTS_I2)
 	ON_EVENT(CMainView, IDC_TMPOWERCTRL, 4 /* ViewFocus */, OnAxPowerFocus, VTS_I2)
 	ON_EVENT(CMainView, IDC_TMMOVIECTRL, 2 /* StateChange */, OnAxStateChange, VTS_I2)
 	ON_EVENT(CMainView, IDC_TMMOVIECTRL, 3 /* PlaylistState */, OnAxPlaylistState, VTS_I2)
@@ -210,8 +230,6 @@ BEGIN_EVENTSINK_MAP(CMainView, CFormView)
 	ON_EVENT(CMainView, IDC_TMMOVIECTRL, 10 /* ElapsedTimes */, OnAxElapsedTimes, VTS_R8 VTS_R8)
 	ON_EVENT(CMainView, IDC_TMMOVIECTRL, 11 /* DesignationChange */, OnAxDesignationChange, VTS_I4 VTS_I4)
 	ON_EVENT(CMainView, IDC_TMMOVIECTRL, 12 /* LinkChange */, OnAxLinkChange, VTS_BSTR VTS_I4 VTS_I4)
-	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 9 /* StartTextEdit */, OnAxStartTextEdit, VTS_I2)
-	ON_EVENT(CMainView, IDC_TMVIEWCTRL, 10 /* StopTextEdit */, OnAxStopTextEdit, VTS_I2)
 	ON_EVENT(CMainView, IDC_TMMOVIECTRL, 14 /* PositionChange */, OnAxPositionChange, VTS_R8)
 	ON_EVENT(CMainView, IDC_TMSHARE, 1 /* CommandRequest */, OnAxManagerRequest, VTS_NONE)
 	ON_EVENT(CMainView, IDC_TMSHARE, 4 /* CommandResponse */, OnAxManagerResponse, VTS_NONE)
@@ -361,13 +379,13 @@ void CMainView::ClearTMViewInactive()
 	short			sInactive;
 
 	//	Get the identifier of the active and inactive panes
-	sInactive = (m_ctrlTMView.GetActivePane() == TMV_LEFTPANE) ? TMV_RIGHTPANE : TMV_LEFTPANE;
+	sInactive = (m_ctrlTMView->GetActivePane() == TMV_LEFTPANE) ? TMV_RIGHTPANE : TMV_LEFTPANE;
 
 	//	Clear out the inactive pane
-	m_ctrlTMView.LoadFile(0, sInactive);
+	m_ctrlTMView->LoadFile(0, sInactive);
 	
 	//	Reset the media descriptor attached to the pane
-	if((pInfo = (SMultipageInfo*)m_ctrlTMView.GetData(sInactive)) != NULL)
+	if((pInfo = (SMultipageInfo*)m_ctrlTMView->GetData(sInactive)) != NULL)
 		ResetMultipage(pInfo);
 }
 
@@ -427,10 +445,12 @@ void CMainView::CloseDatabase()
 //	Notes:			None
 //
 //==============================================================================
-CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL)
+CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMView(NULL) 
 {
 	//{{AFX_DATA_INIT(CMainView)
 	//}}AFX_DATA_INIT
+
+	AfxMessageBox("hello");
 
 	m_pDatabase = 0;
 	m_pFrame = 0;
@@ -525,8 +545,6 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL)
 	ZeroMemory(&m_rcPower, sizeof(m_rcPower));
 	ZeroMemory(&m_rcStatus, sizeof(m_rcStatus));
 	ZeroMemory(&m_PlaylistStatus, sizeof(m_PlaylistStatus));
-	ZeroMemory(&m_TMView1, sizeof(m_TMView1));
-	ZeroMemory(&m_TMView2, sizeof(m_TMView2));
 	ZeroMemory(&m_TMPower1, sizeof(m_TMPower1));
 	ZeroMemory(&m_TMPower2, sizeof(m_TMPower2));
 	ZeroMemory(&m_TMMovie, sizeof(m_TMMovie));
@@ -536,7 +554,14 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL)
 	ZeroMemory(&m_ControlBar, sizeof(m_ControlBar));
 	ZeroMemory(&m_ControlBarExtra, sizeof(m_ControlBarExtra));
 	::GetWindowRect(::GetDesktopWindow(), &m_ScreenResolution);
-		
+
+	for(int i=0; i < 3; i++) {
+
+		CTm_view *pTmView = new CTm_view();
+		m_arrTmView.push_back(pTmView);
+	}
+
+	m_ctrlTMView = m_arrTmView[0];
 }
 
 //==============================================================================
@@ -726,7 +751,9 @@ void CMainView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CMainView)
-	DDX_Control(pDX, IDC_TMVIEWCTRL, m_ctrlTMView);
+	DDX_Control(pDX, IDC_TMVIEWCTRL, *m_arrTmView[0]);
+	DDX_Control(pDX, IDC_TMVIEWCTRL2, *m_arrTmView[1]);
+	DDX_Control(pDX, IDC_TMVIEWCTRL3, *m_arrTmView[2]);
 	DDX_Control(pDX, IDC_DOCUMENTS, m_ctrlTBDocuments);
 	DDX_Control(pDX, IDC_DOCUMENTS_LARGE, m_ctrlTBDocumentsLarge);
 	DDX_Control(pDX, IDC_GRAPHICS, m_ctrlTBGraphics);
@@ -1119,12 +1146,12 @@ SMultipageInfo* CMainView::GetMultipageInfo(short sState)
 		case S_LINKEDIMAGE:
 
 			//	Get the media object attached to the active pane
-			pInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_ACTIVEPANE);
+			pInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_ACTIVEPANE);
 
 			//	This is just to keep the app from crashing. It should never 
 			//	happen once initialized
 			if(pInfo == NULL)
-				pInfo = &m_TMView1;
+				pInfo = new SMultipageInfo();
 			
 			break; 
 		
@@ -1148,7 +1175,7 @@ SMultipageInfo* CMainView::GetMultipageInfo(short sState)
 
 		default:				
 
-			pInfo = &m_TMView1;
+			pInfo = new SMultipageInfo();
 			break;
 	}
 
@@ -1209,12 +1236,12 @@ BOOL CMainView::GetSplitPageInfo(SMultipageInfo* pInfo, BOOL bPrevious)
 	CMultipage*		pSplitMultipage = NULL;
 
 	//	Are we in split screen mode?
-	if(m_ctrlTMView.GetSplitScreen() == TRUE)
+	if(m_ctrlTMView->GetSplitScreen() == TRUE)
 	{
 		//	Get the information bound to each pane
-		if((pLInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_LEFTPANE)) != NULL)
+		if((pLInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_LEFTPANE)) != NULL)
 			pLPage = pLInfo->pSecondary;
-		if((pRInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_RIGHTPANE)) != NULL)
+		if((pRInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_RIGHTPANE)) != NULL)
 			pRPage = pRInfo->pSecondary;
 
 		//	Get the record required to perform the operation
@@ -1265,7 +1292,7 @@ BOOL CMainView::GetSplitPageInfo(SMultipageInfo* pInfo, BOOL bPrevious)
 				pSplitSecondary = pRInfo->pMultipage->m_Pages.FindNext(pRInfo->pSecondary);
 		}
 
-	}// if(m_ctrlTMView.GetSplitScreen() == TRUE)
+	}// if(m_ctrlTMView->GetSplitScreen() == TRUE)
 
 	//	Does the caller want the results?
 	if(pInfo != NULL)
@@ -1728,7 +1755,7 @@ void CMainView::InitializeTest()
 	//	Disable all the runtime error handlers
 	m_Errors.Enable(FALSE);
 	m_ctrlTMMovie.SetEnableErrors(FALSE);
-	m_ctrlTMView.SetEnableErrors(FALSE);
+	m_ctrlTMView->SetEnableErrors(FALSE);
 	m_pDatabase->SetErrorHandler(FALSE, 0);
 
 	//	Mark the start of this test in the activity log
@@ -1837,91 +1864,91 @@ BOOL CMainView::IsCommandChecked(short sCommand)
 	{
 		case TMAX_RED:
 		
-			return m_ctrlTMView.GetColor() == TMV_RED;
+			return m_ctrlTMView->GetColor() == TMV_RED;
 		
 		case TMAX_GREEN:
 		
-			return m_ctrlTMView.GetColor() == TMV_GREEN;
+			return m_ctrlTMView->GetColor() == TMV_GREEN;
 		
 		case TMAX_BLUE:
 		
-			return m_ctrlTMView.GetColor() == TMV_BLUE;
+			return m_ctrlTMView->GetColor() == TMV_BLUE;
 		
 		case TMAX_YELLOW:
 		
-			return m_ctrlTMView.GetColor() == TMV_YELLOW;
+			return m_ctrlTMView->GetColor() == TMV_YELLOW;
 		
 		case TMAX_BLACK:
 		
-			return m_ctrlTMView.GetColor() == TMV_BLACK;
+			return m_ctrlTMView->GetColor() == TMV_BLACK;
 		
 		case TMAX_WHITE:
 		
-			return m_ctrlTMView.GetColor() == TMV_WHITE;
+			return m_ctrlTMView->GetColor() == TMV_WHITE;
 		
 		case TMAX_DARKRED:
 		
-			return m_ctrlTMView.GetColor() == TMV_DARKRED;
+			return m_ctrlTMView->GetColor() == TMV_DARKRED;
 		
 		case TMAX_DARKGREEN:
 		
-			return m_ctrlTMView.GetColor() == TMV_DARKGREEN;
+			return m_ctrlTMView->GetColor() == TMV_DARKGREEN;
 		
 		case TMAX_DARKBLUE:
 		
-			return m_ctrlTMView.GetColor() == TMV_DARKBLUE;
+			return m_ctrlTMView->GetColor() == TMV_DARKBLUE;
 		
 		case TMAX_LIGHTRED:
 		
-			return m_ctrlTMView.GetColor() == TMV_LIGHTRED;
+			return m_ctrlTMView->GetColor() == TMV_LIGHTRED;
 		
 		case TMAX_LIGHTGREEN:
 		
-			return m_ctrlTMView.GetColor() == TMV_LIGHTGREEN;
+			return m_ctrlTMView->GetColor() == TMV_LIGHTGREEN;
 		
 		case TMAX_LIGHTBLUE:
 		
-			return m_ctrlTMView.GetColor() == TMV_LIGHTBLUE;
+			return m_ctrlTMView->GetColor() == TMV_LIGHTBLUE;
 		
 		case TMAX_FREEHAND:
 		
-			return m_ctrlTMView.GetAnnTool() == FREEHAND;
+			return m_ctrlTMView->GetAnnTool() == FREEHAND;
 		
 		case TMAX_LINE:
 		
-			return m_ctrlTMView.GetAnnTool() == LINE;
+			return m_ctrlTMView->GetAnnTool() == LINE;
 		
 		case TMAX_ARROW:
 		
-			return m_ctrlTMView.GetAnnTool() == ARROW;
+			return m_ctrlTMView->GetAnnTool() == ARROW;
 		
 		case TMAX_ELLIPSE:
 		
-			return m_ctrlTMView.GetAnnTool() == ELLIPSE;
+			return m_ctrlTMView->GetAnnTool() == ELLIPSE;
 		
 		case TMAX_RECTANGLE:
 		
-			return m_ctrlTMView.GetAnnTool() == RECTANGLE;
+			return m_ctrlTMView->GetAnnTool() == RECTANGLE;
 		
 		case TMAX_FILLEDELLIPSE:
 		
-			return m_ctrlTMView.GetAnnTool() == FILLED_ELLIPSE;
+			return m_ctrlTMView->GetAnnTool() == FILLED_ELLIPSE;
 		
 		case TMAX_FILLEDRECTANGLE:
 		
-			return m_ctrlTMView.GetAnnTool() == FILLED_RECTANGLE;
+			return m_ctrlTMView->GetAnnTool() == FILLED_RECTANGLE;
 		
 		case TMAX_POLYLINE:
 		
-			return m_ctrlTMView.GetAnnTool() == POLYLINE;
+			return m_ctrlTMView->GetAnnTool() == POLYLINE;
 		
 		case TMAX_POLYGON:
 		
-			return m_ctrlTMView.GetAnnTool() == POLYGON;
+			return m_ctrlTMView->GetAnnTool() == POLYGON;
 		
 		case TMAX_ANNTEXT:
 		
-			return m_ctrlTMView.GetAnnTool() == ANNTEXT;
+			return m_ctrlTMView->GetAnnTool() == ANNTEXT;
 		
 		case TMAX_DISABLELINKS:
 		
@@ -1929,58 +1956,58 @@ BOOL CMainView::IsCommandChecked(short sCommand)
 
 		case TMAX_SPLITVERTICAL:
 
-			return (m_ctrlTMView.GetSplitScreen() && !m_ctrlTMView.GetSplitHorizontal());
+			return (m_ctrlTMView->GetSplitScreen() && !m_ctrlTMView->GetSplitHorizontal());
 
 		case TMAX_SPLITHORIZONTAL:
 
-			return (m_ctrlTMView.GetSplitScreen() && m_ctrlTMView.GetSplitHorizontal());
+			return (m_ctrlTMView->GetSplitScreen() && m_ctrlTMView->GetSplitHorizontal());
 
 		case TMAX_CALLOUT:
 		
-			return m_ctrlTMView.GetAction() == CALLOUT;
+			return m_ctrlTMView->GetAction() == CALLOUT;
 		
 		case TMAX_DRAWTOOL:
 		
-			return m_ctrlTMView.GetAction() == DRAW;
+			return m_ctrlTMView->GetAction() == DRAW;
 		
 		case TMAX_HIGHLIGHT:
 		
-			return m_ctrlTMView.GetAction() == HIGHLIGHT;
+			return m_ctrlTMView->GetAction() == HIGHLIGHT;
 		
 		case TMAX_REDACT:
 		
-			return m_ctrlTMView.GetAction() == REDACT;
+			return m_ctrlTMView->GetAction() == REDACT;
 		
 		case TMAX_PAN:
 		
-			return m_ctrlTMView.GetAction() == PAN;
+			return m_ctrlTMView->GetAction() == PAN;
 		
 		case TMAX_SELECT:
 		
-			return m_ctrlTMView.GetAction() == SELECT;
+			return m_ctrlTMView->GetAction() == SELECT;
 		
 		case TMAX_ZOOM:				
 		
-			if(m_ctrlTMView.GetAction() != ZOOM)
+			if(m_ctrlTMView->GetAction() != ZOOM)
 				return FALSE;
-			if(m_ctrlTMView.GetZoomToRect())
+			if(m_ctrlTMView->GetZoomToRect())
 				return FALSE;
-			if(m_ctrlTMView.GetZoomFactor(TMV_ACTIVEPANE) >= (float)m_ctrlTMView.GetMaxZoom())
+			if(m_ctrlTMView->GetZoomFactor(TMV_ACTIVEPANE) >= (float)m_ctrlTMView->GetMaxZoom())
 				return FALSE;
 			else
 				return TRUE;
 
 		case TMAX_ZOOMWIDTH:
 
-			return m_ctrlTMView.GetZoomState(TMV_ACTIVEPANE) == ZOOMED_FULLWIDTH;
+			return m_ctrlTMView->GetZoomState(TMV_ACTIVEPANE) == ZOOMED_FULLWIDTH;
 
 		case TMAX_ZOOMRESTRICTED:
 
-			if(m_ctrlTMView.GetAction() != ZOOM)
+			if(m_ctrlTMView->GetAction() != ZOOM)
 				return FALSE;
-			if(!m_ctrlTMView.GetZoomToRect())
+			if(!m_ctrlTMView->GetZoomToRect())
 				return FALSE;
-			if(m_ctrlTMView.GetZoomFactor(TMV_ACTIVEPANE) >= (float)m_ctrlTMView.GetMaxZoom())
+			if(m_ctrlTMView->GetZoomFactor(TMV_ACTIVEPANE) >= (float)m_ctrlTMView->GetMaxZoom())
 				return FALSE;
 			else
 				return TRUE;
@@ -2003,11 +2030,11 @@ BOOL CMainView::IsCommandChecked(short sCommand)
 
 		case TMAX_SHADEONCALLOUT:
 
-			return (m_ctrlTMView.GetShadeOnCallout());
+			return (m_ctrlTMView->GetShadeOnCallout());
 
 		case TMAX_GESTURE_PAN:
 
-			return m_ctrlTMView.GetAction() == TMAX_NOCOMMAND;
+			return m_ctrlTMView->GetAction() == TMAX_NOCOMMAND;
 
 		default:
 			
@@ -2067,7 +2094,7 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 		case TMAX_SELECT:
 		case TMAX_SHADEONCALLOUT:
 		
-			return m_ctrlTMView.IsLoaded(TMV_ACTIVEPANE);
+			return m_ctrlTMView->IsLoaded(TMV_ACTIVEPANE);
 
 		case TMAX_SELECTTOOL:
 
@@ -2075,7 +2102,7 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 
 		case TMAX_SWITCHPANE:
 
-			return m_ctrlTMView.GetSplitScreen();
+			return m_ctrlTMView->GetSplitScreen();
 
 		case TMAX_FIRSTZAP:
 		case TMAX_LASTZAP:
@@ -2083,7 +2110,7 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 		case TMAX_PREVZAP:
 		
 			//	Is the active pane of the viewer loaded?
-			if(!m_ctrlTMView.IsLoaded(TMV_ACTIVEPANE))
+			if(!m_ctrlTMView->IsLoaded(TMV_ACTIVEPANE))
 				return FALSE;
 
 			//	Do we have an active multipage object?
@@ -2138,16 +2165,16 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 		case TMAX_NORMAL:
 			
 			//	Is the active pane of the viewer loaded?
-			if(!m_ctrlTMView.IsLoaded(TMV_ACTIVEPANE))
+			if(!m_ctrlTMView->IsLoaded(TMV_ACTIVEPANE))
 				return FALSE;
 
-			return (m_ctrlTMView.GetZoomState(TMV_ACTIVEPANE) != ZOOMED_NONE);
+			return (m_ctrlTMView->GetZoomState(TMV_ACTIVEPANE) != ZOOMED_NONE);
 		
 		case TMAX_SAVEZAP:
 		case TMAX_UPDATE_ZAP:
 			
 			//	Is the active pane of the viewer loaded?
-			if(!m_ctrlTMView.IsLoaded(TMV_ACTIVEPANE))
+			if(!m_ctrlTMView->IsLoaded(TMV_ACTIVEPANE))
 				return FALSE;
 
 			//	Is this an image?
@@ -2176,24 +2203,24 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 		case TMAX_SAVE_SPLIT_ZAP:
 			
 			//	Must be in split screen mode
-			if(!m_ctrlTMView.GetSplitScreen())
+			if(!m_ctrlTMView->GetSplitScreen())
 				return FALSE;
 
 			//	Make sure both viewer panes are loaded
-			if(!m_ctrlTMView.IsLoaded(TMV_LEFTPANE))
+			if(!m_ctrlTMView->IsLoaded(TMV_LEFTPANE))
 				return FALSE;
-			if(!m_ctrlTMView.IsLoaded(TMV_RIGHTPANE))
+			if(!m_ctrlTMView->IsLoaded(TMV_RIGHTPANE))
 				return FALSE;
 
 			//	Verify the contents of the left pane
-			pInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_LEFTPANE);
+			pInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_LEFTPANE);
 			if(pInfo == NULL) return FALSE;
 			if(pInfo->pMultipage == NULL) return FALSE;
 			if(pInfo->pSecondary == NULL) return FALSE;
 			if(pInfo->pMultipage->m_lPlayerType != MEDIA_TYPE_IMAGE) return FALSE;
 
 			//	Verify the contents of the right pane
-			pInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_RIGHTPANE);
+			pInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_RIGHTPANE);
 			if(pInfo == NULL) return FALSE;
 			if(pInfo->pMultipage == NULL) return FALSE;
 			if(pInfo->pSecondary == NULL) return FALSE;
@@ -2206,16 +2233,16 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 		case TMAX_ZOOMRESTRICTED:
 		
 			//	Is the active pane of the viewer loaded?
-			if(!m_ctrlTMView.IsLoaded(TMV_ACTIVEPANE))
+			if(!m_ctrlTMView->IsLoaded(TMV_ACTIVEPANE))
 				return FALSE;
 
-			return (m_ctrlTMView.GetZoomFactor(TMV_ACTIVEPANE) < 
-					(float)m_ctrlTMView.GetMaxZoom());
+			return (m_ctrlTMView->GetZoomFactor(TMV_ACTIVEPANE) < 
+					(float)m_ctrlTMView->GetMaxZoom());
 
 		case TMAX_ZOOMWIDTH:
 		
 			//	Is the active pane of the viewer loaded?
-			if(!m_ctrlTMView.IsLoaded(TMV_ACTIVEPANE))
+			if(!m_ctrlTMView->IsLoaded(TMV_ACTIVEPANE))
 				return FALSE;
 			else
 				return TRUE;
@@ -2388,7 +2415,7 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 				return FALSE;
 
 			//	Are we already in split screen mode?
-			if(m_ctrlTMView.GetSplitScreen())
+			if(m_ctrlTMView->GetSplitScreen())
 				return FALSE;
 
 			//	Must have a valid page
@@ -2406,7 +2433,7 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 				return FALSE;
 
 			//	Are we already in split screen mode?
-			if(m_ctrlTMView.GetSplitScreen() == FALSE)
+			if(m_ctrlTMView->GetSplitScreen() == FALSE)
 				return FALSE;
 
 			//	Must have a valid page
@@ -2834,9 +2861,9 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	}
 
 	//	Turn off split-screen mode if the screen is blanked
-	if((m_sState == S_CLEAR) && (m_ctrlTMView.GetSplitScreen() == TRUE))
+	if((m_sState == S_CLEAR) && (m_ctrlTMView->GetSplitScreen() == TRUE))
 	{
-		if(m_ctrlTMView.GetSplitHorizontal())
+		if(m_ctrlTMView->GetSplitHorizontal())
 			OnSplitHorizontal();
 		else
 			OnSplitVertical();
@@ -3567,14 +3594,14 @@ BOOL CMainView::LoadTreatment(SMultipageInfo* pMPTreatment, short sState)
 	if(MPSibling.pTertiary != NULL)
 	{
 		//	Make sure we are in split screen mode
-		if(m_ctrlTMView.GetSplitHorizontal() != pMPTreatment->pTertiary->GetSplitHorizontal())
-			m_ctrlTMView.SetSplitHorizontal(pMPTreatment->pTertiary->GetSplitHorizontal());
+		if(m_ctrlTMView->GetSplitHorizontal() != pMPTreatment->pTertiary->GetSplitHorizontal())
+			m_ctrlTMView->SetSplitHorizontal(pMPTreatment->pTertiary->GetSplitHorizontal());
 		
-		if(m_ctrlTMView.GetSplitScreen() != TRUE)
-			m_ctrlTMView.SetSplitScreen(TRUE);
+		if(m_ctrlTMView->GetSplitScreen() != TRUE)
+			m_ctrlTMView->SetSplitScreen(TRUE);
 		
 		//	What pane is currently active?
-		sActivePaneId = m_ctrlTMView.GetActivePane();
+		sActivePaneId = m_ctrlTMView->GetActivePane();
 
 		//	Set the correct color of the split screen frame
 		SetZapSplitScreen(TRUE);
@@ -3592,8 +3619,8 @@ BOOL CMainView::LoadTreatment(SMultipageInfo* pMPTreatment, short sState)
 		}
 
 		//	Get the multipage information bound to each pane
-		pTMViewPrimary = (SMultipageInfo*)m_ctrlTMView.GetData(sPrimaryPaneId);
-		pTMViewSibling = (SMultipageInfo*)m_ctrlTMView.GetData(sSiblingPaneId);
+		pTMViewPrimary = (SMultipageInfo*)m_ctrlTMView->GetData(sPrimaryPaneId);
+		pTMViewSibling = (SMultipageInfo*)m_ctrlTMView->GetData(sSiblingPaneId);
 
 		ASSERT_RET_BOOL(pTMViewPrimary != NULL);
 		ASSERT_RET_BOOL(pTMViewSibling != NULL);
@@ -3629,7 +3656,7 @@ BOOL CMainView::LoadTreatment(SMultipageInfo* pMPTreatment, short sState)
 		m_bLoadingSplitZap = FALSE;
 
 		//	Restore the active pane
-		m_ctrlTMView.SetActivePane(sActivePaneId);
+		m_ctrlTMView->SetActivePane(sActivePaneId);
 	}
 	else
 	{
@@ -3644,7 +3671,7 @@ BOOL CMainView::LoadTreatment(SMultipageInfo* pMPTreatment, short sState)
 	}// if(MPSibling.pTertiary != NULL)
 
 	//	Update the barcode information
-	if((pMPActive = (SMultipageInfo*)m_ctrlTMView.GetData(-1)) != NULL)
+	if((pMPActive = (SMultipageInfo*)m_ctrlTMView->GetData(-1)) != NULL)
 	{
 		m_Barcode.m_strMediaId   = pMPActive->pMultipage->m_strMediaId;
 		m_Barcode.m_lSecondaryId = pMPActive->pSecondary->m_lBarcodeId;
@@ -3681,7 +3708,7 @@ BOOL CMainView::LoadTreatment(SMultipageInfo* pMPTreatment, LPCSTR lpszZapFileSp
 	ASSERT_RET_BOOL(pMPTreatment->pTertiary != NULL);
 
 	//	Get the data descriptor bound to the TMView pane
-	if((pTMViewInfo = (SMultipageInfo*)m_ctrlTMView.GetData(sPane)) != NULL)
+	if((pTMViewInfo = (SMultipageInfo*)m_ctrlTMView->GetData(sPane)) != NULL)
 	{
 		//	Update the data associated with the pane
 		//
@@ -3692,9 +3719,9 @@ BOOL CMainView::LoadTreatment(SMultipageInfo* pMPTreatment, LPCSTR lpszZapFileSp
 
 		//	Load the treatment
 		if(pMPTreatment->pSecondary->m_lDisplayType == DISPLAY_TYPE_HIRESPAGE)
-			m_ctrlTMView.LoadZap(lpszZapFileSpec, TRUE, m_bScaleDocs, m_ctrlTMView.IsWindowVisible(), sPane, lpszSourceFileSpec);
+			m_ctrlTMView->LoadZap(lpszZapFileSpec, TRUE, m_bScaleDocs, m_ctrlTMView->IsWindowVisible(), sPane, lpszSourceFileSpec);
 		else
-			m_ctrlTMView.LoadZap(lpszZapFileSpec, TRUE, m_bScaleGraphics, m_ctrlTMView.IsWindowVisible(), sPane, lpszSourceFileSpec);
+			m_ctrlTMView->LoadZap(lpszZapFileSpec, TRUE, m_bScaleGraphics, m_ctrlTMView->IsWindowVisible(), sPane, lpszSourceFileSpec);
 	}
 
 
@@ -3864,7 +3891,7 @@ void CMainView::OnAxButtonClickLarge(short sId, BOOL bChecked)
 	{
 		if(!IsCommandEnabled(TMAX_RED))
 			return;
-		m_ctrlTMView.SetColor(TMV_RED);
+		m_ctrlTMView->SetColor(TMV_RED);
 		UpdateToolColor();
 		return;
 	}
@@ -3945,11 +3972,11 @@ void CMainView::OnAxCloseTextBox(short sPane)
 
 	//	Update the ini file in case the user changed the font
 	m_Ini.SetTMSection(PRESENTATION_APP);
-	lstrcpyn(szFont, m_ctrlTMView.GetAnnFontName(), sizeof(szFont));
-	m_Ini.WriteLong(ANNFONTSIZE_LINE, m_ctrlTMView.GetAnnFontSize());
-	m_Ini.WriteBool(ANNFONTSTRIKETHROUGH_LINE, m_ctrlTMView.GetAnnFontStrikeThrough());
-	m_Ini.WriteBool(ANNFONTUNDERLINE_LINE, m_ctrlTMView.GetAnnFontUnderline());
-	m_Ini.WriteBool(ANNFONTBOLD_LINE, m_ctrlTMView.GetAnnFontBold());
+	lstrcpyn(szFont, m_ctrlTMView->GetAnnFontName(), sizeof(szFont));
+	m_Ini.WriteLong(ANNFONTSIZE_LINE, m_ctrlTMView->GetAnnFontSize());
+	m_Ini.WriteBool(ANNFONTSTRIKETHROUGH_LINE, m_ctrlTMView->GetAnnFontStrikeThrough());
+	m_Ini.WriteBool(ANNFONTUNDERLINE_LINE, m_ctrlTMView->GetAnnFontUnderline());
+	m_Ini.WriteBool(ANNFONTBOLD_LINE, m_ctrlTMView->GetAnnFontBold());
 	m_Ini.WriteString(ANNFONTNAME_LINE, szFont);
 }
 
@@ -4689,7 +4716,7 @@ void CMainView::OnBlack()
 	if(!IsCommandEnabled(TMAX_BLACK))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_BLACK);
+	m_ctrlTMView->SetColor(TMV_BLACK);
 	UpdateToolColor();
 }
 
@@ -4709,7 +4736,7 @@ void CMainView::OnBlue()
 	if(!IsCommandEnabled(TMAX_BLUE))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_BLUE);
+	m_ctrlTMView->SetColor(TMV_BLUE);
 	UpdateToolColor();
 }
 
@@ -4729,7 +4756,7 @@ void CMainView::OnCallout()
 	if(!IsCommandEnabled(TMAX_CALLOUT))
 		return;
 	
-	m_ctrlTMView.SetAction(CALLOUT);
+	m_ctrlTMView->SetAction(CALLOUT);
 }
 
 //==============================================================================
@@ -4807,11 +4834,11 @@ void CMainView::OnChangePane(short sPane)
 
 			//	Don't bother doing anything if we are not in split screen or
 			//	if we are in the process of loading a split screen treatment
-			if(!m_ctrlTMView.GetSplitScreen()) return;
+			if(!m_ctrlTMView->GetSplitScreen()) return;
 			if(m_bLoadingSplitZap == TRUE) return;
 
 			//	Get the media information attached to the active pane
-			pInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_ACTIVEPANE);
+			pInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_ACTIVEPANE);
 
 			DbgMsg(pInfo, "OnChangePane (%d): ", sPane);
 
@@ -4876,7 +4903,7 @@ void CMainView::OnChangePane(short sPane)
 			if(m_ControlBar.bDocked)
 			{
 				RecalcLayout(m_sState);
-				m_ctrlTMView.MoveWindow(&m_rcView);
+				m_ctrlTMView->MoveWindow(&m_rcView);
 			}
 			
 			//	Make sure the toolbar remains visible
@@ -5196,7 +5223,7 @@ void CMainView::OnDarkBlue()
 	if(!IsCommandEnabled(TMAX_DARKBLUE))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_DARKBLUE);
+	m_ctrlTMView->SetColor(TMV_DARKBLUE);
 	UpdateToolColor();
 }
 
@@ -5216,7 +5243,7 @@ void CMainView::OnDarkGreen()
 	if(!IsCommandEnabled(TMAX_DARKGREEN))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_DARKGREEN);
+	m_ctrlTMView->SetColor(TMV_DARKGREEN);
 	UpdateToolColor();
 }
 
@@ -5236,7 +5263,7 @@ void CMainView::OnDarkRed()
 	if(!IsCommandEnabled(TMAX_DARKRED))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_DARKRED);
+	m_ctrlTMView->SetColor(TMV_DARKRED);
 	UpdateToolColor();
 }
 
@@ -5258,11 +5285,11 @@ void CMainView::OnDeleteAnn()
 		return;
 	
 	//	Delete the selections in the active pane
-	if(m_ctrlTMView.GetAction() == SELECT && 
-       m_ctrlTMView.GetSelectCount(TMV_ACTIVEPANE) > 0)
-		m_ctrlTMView.DeleteSelections(TMV_ACTIVEPANE);
+	if(m_ctrlTMView->GetAction() == SELECT && 
+       m_ctrlTMView->GetSelectCount(TMV_ACTIVEPANE) > 0)
+		m_ctrlTMView->DeleteSelections(TMV_ACTIVEPANE);
 	else
-		m_ctrlTMView.DeleteLastAnn(TMV_ACTIVEPANE);
+		m_ctrlTMView->DeleteLastAnn(TMV_ACTIVEPANE);
 }
 
 //==============================================================================
@@ -5404,7 +5431,7 @@ void CMainView::OnDrawTool()
 	short drawToolColor =(short)m_Ini.ReadLong(ANNCOLOR_LINE);
 	ChangeColorOfColorButton(drawToolColor);
 
-	m_ctrlTMView.SetAction(DRAW);
+	m_ctrlTMView->SetAction(DRAW);
 }
 
 //==============================================================================
@@ -5465,7 +5492,7 @@ void CMainView::OnErase()
 	if(!IsCommandEnabled(TMAX_ERASE))
 		return;
 	
-	m_ctrlTMView.Erase(TMV_ACTIVEPANE);
+	m_ctrlTMView->Erase(TMV_ACTIVEPANE);
 }
 
 //==============================================================================
@@ -5519,7 +5546,7 @@ void CMainView::OnFilePrint()
 		return;
 	
 	theApp.DoWaitCursor(1);
-	m_ctrlTMView.Print(FALSE, -1);
+	m_ctrlTMView->Print(FALSE, -1);
 	theApp.DoWaitCursor(0);
 }
 
@@ -5642,9 +5669,9 @@ void CMainView::OnFirstPage()
 		case S_GRAPHIC:		
 		case S_LINKEDIMAGE:
 
-			if(m_ctrlTMView.GetCurrentPage(TMV_ACTIVEPANE) > 1)
+			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) > 1)
 			{
-				m_ctrlTMView.FirstPage(TMV_ACTIVEPANE);
+				m_ctrlTMView->FirstPage(TMV_ACTIVEPANE);
 
 				if(m_sState == S_CLEAR)
 					RestoreDisplay();
@@ -5852,7 +5879,7 @@ void CMainView::OnGreen()
 	if(!IsCommandEnabled(TMAX_GREEN))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_GREEN);
+	m_ctrlTMView->SetColor(TMV_GREEN);
 	UpdateToolColor();
 }
 
@@ -5877,7 +5904,7 @@ void CMainView::OnHighlight()
 	short highliterColor = (short)m_Ini.ReadLong(HIGHLIGHTCOLOR_LINE);
 	ChangeColorOfColorButton(highliterColor);
 
-	m_ctrlTMView.SetAction(HIGHLIGHT);	
+	m_ctrlTMView->SetAction(HIGHLIGHT);	
 }
 
 //==============================================================================
@@ -5974,8 +6001,18 @@ void CMainView::OnInitialUpdate()
 	CFormView::OnInitialUpdate();
 
 	//	Attach multipage objects to each pane of the TMView control
-	m_ctrlTMView.SetData(TMV_LEFTPANE, (long)&m_TMView1);
-	m_ctrlTMView.SetData(TMV_RIGHTPANE, (long)&m_TMView2);
+	
+	for(int i = 0; i < m_arrTmView.size(); i++) {
+		SMultipageInfo *tmViewMultipageInfoData = new SMultipageInfo();
+		ZeroMemory(tmViewMultipageInfoData, sizeof(SMultipageInfo));
+		m_arrMultiPageInfo.push_back(tmViewMultipageInfoData);
+		m_arrTmView[i]->SetData(TMV_LEFTPANE, (long)tmViewMultipageInfoData);
+
+		tmViewMultipageInfoData = new SMultipageInfo();
+		ZeroMemory(tmViewMultipageInfoData, sizeof(SMultipageInfo));
+		m_arrTmView[i]->SetData(TMV_RIGHTPANE, (long)tmViewMultipageInfoData);
+		m_arrMultiPageInfo.push_back(tmViewMultipageInfoData);
+	}
 
 	//	Get a pointer to the frame window
 	m_pFrame = (CMainFrame*)GetParent();
@@ -6056,7 +6093,7 @@ void CMainView::OnInitialUpdate()
 	//	This helps the TMView control initialize its panes
 	RECT rcClient;
 	GetClientRect(&rcClient);
-	m_ctrlTMView.MoveWindow(&rcClient);
+	m_ctrlTMView->MoveWindow(&rcClient);
 
 	//	Initialize the display
 	SetDisplay(S_CLEAR);
@@ -6147,10 +6184,10 @@ void CMainView::OnLastPage()
 		case S_GRAPHIC:		
 		case S_LINKEDIMAGE:
 
-			if(m_ctrlTMView.GetCurrentPage(TMV_ACTIVEPANE) < 
-			   m_ctrlTMView.GetPageCount(TMV_ACTIVEPANE))
+			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) < 
+			   m_ctrlTMView->GetPageCount(TMV_ACTIVEPANE))
 			{
-				m_ctrlTMView.LastPage(TMV_ACTIVEPANE);
+				m_ctrlTMView->LastPage(TMV_ACTIVEPANE);
 
 				if(m_sState == S_CLEAR)
 					RestoreDisplay();
@@ -6280,7 +6317,7 @@ void CMainView::OnLightBlue()
 	if(!IsCommandEnabled(TMAX_LIGHTBLUE))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_LIGHTBLUE);
+	m_ctrlTMView->SetColor(TMV_LIGHTBLUE);
 	UpdateToolColor();
 }
 
@@ -6300,7 +6337,7 @@ void CMainView::OnLightGreen()
 	if(!IsCommandEnabled(TMAX_LIGHTGREEN))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_LIGHTGREEN);
+	m_ctrlTMView->SetColor(TMV_LIGHTGREEN);
 	UpdateToolColor();
 }
 
@@ -6319,7 +6356,7 @@ void CMainView::OnLightRed()
 {
 	if(!IsCommandEnabled(TMAX_LIGHTRED))
 		return;
-	m_ctrlTMView.SetColor(TMV_LIGHTRED);
+	m_ctrlTMView->SetColor(TMV_LIGHTRED);
 	UpdateToolColor();
 }
 
@@ -6364,24 +6401,18 @@ void CMainView::OnManagerResAddTreatment()
 	{
 		//	Check each of the TMView structures just in case we're toggling between
 		//	split screen
-		if((m_TMView1.pSecondary != 0) && 
-		   (m_TMView1.pSecondary->m_lSecondaryId == m_ctrlManagerApp.GetSecondaryId()))
-		{
-			m_pDatabase->AddTreatment(m_TMView1.pSecondary, 
-									  m_ctrlManagerApp.GetTertiaryId(),
-									  m_ctrlManagerApp.GetDisplayOrder(),
-									  m_ctrlManagerApp.GetBarcodeId(),
-									  m_ctrlManagerApp.GetSourceFileName());
-		}
-
-		if((m_TMView2.pSecondary != 0) && 
-		   (m_TMView2.pSecondary->m_lSecondaryId == m_ctrlManagerApp.GetSecondaryId()))
-		{
-			m_pDatabase->AddTreatment(m_TMView2.pSecondary, 
-									  m_ctrlManagerApp.GetTertiaryId(),
-									  m_ctrlManagerApp.GetDisplayOrder(),
-									  m_ctrlManagerApp.GetBarcodeId(),
-									  m_ctrlManagerApp.GetSourceFileName());
+		for(vector<SMultipageInfo *>::iterator it = m_arrMultiPageInfo.begin();
+			it != m_arrMultiPageInfo.end(); it++) {
+			
+			if(((*it)->pSecondary != 0) && 
+			   ((*it)->pSecondary->m_lSecondaryId == m_ctrlManagerApp.GetSecondaryId()))
+			{
+				m_pDatabase->AddTreatment((*it)->pSecondary, 
+										  m_ctrlManagerApp.GetTertiaryId(),
+										  m_ctrlManagerApp.GetDisplayOrder(),
+										  m_ctrlManagerApp.GetBarcodeId(),
+										  m_ctrlManagerApp.GetSourceFileName());
+			}
 		}
 
 		//	Update the barcode information
@@ -6665,10 +6696,10 @@ void CMainView::OnNextPage()
 		case S_GRAPHIC:		
 		case S_LINKEDIMAGE:
 
-			if(m_ctrlTMView.GetCurrentPage(TMV_ACTIVEPANE) < 
-			   m_ctrlTMView.GetPageCount(TMV_ACTIVEPANE))
+			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) < 
+			   m_ctrlTMView->GetPageCount(TMV_ACTIVEPANE))
 			{
-				m_ctrlTMView.NextPage(TMV_ACTIVEPANE);
+				m_ctrlTMView->NextPage(TMV_ACTIVEPANE);
 
 				if(m_sState == S_CLEAR)
 					RestoreDisplay();
@@ -6752,7 +6783,7 @@ void CMainView::OnNextPageHorizontal()
 	
 	//	Make sure we are at the bottom of the active page
 	for(int i = 0; i < 10; i++)
-		m_ctrlTMView.Pan(PAN_DOWN, TMV_ACTIVEPANE);
+		m_ctrlTMView->Pan(PAN_DOWN, TMV_ACTIVEPANE);
 	
 	//	Shift focus to the bottom pane
 	SwitchPane();
@@ -6904,7 +6935,7 @@ void CMainView::OnNormal()
 	if(!IsCommandEnabled(TMAX_NORMAL))
 		return;
 	
-	m_ctrlTMView.ResetZoom(TMV_ACTIVEPANE);
+	m_ctrlTMView->ResetZoom(TMV_ACTIVEPANE);
 }
 
 //==============================================================================
@@ -6923,7 +6954,7 @@ void CMainView::OnPan()
 	if(!IsCommandEnabled(TMAX_PAN))
 		return;
 	
-	m_ctrlTMView.SetAction(PAN);
+	m_ctrlTMView->SetAction(PAN);
 }
 
 //==============================================================================
@@ -7095,9 +7126,9 @@ void CMainView::OnPreviousPage()
 		case S_GRAPHIC:		
 		case S_LINKEDIMAGE:
 
-			if(m_ctrlTMView.GetCurrentPage(TMV_ACTIVEPANE) > 1)
+			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) > 1)
 			{
-				m_ctrlTMView.PrevPage(TMV_ACTIVEPANE);
+				m_ctrlTMView->PrevPage(TMV_ACTIVEPANE);
 
 				if(m_sState == S_CLEAR)
 					RestoreDisplay();
@@ -7329,7 +7360,7 @@ void CMainView::OnRed()
 	if(!IsCommandEnabled(TMAX_RED))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_RED);
+	m_ctrlTMView->SetColor(TMV_RED);
 	UpdateToolColor();
 	
 	
@@ -7349,7 +7380,7 @@ void CMainView::OnRed()
 	//	if(!IsCommandEnabled(TMAX_RED))
 	//		return;
 	//
-	//	m_ctrlTMView.SetColor(TMV_RED);
+	//	m_ctrlTMView->SetColor(TMV_RED);
 	//	UpdateToolColor();
 	//}
 
@@ -7375,7 +7406,7 @@ void CMainView::OnRedact()
 	short redactColor = (short)m_Ini.ReadLong(REDACTCOLOR_LINE);
 	ChangeColorOfColorButton(redactColor);
 
-	m_ctrlTMView.SetAction(REDACT);
+	m_ctrlTMView->SetAction(REDACT);
 }
 
 //==============================================================================
@@ -7394,7 +7425,7 @@ void CMainView::OnRotateCcw()
 	if(!IsCommandEnabled(TMAX_ROTATECCW))
 		return;
 	
-	m_ctrlTMView.RotateCcw(TRUE, TMV_ACTIVEPANE);
+	m_ctrlTMView->RotateCcw(TRUE, TMV_ACTIVEPANE);
 }
 
 //==============================================================================
@@ -7413,7 +7444,7 @@ void CMainView::OnRotateCw()
 	if(!IsCommandEnabled(TMAX_ROTATECW))
 		return;
 	
-	m_ctrlTMView.RotateCw(TRUE, TMV_ACTIVEPANE);
+	m_ctrlTMView->RotateCw(TRUE, TMV_ACTIVEPANE);
 }
 
 //==============================================================================
@@ -7488,7 +7519,7 @@ void CMainView::OnSelect()
 	if(!IsCommandEnabled(TMAX_SELECT))
 		return;
 	
-	m_ctrlTMView.SetAction(SELECT);
+	m_ctrlTMView->SetAction(SELECT);
 }
 
 //==============================================================================
@@ -7616,11 +7647,11 @@ void CMainView::OnShadeOnCallout()
 	if(!IsCommandEnabled(TMAX_SHADEONCALLOUT))
 		return;
 	
-	m_ctrlTMView.SetShadeOnCallout(!m_ctrlTMView.GetShadeOnCallout());
+	m_ctrlTMView->SetShadeOnCallout(!m_ctrlTMView->GetShadeOnCallout());
 	
 	//	Update the ini file
 	m_Ini.SetTMSection(PRESENTATION_APP);
-	m_Ini.WriteBool(SHADEONCALLOUT_LINE, m_ctrlTMView.GetShadeOnCallout());
+	m_Ini.WriteBool(SHADEONCALLOUT_LINE, m_ctrlTMView->GetShadeOnCallout());
 }
 
 //==============================================================================
@@ -7644,7 +7675,7 @@ void CMainView::OnShowToolbar()
 	if(m_ctrlTBTools.IsWindowVisible())
 	{
 		//	This executes the code that normally turns the drawing toolbar off
-		SetDrawingTool(m_ctrlTMView.GetAnnTool());
+		SetDrawingTool(m_ctrlTMView->GetAnnTool());
 	}
 	else
 	{
@@ -7675,7 +7706,7 @@ void CMainView::OnShowToolbarLarge()
 	if(m_ctrlTBTools.IsWindowVisible())
 	{
 		//	This executes  the code that normally turns the drawing toolbar off
-		SetDrawingTool(m_ctrlTMView.GetAnnTool());
+		SetDrawingTool(m_ctrlTMView->GetAnnTool());
 	}
 	else
 	{
@@ -7723,7 +7754,7 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 		m_ctrlTBTools.ResetFrame();
 
 	//	Have the control windows been created?
-	if(IsWindow(m_ctrlTMView.m_hWnd) && 
+	if(IsWindow(m_ctrlTMView->m_hWnd) && 
 	   IsWindow(m_ctrlTMMovie) &&
 	   IsWindow(m_ctrlTMText))
 	{
@@ -7755,10 +7786,10 @@ void CMainView::OnSplitHorizontal()
 		return;
 	
 	//	Are we currently in split horizontal mode?
-	if(m_ctrlTMView.GetSplitScreen() && m_ctrlTMView.GetSplitHorizontal())
+	if(m_ctrlTMView->GetSplitScreen() && m_ctrlTMView->GetSplitHorizontal())
 	{
 		//	Turn off split screening
-		m_ctrlTMView.SetSplitScreen(FALSE);
+		m_ctrlTMView->SetSplitScreen(FALSE);
 		
 		//	Clear out the inactive pane
 		ClearTMViewInactive();
@@ -7766,10 +7797,10 @@ void CMainView::OnSplitHorizontal()
 	else
 	{
 		//	Split the screen horizontally
-		m_ctrlTMView.SetSplitHorizontal(TRUE);
+		m_ctrlTMView->SetSplitHorizontal(TRUE);
 		
-		if(!m_ctrlTMView.GetSplitScreen())
-			m_ctrlTMView.SetSplitScreen(TRUE);
+		if(!m_ctrlTMView->GetSplitScreen())
+			m_ctrlTMView->SetSplitScreen(TRUE);
 	}
 	
 	//	Split screen state has been set by the user
@@ -7777,8 +7808,8 @@ void CMainView::OnSplitHorizontal()
 
 	//	Set the correct bitmap on the toolbar button
 	if(m_pToolbar)
-		m_pToolbar->SetSplitButton(m_ctrlTMView.GetSplitScreen(),
-								   m_ctrlTMView.GetSplitHorizontal());	
+		m_pToolbar->SetSplitButton(m_ctrlTMView->GetSplitScreen(),
+								   m_ctrlTMView->GetSplitHorizontal());	
 }
 
 //==============================================================================
@@ -7808,12 +7839,12 @@ void CMainView::OnSplitPagesNext()
 		if(GetSplitPageInfo(&pageInfo, FALSE) == TRUE)
 		{
 			//	If the right pane is loaded we have to swap panes
-			if(m_ctrlTMView.IsLoaded(TMV_RIGHTPANE) == TRUE)
-				m_ctrlTMView.SwapPanes();
+			if(m_ctrlTMView->IsLoaded(TMV_RIGHTPANE) == TRUE)
+				m_ctrlTMView->SwapPanes();
 
 			//	Make sure the right pane is the active pane
-			if(m_ctrlTMView.GetActivePane() != TMV_RIGHTPANE)
-				m_ctrlTMView.SetActivePane(TMV_RIGHTPANE);
+			if(m_ctrlTMView->GetActivePane() != TMV_RIGHTPANE)
+				m_ctrlTMView->SetActivePane(TMV_RIGHTPANE);
 			
 			//	Format the barcode
 			if(m_iImageSecondary == SECONDARY_AS_ORDER)
@@ -7825,7 +7856,7 @@ void CMainView::OnSplitPagesNext()
 			LoadFromBarcode(strBarcode, TRUE);
 
 			//	Go wide screen if horizontal
-			if(m_ctrlTMView.GetSplitHorizontal() == TRUE)
+			if(m_ctrlTMView->GetSplitHorizontal() == TRUE)
 				OnZoomWidth();
 
 		}// if(GetSplitPageInfo(&pageInfo, FALSE) == TRUE)
@@ -7865,12 +7896,12 @@ void CMainView::OnSplitPagesPrevious()
 		if(GetSplitPageInfo(&pageInfo, TRUE) == TRUE)
 		{
 			//	If the left pane is loaded we have to swap panes
-			if(m_ctrlTMView.IsLoaded(TMV_LEFTPANE) == TRUE)
-				m_ctrlTMView.SwapPanes();
+			if(m_ctrlTMView->IsLoaded(TMV_LEFTPANE) == TRUE)
+				m_ctrlTMView->SwapPanes();
 
 			//	Make sure the left pane is the active pane
-			if(m_ctrlTMView.GetActivePane() != TMV_LEFTPANE)
-				m_ctrlTMView.SetActivePane(TMV_LEFTPANE);
+			if(m_ctrlTMView->GetActivePane() != TMV_LEFTPANE)
+				m_ctrlTMView->SetActivePane(TMV_LEFTPANE);
 			
 			//	Format the barcode
 			if(m_iImageSecondary == SECONDARY_AS_ORDER)
@@ -7882,7 +7913,7 @@ void CMainView::OnSplitPagesPrevious()
 			LoadFromBarcode(strBarcode, TRUE);
 
 			//	Go wide screen if horizontal
-			if(m_ctrlTMView.GetSplitHorizontal() == TRUE)
+			if(m_ctrlTMView->GetSplitHorizontal() == TRUE)
 				OnZoomWidth();
 
 		}// if(GetSplitPageInfo(&pageInfo, FALSE) == TRUE)
@@ -7912,9 +7943,9 @@ void CMainView::OnSplitVertical()
 		return;
 	
 	//	Are we currently in split vertical mode?
-	if(m_ctrlTMView.GetSplitScreen() && !m_ctrlTMView.GetSplitHorizontal())
+	if(m_ctrlTMView->GetSplitScreen() && !m_ctrlTMView->GetSplitHorizontal())
 	{
-		m_ctrlTMView.SetSplitScreen(FALSE);
+		m_ctrlTMView->SetSplitScreen(FALSE);
 	
 		//	Clear out the inactive pane
 		ClearTMViewInactive();
@@ -7922,10 +7953,10 @@ void CMainView::OnSplitVertical()
 	else
 	{
 		//	Split the screen vertically
-		m_ctrlTMView.SetSplitHorizontal(FALSE);
+		m_ctrlTMView->SetSplitHorizontal(FALSE);
 		
-		if(!m_ctrlTMView.GetSplitScreen())
-			m_ctrlTMView.SetSplitScreen(TRUE);
+		if(!m_ctrlTMView->GetSplitScreen())
+			m_ctrlTMView->SetSplitScreen(TRUE);
 	}
 	
 	//	Split screen state has been set by the user
@@ -7933,8 +7964,8 @@ void CMainView::OnSplitVertical()
 
 	//	Set the correct bitmap on the toolbar button
 	if(m_pToolbar)
-		m_pToolbar->SetSplitButton(m_ctrlTMView.GetSplitScreen(),
-								   m_ctrlTMView.GetSplitHorizontal());	
+		m_pToolbar->SetSplitButton(m_ctrlTMView->GetSplitScreen(),
+								   m_ctrlTMView->GetSplitHorizontal());	
 	
 }
 
@@ -8328,14 +8359,14 @@ void CMainView::OnUpdateZap()
 		return;
 
 	//	Are we currently in split screen mode?
-	if(m_ctrlTMView.GetSplitScreen())
+	if(m_ctrlTMView->GetSplitScreen())
 	{
 		//	Is each pane loaded?
-		if(m_ctrlTMView.IsLoaded(TMV_LEFTPANE) && m_ctrlTMView.IsLoaded(TMV_RIGHTPANE))
+		if(m_ctrlTMView->IsLoaded(TMV_LEFTPANE) && m_ctrlTMView->IsLoaded(TMV_RIGHTPANE))
 		{
 			//	Get the multipage descriptor bound to each pane
-			pTLInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_LEFTPANE);
-			pBRInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_RIGHTPANE);
+			pTLInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_LEFTPANE);
+			pBRInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_RIGHTPANE);
 
 			//	Do we have valid tertiary media records for each?
 			if((pTLInfo->pTertiary != NULL) && (pBRInfo->pTertiary != NULL))
@@ -8368,9 +8399,9 @@ void CMainView::OnUpdateZap()
 
 			}// if((pTLInfo->pTertiary != NULL) && (pBRInfo->pTertiary != NULL))
 
-		}// if(m_ctrlTMView.IsLoaded(TMV_LEFTPANE) && m_ctrlTMView.IsLoaded(TMV_RIGHTPANE))
+		}// if(m_ctrlTMView->IsLoaded(TMV_LEFTPANE) && m_ctrlTMView->IsLoaded(TMV_RIGHTPANE))
 	
-	}// if(m_ctrlTMView.GetSplitScreen())
+	}// if(m_ctrlTMView->GetSplitScreen())
 
 	//	Get the active pane
 	if(bSplitScreen == TRUE)
@@ -8424,7 +8455,7 @@ void CMainView::OnWhite()
 	if(!IsCommandEnabled(TMAX_WHITE))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_WHITE);
+	m_ctrlTMView->SetColor(TMV_WHITE);
 	UpdateToolColor();
 }
 
@@ -8488,7 +8519,7 @@ void CMainView::OnYellow()
 	if(!IsCommandEnabled(TMAX_YELLOW))
 		return;
 	
-	m_ctrlTMView.SetColor(TMV_YELLOW);
+	m_ctrlTMView->SetColor(TMV_YELLOW);
 	UpdateToolColor();
 }
 
@@ -8509,8 +8540,8 @@ void CMainView::OnZoom()
 	if(!IsCommandEnabled(TMAX_ZOOM))
 		return;
 	
-	m_ctrlTMView.SetAction(ZOOM);
-	m_ctrlTMView.SetZoomToRect(FALSE);
+	m_ctrlTMView->SetAction(ZOOM);
+	m_ctrlTMView->SetZoomToRect(FALSE);
 }
 
 //==============================================================================
@@ -8529,8 +8560,8 @@ void CMainView::OnZoomRestricted()
 	if(!IsCommandEnabled(TMAX_ZOOM))
 		return;
 	
-	m_ctrlTMView.SetAction(ZOOM);
-	m_ctrlTMView.SetZoomToRect(TRUE);
+	m_ctrlTMView->SetAction(ZOOM);
+	m_ctrlTMView->SetZoomToRect(TRUE);
 }
 
 //==============================================================================
@@ -8551,10 +8582,10 @@ void CMainView::OnZoomWidth()
 		return;
 	
 	//	Are we already zoomed to full width?
-	if(m_ctrlTMView.GetZoomState(TMV_ACTIVEPANE) == ZOOMED_FULLWIDTH)
+	if(m_ctrlTMView->GetZoomState(TMV_ACTIVEPANE) == ZOOMED_FULLWIDTH)
 		OnNormal();
 	else
-		m_ctrlTMView.ZoomFullWidth(TMV_ACTIVEPANE);
+		m_ctrlTMView->ZoomFullWidth(TMV_ACTIVEPANE);
 }
 
 //==============================================================================
@@ -9472,8 +9503,8 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 			//	Temporarily disable the sync panes option if we are in split
 			//	screen mode so that setting the scale option will not affect
 			//	both panes
-			if(m_ctrlTMView.GetSplitScreen())
-				m_ctrlTMView.SetSyncPanes(FALSE);
+			if(m_ctrlTMView->GetSplitScreen())
+				m_ctrlTMView->SetSyncPanes(FALSE);
 
 			//	Do the processing that is ACTION specific here
 			switch(sAction)
@@ -9482,7 +9513,7 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 				case A_LINKGRAPHIC:
 
 					//	Disable split screen mode
-					m_ctrlTMView.SetSplitScreen(FALSE);
+					m_ctrlTMView->SetSplitScreen(FALSE);
 					theApp.bSetDisplay = FALSE;
 					break;
 
@@ -9506,9 +9537,9 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 			{
 				//	Is this a document or graphic?
 				if(sAction == A_LOADDOCUMENT || sAction == A_LINKDOCUMENT)
-					m_ctrlTMView.SetScaleImage(m_bScaleDocs);
+					m_ctrlTMView->SetScaleImage(m_bScaleDocs);
 				else
-					m_ctrlTMView.SetScaleImage(m_bScaleGraphics);
+					m_ctrlTMView->SetScaleImage(m_bScaleGraphics);
 
 				//	Force single pane mode if running a custom show
 				//if(m_bLoadingShowItem == TRUE)
@@ -9519,13 +9550,15 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 				//	Do we need to change the screen state?
 				if(sNextState != m_sState)
 				{
-					//m_ctrlTMView.ShowWindow(SW_HIDE);
+					//m_ctrlTMView->ShowWindow(SW_HIDE);
 				}
 				//	Load the new file
-				m_ctrlTMView.LoadFile(strFilename, -1);
+				for(int i=0; i < m_arrTmView.size(); i++) {
+					m_arrTmView[i]->LoadFile(strFilename, TMV_ACTIVEPANE);
+				}
 
 				//	Reset the multipage information
-				pMPOld = (SMultipageInfo*)m_ctrlTMView.GetData(-1);
+				pMPOld = (SMultipageInfo*)m_ctrlTMView->GetData(-1);
 				ASSERT(pMPOld);
 				if(pMPOld != NULL)
 					UpdateMultipage(pMPOld, pMPNew);
@@ -9533,7 +9566,7 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 			}// if(pMPNew->pTertiary != NULL)
 
 			//	Make sure pane synchronization is reenabled
-			m_ctrlTMView.SetSyncPanes(TRUE);
+			m_ctrlTMView->SetSyncPanes(TRUE);
 			
 			//	Do we need to change the screen state?
 			if(sNextState != m_sState)
@@ -9549,7 +9582,9 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 					m_sState = sNextState;
 					SetControlBar(m_ControlBar.iId);
 				}
-				m_ctrlTMView.ShowWindow(SW_SHOW );
+				//m_ctrlTMView->ShowWindow(SW_SHOW );
+				for(int i =0; i < m_arrTmView.size(); i++)
+					m_arrTmView[i]->ShowWindow(SW_SHOW);
 			}
 			else if(m_sState == S_LINKEDIMAGE)
 			{
@@ -9652,8 +9687,11 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 			//	Reset the media information not being used
 			//
 			//	NOTE: Only reset the TMMovie information if not linking to a clip
-			ResetMultipage(&m_TMView1);
-			ResetMultipage(&m_TMView2);
+			for(vector<SMultipageInfo *>::iterator it = m_arrMultiPageInfo.begin();
+			it != m_arrMultiPageInfo.end(); it++) {
+				ResetMultipage(*it);
+			}
+
 			if((sAction == A_LOADPOWER) || (m_Playlist.pPlaylist != 0))
 				ResetMultipage(&m_TMMovie);
 
@@ -10093,7 +10131,7 @@ BOOL CMainView::ProcessVirtualKey(WORD wKey)
 				case S_DOCUMENT:
 				case S_GRAPHIC:
 
-					m_ctrlTMView.Pan(PAN_UP, TMV_ACTIVEPANE);
+					m_ctrlTMView->Pan(PAN_UP, TMV_ACTIVEPANE);
 					break;
 
 				case S_LINKEDPOWER:
@@ -10123,7 +10161,7 @@ BOOL CMainView::ProcessVirtualKey(WORD wKey)
 				case S_DOCUMENT:
 				case S_GRAPHIC:
 
-					m_ctrlTMView.Pan(PAN_DOWN, TMV_ACTIVEPANE);
+					m_ctrlTMView->Pan(PAN_DOWN, TMV_ACTIVEPANE);
 					break;
 
 				case S_LINKEDPOWER:
@@ -10660,34 +10698,34 @@ void CMainView::ReadSetup(BOOL bFirstTime)
 	if(m_fMovieStep <= 0) m_fMovieStep = 1.0f;
 	
 	//	Initialize the TMView control
-	m_ctrlTMView.SetAnnColor(Graphics.sAnnColor);
-	m_ctrlTMView.SetAnnThickness(Graphics.sAnnThickness);
-	m_ctrlTMView.SetHighlightColor(Graphics.sHighlightColor);
-	m_ctrlTMView.SetRedactColor(Graphics.sRedactColor);
-	m_ctrlTMView.SetMaxZoom(Graphics.sMaxZoom);
-	m_ctrlTMView.SetCalloutColor(Graphics.sCalloutColor);
-	m_ctrlTMView.SetCalloutHandleColor(Graphics.sCalloutHandleColor);
-	m_ctrlTMView.SetCalloutFrameColor(Graphics.sCalloutFrameColor);
-	m_ctrlTMView.SetCalloutFrameThickness(Graphics.sCalloutFrameThickness);
-	m_ctrlTMView.SetSplitFrameColor(Graphics.sUserSplitFrameColor);
-	m_ctrlTMView.SetBitonalScaling(Graphics.sBitonalScaling);
-	m_ctrlTMView.SetAnnTool(Graphics.sAnnTool);
-	m_ctrlTMView.SetAnnFontSize(Graphics.sAnnFontSize);
-	m_ctrlTMView.SetAnnFontBold(Graphics.bAnnFontBold);
-	m_ctrlTMView.SetAnnFontStrikeThrough(Graphics.bAnnFontStrikeThrough);
-	m_ctrlTMView.SetAnnFontUnderline(Graphics.bAnnFontUnderline);
-	m_ctrlTMView.SetAnnFontName(Graphics.strAnnFontName);
-	m_ctrlTMView.SetPenSelectorVisible(Graphics.bLightPenEnabled);
-	m_ctrlTMView.SetPenSelectorColor(Graphics.sLightPenColor);
-	m_ctrlTMView.SetPenSelectorSize(Graphics.sLightPenSize);
-	m_ctrlTMView.SetResizeCallouts(Graphics.bResizableCallouts);
-	m_ctrlTMView.SetPanCallouts(Graphics.bPanCallouts);
-	m_ctrlTMView.SetZoomCallouts(Graphics.bZoomCallouts);
-	m_ctrlTMView.SetShadeOnCallout(Graphics.bShadeOnCallout);
-	m_ctrlTMView.SetCalloutShadeGrayscale(Graphics.sCalloutShadeGrayscale);
+	m_ctrlTMView->SetAnnColor(Graphics.sAnnColor);
+	m_ctrlTMView->SetAnnThickness(Graphics.sAnnThickness);
+	m_ctrlTMView->SetHighlightColor(Graphics.sHighlightColor);
+	m_ctrlTMView->SetRedactColor(Graphics.sRedactColor);
+	m_ctrlTMView->SetMaxZoom(Graphics.sMaxZoom);
+	m_ctrlTMView->SetCalloutColor(Graphics.sCalloutColor);
+	m_ctrlTMView->SetCalloutHandleColor(Graphics.sCalloutHandleColor);
+	m_ctrlTMView->SetCalloutFrameColor(Graphics.sCalloutFrameColor);
+	m_ctrlTMView->SetCalloutFrameThickness(Graphics.sCalloutFrameThickness);
+	m_ctrlTMView->SetSplitFrameColor(Graphics.sUserSplitFrameColor);
+	m_ctrlTMView->SetBitonalScaling(Graphics.sBitonalScaling);
+	m_ctrlTMView->SetAnnTool(Graphics.sAnnTool);
+	m_ctrlTMView->SetAnnFontSize(Graphics.sAnnFontSize);
+	m_ctrlTMView->SetAnnFontBold(Graphics.bAnnFontBold);
+	m_ctrlTMView->SetAnnFontStrikeThrough(Graphics.bAnnFontStrikeThrough);
+	m_ctrlTMView->SetAnnFontUnderline(Graphics.bAnnFontUnderline);
+	m_ctrlTMView->SetAnnFontName(Graphics.strAnnFontName);
+	m_ctrlTMView->SetPenSelectorVisible(Graphics.bLightPenEnabled);
+	m_ctrlTMView->SetPenSelectorColor(Graphics.sLightPenColor);
+	m_ctrlTMView->SetPenSelectorSize(Graphics.sLightPenSize);
+	m_ctrlTMView->SetResizeCallouts(Graphics.bResizableCallouts);
+	m_ctrlTMView->SetPanCallouts(Graphics.bPanCallouts);
+	m_ctrlTMView->SetZoomCallouts(Graphics.bZoomCallouts);
+	m_ctrlTMView->SetShadeOnCallout(Graphics.bShadeOnCallout);
+	m_ctrlTMView->SetCalloutShadeGrayscale(Graphics.sCalloutShadeGrayscale);
 
 	//	Initialize the TMLPen control
-	m_ctrlTMLpen.SetBackColor((OLE_COLOR)m_ctrlTMView.GetRGBColor(Graphics.sLightPenColor));
+	m_ctrlTMLpen.SetBackColor((OLE_COLOR)m_ctrlTMView->GetRGBColor(Graphics.sLightPenColor));
 	ShowLightPen(Graphics.bLightPenEnabled);
 
 	//	Initialize the TMText control
@@ -10776,7 +10814,7 @@ void CMainView::ReadSetup(BOOL bFirstTime)
 	//	Initialize the error handlers. We disable the default database handler
 	//	so that the application can handle database errors on its own
 	m_ctrlTMMovie.SetEnableErrors(m_bEnableErrors);
-	m_ctrlTMView.SetEnableErrors(m_bEnableErrors);
+	m_ctrlTMView->SetEnableErrors(m_bEnableErrors);
 	m_ctrlTMText.SetEnableErrors(m_bEnableErrors);
 	m_ctrlTMStat.SetEnableErrors(m_bEnableErrors);
 	m_ctrlTMLpen.SetEnableErrors(m_bEnableErrors);
@@ -10908,11 +10946,11 @@ void CMainView::RecalcLayout(short sState)
 	RECT*	pViewer;
 	SIZE	videoSize;
 
-	ASSERT(IsWindow(m_ctrlTMView.m_hWnd));
+	ASSERT(IsWindow(m_ctrlTMView->m_hWnd));
 	ASSERT(IsWindow(m_ctrlTMMovie.m_hWnd));
 	ASSERT(IsWindow(m_ctrlTMText.m_hWnd));
 	ASSERT(IsWindow(m_ctrlTMPower.m_hWnd));
-	if(!IsWindow(m_ctrlTMView.m_hWnd) ||
+	if(!IsWindow(m_ctrlTMView->m_hWnd) ||
 	   !IsWindow(m_ctrlTMMovie.m_hWnd) ||
 	   !IsWindow(m_ctrlTMText.m_hWnd) ||
 	   !IsWindow(m_ctrlTMPower.m_hWnd))
@@ -11287,14 +11325,16 @@ void CMainView::ResetTMPower()
 void CMainView::ResetTMView()   
 {
 	//	Unload the current images
-	m_ctrlTMView.LoadFile(0, TMV_LEFTPANE);
-	m_ctrlTMView.LoadFile(0, TMV_RIGHTPANE);
-	m_ctrlTMView.SetSplitScreen(FALSE);
+	m_ctrlTMView->LoadFile(0, TMV_LEFTPANE);
+	m_ctrlTMView->LoadFile(0, TMV_RIGHTPANE);
+	m_ctrlTMView->SetSplitScreen(FALSE);
 	SetZapSplitScreen(FALSE);
 	
 	//	Deallocate the multipage objects
-	ResetMultipage(&m_TMView1);
-	ResetMultipage(&m_TMView2);
+	for(vector<SMultipageInfo *>::iterator it = m_arrMultiPageInfo.begin();
+			it != m_arrMultiPageInfo.end(); it++) {
+				ResetMultipage(*it);
+	}
 }
 
 //==============================================================================
@@ -11327,16 +11367,19 @@ void CMainView::RestoreDisplay()
 		case S_DOCUMENT:
 		case S_GRAPHIC:
 
-			m_ctrlTMView.ShowWindow(SW_SHOW);
-			m_ctrlTMView.BringWindowToTop();
-			if(m_ctrlTMView.GetSplitScreen() == TRUE)
-			{
-				m_ctrlTMView.ShowCallouts(TRUE, TMV_LEFTPANE);
-				m_ctrlTMView.ShowCallouts(TRUE, TMV_RIGHTPANE);
-			}
-			else
-			{
-				m_ctrlTMView.ShowCallouts(TRUE, TMV_ACTIVEPANE);
+			for(int i =0; i < m_arrTmView.size(); i++) {
+
+				m_arrTmView[i]->ShowWindow(SW_SHOW);
+				m_arrTmView[i]->BringWindowToTop();
+				if(m_arrTmView[i]->GetSplitScreen() == TRUE)
+				{
+					m_arrTmView[i]->ShowCallouts(TRUE, TMV_LEFTPANE);
+					m_arrTmView[i]->ShowCallouts(TRUE, TMV_RIGHTPANE);
+				}
+				else
+				{
+					m_arrTmView[i]->ShowCallouts(TRUE, TMV_ACTIVEPANE);
+				}
 			}
 			m_ctrlTMStat.SetMode(TMSTAT_TEXTMODE);
 
@@ -11372,8 +11415,10 @@ void CMainView::RestoreDisplay()
 
 			if(m_sPrevState == S_LINKEDIMAGE)
 			{		
-				m_ctrlTMView.ShowWindow(SW_SHOW);
-				m_ctrlTMView.ShowCallouts(TRUE, TMV_ACTIVEPANE);
+				for(int i =0; i < m_arrTmView.size(); i++) {
+					m_arrTmView[i]->ShowWindow(SW_SHOW);
+					m_arrTmView[i]->ShowCallouts(TRUE, TMV_ACTIVEPANE);
+				}
 			}
 			else
 			{
@@ -11460,8 +11505,8 @@ void CMainView::RestoreDisplay()
 //==============================================================================
 BOOL CMainView::SaveSplitZap() 
 {
-	SMultipageInfo*	pTLInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_LEFTPANE);
-	SMultipageInfo*	pBRInfo = (SMultipageInfo*)m_ctrlTMView.GetData(TMV_RIGHTPANE);
+	SMultipageInfo*	pTLInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_LEFTPANE);
+	SMultipageInfo*	pBRInfo = (SMultipageInfo*)m_ctrlTMView->GetData(TMV_RIGHTPANE);
 	CString			strTLFilename = "";
 	CString			strBRFilename = "";
 	DWORD			dwFlags = 0;
@@ -11481,7 +11526,7 @@ BOOL CMainView::SaveSplitZap()
 	if(pBRInfo->pMultipage->m_lPlayerType != MEDIA_TYPE_IMAGE) return FALSE;
 
 	//	Set the appropriate flags
-	if(m_ctrlTMView.GetSplitHorizontal())
+	if(m_ctrlTMView->GetSplitHorizontal())
 		dwFlags |= TMFLAG_SPLIT_ZAP_HORIZONTAL;
 
 	// Get the file specifications
@@ -11495,10 +11540,10 @@ BOOL CMainView::SaveSplitZap()
 	if(strBRFilename.GetLength() == 0) return FALSE;
 		
 	//	First save the zap file for the right-hand pane
-	if(m_ctrlTMView.SaveZap(strBRFilename, TMV_RIGHTPANE) == TMV_NOERROR)
+	if(m_ctrlTMView->SaveZap(strBRFilename, TMV_RIGHTPANE) == TMV_NOERROR)
 	{
 		//	Now save the zap file for the left pane
-		if(m_ctrlTMView.SaveZap(strTLFilename, TMV_LEFTPANE) == TMV_NOERROR)
+		if(m_ctrlTMView->SaveZap(strTLFilename, TMV_LEFTPANE) == TMV_NOERROR)
 		{
 			bSuccessful = TRUE;
 
@@ -11518,9 +11563,9 @@ BOOL CMainView::SaveSplitZap()
 			//	Delete the file we created for the right hand pane
 			_unlink(strBRFilename);
 
-		}// // if(m_ctrlTMView.SaveZap(strBRFilename, TMV_RIGHTPANE) == TMV_NOERROR)
+		}// // if(m_ctrlTMView->SaveZap(strBRFilename, TMV_RIGHTPANE) == TMV_NOERROR)
 
-	}// if(m_ctrlTMView.SaveZap(strBRFilename, TMV_RIGHTPANE) == TMV_NOERROR)
+	}// if(m_ctrlTMView->SaveZap(strBRFilename, TMV_RIGHTPANE) == TMV_NOERROR)
 
 	return bSuccessful;
 }
@@ -11560,7 +11605,7 @@ BOOL CMainView::SaveZap()
 	//	Now save the actual zap file
 	//
 	//	NOTE:	TMView will report any errors if reporting is turned on
-	if(m_ctrlTMView.SaveZap(strFilename, TMV_ACTIVEPANE) == TMV_NOERROR)
+	if(m_ctrlTMView->SaveZap(strFilename, TMV_ACTIVEPANE) == TMV_NOERROR)
 	{
 		bSuccessful = TRUE;
 
@@ -11639,7 +11684,7 @@ void CMainView::SelectToolbar(short sState)
 
 					//	If we are currently using split screen we do not want
 					//	to change the toolbar properties
-					if(!m_ctrlTMView.GetSplitScreen())
+					if(!m_ctrlTMView->GetSplitScreen())
 						bSetProperties = FALSE;
 					break;
 		
@@ -11687,10 +11732,10 @@ void CMainView::SelectToolbar(short sState)
 	if(m_pToolbar)
 	{
 		m_pToolbar->SetPlayButton(m_bPlaying);
-		m_pToolbar->SetSplitButton(m_ctrlTMView.GetSplitScreen(), m_ctrlTMView.GetSplitHorizontal());
+		m_pToolbar->SetSplitButton(m_ctrlTMView->GetSplitScreen(), m_ctrlTMView->GetSplitHorizontal());
 		m_pToolbar->SetLinkButton(m_bDisableLinks);
-		m_pToolbar->SetZoomButton(m_ctrlTMView.GetAction() == ZOOM,
-								  m_ctrlTMView.GetZoomToRect());
+		m_pToolbar->SetZoomButton(m_ctrlTMView->GetAction() == ZOOM,
+								  m_ctrlTMView->GetZoomToRect());
 	}
 }
 
@@ -11773,9 +11818,9 @@ void CMainView::SetControlBar(int iId)
 			case S_DOCUMENT:
 			case S_GRAPHIC:
 
-				m_ctrlTMView.MoveWindow(&m_rcView);
-				m_ctrlTMView.RescaleZapCallouts();
-				m_ctrlTMView.BringWindowToTop();
+				m_ctrlTMView->MoveWindow(&m_rcView);
+				m_ctrlTMView->RescaleZapCallouts();
+				m_ctrlTMView->BringWindowToTop();
 				break;
 			
 			case S_POWERPOINT:
@@ -11802,8 +11847,8 @@ void CMainView::SetControlBar(int iId)
 			case S_LINKEDIMAGE:
 				
 				m_ctrlTMText.MoveWindow(&m_rcText);
-				m_ctrlTMView.MoveWindow(&m_rcView);
-				m_ctrlTMView.RescaleZapCallouts();
+				m_ctrlTMView->MoveWindow(&m_rcView);
+				m_ctrlTMView->RescaleZapCallouts();
 				if((m_sVideoPosition == VIDEO_LOWERLEFT) ||
 				   (m_sVideoPosition == VIDEO_LOWERRIGHT))
 					m_ctrlTMMovie.MoveWindow(&m_rcMovie);
@@ -11891,7 +11936,7 @@ void CMainView::SetDisplay(short sState)
 	//	Prevent attempts to update the toolbar buttons while we change
 //	::ShowCursor(100);
 	//AfxGetApp()->LoadCursorA(IDC_CURSOR1);
-	//m_ctrlTMView.SetFocus();
+	//m_ctrlTMView->SetFocus();
 	
 	m_bDoUpdates = FALSE;
 
@@ -11907,9 +11952,11 @@ void CMainView::SetDisplay(short sState)
 			m_ctrlTMMovie.Pause();
 			m_ctrlTMMovie.ShowWindow(SW_HIDE);
 			m_ctrlTMMovie.ShowVideo(FALSE);
-			m_ctrlTMView.ShowCallouts(FALSE, TMV_LEFTPANE);
-			m_ctrlTMView.ShowCallouts(FALSE, TMV_RIGHTPANE);
-			m_ctrlTMView.ShowWindow(SW_HIDE);
+			for(int i=0; i < m_arrTmView.size(); i++) {
+				m_arrTmView[i]->ShowCallouts(FALSE, TMV_LEFTPANE);
+				m_arrTmView[i]->ShowCallouts(FALSE, TMV_RIGHTPANE);
+				m_arrTmView[i]->ShowWindow(SW_HIDE);
+			}
 			m_ctrlTMText.ShowWindow(SW_HIDE);
 			m_ctrlTMStat.SetMode(TMSTAT_TEXTMODE);
 			m_ctrlTMPower.Show(FALSE);
@@ -11924,7 +11971,8 @@ void CMainView::SetDisplay(short sState)
 			m_ctrlTMMovie.ShowWindow(SW_HIDE);
 			m_ctrlTMMovie.ShowVideo(FALSE);
 			m_ctrlTMPower.Show(FALSE);
-			m_ctrlTMView.BringWindowToTop();
+			for(int i=0; i < m_arrTmView.size(); i++)
+				m_arrTmView[i]->BringWindowToTop();
 			m_ctrlTMText.ShowWindow(SW_HIDE);
 			m_ctrlTMStat.SetMode(TMSTAT_TEXTMODE);
 //			m_ctrlTMText.ShowCursor(true);
@@ -11934,36 +11982,42 @@ void CMainView::SetDisplay(short sState)
 			RecalcLayout(sState);
 
 			//	Size the TMView control
-			m_ctrlTMView.MoveWindow(&m_rcView);
-			// m_ctrlTMView.SetFocus();
+			for(int i = 0; i < m_arrTmView.size(); i++) {
+				int offset = 0;
+				if(i > 0) {
+					offset = 15;
+				} 
+				m_arrTmView[i]->MoveWindow(0, i*(m_ScreenResolution.bottom + offset), m_ScreenResolution.right, m_ScreenResolution.bottom);
+				// m_ctrlTMView->SetFocus();
 
-			//	This ensures that callouts defined in the current zap
-			//	file (if that's what is loaded) will be properly sized
-			m_ctrlTMView.RescaleZapCallouts();
+				//	This ensures that callouts defined in the current zap
+				//	file (if that's what is loaded) will be properly sized
+				m_arrTmView[i]->RescaleZapCallouts();
 
-			//	Make sure the TMView control is visible
-			if(!m_ctrlTMView.IsWindowVisible())
-			{
-				m_ctrlTMView.ShowWindow(SW_SHOW);
-				if(m_ctrlTMView.GetSplitScreen() == TRUE)
+				//	Make sure the TMView control is visible
+				if(!m_arrTmView[i]->IsWindowVisible())
 				{
-					m_ctrlTMView.ShowCallouts(TRUE, TMV_LEFTPANE);
-					m_ctrlTMView.ShowCallouts(TRUE, TMV_RIGHTPANE);
+					m_arrTmView[i]->ShowWindow(SW_SHOW);
+					if(m_arrTmView[i]->GetSplitScreen() == TRUE)
+					{
+						m_arrTmView[i]->ShowCallouts(TRUE, TMV_LEFTPANE);
+						m_arrTmView[i]->ShowCallouts(TRUE, TMV_RIGHTPANE);
+					}
+					else
+					{
+						m_arrTmView[i]->ShowCallouts(TRUE, TMV_ACTIVEPANE);
+					}
 				}
-				else
-				{
-					m_ctrlTMView.ShowCallouts(TRUE, TMV_ACTIVEPANE);
-				}
+
+				//::ShowCursor(true);
+				m_arrTmView[i]->ShowWindow(SW_SHOW);
+				m_arrTmView[i]->RedrawWindow();
+				m_arrTmView[i]->BringWindowToTop();
 			}
-
-			//::ShowCursor(true);
-			m_ctrlTMView.ShowWindow(SW_SHOW);
-			m_ctrlTMView.RedrawWindow();
-			m_ctrlTMView.BringWindowToTop();
 			// m_ctrlTMPower.SetFocus();
-			// m_ctrlTMView.GetActiveWindow();
-			// m_ctrlTMView.GetDSCCursor();
-//			m_ctrlTMView.SetFocus();
+			// m_ctrlTMView->GetActiveWindow();
+			// m_ctrlTMView->GetDSCCursor();
+//			m_ctrlTMView->SetFocus();
 //			::ShowCursor(true);
 
 			
@@ -11986,11 +12040,13 @@ void CMainView::SetDisplay(short sState)
 			m_ctrlTMPower.MoveWindow(&m_rcPower);
 
 			//	Make sure the other controls are invisible
-			if(m_ctrlTMView.IsWindowVisible())
+			if(m_ctrlTMView->IsWindowVisible())
 			{
-				m_ctrlTMView.ShowCallouts(FALSE, TMV_LEFTPANE);
-				m_ctrlTMView.ShowCallouts(FALSE, TMV_RIGHTPANE);
-				m_ctrlTMView.ShowWindow(SW_HIDE);
+				for(int i=0; i < m_arrTmView.size(); i++) {
+					m_arrTmView[i]->ShowCallouts(FALSE, TMV_LEFTPANE);
+					m_arrTmView[i]->ShowCallouts(FALSE, TMV_RIGHTPANE);
+					m_arrTmView[i]->ShowWindow(SW_HIDE);
+				}
 				ResetTMView();
 			}
 
@@ -12035,11 +12091,13 @@ void CMainView::SetDisplay(short sState)
 			//	Make sure the other controls are invisible
 			if(m_ctrlTMText.IsWindowVisible())
 				m_ctrlTMText.ShowWindow(SW_HIDE);
-			if(m_ctrlTMView.IsWindowVisible())
+			if(m_ctrlTMView->IsWindowVisible())
 			{
-				m_ctrlTMView.ShowCallouts(FALSE, TMV_LEFTPANE);
-				m_ctrlTMView.ShowCallouts(FALSE, TMV_RIGHTPANE);
-				m_ctrlTMView.ShowWindow(SW_HIDE);
+				for(int i = 0; i < m_arrTmView.size(); i++) {
+					m_arrTmView[i]->ShowCallouts(FALSE, TMV_LEFTPANE);
+					m_arrTmView[i]->ShowCallouts(FALSE, TMV_RIGHTPANE);
+					m_arrTmView[i]->ShowWindow(SW_HIDE);
+				}
 				ResetTMView();
 			}
 			if(m_ctrlTMPower.IsWindowVisible())
@@ -12060,7 +12118,7 @@ void CMainView::SetDisplay(short sState)
 		case S_LINKEDIMAGE:
 
 
-			//m_ctrlTMView.ShowWindow(SW_HIDE);
+			//m_ctrlTMView->ShowWindow(SW_HIDE);
 			//	Setup the toolbar
 			SelectToolbar(S_LINKEDIMAGE);
 			
@@ -12086,25 +12144,26 @@ void CMainView::SetDisplay(short sState)
 
 			m_ctrlTMPower.Show(FALSE);
 			m_ctrlTMMovie.MoveWindow(&m_rcMovie);
-			m_ctrlTMView.MoveWindow(&m_rcView);
+			m_ctrlTMView->MoveWindow(&m_rcView);
 			m_ctrlTMMovie.BringWindowToTop();
 
 			//	Make sure the viewer is not in split screen mode
-			if(m_ctrlTMView.GetSplitScreen())
-				m_ctrlTMView.SetSplitScreen(FALSE);
+			if(m_ctrlTMView->GetSplitScreen())
+				m_ctrlTMView->SetSplitScreen(FALSE);
 
 			//	This ensures that callouts defined in the current zap
 			//	file (if that's what is loaded) will be properly sized
-			m_ctrlTMView.RescaleZapCallouts();
+			m_ctrlTMView->RescaleZapCallouts();
 
 			//	Make sure the TMView control is visible
-			if(!m_ctrlTMView.IsWindowVisible())
+			if(!m_ctrlTMView->IsWindowVisible())
 			{
 				m_ctrlTMMovie.RedrawWindow();
-				m_ctrlTMView.ShowWindow(SW_SHOW);
-				m_ctrlTMView.RedrawWindow();
-				m_ctrlTMView.ShowCallouts(TRUE, TMV_ACTIVEPANE);
-
+				for(int i = 0; i < m_arrTmView.size(); i++) {
+					m_arrTmView[i]->ShowWindow(SW_SHOW);
+					m_arrTmView[i]->RedrawWindow();
+					m_arrTmView[i]->ShowCallouts(TRUE, TMV_ACTIVEPANE);
+				}
 			}
 				
 			break;
@@ -12121,9 +12180,11 @@ void CMainView::SetDisplay(short sState)
 			RecalcLayout(sState);
 
 			//	Make sure the viewers are turned off
-			m_ctrlTMView.ShowCallouts(FALSE, TMV_LEFTPANE);
-			m_ctrlTMView.ShowCallouts(FALSE, TMV_RIGHTPANE);
-			m_ctrlTMView.ShowWindow(SW_HIDE);
+			for(int i = 0; i < m_arrTmView.size(); i++) {
+				m_arrTmView[i]->ShowCallouts(FALSE, TMV_LEFTPANE);
+				m_arrTmView[i]->ShowCallouts(FALSE, TMV_RIGHTPANE);
+				m_arrTmView[i]->ShowWindow(SW_HIDE);
+			}
 			m_ctrlTMPower.Show(FALSE);
 			ResetTMView();
 			ResetTMPower();
@@ -12179,9 +12240,11 @@ void CMainView::SetDisplay(short sState)
 				m_ctrlTMText.ShowWindow(SW_HIDE);
 			}
 
-			m_ctrlTMView.ShowCallouts(FALSE, TMV_LEFTPANE);
-			m_ctrlTMView.ShowCallouts(FALSE, TMV_RIGHTPANE);
-			m_ctrlTMView.ShowWindow(SW_HIDE);
+			for(int i = 0; i < m_arrTmView.size(); i++) {
+				m_arrTmView[i]->ShowCallouts(FALSE, TMV_LEFTPANE);
+				m_arrTmView[i]->ShowCallouts(FALSE, TMV_RIGHTPANE);
+				m_arrTmView[i]->ShowWindow(SW_HIDE);
+			}
 			m_ctrlTMMovie.MoveWindow(&m_rcMovie);
 			m_ctrlTMPower.MoveWindow(&m_rcPower);
 			m_ctrlTMMovie.BringWindowToTop();
@@ -12241,12 +12304,12 @@ void CMainView::SetDrawingTool(short sTool)
 		ShowLightPen(TRUE);
 
 	//	Change the drawing tool
-	m_ctrlTMView.SetAnnTool(sTool);
-	m_ctrlTMView.SetAction(DRAW);
+	m_ctrlTMView->SetAnnTool(sTool);
+	m_ctrlTMView->SetAction(DRAW);
 
 	//	Update the ini file
 	m_Ini.SetTMSection(PRESENTATION_APP);
-	m_Ini.WriteLong(DRAWTOOL_LINE, m_ctrlTMView.GetAnnTool());
+	m_Ini.WriteLong(DRAWTOOL_LINE, m_ctrlTMView->GetAnnTool());
 
 	//	Make sure the drawing tools toolbar is hidden
 	if(m_ctrlTBTools.IsWindowVisible())
@@ -12834,10 +12897,10 @@ void CMainView::SetPosition(CSetLine* pSetLine)
 //==============================================================================
 void CMainView::SetSinglePaneMode()   
 {
-	if(m_ctrlTMView.GetSplitScreen() == TRUE)
+	if(m_ctrlTMView->GetSplitScreen() == TRUE)
 	{
 		//	Return to single pane mode
-		if(m_ctrlTMView.GetSplitHorizontal() == TRUE)
+		if(m_ctrlTMView->GetSplitHorizontal() == TRUE)
 			OnSplitHorizontal();
 		else
 			OnSplitVertical();
@@ -12928,9 +12991,9 @@ void CMainView::SetZapSplitScreen(BOOL bZapSplitScreen)
 	m_bZapSplitScreen = bZapSplitScreen;
 
 	if(m_bZapSplitScreen == TRUE)
-		m_ctrlTMView.SetSplitFrameColor(m_iZapSplitFrameColor);
+		m_ctrlTMView->SetSplitFrameColor(m_iZapSplitFrameColor);
 	else
-		m_ctrlTMView.SetSplitFrameColor(m_iUserSplitFrameColor);
+		m_ctrlTMView->SetSplitFrameColor(m_iUserSplitFrameColor);
 }
 
 //==============================================================================
@@ -13049,9 +13112,11 @@ BOOL CMainView::Shutdown()
 	theApp.UnlockInstance();
 
 	//	Turn off the windows
-	m_ctrlTMView.ShowCallouts(FALSE, TMV_LEFTPANE);
-	m_ctrlTMView.ShowCallouts(FALSE, TMV_RIGHTPANE);
-	m_ctrlTMView.ShowWindow(SW_HIDE);
+	for(int i = 0; i < m_arrTmView.size(); i++) {
+		m_arrTmView[i]->ShowCallouts(FALSE, TMV_LEFTPANE);
+		m_arrTmView[i]->ShowCallouts(FALSE, TMV_RIGHTPANE);
+		m_arrTmView[i]->ShowWindow(SW_HIDE);
+	}
 	m_ctrlTMText.ShowWindow(SW_HIDE);
 	m_ctrlTMStat.ShowWindow(SW_HIDE);
 	m_ctrlTMMovie.ShowWindow(SW_HIDE);
@@ -13116,10 +13181,10 @@ void CMainView::SwitchPane()
 		return;
 
 	//	Switch the active pane
-	if(m_ctrlTMView.GetActivePane() == TMV_LEFTPANE)
-		m_ctrlTMView.SetActivePane(TMV_RIGHTPANE);
+	if(m_ctrlTMView->GetActivePane() == TMV_LEFTPANE)
+		m_ctrlTMView->SetActivePane(TMV_RIGHTPANE);
 	else
-		m_ctrlTMView.SetActivePane(TMV_LEFTPANE);
+		m_ctrlTMView->SetActivePane(TMV_LEFTPANE);
 
 }
 
@@ -13356,21 +13421,21 @@ void CMainView::UpdateToolColor()
 	m_Ini.SetTMSection(PRESENTATION_APP);
 
 	//	What is the current action
-	switch(m_ctrlTMView.GetAction())
+	switch(m_ctrlTMView->GetAction())
 	{
 		case REDACT:
 
-			m_Ini.WriteLong(REDACTCOLOR_LINE, m_ctrlTMView.GetColor());
+			m_Ini.WriteLong(REDACTCOLOR_LINE, m_ctrlTMView->GetColor());
 			return;
 
 		case HIGHLIGHT:	
 
-			m_Ini.WriteLong(HIGHLIGHTCOLOR_LINE, m_ctrlTMView.GetColor());
+			m_Ini.WriteLong(HIGHLIGHTCOLOR_LINE, m_ctrlTMView->GetColor());
 			break;
 
 		case CALLOUT:	
 
-			m_Ini.WriteLong(CALLOUTCOLOR_LINE, m_ctrlTMView.GetColor());
+			m_Ini.WriteLong(CALLOUTCOLOR_LINE, m_ctrlTMView->GetColor());
 			break;
 
 		case ZOOM:		
@@ -13379,7 +13444,7 @@ void CMainView::UpdateToolColor()
 		case SELECT:	
 		default:		
 
-			m_Ini.WriteLong(ANNCOLOR_LINE, m_ctrlTMView.GetColor());
+			m_Ini.WriteLong(ANNCOLOR_LINE, m_ctrlTMView->GetColor());
 			break;
 
 	}
@@ -13436,7 +13501,7 @@ BOOL CMainView::UpdateZap(SMultipageInfo* pInfo, short sPaneId)
 	//	Now save the zap file
 	//
 	//	NOTE:	TMView will report any errors if reporting is turned on
-	if(m_ctrlTMView.SaveZap(strZapFileSpec, sPaneId) == TMV_NOERROR)
+	if(m_ctrlTMView->SaveZap(strZapFileSpec, sPaneId) == TMV_NOERROR)
 	{
 		//	Is the manager running
 		if(m_ctrlManagerApp.IsRunning() == TRUE)
@@ -13461,7 +13526,7 @@ BOOL CMainView::UpdateZap(SMultipageInfo* pInfo, short sPaneId)
 			rename(strBackupFileSpec, strZapFileSpec);
 		}
 
-	}// if(m_ctrlTMView.SaveZap(strZapFileSpec, TMV_ACTIVEPANE) == TMV_NOERROR)
+	}// if(m_ctrlTMView->SaveZap(strZapFileSpec, TMV_ACTIVEPANE) == TMV_NOERROR)
 
 	return bSuccessful;
 }
@@ -13603,6 +13668,7 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 //	Notes:			None
 //
 //==============================================================================
+bool loadNextInOtherPanes = false;
 void CMainView::HandlePan(GESTUREINFO gi)
 {
 	POINTS				pCurrent;					// new point
@@ -13636,7 +13702,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 	// gesture starts at top of monitor. that mean y should be around 0
 	// we setting the limit for this gesture within the top 12% of screen
-	if (m_gestureStartPoint.y <= iMonitor_width/8) {
+	/*if (m_gestureStartPoint.y <= iMonitor_width/8) {
 		if (abs(iDistY) < iMonitor_width/8) {
 			DisplayKeyboardIconGesture(pCurrent);
 		}
@@ -13659,7 +13725,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		// update last location
 		m_gestureLastPoint = pCurrent;
 		return;
-	}
+	}*/
 
 
 	// 3. Swipe right to left to advance to the next page and swipe left to right to go to the previous page
@@ -13694,14 +13760,14 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		return;
 	}
 
-	if (abs(iDistY) > iMonitor_height/4 && abs(iDistX) < iMonitor_width/8 && 
+	/*if (abs(iDistY) > iMonitor_height/4 && abs(iDistX) < iMonitor_width/8 && 
 		gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
 
 		// check if the document suport zooming
 		if (IsCommandEnabled(TMAX_ZOOM))
-			m_ctrlTMView.SetZoomedNextPage(true);
+			m_ctrlTMView->SetZoomedNextPage(true);
 		else
-			m_ctrlTMView.SetZoomedNextPage(false);
+			m_ctrlTMView->SetZoomedNextPage(false);
 
 		if (iDistY > 0) {
 			BYTE keyState[256];
@@ -13718,7 +13784,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		// update last location
 		m_gestureLastPoint = pCurrent;
 		return;
-	}
+	}*/
 
 	// 1. Moving the page with your finger on the screen; similar to what happens now when grabbing and moving the page with the mouse button
 	//CRect myRect;
@@ -13735,8 +13801,27 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 	bool *bSmooth = (bool *)malloc(sizeof(bool));
 	*bSmooth = false;
-	
-	m_ctrlTMView.DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth);
+
+	ScrollWindow(0, pCurrent.y - m_gestureLastPoint.y);	
+	for(int i =0; i < m_arrTmView.size(); i++) {
+		m_arrTmView[i]->BringWindowToTop();
+		m_arrTmView[i]->ShowWindow(SW_SHOW);
+	}
+
+	if(!loadNextInOtherPanes) {
+		for(int i = 1; i < m_arrTmView.size(); i++) {
+			CTm_view *bk = m_ctrlTMView;
+			m_ctrlTMView = m_arrTmView[i];
+			for(int j = 0; j < i; j++) {
+				OnNextPage();
+			}
+
+			m_ctrlTMView = bk;
+		}
+		loadNextInOtherPanes = true;
+	}
+
+	//m_ctrlTMView->DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth);
 	if (*bSmooth == true)
 		m_bGestureHandled = TRUE;
 
@@ -13773,7 +13858,7 @@ void CMainView::HandleZoom(GESTUREINFO gi)
 
 		// zoom factor
 		scale = (FLOAT)gi.ullArguments / (FLOAT)m_ullArguments;
-		m_ctrlTMView.DoGestureZoom(scale);
+		m_ctrlTMView->DoGestureZoom(scale);
 
 		// update current point and distance
 		m_gestureLastPoint = gi.ptsLocation;
@@ -13909,7 +13994,7 @@ void CMainView::OnGesturePan()
 		return;
 	
 	// enable gesture configration
-	m_ctrlTMView.SetAction(TMAX_NOCOMMAND);
+	m_ctrlTMView->SetAction(TMAX_NOCOMMAND);
 
 	// re-setting gestures pan configration
 	CGestureConfig config;

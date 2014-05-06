@@ -370,7 +370,7 @@ HWND CApp::GetPrevInstance()
 //==============================================================================
 BOOL CApp::InitInstance()
 {
-	AfxMessageBox("CApp::InitInstance()");
+	//AfxMessageBox("CApp::InitInstance()");
 	HWND	hwndPrevious = NULL;
 	char	szFolder[512];
 	char*	pToken;

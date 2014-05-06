@@ -129,7 +129,6 @@
 #define IDI_CLOSE_BLACK                 389
 #define IDD_COLOR_PICKER_DLG            391
 #define IDB_GEEN_COLOR                  397
-#define IDC_TMVIEWCTRL                  1000
 #define IDC_CASEFOLDER                  1001
 #define IDC_CASESFOLDER                 1001
 #define IDC_FILENAME                    1002
@@ -313,6 +312,9 @@
 #define IDC_TMGRABCTRL                  1123
 #define IDC_TMSHARECTRL1                1124
 #define IDC_TMSHARE                     1124
+#define IDC_TMVIEWCTRL                  5000
+#define IDC_TMVIEWCTRL2                 5001
+#define IDC_TMVIEWCTRL3                 5002
 #define ID_NORMAL                       32701
 #define ID_ZOOM                         32702
 #define ID_NEXT                         32703
