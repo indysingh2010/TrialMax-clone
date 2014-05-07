@@ -812,12 +812,21 @@ class CMainView : public CFormView
 		void			OpenColorPicker();
 		void			SetColorPickerPosition();
 		void			ChangeColorOfColorButton(short sColorToChange);
+
+		bool			IsNextPageAvailable();
+		bool			IsPrevPageAvailable();
+
 	//	Class Wizard Maintained
 	public:
 	//{{AFX_DATA(CMainView)
 	enum { IDD = IDD_TMAXPRESENTATION_FORM };
+
 	CTm_view	*m_ctrlTMView;
-	vector<CTm_view *> m_arrTmView;
+#define SZ_ARR_TM_VW 3
+	CTm_view *m_arrTmView[3];
+	bool hasPage[3];
+	int curIndexView;
+
 	CTMTool	m_ctrlTBDocuments;
 	CTMTool	m_ctrlTBDocumentsLarge;
 	CTMTool	m_ctrlTBGraphics;

@@ -1,82 +1,11 @@
-﻿Build started 5/7/2014 6:48:09 PM.
+﻿Build started 5/7/2014 9:09:56 PM.
      1>Project "E:\10Pearls Projects\Trail Max\TrialMax\sourcecode\Trialmax\TmaxPresentation\App\TmaxPresentation.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating ".\Debug\TmaxPresentation.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching ".\Debug\TmaxPresentation.unsuccessfulbuild".
        Midl:
          All outputs are up-to-date.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IInclude /I..\Common\Include /I..\Common\Include\Tmview /I..\Common\Include\Tmdata /I..\Common\Include\Tmmovie /I..\Common\Include\Tmbars /I..\Common\Include\Tmtool /I..\Common\Include\Directx /I..\Common\Include\Tmhelp /I..\Common\Include\Tmtext /I..\Common\Include\Tmstat /I..\Common\Include\Tmlpen /I..\Common\Include\Tmpower /I..\Common\Include\Tmsetup /I..\Common\Include\Tmgrab /I..\Common\Include\Tmdb45 /I..\Common\Include\Tmdbnet /I..\Common\Include\Msxml /I..\Common\Include\Tmshare /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _AFXDLL /Gm /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug/" /Fd".\Debug/vc100.pdb" /Gd /TP /wd4995 /analyze- /errorReport:prompt Source\View.cpp
-         View.cpp
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(1154): warning C4345: behavior change: an object of POD type constructed with an initializer of the form () will be default-initialized
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(1178): warning C4345: behavior change: an object of POD type constructed with an initializer of the form () will be default-initialized
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(3830): warning C4101: 'tmp' : unreferenced local variable
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(4967): warning C4101: 'dwPriorityClass' : unreferenced local variable
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(5142): warning C4101: 'y' : unreferenced local variable
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(5141): warning C4101: 'x' : unreferenced local variable
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(6014): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(6015): warning C4345: behavior change: an object of POD type constructed with an initializer of the form () will be default-initialized
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(6020): warning C4345: behavior change: an object of POD type constructed with an initializer of the form () will be default-initialized
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(9603): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(11387): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(11435): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(11973): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(11992): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(12003): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(12063): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(12114): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(12180): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(12201): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(12261): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(13133): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(13865): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(13911): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(13919): warning C4018: '<' : signed/unsigned mismatch
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(13736): warning C4101: 'hwnd' : unreferenced local variable
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(13802): warning C4101: 'keyState' : unreferenced local variable
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(13810): warning C4101: 'keyState' : unreferenced local variable
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14256): warning C4482: nonstandard extension used: enum 'CBinderEntry::TableType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14284): warning C4482: nonstandard extension used: enum 'CBinderEntry::TableType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14318): warning C4482: nonstandard extension used: enum 'CBinderEntry::TableType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14356): warning C4482: nonstandard extension used: enum 'CBinderEntry::TableType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14369): warning C4482: nonstandard extension used: enum 'CBinderEntry::TableType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14514): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(197) : see declaration of 'strtok'
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14517): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-                 c:\program files (x86)\microsoft visual studio 10.0\vc\include\string.h(197) : see declaration of 'strtok'
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14798): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14799): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14803): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14804): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14808): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14809): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14813): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14814): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14818): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14819): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14823): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14824): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14828): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14829): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14833): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14834): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14838): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14839): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14843): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14844): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14848): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14849): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14853): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14854): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14921): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14923): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14925): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14927): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14929): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14931): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14933): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14935): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14937): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
-     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\app\source\view.cpp(14939): warning C4482: nonstandard extension used: enum 'CColorPickerList::ColorType' used in qualified name
+         All outputs are up-to-date.
          All outputs are up-to-date.
          All outputs are up-to-date.
          All outputs are up-to-date.
@@ -178,4 +107,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.13
+Time Elapsed 00:00:00.43
