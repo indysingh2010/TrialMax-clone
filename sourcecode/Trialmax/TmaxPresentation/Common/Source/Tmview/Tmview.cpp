@@ -1747,10 +1747,12 @@ void CTm_view::AboutBox()
 	InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
 }
 
-void CTm_view::DoGesturePan(long lCurrentX, long lCurrentY, long lLastX, long lLastY, bool* bSmooth)
+bool CTm_view::DoGesturePan(long lCurrentX, long lCurrentY, long lLastX, long lLastY, bool* bSmooth)
 {
+	bool result;
 	static BYTE parms[] = VTS_I4 VTS_I4 VTS_I4 VTS_I4 VTS_BOOL;
-	InvokeHelper(0x92, DISPATCH_METHOD, VT_EMPTY, NULL, parms, lCurrentX, lCurrentY, lLastX, lLastY, bSmooth);
+	InvokeHelper(0x92, DISPATCH_METHOD, VT_BOOL, (void*)&result, parms, lCurrentX, lCurrentY, lLastX, lLastY, bSmooth);
+	return result;
 }
 
 void CTm_view::DoGestureZoom(float zoomFactor)

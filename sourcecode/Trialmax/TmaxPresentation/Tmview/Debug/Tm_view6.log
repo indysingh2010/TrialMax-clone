@@ -1,5 +1,62 @@
-﻿Build started 4/2/2014 11:34:45 AM.
+﻿Build started 5/7/2014 2:54:02 PM.
+     1>Project "E:\10Pearls Projects\Trail Max\TrialMax\sourcecode\Trialmax\TmaxPresentation\Tmview\Tm_view6.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating ".\Debug\Tm_view6.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       Midl:
+         All outputs are up-to-date.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IInclude /I..\Common\Include /I..\Common\Include\Lead /I..\Common\Include\Tmview /I..\Common\Include\Tmdata /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D LTV16_CONFIG /D _VC80_UPGRADE=0x0600 /D _WINDLL /D _AFXDLL /Gm /EHsc /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\Debug/" /Fd".\Debug/vc100.pdb" /Gd /TP /analyze- /errorReport:prompt Source\Tmview.cpp
+         Tmview.cpp
+     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\tmview\source\tmview.cpp(8706): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+     1>e:\10pearls projects\trail max\trialmax\sourcecode\trialmax\tmaxpresentation\tmview\source\tmview.cpp(8708): warning C4800: 'int' : forcing value to bool 'true' or 'false' (performance warning)
+         All outputs are up-to-date.
+       ResourceCompile:
+         All outputs are up-to-date.
+       ManifestResourceCompile:
+         All outputs are up-to-date.
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:".\..\..\Bin\Debug/Tm_view6.ocx" /INCREMENTAL /NOLOGO version.lib ..\Common\Lib\Lead\Ltann_u.lib ..\Common\Lib\Lead\Ltfil_u.lib /DEF:".\Tm_view6.def" /MANIFEST /ManifestFile:".\Debug\Tm_view6.ocx.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:".\..\..\Bin\Debug/Tm_view6.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE:NO /IMPLIB:".\..\..\Bin\Debug/Tm_view6.lib" /MACHINE:X86 /DLL .\Debug\Tm_view6.res
+         .\Debug\Tm_view6.ocx.embed.manifest.res
+         .\Debug/Annotate.obj
+         .\Debug/Annprops.obj
+         .\Debug/Anntext.obj
+         .\Debug/Callout.obj
+         .\Debug/Cleanup.obj
+         .\Debug/Colorctl.obj
+         .\Debug/Devcapsctrl.obj
+         .\Debug/Diagnose.obj
+         .\Debug/Filever.obj
+         .\Debug/Fprintercaps.obj
+         .\Debug/Handler.obj
+         .\Debug/Imgprop.obj
+         .\Debug/lead.obj
+         .\Debug/Pageset.obj
+         .\Debug/Pathsplit.obj
+         .\Debug/Printer.obj
+         .\Debug/Redact.obj
+         .\Debug/Regcats.obj
+         .\Debug/StdAfx.obj
+         .\Debug/Tmini.obj
+         .\Debug/Tmlead.obj
+         .\Debug/Tmtrack.obj
+         .\Debug/Tmver.obj
+         .\Debug/Tmview.obj
+         .\Debug/Tmviewap.obj
+         .\Debug/Tmviewpg.obj
+         .\Debug/Toolbox.obj
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:".\Debug\Tm_view6.ocx.embed.manifest" /manifest .\Debug\Tm_view6.ocx.intermediate.manifest "C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\Include\Manifest\dpiaware.manifest"
+         All outputs are up-to-date.
+       LinkEmbedManifest:
+         All outputs are up-to-date.
+         Tm_view6.vcxproj -> E:\10Pearls Projects\Trail Max\TrialMax\sourcecode\Trialmax\TmaxPresentation\Tmview\.\..\..\Bin\Debug\Tm_view6.ocx
+       CustomBuildStep:
+       Skipping target "CustomBuildStep" because all output files are up-to-date with respect to the input files.
+       FinalizeBuildStatus:
+         Deleting file ".\Debug\Tm_view6.unsuccessfulbuild".
+         Touching ".\Debug\Tm_view6.lastbuildstate".
+     1>Done Building Project "E:\10Pearls Projects\Trail Max\TrialMax\sourcecode\Trialmax\TmaxPresentation\Tmview\Tm_view6.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.01
+Time Elapsed 00:00:02.96

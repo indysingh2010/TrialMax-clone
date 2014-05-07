@@ -2919,6 +2919,10 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 //	Notes:			None
 //
 //==============================================================================
+CMedia* g_pMedia; 
+long g_lSecondary; 
+long g_lTertiary;
+
 BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 {
 	SMultipageInfo	MPInfo;
@@ -3001,6 +3005,11 @@ BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 				DbgMsg(&MPInfo, "LoadMedia->LoadMultipage Failed: ");
 				delete MPInfo.pMultipage;
 				return FALSE;
+			} else {
+
+				g_pMedia = pMedia;
+				g_lSecondary = lSecondary;
+				g_lTertiary = lTertiary;
 			}
 
 			break;
@@ -9553,9 +9562,17 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 					//m_ctrlTMView->ShowWindow(SW_HIDE);
 				}
 				//	Load the new file
+				m_ctrlTMView->LoadFile(strFilename, TMV_ACTIVEPANE);
+
+				/*SetDefaultState(this);
 				for(int i=0; i < m_arrTmView.size(); i++) {
+					RestoreDefaultState(this);
+
 					m_arrTmView[i]->LoadFile(strFilename, TMV_ACTIVEPANE);
+					PushCurrentState(this, i);
 				}
+
+				SetCurrentState(this, 0);*/
 
 				//	Reset the multipage information
 				pMPOld = (SMultipageInfo*)m_ctrlTMView->GetData(-1);
@@ -11931,6 +11948,7 @@ void CMainView::SetControlBar(int iId)
 //					we size it to zero.
 //
 //==============================================================================
+#define PAGES_MARGIN 15
 void CMainView::SetDisplay(short sState)   
 {
 	//	Prevent attempts to update the toolbar buttons while we change
@@ -11985,7 +12003,7 @@ void CMainView::SetDisplay(short sState)
 			for(int i = 0; i < m_arrTmView.size(); i++) {
 				int offset = 0;
 				if(i > 0) {
-					offset = 15;
+					offset = PAGES_MARGIN;
 				} 
 				m_arrTmView[i]->MoveWindow(0, i*(m_ScreenResolution.bottom + offset), m_ScreenResolution.right, m_ScreenResolution.bottom);
 				// m_ctrlTMView->SetFocus();
@@ -13596,6 +13614,10 @@ LRESULT CMainView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 //	Notes:			None
 //
 //==============================================================================
+int top = 0;
+BOOL panHandled = TRUE;
+BOOL panDirUP = TRUE;
+int maxLastPage = 0;
 LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 {
 	// check if tablet mode is on
@@ -13624,6 +13646,44 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				LogMe("--------------Gesture Ended---------------/n");
 				m_bMouseMode = TRUE;
 				m_bGestureHandled = FALSE;
+
+				if(!panHandled) {
+
+					if(panDirUP) {
+						
+						int remainder = abs(top) % (m_ScreenResolution.bottom + PAGES_MARGIN);
+					
+						if(remainder > (m_ScreenResolution.bottom+PAGES_MARGIN)/20) {
+						
+							int diff = m_ScreenResolution.bottom + PAGES_MARGIN - remainder;
+							ScrollWindow(0, -diff);
+							top -= diff;
+
+						} else {
+							ScrollWindow(0, abs(remainder));
+							top += abs(remainder);
+						}
+
+					} else { // panDirDown
+
+						int remainder = abs(top) % (m_ScreenResolution.bottom + PAGES_MARGIN);
+						int remainderTop = m_ScreenResolution.bottom + PAGES_MARGIN - remainder;
+					
+						if(remainderTop > (m_ScreenResolution.bottom+PAGES_MARGIN)/20) {
+						
+							int diff = m_ScreenResolution.bottom + PAGES_MARGIN - remainderTop;
+							ScrollWindow(0, diff);
+							top += diff;
+
+						} else {
+							ScrollWindow(0, -abs(remainderTop));
+							top -= abs(remainderTop);
+						}
+					}
+
+					RedrawWindow();
+					panHandled = TRUE;
+				}
 				break;
 			case GID_ZOOM:
 				HandleZoom(gi);
@@ -13802,26 +13862,65 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	bool *bSmooth = (bool *)malloc(sizeof(bool));
 	*bSmooth = false;
 
-	ScrollWindow(0, pCurrent.y - m_gestureLastPoint.y);	
-	for(int i =0; i < m_arrTmView.size(); i++) {
-		m_arrTmView[i]->BringWindowToTop();
-		m_arrTmView[i]->ShowWindow(SW_SHOW);
-	}
-
 	if(!loadNextInOtherPanes) {
 		for(int i = 1; i < m_arrTmView.size(); i++) {
-			CTm_view *bk = m_ctrlTMView;
 			m_ctrlTMView = m_arrTmView[i];
+			LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
 			for(int j = 0; j < i; j++) {
 				OnNextPage();
 			}
 
-			m_ctrlTMView = bk;
 		}
+
+		m_ctrlTMView = m_arrTmView[0];
+		maxLastPage = m_arrTmView.size() - 1;
 		loadNextInOtherPanes = true;
 	}
 
-	//m_ctrlTMView->DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth);
+	if(!m_ctrlTMView->DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth)) {
+		
+		int totalScroll = m_ScreenResolution.bottom;
+		int diff = pCurrent.y - m_gestureLastPoint.y;
+
+		// pan or not
+		if(diff < 0) {
+			panDirUP = TRUE;
+			// pan up
+			if(top > -2*(m_ScreenResolution.bottom+PAGES_MARGIN)) {
+				diff = -1 * min(abs(diff), abs(2*(m_ScreenResolution.bottom+PAGES_MARGIN)) - top);
+			} else {
+				// no scroll
+				diff = 0;
+			}
+
+		} else if(diff > 0) {
+			panDirUP = FALSE;
+			// pan down
+			if(top < 0) {
+				diff = min(abs(top), diff);
+			} else {
+				// no scroll
+				diff = 0;
+			}
+		}
+
+
+		if(diff != 0) {
+			panHandled = FALSE;
+			ScrollWindow(0, diff);
+			top += diff;
+
+			for(int i =0; i < m_arrTmView.size(); i++)
+				m_arrTmView[i]->RedrawWindow();
+		}
+
+		POINT pt;
+		pt.x = 0;
+		pt.y = abs(top);
+
+		m_ctrlTMView = m_arrTmView[min(abs(top)/(m_ScreenResolution.bottom+PAGES_MARGIN), m_arrTmView.size() - 1)];
+
+	}
 	if (*bSmooth == true)
 		m_bGestureHandled = TRUE;
 

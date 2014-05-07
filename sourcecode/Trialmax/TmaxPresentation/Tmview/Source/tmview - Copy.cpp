@@ -8684,142 +8684,162 @@ void CTMViewCtrl::DoGesturePan(LONG lCurrentX, LONG lCurrentY, LONG lLastX, LONG
 	m_iWidth  = m_rcMax.right - m_rcMax.left;
 	m_iHeight = m_rcMax.bottom - m_rcMax.top;
 
-	if (lCurrentY - lLastY > 0 && m_sActivePane == TMV_LEFTPANE && m_rcFrames[0]->top >= m_rcMax.top) {
+	//******************* Check first page/last page boundary so that can not scroll onwards ******************* 
+	if (lCurrentY - lLastY > 0 && m_sActivePane == TMV_LEFTPANE && m_rcLFrame.top >= m_rcMax.top) {
 		return;
 	}
 
-	if (lCurrentY - lLastY < 0 && m_sActivePane == TMV_RIGHTPANE && m_rcFrames[m_Panes.size() - 1]->bottom <= m_rcMax.bottom)
+	if (lCurrentY - lLastY < 0 && m_sActivePane == TMV_RIGHTPANE && m_rcRFrames.bottom <= m_rcMax.bottom)
 		return;
+	//******************* ******************* ******************* ******************* ******************* 
 
 	if((lCurrentY - lLastY < 0 && !(sPanStates & ENABLE_PANDOWN)) 
 		|| (lCurrentY - lLastY > 0 && !(sPanStates & ENABLE_PANUP))) {
 
-		for(int i = 0; i < m_Panes.size(); i++) {
-			m_rcFrames[i]->top += (lCurrentY - lLastY);
-		 	m_rcFrames[i]->bottom += (lCurrentY - lLastY);
-
-			//	Note: The bottom/right members are used for width/height
-			m_rcPanes[i]->top  += (lCurrentY - lLastY);
-			m_rcPanes[i]->bottom += (lCurrentY - lLastY);
-		}
-
-		ScrollWindow(0, lCurrentY - lLastY);
-		
-		for(int i = 0; i < m_Panes.size(); i++)
-			m_Panes[i]->SetMaxRect(&m_rcMax, TRUE, FALSE);
-		
-		RedrawWindow();
-
-
+		//*******************  Smooth scroll 10% to allign ******************* 
 		// pan up
 		if (lCurrentY - lLastY < 0) {
 			// check if top(current) pan is above screen top
-			if (m_rcPanes[m_sActivePane]->top + m_rcMax.bottom/10 < 0) // first pane
+			if (m_rcPanes[0]->top + m_rcMax.bottom/10 < 0 && m_sActivePane == TMV_LEFTPANE)
 			{
 				//int scrollDist = -(m_rcFrames[0]->top + m_rcMax.bottom);
 
-				int scrollDist = m_rcFrames[m_sActivePane]->top + m_rcMax.bottom;
+				int scrollDist = m_rcFrames[0]->top + m_rcMax.bottom;
 
 				for(int i = 1; i < scrollDist; i *= 2) {
 
 					scrollDist -=i;
 
-					for(int j=0; j<m_Panes.size(); j++) {
-						
-						m_rcFrames[j]->top -= i;
-						m_rcFrames[j]->bottom -= i;
-					
-						//	Note: The bottom/right members are used for width/height
-						m_rcPanes[j]->top  -= i;
-						m_rcPanes[j]->bottom -= i;
-					}
+					m_rcFrames[0]->top -= i;
+					m_rcFrames[0]->bottom -= i;
+		
+					m_rcFrames[1]->top -= i;
+					m_rcFrames[1]->bottom -= i;
+
+					//	Note: The bottom/right members are used for width/height
+					m_rcPanes[0]->left   = m_rcFrames[0]->left + m_sSplitFrameThickness;
+					m_rcPanes[0]->top    = m_rcFrames[0]->top + m_sSplitFrameThickness;
+					m_rcPanes[0]->right  = (m_rcFrames[0]->right - m_rcFrames[0]->left) - (2 * m_sSplitFrameThickness);
+					m_rcPanes[0]->bottom = (m_rcFrames[0]->bottom - m_rcFrames[0]->top) - (2 * m_sSplitFrameThickness);
+
+					//	Calculate the right pane rectangle
+					//
+					//	Note: The bottom/right members are used for width/height
+					m_rcPanes[1]->left   = m_rcFrames[1]->left + m_sSplitFrameThickness;
+					m_rcPanes[1]->top    = m_rcFrames[1]->top + m_sSplitFrameThickness;
+					m_rcPanes[1]->right  = (m_rcFrames[1]->right - m_rcFrames[1]->left) - (2 * m_sSplitFrameThickness);
+					m_rcPanes[1]->bottom = (m_rcFrames[1]->bottom - m_rcFrames[1]->top) - (2 * m_sSplitFrameThickness);
 
 					ScrollWindow(0, -i);
 
-					for(int j=0; j < m_Panes.size(); j++) {
-						m_Panes[j]->SetMaxRect(&m_rcMax, TRUE, FALSE);
-					}
-
+					m_Panes[0]->SetMaxRect(m_rcPanes[0], TRUE, FALSE);
+					m_Panes[1]->SetMaxRect(m_rcPanes[1], TRUE, FALSE);
 					RedrawWindow();
 				}
 
-				for(int j=0; j < m_Panes.size(); j++) {
-					// a small remaining part
-					m_rcFrames[j]->top -= scrollDist;
-					m_rcFrames[j]->bottom -= scrollDist;
-					//	Note: The bottom/right members are used for width/height
-					m_rcPanes[j]->top  -= scrollDist;
-					m_rcPanes[j]->bottom -= scrollDist;
-				}
+				// a small remaining part
+				m_rcFrames[0]->top -= scrollDist;
+				m_rcFrames[0]->bottom -= scrollDist;
+		
+				m_rcFrames[1]->top -= scrollDist;
+				m_rcFrames[1]->bottom -= scrollDist;
+
+				//	Note: The bottom/right members are used for width/height
+				m_rcPanes[0]->left   = m_rcFrames[0]->left + m_sSplitFrameThickness;
+				m_rcPanes[0]->top    = m_rcFrames[0]->top + m_sSplitFrameThickness;
+				m_rcPanes[0]->right  = (m_rcFrames[0]->right - m_rcFrames[0]->left) - (2 * m_sSplitFrameThickness);
+				m_rcPanes[0]->bottom = (m_rcFrames[0]->bottom - m_rcFrames[0]->top) - (2 * m_sSplitFrameThickness);
+
+				//	Calculate the right pane rectangle
+				//
+				//	Note: The bottom/right members are used for width/height
+				m_rcPanes[1]->left   = m_rcFrames[1]->left + m_sSplitFrameThickness;
+				m_rcPanes[1]->top    = m_rcFrames[1]->top + m_sSplitFrameThickness;
+				m_rcPanes[1]->right  = (m_rcFrames[1]->right - m_rcFrames[1]->left) - (2 * m_sSplitFrameThickness);
+				m_rcPanes[1]->bottom = (m_rcFrames[1]->bottom - m_rcFrames[1]->top) - (2 * m_sSplitFrameThickness);
 
 				ScrollWindow(0, -scrollDist);
 		
-				for(int j=0; j < m_Panes.size(); j++)
-					m_Panes[j]->SetMaxRect(&m_rcMax, TRUE, FALSE);
-
+				m_Panes[0]->SetMaxRect(m_rcPanes[0], TRUE, FALSE);
+				m_Panes[1]->SetMaxRect(m_rcPanes[1], TRUE, FALSE);
 				RedrawWindow();
 
-				// activate "next" pan
-				if(m_sActivePane < m_Panes.size() - 1) {
-					m_sActivePane++;
-					m_pActive = m_Panes[m_sActivePane];
-				}
+				m_sActivePane = TMV_RIGHTPANE;
+				m_pActive	 = m_Panes[1];
 			}
 		}
 
 		// pan down
 		else if (lCurrentY - lLastY > 0) {
-			if (m_rcPanes[m_sActivePane]->top > m_rcMax.bottom/10)
+			if (m_rcPanes[1]->top > m_rcMax.bottom/10 && m_sActivePane == TMV_RIGHTPANE)
 			{
-				int scrollDist = m_rcMax.bottom - m_rcFrames[m_sActivePane]->top;
+				int scrollDist = m_rcMax.bottom - m_rcFrames[1]->top;
 
 				for (int i = 1; i < scrollDist; i *= 2) {
 
 					scrollDist -=i;
 
-					for(int j =0; j < m_Panes.size(); j++) {
-						m_rcFrames[j]->top += i;
-						m_rcFrames[j]->bottom += i;
+					m_rcFrames[0]->top += i;
+					m_rcFrames[0]->bottom += i;
 		
-						//	Note: The bottom/right members are used for width/height
-						m_rcPanes[j]->top   += i;
-						m_rcPanes[j]->bottom += i;
-					}
+					m_rcFrames[1]->top += i;
+					m_rcFrames[1]->bottom += i;
+
+					//	Note: The bottom/right members are used for width/height
+					m_rcPanes[0]->left   = m_rcFrames[0]->left + m_sSplitFrameThickness;
+					m_rcPanes[0]->top    = m_rcFrames[0]->top + m_sSplitFrameThickness;
+					m_rcPanes[0]->right  = (m_rcFrames[0]->right - m_rcFrames[0]->left) - (2 * m_sSplitFrameThickness);
+					m_rcPanes[0]->bottom = (m_rcFrames[0]->bottom - m_rcFrames[0]->top) - (2 * m_sSplitFrameThickness);
+
+					//	Calculate the right pane rectangle
+					//
+					//	Note: The bottom/right members are used for width/height
+					m_rcPanes[1]->left   = m_rcFrames[1]->left + m_sSplitFrameThickness;
+					m_rcPanes[1]->top    = m_rcFrames[1]->top + m_sSplitFrameThickness;
+					m_rcPanes[1]->right  = (m_rcFrames[1]->right - m_rcFrames[1]->left) - (2 * m_sSplitFrameThickness);
+					m_rcPanes[1]->bottom = (m_rcFrames[1]->bottom - m_rcFrames[1]->top) - (2 * m_sSplitFrameThickness);
 
 					ScrollWindow(0, i);
 		
-					for(int j=0; j < m_Panes.size(); j++)
-						m_Panes[j]->SetMaxRect(&m_rcMax, TRUE, FALSE);
-
+					m_Panes[0]->SetMaxRect(m_rcPanes[0], TRUE, FALSE);
+					m_Panes[1]->SetMaxRect(m_rcPanes[1], TRUE, FALSE);
 					RedrawWindow();
 				}
 
 				// remaining
-
-				for(int j=0; j < m_Panes.size(); j++) {
-					m_rcFrames[j]->top += scrollDist;
-					m_rcFrames[j]->bottom += scrollDist;
-
-					//	Note: The bottom/right members are used for width/height
-					m_rcPanes[j]->top  += scrollDist;
-					m_rcPanes[j]->bottom += scrollDist;
-
-				}
+				
+				m_rcFrames[0]->top += scrollDist;
+				m_rcFrames[0]->bottom += scrollDist;
 		
+				m_rcFrames[1]->top += scrollDist;
+				m_rcFrames[1]->bottom += scrollDist;
+
+				//	Note: The bottom/right members are used for width/height
+				m_rcPanes[0]->left   = m_rcFrames[0]->left + m_sSplitFrameThickness;
+				m_rcPanes[0]->top    = m_rcFrames[0]->top + m_sSplitFrameThickness;
+				m_rcPanes[0]->right  = (m_rcFrames[0]->right - m_rcFrames[0]->left) - (2 * m_sSplitFrameThickness);
+				m_rcPanes[0]->bottom = (m_rcFrames[0]->bottom - m_rcFrames[0]->top) - (2 * m_sSplitFrameThickness);
+
+				//	Calculate the right pane rectangle
+				//
+				//	Note: The bottom/right members are used for width/height
+				m_rcPanes[1]->left   = m_rcFrames[1]->left + m_sSplitFrameThickness;
+				m_rcPanes[1]->top    = m_rcFrames[1]->top + m_sSplitFrameThickness;
+				m_rcPanes[1]->right  = (m_rcFrames[1]->right - m_rcFrames[1]->left) - (2 * m_sSplitFrameThickness);
+				m_rcPanes[1]->bottom = (m_rcFrames[1]->bottom - m_rcFrames[1]->top) - (2 * m_sSplitFrameThickness);
+
 				ScrollWindow(0, scrollDist);
-
-				for(int j=0; j < m_Panes.size(); j++)
-					m_Panes[j]->SetMaxRect(&m_rcMax, TRUE, FALSE);
-
+		
+				m_Panes[0]->SetMaxRect(m_rcPanes[0], TRUE, FALSE);
+				m_Panes[1]->SetMaxRect(m_rcPanes[1], TRUE, FALSE);
 				RedrawWindow();
-
-				// activate "previous" pan
-				if(m_sActivePane > 0) {
-					m_sActivePane--;
-					m_pActive	 = m_Panes[m_sActivePane];
-				}
+				
+				m_sActivePane = TMV_LEFTPANE;
+				m_pActive	 = m_Panes[0];
 			}
 		}
+		
+		//******************* ******************* ******************* ******************* ******************* 
 
 	}
 	

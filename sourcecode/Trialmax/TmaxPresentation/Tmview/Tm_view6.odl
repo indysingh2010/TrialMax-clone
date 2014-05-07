@@ -216,7 +216,7 @@ library TM_VIEW6Lib
 			//}}AFX_ODL_METHOD
 
 			[id(DISPID_ABOUTBOX)] void AboutBox();
-			[id(146)] void DoGesturePan(LONG lCurrentX, LONG lCurrentY, LONG lLastX, LONG lLastY, BOOL* bSmooth);
+			[id(146)] boolean DoGesturePan(LONG lCurrentX, LONG lCurrentY, LONG lLastX, LONG lLastY, BOOL* bSmooth);
 			[id(147)] void DoGestureZoom(FLOAT zoomFactor);
 };
 

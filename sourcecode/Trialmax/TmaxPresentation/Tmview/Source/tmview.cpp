@@ -295,7 +295,7 @@ BEGIN_DISPATCH_MAP(CTMViewCtrl, COleControl)
 	DISP_PROPERTY_EX_ID(CTMViewCtrl, "VerQEF", DISPID_VERQEF, GetVerQEF, SetNotSupported, VT_I2)
 	DISP_PROPERTY_EX_ID(CTMViewCtrl, "VerBuildDate", DISPID_VERBUILDDATE, GetVerBuildDate, SetNotSupported, VT_BSTR)
 
-	DISP_FUNCTION_ID(CTMViewCtrl, "DoGesturePan", dispidDoGesturePan, DoGesturePan, VT_EMPTY, VTS_I4 VTS_I4)
+	DISP_FUNCTION_ID(CTMViewCtrl, "DoGesturePan", dispidDoGesturePan, DoGesturePan, VT_BOOL, VTS_I4 VTS_I4 VTS_I4 VTS_I4 VTS_BOOL)
 	DISP_FUNCTION_ID(CTMViewCtrl, "DoGestureZoom", dispidDoGestureZoom, DoGestureZoom, VT_EMPTY, VTS_R4)
 	DISP_FUNCTION_ID(CTMViewCtrl, "SetZoomedNextPage", dispidZoomedNextPage, SetZoomedNextPage, VT_EMPTY, VTS_BOOL)
 	END_DISPATCH_MAP()
@@ -8693,11 +8693,20 @@ void CTMViewCtrl::ZoomFullWidth(short sPane)
 //	Notes:			None
 //
 //==============================================================================
-void CTMViewCtrl::DoGesturePan(LONG lX, LONG lY)
+bool CTMViewCtrl::DoGesturePan(LONG lCurrentX, LONG lCurrentY, LONG lLastX, LONG lLastY, bool* bSmooth)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
-	GetPane(TMV_ACTIVEPANE)->GesturePan(lX, lY);
+	GetPane(TMV_ACTIVEPANE)->GesturePan(lCurrentX - lLastX, lCurrentY - lLastY);
+
+	short sPanStates = GetPane(TMV_ACTIVEPANE)->GetPanStates();
+
+	if(lLastY < lCurrentY) {
+
+		return (sPanStates & ENABLE_PANUP);
+	} else {
+		return (sPanStates & ENABLE_PANDOWN);
+	}
 }
 
 //==============================================================================
