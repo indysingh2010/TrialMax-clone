@@ -13639,7 +13639,6 @@ bool CMainView::IsPrevPageAvailable() {
 //	Notes:			None
 //
 //==============================================================================
-BOOL panDirUP = TRUE;
 LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 {
 	// check if tablet mode is on
@@ -13668,13 +13667,6 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				LogMe("--------------Gesture Ended---------------/n");
 				m_bMouseMode = TRUE;
 				m_bGestureHandled = FALSE;
-
-
-				for(int i=0; i < SZ_ARR_TM_VW; i++) {
-					m_arrTmView[i]->MoveWindow(0, (i-1) * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
-				}
-
-				RedrawWindow();
 				break;
 			case GID_ZOOM:
 				HandleZoom(gi);
@@ -13883,37 +13875,67 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 		// pan or not
 		if(diff < 0) {
-			panDirUP = TRUE;
 			// pan up
-			if(hasPage[2]) {
-				diff = -1 * min(abs(diff), abs(m_ScreenResolution.bottom+PAGES_MARGIN) - threeViewsTop);
-			} else {
-				diff = 0;
-			}
+			if(!hasPage[2]) diff = 0;
+			diff = -1 * min(abs(diff), 40);
 
 		} else if(diff > 0) {
-			panDirUP = FALSE;
 			// pan down
-			if(hasPage[0]) {
-				diff = min(abs(threeViewsTop), diff);
-			} else {
-				diff = 0;
-			}
+			if(!hasPage[0]) diff = 0;
+			diff = min(abs(diff), 40);
 		}
 
 
 		if(diff != 0) {
+
 			ScrollWindow(0, diff);
 			threeViewsTop += diff;
-
-			for(int i =0; i < SZ_ARR_TM_VW; i++)
-				m_arrTmView[i]->RedrawWindow();
+			UpdateWindow();
 		}
 
 		// reorder views to mimic continuous pages view
 		curIndexView = min(abs(threeViewsTop)/(m_ScreenResolution.bottom+PAGES_MARGIN), SZ_ARR_TM_VW - 1);
 		if(curIndexView == 0) {
 		
+			RECT lastRect,
+				nextRect;
+
+			m_arrTmView[0]->GetWindowRect(&lastRect);
+			nextRect.left = 0;
+			nextRect.top = lastRect.top - (lastRect.bottom + PAGES_MARGIN);
+			nextRect.right = lastRect.right;
+			nextRect.bottom = nextRect.top + lastRect.bottom;
+			m_arrTmView[2]->MoveWindow(&nextRect);
+
+			CTm_view *tmpVu = m_arrTmView[2];
+			m_arrTmView[2] = m_arrTmView[1];
+			m_arrTmView[1] = m_arrTmView[0];
+			m_arrTmView[0] = tmpVu;
+
+			bool tmpHasPage = hasPage[2];
+			hasPage[2] = hasPage[1];
+			hasPage[1] = hasPage[0];
+			hasPage[0] = tmpHasPage;
+
+			m_ctrlTMView = m_arrTmView[0];
+			int loopLimit = 3;
+			if(!hasPage[0])
+				loopLimit = 2;
+			for(int i = 0; i < loopLimit; i++)
+				if(IsPrevPageAvailable()) {
+					OnPreviousPage();
+					hasPage[0] = true;
+				} else {
+					hasPage[0] = false;
+					break;
+				}
+
+			RECT firstRect;
+			m_arrTmView[0]->GetWindowRect(&firstRect);
+
+			threeViewsTop = firstRect.top;
+			m_bGestureHandled = TRUE;
+
 		} else if(curIndexView == 2) {
 
 			RECT lastRect,
@@ -13960,6 +13982,21 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		curIndexView = 1;
 		m_ctrlTMView = m_arrTmView[curIndexView];
 		
+	}
+
+	if(m_bGestureHandled) {
+
+		m_arrTmView[0]->MoveWindow(0, -1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+
+		RECT wndRect;
+		m_arrTmView[1]->GetWindowRect(&wndRect);
+		int diff = wndRect.top;
+		if(diff) {
+			ScrollWindow(0, -diff);
+			UpdateWindow();
+		}
+
+		m_arrTmView[2]->MoveWindow(0,  1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
 	}
 
 	if (*bSmooth == true)
