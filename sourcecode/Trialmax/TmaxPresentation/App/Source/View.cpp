@@ -4727,8 +4727,8 @@ void CMainView::OnBlack()
 {
 	if(!IsCommandEnabled(TMAX_BLACK))
 		return;
-	
-	m_ctrlTMView->SetColor(TMV_BLACK);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_BLACK);
 	UpdateToolColor();
 }
 
@@ -4748,7 +4748,8 @@ void CMainView::OnBlue()
 	if(!IsCommandEnabled(TMAX_BLUE))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_BLUE);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_BLUE);
 	UpdateToolColor();
 }
 
@@ -5235,7 +5236,8 @@ void CMainView::OnDarkBlue()
 	if(!IsCommandEnabled(TMAX_DARKBLUE))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_DARKBLUE);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_DARKBLUE);
 	UpdateToolColor();
 }
 
@@ -5255,7 +5257,8 @@ void CMainView::OnDarkGreen()
 	if(!IsCommandEnabled(TMAX_DARKGREEN))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_DARKGREEN);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_DARKGREEN);
 	UpdateToolColor();
 }
 
@@ -5275,7 +5278,8 @@ void CMainView::OnDarkRed()
 	if(!IsCommandEnabled(TMAX_DARKRED))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_DARKRED);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_DARKRED);
 	UpdateToolColor();
 }
 
@@ -5891,7 +5895,8 @@ void CMainView::OnGreen()
 	if(!IsCommandEnabled(TMAX_GREEN))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_GREEN);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_GREEN);
 	UpdateToolColor();
 }
 
@@ -6329,7 +6334,8 @@ void CMainView::OnLightBlue()
 	if(!IsCommandEnabled(TMAX_LIGHTBLUE))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_LIGHTBLUE);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_LIGHTBLUE);
 	UpdateToolColor();
 }
 
@@ -6349,7 +6355,8 @@ void CMainView::OnLightGreen()
 	if(!IsCommandEnabled(TMAX_LIGHTGREEN))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_LIGHTGREEN);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_LIGHTGREEN);
 	UpdateToolColor();
 }
 
@@ -6368,7 +6375,8 @@ void CMainView::OnLightRed()
 {
 	if(!IsCommandEnabled(TMAX_LIGHTRED))
 		return;
-	m_ctrlTMView->SetColor(TMV_LIGHTRED);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_LIGHTRED);
 	UpdateToolColor();
 }
 
@@ -7372,7 +7380,8 @@ void CMainView::OnRed()
 	if(!IsCommandEnabled(TMAX_RED))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_RED);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_RED);
 	UpdateToolColor();
 	
 	
@@ -8467,7 +8476,8 @@ void CMainView::OnWhite()
 	if(!IsCommandEnabled(TMAX_WHITE))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_WHITE);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_WHITE);
 	UpdateToolColor();
 }
 
@@ -8531,7 +8541,8 @@ void CMainView::OnYellow()
 	if(!IsCommandEnabled(TMAX_YELLOW))
 		return;
 	
-	m_ctrlTMView->SetColor(TMV_YELLOW);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetColor(TMV_YELLOW);
 	UpdateToolColor();
 }
 
@@ -10718,31 +10729,36 @@ void CMainView::ReadSetup(BOOL bFirstTime)
 	if(m_fMovieStep <= 0) m_fMovieStep = 1.0f;
 	
 	//	Initialize the TMView control
-	m_ctrlTMView->SetAnnColor(Graphics.sAnnColor);
-	m_ctrlTMView->SetAnnThickness(Graphics.sAnnThickness);
-	m_ctrlTMView->SetHighlightColor(Graphics.sHighlightColor);
-	m_ctrlTMView->SetRedactColor(Graphics.sRedactColor);
-	m_ctrlTMView->SetMaxZoom(Graphics.sMaxZoom);
-	m_ctrlTMView->SetCalloutColor(Graphics.sCalloutColor);
-	m_ctrlTMView->SetCalloutHandleColor(Graphics.sCalloutHandleColor);
-	m_ctrlTMView->SetCalloutFrameColor(Graphics.sCalloutFrameColor);
-	m_ctrlTMView->SetCalloutFrameThickness(Graphics.sCalloutFrameThickness);
-	m_ctrlTMView->SetSplitFrameColor(Graphics.sUserSplitFrameColor);
-	m_ctrlTMView->SetBitonalScaling(Graphics.sBitonalScaling);
-	m_ctrlTMView->SetAnnTool(Graphics.sAnnTool);
-	m_ctrlTMView->SetAnnFontSize(Graphics.sAnnFontSize);
-	m_ctrlTMView->SetAnnFontBold(Graphics.bAnnFontBold);
-	m_ctrlTMView->SetAnnFontStrikeThrough(Graphics.bAnnFontStrikeThrough);
-	m_ctrlTMView->SetAnnFontUnderline(Graphics.bAnnFontUnderline);
-	m_ctrlTMView->SetAnnFontName(Graphics.strAnnFontName);
-	m_ctrlTMView->SetPenSelectorVisible(Graphics.bLightPenEnabled);
-	m_ctrlTMView->SetPenSelectorColor(Graphics.sLightPenColor);
-	m_ctrlTMView->SetPenSelectorSize(Graphics.sLightPenSize);
-	m_ctrlTMView->SetResizeCallouts(Graphics.bResizableCallouts);
-	m_ctrlTMView->SetPanCallouts(Graphics.bPanCallouts);
-	m_ctrlTMView->SetZoomCallouts(Graphics.bZoomCallouts);
-	m_ctrlTMView->SetShadeOnCallout(Graphics.bShadeOnCallout);
-	m_ctrlTMView->SetCalloutShadeGrayscale(Graphics.sCalloutShadeGrayscale);
+	for(int i=0; i < SZ_ARR_TM_VW; i++) {
+		m_ctrlTMView = m_arrTmView[i];
+
+		m_ctrlTMView->SetAnnColor(Graphics.sAnnColor);
+		m_ctrlTMView->SetAnnThickness(Graphics.sAnnThickness);
+		m_ctrlTMView->SetHighlightColor(Graphics.sHighlightColor);
+		m_ctrlTMView->SetRedactColor(Graphics.sRedactColor);
+		m_ctrlTMView->SetMaxZoom(Graphics.sMaxZoom);
+		m_ctrlTMView->SetCalloutColor(Graphics.sCalloutColor);
+		m_ctrlTMView->SetCalloutHandleColor(Graphics.sCalloutHandleColor);
+		m_ctrlTMView->SetCalloutFrameColor(Graphics.sCalloutFrameColor);
+		m_ctrlTMView->SetCalloutFrameThickness(Graphics.sCalloutFrameThickness);
+		m_ctrlTMView->SetSplitFrameColor(Graphics.sUserSplitFrameColor);
+		m_ctrlTMView->SetBitonalScaling(Graphics.sBitonalScaling);
+		m_ctrlTMView->SetAnnTool(Graphics.sAnnTool);
+		m_ctrlTMView->SetAnnFontSize(Graphics.sAnnFontSize);
+		m_ctrlTMView->SetAnnFontBold(Graphics.bAnnFontBold);
+		m_ctrlTMView->SetAnnFontStrikeThrough(Graphics.bAnnFontStrikeThrough);
+		m_ctrlTMView->SetAnnFontUnderline(Graphics.bAnnFontUnderline);
+		m_ctrlTMView->SetAnnFontName(Graphics.strAnnFontName);
+		m_ctrlTMView->SetPenSelectorVisible(Graphics.bLightPenEnabled);
+		m_ctrlTMView->SetPenSelectorColor(Graphics.sLightPenColor);
+		m_ctrlTMView->SetPenSelectorSize(Graphics.sLightPenSize);
+		m_ctrlTMView->SetResizeCallouts(Graphics.bResizableCallouts);
+		m_ctrlTMView->SetPanCallouts(Graphics.bPanCallouts);
+		m_ctrlTMView->SetZoomCallouts(Graphics.bZoomCallouts);
+		m_ctrlTMView->SetShadeOnCallout(Graphics.bShadeOnCallout);
+		m_ctrlTMView->SetCalloutShadeGrayscale(Graphics.sCalloutShadeGrayscale);
+	}
+	m_ctrlTMView = m_arrTmView[1];
 
 	//	Initialize the TMLPen control
 	m_ctrlTMLpen.SetBackColor((OLE_COLOR)m_ctrlTMView->GetRGBColor(Graphics.sLightPenColor));
@@ -13623,7 +13639,6 @@ bool CMainView::IsPrevPageAvailable() {
 //	Notes:			None
 //
 //==============================================================================
-BOOL panHandled = TRUE;
 BOOL panDirUP = TRUE;
 LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 {
@@ -13654,43 +13669,12 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				m_bMouseMode = TRUE;
 				m_bGestureHandled = FALSE;
 
-				if(!panHandled) {
 
-					if(panDirUP) {
-						
-						int remainder = abs(threeViewsTop) % (m_ScreenResolution.bottom + PAGES_MARGIN);
-					
-						if(remainder > (m_ScreenResolution.bottom+PAGES_MARGIN)/20) {
-						
-							int diff = m_ScreenResolution.bottom + PAGES_MARGIN - remainder;
-							ScrollWindow(0, -diff);
-							threeViewsTop -= diff;
-
-						} else {
-							ScrollWindow(0, abs(remainder));
-							threeViewsTop += abs(remainder);
-						}
-
-					} else { // panDirDown
-
-						int remainder = abs(threeViewsTop) % (m_ScreenResolution.bottom + PAGES_MARGIN);
-						int remainderTop = m_ScreenResolution.bottom + PAGES_MARGIN - remainder;
-					
-						if(remainderTop > (m_ScreenResolution.bottom+PAGES_MARGIN)/20) {
-						
-							int diff = m_ScreenResolution.bottom + PAGES_MARGIN - remainderTop;
-							ScrollWindow(0, diff);
-							threeViewsTop += diff;
-
-						} else {
-							ScrollWindow(0, -abs(remainderTop));
-							threeViewsTop -= abs(remainderTop);
-						}
-					}
-
-					RedrawWindow();
-					panHandled = TRUE;
+				for(int i=0; i < SZ_ARR_TM_VW; i++) {
+					m_arrTmView[i]->MoveWindow(0, (i-1) * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
 				}
+
+				RedrawWindow();
 				break;
 			case GID_ZOOM:
 				HandleZoom(gi);
@@ -13866,7 +13850,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
        //     pScrollView->GetClientRect(&rectClient);
       //      this->GetWindowRect(&rectWindow);
 
-	bool *bSmooth = (bool *)malloc(sizeof(bool));
+	bool *bSmooth = new bool;
 	*bSmooth = false;
 
 	if(!loadNextInOtherPanes) {
@@ -13902,7 +13886,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 			panDirUP = TRUE;
 			// pan up
 			if(hasPage[2]) {
-				diff = -1 * min(abs(diff), abs(2*(m_ScreenResolution.bottom+PAGES_MARGIN)) - threeViewsTop);
+				diff = -1 * min(abs(diff), abs(m_ScreenResolution.bottom+PAGES_MARGIN) - threeViewsTop);
 			} else {
 				diff = 0;
 			}
@@ -13919,7 +13903,6 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 
 		if(diff != 0) {
-			panHandled = FALSE;
 			ScrollWindow(0, diff);
 			threeViewsTop += diff;
 
@@ -13970,6 +13953,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 			m_arrTmView[0]->GetWindowRect(&firstRect);
 
 			threeViewsTop = firstRect.top;
+			m_bGestureHandled = TRUE;
 
 		} // else no page change, do nothing
 
@@ -13981,7 +13965,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	if (*bSmooth == true)
 		m_bGestureHandled = TRUE;
 
-	free(bSmooth);
+	delete bSmooth;
 	bSmooth = NULL;
 	
 
@@ -14150,7 +14134,9 @@ void CMainView::OnGesturePan()
 		return;
 	
 	// enable gesture configration
-	m_ctrlTMView->SetAction(TMAX_NOCOMMAND);
+	for(int i=0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetAction(TMAX_NOCOMMAND);
+	//m_ctrlTMView->SetAction(TMAX_NOCOMMAND);
 
 	// re-setting gestures pan configration
 	CGestureConfig config;
@@ -14331,6 +14317,7 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 			if(m_currentBinderItem.m_MediaType > 4)
 			{
 				LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);	
+				loadNextInOtherPanes = false;
 				m_bIsBinderOpen = FALSE;
 			}
 			else
@@ -14368,7 +14355,8 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 				m_currentBinderItem.m_ParentId = binderItemForParent.m_ParentId;
 			}
 			//m_currentBinderItem = m_parentBinderItem;
-			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);	
+			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
+			loadNextInOtherPanes = false;
 			m_bIsBinderOpen = FALSE;
 		}
 		return;
@@ -14407,6 +14395,7 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 	
 			}			
 			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
+			loadNextInOtherPanes = false;
 			m_bIsBinderOpen = FALSE;
 		}
 		return;
@@ -14420,7 +14409,8 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 
 		m_currentBinderItem = m_pDatabase->GetQuarternaryMediaById(m_currentBinderItem.m_AutoId);
 		m_currentBinderItem = m_pDatabase->GetTertiaryMediaById(m_currentBinderItem.m_ParentId);		
-		LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);		
+		LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
+		loadNextInOtherPanes = false;
 		m_bIsBinderOpen = FALSE;
 		return;
 	}
