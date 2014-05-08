@@ -13767,12 +13767,6 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	if (m_bGestureHandled)
 		return;	
 
-	//	Toggle the visibility of the toolbar
-	if(m_pToolbar->IsWindowVisible()) {
-		SetControlBar(CONTROL_BAR_NONE);
-		toolbarForcedHidden = true;
-	}
-
 	pCurrent.x = gi.ptsLocation.x;
 	pCurrent.y = gi.ptsLocation.y;
 
@@ -13792,7 +13786,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 	// gesture starts at top of monitor. that mean y should be around 0
 	// we setting the limit for this gesture within the top 12% of screen
-	/*if (m_gestureStartPoint.y <= iMonitor_width/8) {
+	if (m_gestureStartPoint.y <= iMonitor_width/8) {
 		if (abs(iDistY) < iMonitor_width/8) {
 			DisplayKeyboardIconGesture(pCurrent);
 		}
@@ -13815,7 +13809,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		// update last location
 		m_gestureLastPoint = pCurrent;
 		return;
-	}*/
+	}
 
 
 	// 3. Swipe right to left to advance to the next page and swipe left to right to go to the previous page
@@ -13850,7 +13844,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		return;
 	}
 
-	/*if (abs(iDistY) > iMonitor_height/4 && abs(iDistX) < iMonitor_width/8 && 
+	if (abs(iDistY) > iMonitor_height/4 && abs(iDistX) < iMonitor_width/8 && 
 		gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
 
 		// check if the document suport zooming
@@ -13874,20 +13868,14 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		// update last location
 		m_gestureLastPoint = pCurrent;
 		return;
-	}*/
+	}
 
 	// 1. Moving the page with your finger on the screen; similar to what happens now when grabbing and moving the page with the mouse button
-	//CRect myRect;
-	//GetClientRect(&myRect);
-	//myRect.top = pCurrent.y - m_gestureLastPoint.y;
-	//MoveWindow(myRect);
-	//RedrawWindow();
-	//ScrollWindow(0, pCurrent.y - m_gestureLastPoint.y);
-	//CScrollView *pScrollView = (CScrollView *)m_pFrame->GetActiveView();
-	//CRect rectClient, rectWindow;
-
-       //     pScrollView->GetClientRect(&rectClient);
-      //      this->GetWindowRect(&rectWindow);
+	//	Toggle the visibility of the toolbar
+	if(m_pToolbar->IsWindowVisible()) {
+		SetControlBar(CONTROL_BAR_NONE);
+		toolbarForcedHidden = true;
+	}
 
 	bool *bSmooth = new bool;
 	*bSmooth = false;
