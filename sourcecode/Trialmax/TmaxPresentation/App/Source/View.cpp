@@ -565,6 +565,9 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMVie
 	curIndexView = 1;
 	m_ctrlTMView = m_arrTmView[curIndexView];
 	hasPage[curIndexView] = true;
+
+	toolbarForcedHidden = false;
+	loadNextInOtherPanes = false;
 }
 
 //==============================================================================
@@ -13666,7 +13669,12 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 			case GID_END:
 				LogMe("--------------Gesture Ended---------------/n");
 				m_bMouseMode = TRUE;
-				m_bGestureHandled = FALSE;
+				if(m_bGestureHandled) {
+					m_bGestureHandled = FALSE;
+				} else {
+
+					SetViewingCtrl();
+				}
 				break;
 			case GID_ZOOM:
 				HandleZoom(gi);
@@ -13699,6 +13707,40 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 	return (GID_END | GID_ZOOM | GID_PAN) << 1;	
 }
 
+void CMainView::SetViewingCtrl() {
+
+	RECT wndRect;
+	m_arrTmView[1]->GetWindowRect(&wndRect);
+	int diff = wndRect.top;
+
+	if(diff > 0) {
+		for(int i=0; i < diff; i+= m_ScreenResolution.bottom / 10) {
+			ScrollWindow(0, -m_ScreenResolution.bottom / 10);
+			UpdateWindow();
+		}
+	} else {
+		for(int i=0; i < abs(diff); i+= m_ScreenResolution.bottom / 10) {
+			ScrollWindow(0, m_ScreenResolution.bottom / 10);
+			UpdateWindow();
+		}
+	}
+
+	m_arrTmView[1]->GetWindowRect(&wndRect);
+	diff = wndRect.top;
+	if(diff) {
+		ScrollWindow(0, -diff);
+		UpdateWindow();
+	}
+
+	m_arrTmView[0]->MoveWindow(0, -1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+	m_arrTmView[2]->MoveWindow(0,  1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+
+	if(toolbarForcedHidden) {
+		SetControlBar(CONTROL_BAR_TOOLS);
+		toolbarForcedHidden = false;
+	}
+}
+
 //==============================================================================
 //
 // 	Function Name:	CMainView::HandlePan()
@@ -13711,7 +13753,6 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 //	Notes:			None
 //
 //==============================================================================
-bool loadNextInOtherPanes = false;
 void CMainView::HandlePan(GESTUREINFO gi)
 {
 	POINTS				pCurrent;					// new point
@@ -13725,6 +13766,12 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 	if (m_bGestureHandled)
 		return;	
+
+	//	Toggle the visibility of the toolbar
+	if(m_pToolbar->IsWindowVisible()) {
+		SetControlBar(CONTROL_BAR_NONE);
+		toolbarForcedHidden = true;
+	}
 
 	pCurrent.x = gi.ptsLocation.x;
 	pCurrent.y = gi.ptsLocation.y;
@@ -13877,12 +13924,12 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		if(diff < 0) {
 			// pan up
 			if(!hasPage[2]) diff = 0;
-			diff = -1 * min(abs(diff), 40);
+			diff = -1 * min(abs(diff), m_ScreenResolution.bottom/10);
 
 		} else if(diff > 0) {
 			// pan down
 			if(!hasPage[0]) diff = 0;
-			diff = min(abs(diff), 40);
+			diff = min(abs(diff), m_ScreenResolution.bottom/10);
 		}
 
 
@@ -13893,8 +13940,15 @@ void CMainView::HandlePan(GESTUREINFO gi)
 			UpdateWindow();
 		}
 
+		RECT curRect;
+		m_ctrlTMView->GetWindowRect(&curRect);
+		if(curRect.top < -1 * (m_ScreenResolution.bottom / 5)) { // 20%
+			curIndexView = 2;
+		} else if(curRect.top > (m_ScreenResolution.bottom / 5)) { // 20%
+			curIndexView = 0;
+		}
+
 		// reorder views to mimic continuous pages view
-		curIndexView = min(abs(threeViewsTop)/(m_ScreenResolution.bottom+PAGES_MARGIN), SZ_ARR_TM_VW - 1);
 		if(curIndexView == 0) {
 		
 			RECT lastRect,
@@ -13986,21 +14040,8 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 	if(m_bGestureHandled) {
 
-		m_arrTmView[0]->MoveWindow(0, -1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
-
-		RECT wndRect;
-		m_arrTmView[1]->GetWindowRect(&wndRect);
-		int diff = wndRect.top;
-		if(diff) {
-			ScrollWindow(0, -diff);
-			UpdateWindow();
-		}
-
-		m_arrTmView[2]->MoveWindow(0,  1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+		SetViewingCtrl();
 	}
-
-	if (*bSmooth == true)
-		m_bGestureHandled = TRUE;
 
 	delete bSmooth;
 	bSmooth = NULL;
