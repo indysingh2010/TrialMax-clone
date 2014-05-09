@@ -6684,6 +6684,29 @@ void CMainView::OnNextMedia()
 
 }
 
+void CMainView::OnNextDocumentPage(SMultipageInfo *Info) {
+
+	if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) < 
+		m_ctrlTMView->GetPageCount(TMV_ACTIVEPANE))
+	{
+		m_ctrlTMView->NextPage(TMV_ACTIVEPANE);
+
+		if(m_sState == S_CLEAR)
+			RestoreDisplay();
+
+		return;
+	}
+	else
+	{
+		//	Load the next page
+		if(SetPageFromId(Info, 0, SETPAGE_NEXT))
+		{
+			DbgMsg(Info, "OnNextPage");
+			LoadMultipage(Info);
+		}
+	}
+}
+
 //==============================================================================
 //
 // 	Function Name:	CMainView::OnNextPage()
@@ -6719,25 +6742,17 @@ void CMainView::OnNextPage()
 		case S_GRAPHIC:		
 		case S_LINKEDIMAGE:
 
-			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) < 
-			   m_ctrlTMView->GetPageCount(TMV_ACTIVEPANE))
-			{
-				m_ctrlTMView->NextPage(TMV_ACTIVEPANE);
+			if(m_ctrlTMView == m_arrTmView[1]) {
 
-				if(m_sState == S_CLEAR)
-					RestoreDisplay();
+				OnNextDocumentPage(&Info);
+				SetViewingCtrl();
+				//loadNextInOtherPanes = false;
 
-				return;
+			} else {
+				OnNextDocumentPage(&Info);
+				SetViewingCtrl();
 			}
-			else
-			{
-				//	Load the next page
-				if(SetPageFromId(&Info, 0, SETPAGE_NEXT))
-				{
-					DbgMsg(&Info, "OnNextPage");
-					LoadMultipage(&Info);
-				}
-			}
+
 			break;
 		
 		case S_POWERPOINT:
@@ -7114,6 +7129,28 @@ void CMainView::OnPreviousDesignation()
 	CuePlaylist(TMMCUEPL_PREVIOUS, TRUE);
 }
 
+void CMainView::OnPreviousDocumentPage(SMultipageInfo *Info) {
+
+	if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) > 1)
+	{
+		m_ctrlTMView->PrevPage(TMV_ACTIVEPANE);
+
+		if(m_sState == S_CLEAR)
+			RestoreDisplay();
+
+		return;
+	}
+	else
+	{
+		//	Load the previous page
+		if(SetPageFromId(Info, 0, SETPAGE_PREVIOUS))
+		{
+			DbgMsg(Info, "OnPreviousPage");
+			LoadMultipage(Info);
+		}
+	}
+}
+
 //==============================================================================
 //
 // 	Function Name:	CMainView::OnPreviousPage()
@@ -7149,24 +7186,17 @@ void CMainView::OnPreviousPage()
 		case S_GRAPHIC:		
 		case S_LINKEDIMAGE:
 
-			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) > 1)
-			{
-				m_ctrlTMView->PrevPage(TMV_ACTIVEPANE);
+			if(m_ctrlTMView == m_arrTmView[1]) {
 
-				if(m_sState == S_CLEAR)
-					RestoreDisplay();
+				OnPreviousDocumentPage(&Info);
+				SetViewingCtrl();
+				loadNextInOtherPanes = false;
 
-				return;
+			} else {
+				OnPreviousDocumentPage(&Info);
+				SetViewingCtrl();
 			}
-			else
-			{
-				//	Load the previous page
-				if(SetPageFromId(&Info, 0, SETPAGE_PREVIOUS))
-				{
-					DbgMsg(&Info, "OnPreviousPage");
-					LoadMultipage(&Info);
-				}
-			}
+			
 			break;
 		
 		case S_POWERPOINT:
@@ -13741,6 +13771,36 @@ void CMainView::SetViewingCtrl() {
 	}
 }
 
+void CMainView::SetPage(int index, int page) {
+	m_ctrlTMView = m_arrTmView[index];
+	LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
+
+	int curPage = m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE);
+	if(page < curPage) {
+		while(curPage != page) {
+			if(IsPrevPageAvailable()) {		
+				OnPreviousPage();
+				hasPage[0] = true;
+			} else {
+				hasPage[0] = false;
+				break;
+			}
+			curPage = m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE);
+		}
+	} else if(page > curPage) {
+		while(curPage != page) {
+			if(IsNextPageAvailable()) {
+				OnNextPage();
+				hasPage[2] = true;
+			} else {
+				hasPage[2] = false;
+				break;
+			}
+			curPage = m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE);
+		}
+	}
+}
+
 //==============================================================================
 //
 // 	Function Name:	CMainView::HandlePan()
@@ -13881,26 +13941,15 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	*bSmooth = false;
 
 	if(!loadNextInOtherPanes) {
-		m_ctrlTMView = m_arrTmView[0];
-		LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
-		if(IsPrevPageAvailable()) {		
-			OnPreviousPage();
-			hasPage[0] = true;
-		} else {
-			hasPage[0] = false;
-		}
 
-		m_ctrlTMView = m_arrTmView[2];
-		LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
-		if(IsNextPageAvailable()) {
-			OnNextPage();
-			hasPage[2] = true;
-		} else {
-			hasPage[2] = false;
-		}
+		int curPage = m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE);
+
+		SetPage(0, curPage - 1);
+		SetPage(2, curPage + 1);
 		
 		m_ctrlTMView = m_arrTmView[1];
 		loadNextInOtherPanes = true;
+		return;
 	}
 
 	if(!m_ctrlTMView->DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth)) {

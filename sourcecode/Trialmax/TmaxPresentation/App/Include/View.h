@@ -820,6 +820,7 @@ class CMainView : public CFormView
 		void			SetViewingCtrl();
 		void			OnNextDocumentPage(SMultipageInfo *Info);
 		void			OnPreviousDocumentPage(SMultipageInfo *Info);
+		void			SetPage(int, int);
 
 	//	Class Wizard Maintained
 	public:
