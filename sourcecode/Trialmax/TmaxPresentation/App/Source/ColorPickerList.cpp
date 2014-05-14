@@ -25,16 +25,17 @@
 #include <afxstr.h>
 #include <View.h>
 
-// CColorPickerList dialog
+#define BUTTON_WIDTH 48
 
+// CColorPickerList dialog
 IMPLEMENT_DYNAMIC(CColorPickerList, CDialog)
 
 CColorPickerList::CColorPickerList(CMainView* parentWindow, CWnd* pParent /*=NULL*/)  : m_parentWindow(parentWindow),
 	CDialog(CColorPickerList::IDD, pParent)
 {
 	m_brush.CreateSolidBrush(RGB(245, 240, 217));
-	m_xPosition = 10;
-	m_yPosition = 10;			
+	m_nXPosition = 10;
+	m_nYPosition = 10;			
 	m_parentWindow = parentWindow;
 }
 
@@ -48,7 +49,7 @@ void CColorPickerList::DoDataExchange(CDataExchange* pDX)
 }
 
 
-BEGIN_MESSAGE_MAP(CColorPickerList, CDialog)
+BEGIN_MESSAGE_MAP(CColorPickerList, CDialog)	
 END_MESSAGE_MAP()
 
 
@@ -90,7 +91,7 @@ BOOL CColorPickerList::AddButtons()
 	int buttonXPos = 0;
 	int buttonYPos = 0;  
 	int buttonHeight = 25;
-	int buttonWidth = 48;
+	int buttonWidth = BUTTON_WIDTH;
 	int counter = 0;
 	CString buttonName;
 
@@ -155,9 +156,9 @@ BOOL CColorPickerList::AddButtons()
 	 counter++;	
 
 		// Set the Dialog Position
-		m_yPosition = m_yPosition - ((counter) * buttonHeight);
+		m_nYPosition = m_nYPosition - ((counter) * buttonHeight);
 		int buttonListHeight = ((counter) * buttonHeight);// + buttonHeight;
-		SetWindowPos(NULL,m_xPosition,m_yPosition,buttonWidth, buttonListHeight, SWP_NOACTIVATE | SWP_NOZORDER);
+		SetWindowPos(NULL,m_nXPosition,m_nYPosition,buttonWidth, buttonListHeight, SWP_NOACTIVATE | SWP_NOZORDER);
 		
 		return TRUE;
 	}
@@ -212,18 +213,9 @@ void CColorPickerList::CreateButton(CString pButtonName, DWORD pButtonStyle, int
 //==============================================================================
 void CColorPickerList::Recieved(int iButtonId)
 {	
-	/*if(iButtonId == CLOSE_BUTTON_ID)
-	{
-		m_msgMap.clear();		
-		CDialog::OnCancel();		
-		m_parentWindow->OnColorPickerCloseButtonClickEvent();				
-	}	
-	else*/
-	{
-		m_msgMap.clear();						
-		CDialog::OnCancel();
-		m_parentWindow->OnColorPickerButtonClickEvent(iButtonId);		
-	}	
+	m_msgMap.clear();						
+	CDialog::OnCancel();
+	m_parentWindow->OnColorPickerButtonClickEvent(iButtonId);
 }
 
 HBRUSH CColorPickerList::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -291,4 +283,32 @@ void CColorPickerList::PostNcDestroy()
 void CColorPickerList::OnCancel()
 {	
 	CDialog::OnCancel();	
+}
+
+//==============================================================================
+//
+// 	Function Name:	CColorPickerList::HandleMouseClick()
+//
+// 	Description:	This method is used to handle mouse click from main window using hook
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
+void CColorPickerList::HandleMouseClick()
+{
+	CPoint cursorPosition;
+	GetCursorPos(&cursorPosition);
+
+	// if click on the / inside the dialog than dont do any thing
+	if((cursorPosition.x >= m_nXPosition && cursorPosition.x < (m_nXPosition + BUTTON_WIDTH ))
+			&&
+			(cursorPosition.y >= m_nYPosition))
+	{ }
+	else	// else close the dialog
+	{
+		CDialog::OnCancel();
+		m_parentWindow->OnColorPickerCloseButtonClickEvent();
+	}
 }

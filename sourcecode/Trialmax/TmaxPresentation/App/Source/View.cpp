@@ -64,6 +64,8 @@ static char THIS_FILE[] = __FILE__;
 extern CApp theApp;
 HHOOK			g_hDesktopHook;
 CVKBDlg			*m_pVKBDlgPtr;
+CBinderList*	m_BinderList; // declare these properties globaly here because we want to handle hook
+CColorPickerList* m_ColorPickerList; // declare these properties globaly here because we want to handle hook
 
 //	This is the button map for the drawing tools toolbar
 static short aToolsMap[] =	{	TMTB_FREEHAND,
@@ -532,6 +534,8 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMVie
 	m_gestureStartTime = 0;
 	m_BinderList = 0;
 	m_ColorPickerList = 0;
+	m_bIsBinderOpen = FALSE;
+	m_bIsColorPickerOpen = FALSE;
 	m_cVKChar = KEYBOARD_VKCODE;
 	m_cPrimaryBarcodeChar = KEYBOARD_PRIMARY_BARCODE;
 	m_cAlternateBarcodeChar = KEYBOARD_ALTERNATE_BARCODE;	
@@ -5159,6 +5163,16 @@ LRESULT CALLBACK OnDTMouseEvent(int nCode, WPARAM wParam, LPARAM lParam)
 					ShellExecute( NULL, "open", "C:\\Program Files\\Common Files\\microsoft shared\\ink\\TabTip.exe", 
 						NULL, NULL, SW_SHOWNORMAL );
 				}
+			}
+			
+			if(m_BinderList != 0)
+			{
+				m_BinderList->HandleMouseClick();
+			}
+
+			if(m_ColorPickerList != 0)
+			{
+				m_ColorPickerList->HandleMouseClick();
 			}
 
 			
@@ -14367,14 +14381,18 @@ void CMainView::LogMe(LPCTSTR msg)
 //==============================================================================
 void CMainView::OnOpenBinder()
 {
-	LogMe("***************************Open Binder***************************");
-	m_bIsBinderOpen = TRUE;
-
-	LogMe("Set Position");
-	SetBinderPosition(); 
-
-	
-	OpenBinder();
+	if(m_bIsBinderOpen == FALSE)
+	{		
+		m_bIsBinderOpen = TRUE;
+		
+		SetBinderPosition(); 	
+		OpenBinder();
+	}
+	else
+	{
+		m_BinderList->OnCancel();
+		m_bIsBinderOpen = FALSE;
+	}
 }
 
 //==============================================================================
@@ -14391,10 +14409,6 @@ void CMainView::OnOpenBinder()
 //==============================================================================
 void CMainView::OpenBinder(int parentId)
  {
-	 CString log;
-	 log.Format("OpenBinder(parentId %d", parentId);
-	 LogMe(log);
-
 	 if((m_pDatabase == 0) || (m_pDatabase->IsOpen() == FALSE))
 		return;
 	 
@@ -14421,18 +14435,20 @@ void CMainView::OpenBinder(int parentId)
 //
 //==============================================================================
 void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
-	{
+{
+	m_bIsBinderOpen = TRUE; // this is mark to true over here because now we have closed binder on inActive
+
 	if((m_pDatabase == 0) || (m_pDatabase->IsOpen() == FALSE))
 		return;
 	
 	m_currentBinderItem = pBinderEntry;
+	int pButtonId = pBinderEntry.m_AutoId;
 
-	if(pBinderEntry.m_TableType == CBinderEntry::TableType::Primary)
-	{			
+	switch(pBinderEntry.m_TableType)
+	{
+	case CBinderEntry::TableType::Primary:					
 		if(pBinderEntry.m_Children > 0)
 		{
-			int pButtonId = pBinderEntry.m_AutoId;
-
 			// Call in secondary for childrens
 			list<CBinderEntry> secondaryMediaList = m_pDatabase->GetSecondaryMediaByPrimaryMediaId(pButtonId);			
 			CBinderEntry parentBinder = m_pDatabase->GetBinderEntryByAutoId(pBinderEntry.m_ParentId);
@@ -14440,28 +14456,19 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 		}
 		else
 		{
-			// Blank Folder or show Presentation
-			//AfxMessageBox("Show Presentation" + pBinderEntry.m_Name);
+			// Blank Folder or show Presentation			
 			m_currentBinderItem = m_pDatabase->GetBinderEntryByAutoId(pBinderEntry.m_ParentId);
 			if(m_currentBinderItem.m_MediaType > 4)
 			{
 				LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);	
-				loadNextInOtherPanes = false;
-				curPageNavCount = 0;
-				scale = 0.0;
 				m_bIsBinderOpen = FALSE;
 			}
 			else
 				OpenBinderList(list<CBinderEntry>(),m_currentBinderItem.m_AutoId);
 		}
+		break;		
 
-		return;
-	}
-
-	if(pBinderEntry.m_TableType == CBinderEntry::TableType::Secondary)
-	{
-		int pButtonId = pBinderEntry.m_AutoId;
-		//AfxMessageBox("Secondary");
+	case CBinderEntry::TableType::Secondary:
 		if(pBinderEntry.m_Children > 0)
 		{
 			// Call in tertiary for childrens
@@ -14484,21 +14491,13 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 			else
 			{
 				m_currentBinderItem.m_ParentId = binderItemForParent.m_ParentId;
-			}
-			//m_currentBinderItem = m_parentBinderItem;
-			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
-			loadNextInOtherPanes = false;
-			curPageNavCount = 0;
-			scale = 0.0;
+			}			
+			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);	
 			m_bIsBinderOpen = FALSE;
 		}
-		return;
-	}
+		break;
 
-	if(pBinderEntry.m_TableType == CBinderEntry::TableType::Tertiary)
-	{
-		int pButtonId = pBinderEntry.m_AutoId;
-		//AfxMessageBox("Tertiary");
+	case CBinderEntry::TableType::Tertiary:
 		if(pBinderEntry.m_Children > 0)
 		{
 			// Call in Quaternary for childrens
@@ -14507,13 +14506,7 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 		}
 		else
 		{
-			// Blank Folder or show Presentation	
-			/*if(m_parentBinderItem.m_AutoId > 0)
-			{
-				m_currentBinderItem = m_parentBinderItem;
-			}
-			else*/
-			{
+			// Blank Folder or show Presentation		
 				m_currentBinderItem = m_pDatabase->GetTertiaryMediaById(pButtonId);
 				m_currentBinderItem = m_pDatabase->GetSecondaryMediaById(m_currentBinderItem.m_ParentId);	
 				
@@ -14524,40 +14517,25 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 				{
 					m_currentBinderItem = m_pDatabase->GetBinderEntryFromSearchMediaId(mediaId);
 					m_currentBinderItem = m_pDatabase->GetBinderEntryByAutoId(m_currentBinderItem.m_ParentId);
-				}
-	
-			}			
+				}	
+						
 			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
-			loadNextInOtherPanes = false;
-			curPageNavCount = 0;
-			scale = 0.0;
 			m_bIsBinderOpen = FALSE;
 		}
-		return;
-	}
+		break;
 
-	if(pBinderEntry.m_TableType == CBinderEntry::TableType::Quaternary)
-	{
-		//AfxMessageBox("Quaternary");
+	case CBinderEntry::TableType::Quaternary:
 		// Blank Folder or show Presentation
-		//AfxMessageBox("Show Presentation" + pBinderEntry.m_Name);
-
 		m_currentBinderItem = m_pDatabase->GetQuarternaryMediaById(m_currentBinderItem.m_AutoId);
 		m_currentBinderItem = m_pDatabase->GetTertiaryMediaById(m_currentBinderItem.m_ParentId);		
-		LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
-		loadNextInOtherPanes = false;
-		curPageNavCount = 0;
-		scale = 0.0;
+		LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);		
 		m_bIsBinderOpen = FALSE;
-		return;
-	}
-	
-	if(pBinderEntry.m_TableType == CBinderEntry::TableType::Binder)
-	{	
+		break;
+
+	case CBinderEntry::TableType::Binder:
 		BinderListAsBinder(pBinderEntry);
-		return;
-	}
-	
+		break;
+	}	
 }
 
 //==============================================================================
@@ -14589,7 +14567,7 @@ void CMainView::OnBinderDialogCloseButtonClickEvent()
 //==============================================================================
 void CMainView::OnBinderDialogBackButtonClickEvent(CBinderEntry pBinderEntry)
 {
-	
+	m_bIsBinderOpen = TRUE;
 	if((m_pDatabase == 0) || (m_pDatabase->IsOpen() == FALSE))
 		return;
 
@@ -14775,19 +14753,18 @@ CBinderEntry CMainView::ConvertBinderEntry(CBinderEntry* pBinderEntry)
 //==============================================================================
 CBinderList* CMainView::CreateBinder(list<CBinderEntry> pBinderEntryList, BOOL bIsShowBackButton)
 {		
-	m_BinderList = new CBinderList(this);
+	m_BinderList = new CBinderList(this, pBinderEntryList.size());
 			
 	long topDistance = m_BinderListPosition.y;
-	long leftDistance = m_BinderListPosition.x;
-	//int heightOfListPopup = 175;//rectListPopUp.Height();
+	long leftDistance = m_BinderListPosition.x;	
 	
-	m_BinderList->m_xPosition = leftDistance;	
-	m_BinderList->m_yPosition = topDistance;
-	m_BinderList->m_isShowBackButton = bIsShowBackButton;
+	m_BinderList->m_nXPosition = leftDistance;	
+	m_BinderList->m_nYPosition = topDistance;
+	m_BinderList->m_bIsShowBackButton = bIsShowBackButton;
 	m_BinderList->m_binderEntryList = pBinderEntryList;
-	//m_BinderList->Create(IDD_BINDER_LIST);
-	//m_BinderList->ShowWindow(SW_SHOW);
-	m_BinderList->DoModal();	
+	m_BinderList->Create(IDD_BINDER_LIST);
+	m_BinderList->ShowWindow(SW_SHOW);
+		
 	return m_BinderList;
 }
 
@@ -14810,19 +14787,18 @@ void CMainView::OpenBinderList(list<CBinderEntry> pBinderEntryList, int pButtonI
 		isShowBackButton = TRUE;
 	
 	
-	m_BinderList = new CBinderList(this);
+	m_BinderList = new CBinderList(this, pBinderEntryList.size());
 		
 	long topDistance = m_BinderListPosition.y; 
 	long leftDistance =  m_BinderListPosition.x; 	
 	
-	m_BinderList->m_xPosition = leftDistance;	
-	m_BinderList->m_yPosition = topDistance;	
-	m_BinderList->m_isShowBackButton = isShowBackButton;
+	m_BinderList->m_nXPosition = leftDistance;	
+	m_BinderList->m_nYPosition = topDistance;	
+	m_BinderList->m_bIsShowBackButton = isShowBackButton;
 	m_BinderList->m_binderEntryList = pBinderEntryList;
 	m_BinderList->m_parentBinder = pParentBinder;
-	/*m_BinderList->Create(IDD_BINDER_LIST);
-	m_BinderList->ShowWindow(SW_SHOW);*/
-	m_BinderList->DoModal();
+	m_BinderList->Create(IDD_BINDER_LIST);
+	m_BinderList->ShowWindow(SW_SHOW);
 }
 
 //==============================================================================
@@ -14837,11 +14813,7 @@ void CMainView::OpenBinderList(list<CBinderEntry> pBinderEntryList, int pButtonI
 //
 //==============================================================================
 void CMainView::OpenBinder(list<CBinderEntry> binderEntryList)
- {
-	CString log;
-	log.Format("OpenBinder(binderEntry %d)",binderEntryList.size());
-	LogMe(log);
-
+ {	
 	if(binderEntryList.size() > 0)
 	{		
 		CBinderList* binderList = CMainView::CreateBinder(binderEntryList,FALSE);
@@ -14864,14 +14836,13 @@ void CMainView::OpenBinder(list<CBinderEntry> binderEntryList)
 //==============================================================================
 void CMainView::OpenBinderList(list<CBinderEntry> pBinderEntryList, int pButtonId)
 {
-	LogMe("list<CBinderEntry> pBinderEntryList, int pButtonId");
 	BOOL isShowBackButton = FALSE;
 
 	if(pButtonId > 0)
 		isShowBackButton = TRUE;
 
 	CBinderList* binderList = CMainView::CreateBinder(pBinderEntryList,isShowBackButton);	
-	
+		
 }
 
 //==============================================================================
@@ -14889,8 +14860,7 @@ void CMainView::SetBinderPosition()
 {
 	int width = GetSystemMetrics(SM_CXSCREEN);
 	int height = GetSystemMetrics(SM_CYSCREEN);
-	int binderListWidth = 148;
-	//GetCursorPos(&m_BinderListPosition);
+	int binderListWidth = 148; // it is adjusted according to buttons width in binderListDialog it may not be the same.	
 
 	int barHeight = m_pToolbar->GetBarHeight();
 	int barXPosition = m_pToolbar->GetBarXPosition();		
@@ -14939,9 +14909,17 @@ void CMainView::SetBinderPosition()
 //==============================================================================
 void CMainView::OnOpenColorPicker()
 {
-	m_bIsColorPickerOpen = TRUE;
-	SetColorPickerPosition();
-	OpenColorPicker();
+	if(m_bIsColorPickerOpen == FALSE)
+	{
+		m_bIsColorPickerOpen = TRUE;
+		SetColorPickerPosition();
+		OpenColorPicker();
+	}
+	else
+	{
+		m_bIsColorPickerOpen = FALSE;	
+		m_ColorPickerList->OnCancel();
+	}
 }
 
 //==============================================================================
@@ -14958,12 +14936,11 @@ void CMainView::OnOpenColorPicker()
 void CMainView::OpenColorPicker()
 {
 	m_ColorPickerList = new CColorPickerList(this);
-	m_ColorPickerList->m_xPosition = m_ColorPickerListPosition.x;
-	m_ColorPickerList->m_yPosition = m_ColorPickerListPosition.y;
+	m_ColorPickerList->m_nXPosition = m_ColorPickerListPosition.x;
+	m_ColorPickerList->m_nYPosition = m_ColorPickerListPosition.y;
 
-	//colorPickerList->Create(IDD_COLOR_PICKER_DLG);
-	//colorPickerList->ShowWindow(SW_SHOW);
-	m_ColorPickerList->DoModal();
+	m_ColorPickerList->Create(IDD_COLOR_PICKER_DLG);
+	m_ColorPickerList->ShowWindow(SW_SHOW);	
 }
 
 //==============================================================================
@@ -14979,6 +14956,8 @@ void CMainView::OpenColorPicker()
 //==============================================================================
 void CMainView::OnColorPickerButtonClickEvent(int iColorType)
 {	
+	m_bIsColorPickerOpen = TRUE;
+		
 	switch(iColorType)
 	{
 		case CColorPickerList::ColorType::BLACK:
@@ -15051,7 +15030,7 @@ void CMainView::OnColorPickerButtonClickEvent(int iColorType)
 
 void CMainView::OnColorPickerCloseButtonClickEvent()
 {
-	
+	m_bIsColorPickerOpen = FALSE;	
 }
 
 //==============================================================================
@@ -15066,7 +15045,7 @@ void CMainView::OnColorPickerCloseButtonClickEvent()
 //
 //==============================================================================
 void CMainView::SetColorPickerPosition()
-{
+{	
 	int width = GetSystemMetrics(SM_CXSCREEN);
 	int height = GetSystemMetrics(SM_CYSCREEN);
 	int colorPickerListWidth = 48;	
@@ -15082,11 +15061,10 @@ void CMainView::SetColorPickerPosition()
 
 	if(buttonWidth > 40) // if large button
 	{
+		// adjusting the position of list to appear in the center of button
 		m_ColorPickerListPosition.x = m_ColorPickerListPosition.x + 5;
 		m_ColorPickerListPosition.y = m_ColorPickerListPosition.y - 2;
 	}
-	
-
 }
 
 //==============================================================================
