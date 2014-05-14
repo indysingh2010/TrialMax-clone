@@ -11600,13 +11600,14 @@ void CTMLead::ZoomToFactor()
 		if (DstWidth < m_rcMax.right/4)
 			DstWidth = m_rcMax.right/4;
 
+
 		if (DstHeight < m_rcMax.bottom/2)
 			DstHeight = m_rcMax.bottom/2;
-
 		//	Move the window to take up the full client area
 		MoveWindow(0,0,m_rcMax.right,m_rcMax.bottom,TRUE);
 
-		//	Restore the destination rectangle
+		//	Restore the destination rectangletenpearls
+
 		SetDstRect(DstLeft, DstTop, DstWidth, DstHeight);
 		SetDstClipRect(DstLeft, DstTop, DstWidth, DstHeight);
 

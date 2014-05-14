@@ -450,8 +450,6 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMVie
 	//{{AFX_DATA_INIT(CMainView)
 	//}}AFX_DATA_INIT
 
-	AfxMessageBox("hello");
-
 	m_pDatabase = 0;
 	m_pFrame = 0;
 	m_pMedia = 0;
@@ -568,6 +566,8 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMVie
 
 	toolbarForcedHidden = false;
 	loadNextInOtherPanes = false;
+	curPageNavCount = 0;
+	scale = 0.0;
 }
 
 //==============================================================================
@@ -6684,29 +6684,6 @@ void CMainView::OnNextMedia()
 
 }
 
-void CMainView::OnNextDocumentPage(SMultipageInfo *Info) {
-
-	if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) < 
-		m_ctrlTMView->GetPageCount(TMV_ACTIVEPANE))
-	{
-		m_ctrlTMView->NextPage(TMV_ACTIVEPANE);
-
-		if(m_sState == S_CLEAR)
-			RestoreDisplay();
-
-		return;
-	}
-	else
-	{
-		//	Load the next page
-		if(SetPageFromId(Info, 0, SETPAGE_NEXT))
-		{
-			DbgMsg(Info, "OnNextPage");
-			LoadMultipage(Info);
-		}
-	}
-}
-
 //==============================================================================
 //
 // 	Function Name:	CMainView::OnNextPage()
@@ -6743,16 +6720,29 @@ void CMainView::OnNextPage()
 		case S_LINKEDIMAGE:
 
 			if(m_ctrlTMView == m_arrTmView[1]) {
-
-				OnNextDocumentPage(&Info);
-				SetViewingCtrl();
-				//loadNextInOtherPanes = false;
-
-			} else {
-				OnNextDocumentPage(&Info);
-				SetViewingCtrl();
+				curPageNavCount++;
+				loadNextInOtherPanes = false;
 			}
 
+			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) < 
+			   m_ctrlTMView->GetPageCount(TMV_ACTIVEPANE))
+			{
+				m_ctrlTMView->NextPage(TMV_ACTIVEPANE);
+
+				if(m_sState == S_CLEAR)
+					RestoreDisplay();
+
+				return;
+			}
+			else
+			{
+				//	Load the next page
+				if(SetPageFromId(&Info, 0, SETPAGE_NEXT))
+				{
+					DbgMsg(&Info, "OnNextPage");
+					LoadMultipage(&Info);
+				}
+			}
 			break;
 		
 		case S_POWERPOINT:
@@ -7129,28 +7119,6 @@ void CMainView::OnPreviousDesignation()
 	CuePlaylist(TMMCUEPL_PREVIOUS, TRUE);
 }
 
-void CMainView::OnPreviousDocumentPage(SMultipageInfo *Info) {
-
-	if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) > 1)
-	{
-		m_ctrlTMView->PrevPage(TMV_ACTIVEPANE);
-
-		if(m_sState == S_CLEAR)
-			RestoreDisplay();
-
-		return;
-	}
-	else
-	{
-		//	Load the previous page
-		if(SetPageFromId(Info, 0, SETPAGE_PREVIOUS))
-		{
-			DbgMsg(Info, "OnPreviousPage");
-			LoadMultipage(Info);
-		}
-	}
-}
-
 //==============================================================================
 //
 // 	Function Name:	CMainView::OnPreviousPage()
@@ -7187,16 +7155,28 @@ void CMainView::OnPreviousPage()
 		case S_LINKEDIMAGE:
 
 			if(m_ctrlTMView == m_arrTmView[1]) {
-
-				OnPreviousDocumentPage(&Info);
-				SetViewingCtrl();
+				curPageNavCount--;
 				loadNextInOtherPanes = false;
-
-			} else {
-				OnPreviousDocumentPage(&Info);
-				SetViewingCtrl();
 			}
-			
+
+			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) > 1)
+			{
+				m_ctrlTMView->PrevPage(TMV_ACTIVEPANE);
+
+				if(m_sState == S_CLEAR)
+					RestoreDisplay();
+
+				return;
+			}
+			else
+			{
+				//	Load the previous page
+				if(SetPageFromId(&Info, 0, SETPAGE_PREVIOUS))
+				{
+					DbgMsg(&Info, "OnPreviousPage");
+					LoadMultipage(&Info);
+				}
+			}
 			break;
 		
 		case S_POWERPOINT:
@@ -9610,16 +9590,6 @@ BOOL CMainView::ProcessEvent(short sEvent, DWORD dwParam1, DWORD dwParam2)
 				}
 				//	Load the new file
 				m_ctrlTMView->LoadFile(strFilename, TMV_ACTIVEPANE);
-
-				/*SetDefaultState(this);
-				for(int i=0; i < m_arrTmView.size(); i++) {
-					RestoreDefaultState(this);
-
-					m_arrTmView[i]->LoadFile(strFilename, TMV_ACTIVEPANE);
-					PushCurrentState(this, i);
-				}
-
-				SetCurrentState(this, 0);*/
 
 				//	Reset the multipage information
 				pMPOld = (SMultipageInfo*)m_ctrlTMView->GetData(-1);
@@ -13672,6 +13642,7 @@ bool CMainView::IsPrevPageAvailable() {
 //	Notes:			None
 //
 //==============================================================================
+bool scrollUpDownInProgress = false;
 LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 {
 	// check if tablet mode is on
@@ -13699,15 +13670,111 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 			case GID_END:
 				LogMe("--------------Gesture Ended---------------/n");
 				m_bMouseMode = TRUE;
-				if(m_bGestureHandled) {
-					m_bGestureHandled = FALSE;
-				} else {
 
-					SetViewingCtrl();
+				RECT curRect;
+				m_ctrlTMView->GetWindowRect(&curRect);
+				if(curRect.top <= -1 * (m_ScreenResolution.bottom / 3)) { // 50%
+					curIndexView = 2;
+				} else if(curRect.top > (m_ScreenResolution.bottom / 3)) { // 50%
+					curIndexView = 0;
 				}
+
+				// reorder views to mimic continuous pages view
+				if(curIndexView == 0) {
+		
+					RECT lastRect,
+						nextRect;
+
+					m_arrTmView[0]->GetWindowRect(&lastRect);
+					nextRect.left = 0;
+					nextRect.top = lastRect.top - (lastRect.bottom + PAGES_MARGIN);
+					nextRect.right = lastRect.right;
+					nextRect.bottom = nextRect.top + lastRect.bottom;
+					m_arrTmView[2]->MoveWindow(&nextRect);
+
+					CTm_view *tmpVu = m_arrTmView[2];
+					m_arrTmView[2] = m_arrTmView[1];
+					m_arrTmView[1] = m_arrTmView[0];
+					m_arrTmView[0] = tmpVu;
+
+					bool tmpHasPage = hasPage[2];
+					hasPage[2] = hasPage[1];
+					hasPage[1] = hasPage[0];
+					hasPage[0] = tmpHasPage;
+
+					m_ctrlTMView = m_arrTmView[0];
+					int loopLimit = 3;
+					if(!hasPage[0])
+						loopLimit = 2;
+					for(int i = 0; i < loopLimit; i++)
+						if(IsPrevPageAvailable()) {
+							OnPreviousPage();
+							hasPage[0] = true;
+						} else {
+							hasPage[0] = false;
+							break;
+						}
+
+					RECT firstRect;
+					m_arrTmView[0]->GetWindowRect(&firstRect);
+
+					threeViewsTop = firstRect.top;
+					m_bGestureHandled = TRUE;
+					curPageNavCount--;
+
+				} else if(curIndexView == 2) {
+
+					RECT lastRect,
+						nextRect;
+
+					m_arrTmView[2]->GetWindowRect(&lastRect);
+					nextRect.left = 0;
+					nextRect.top = lastRect.bottom + PAGES_MARGIN;
+					nextRect.right = lastRect.right;
+					nextRect.bottom = nextRect.top + lastRect.bottom;
+					m_arrTmView[0]->MoveWindow(&nextRect);
+
+					CTm_view *tmpVu = m_arrTmView[0];
+					m_arrTmView[0] = m_arrTmView[1];
+					m_arrTmView[1] = m_arrTmView[2];
+					m_arrTmView[2] = tmpVu;
+
+					bool tmpHasPage = hasPage[0];
+					hasPage[0] = hasPage[1];
+					hasPage[1] = hasPage[2];
+					hasPage[2] = tmpHasPage;
+
+					m_ctrlTMView = m_arrTmView[2];
+					int loopLimit = 3;
+					if(!hasPage[2])
+						loopLimit = 2;
+					for(int i = 0; i < loopLimit; i++)
+						if(IsNextPageAvailable()) {
+							OnNextPage();
+							hasPage[2] = true;
+						} else {
+							hasPage[2] = false;
+							break;
+						}
+
+					RECT firstRect;
+					m_arrTmView[0]->GetWindowRect(&firstRect);
+
+					threeViewsTop = firstRect.top;
+					m_bGestureHandled = TRUE;
+					curPageNavCount++;
+
+				} // else no page change, do nothing
+
+				curIndexView = 1;
+				m_ctrlTMView = m_arrTmView[curIndexView];
+
+				SetViewingCtrl();
+				scrollUpDownInProgress = false;
 				break;
 			case GID_ZOOM:
-				HandleZoom(gi);
+				if(!scrollUpDownInProgress)
+					HandleZoom(gi);
 				break;
 			case GID_PAN:
 				HandlePan(gi);
@@ -13743,14 +13810,12 @@ void CMainView::SetViewingCtrl() {
 	m_arrTmView[1]->GetWindowRect(&wndRect);
 	int diff = wndRect.top;
 
-	if(diff > 0) {
-		for(int i=0; i < diff; i+= m_ScreenResolution.bottom / 10) {
-			ScrollWindow(0, -m_ScreenResolution.bottom / 10);
+	for(int i=0; i < abs(diff); i+= m_ScreenResolution.bottom / 50) {
+		if(diff > 0) {
+			ScrollWindow(0, -m_ScreenResolution.bottom / 50);
 			UpdateWindow();
-		}
-	} else {
-		for(int i=0; i < abs(diff); i+= m_ScreenResolution.bottom / 10) {
-			ScrollWindow(0, m_ScreenResolution.bottom / 10);
+		} else {
+			ScrollWindow(0, m_ScreenResolution.bottom / 50);
 			UpdateWindow();
 		}
 	}
@@ -13771,36 +13836,6 @@ void CMainView::SetViewingCtrl() {
 	}
 }
 
-void CMainView::SetPage(int index, int page) {
-	m_ctrlTMView = m_arrTmView[index];
-	LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
-
-	int curPage = m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE);
-	if(page < curPage) {
-		while(curPage != page) {
-			if(IsPrevPageAvailable()) {		
-				OnPreviousPage();
-				hasPage[0] = true;
-			} else {
-				hasPage[0] = false;
-				break;
-			}
-			curPage = m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE);
-		}
-	} else if(page > curPage) {
-		while(curPage != page) {
-			if(IsNextPageAvailable()) {
-				OnNextPage();
-				hasPage[2] = true;
-			} else {
-				hasPage[2] = false;
-				break;
-			}
-			curPage = m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE);
-		}
-	}
-}
-
 //==============================================================================
 //
 // 	Function Name:	CMainView::HandlePan()
@@ -13813,6 +13848,7 @@ void CMainView::SetPage(int index, int page) {
 //	Notes:			None
 //
 //==============================================================================
+int lastCurrentPage=-1;
 void CMainView::HandlePan(GESTUREINFO gi)
 {
 	POINTS				pCurrent;					// new point
@@ -13842,243 +13878,222 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	dwCurrentTime = GetTickCount();
 	lTimeInterval = dwCurrentTime - m_gestureStartTime;
 
-	// 4. Swipe down from top of the screen to bring up the keyboard icon; opposite gesture hides keyboard
+	if(!scrollUpDownInProgress) {
 
-	// gesture starts at top of monitor. that mean y should be around 0
-	// we setting the limit for this gesture within the top 12% of screen
-	if (m_gestureStartPoint.y <= iMonitor_width/8) {
-		if (abs(iDistY) < iMonitor_width/8) {
-			DisplayKeyboardIconGesture(pCurrent);
+		// 4. Swipe down from top of the screen to bring up the keyboard icon; opposite gesture hides keyboard
+
+		// gesture starts at top of monitor. that mean y should be around 0
+		// we setting the limit for this gesture within the top 12% of screen
+		if (m_gestureStartPoint.y <= iMonitor_width/8) {
+			if (abs(iDistY) < iMonitor_width/8) {
+				DisplayKeyboardIconGesture(pCurrent);
+			}
+			//m_bGestureHandled = TRUE;
+			// update last location
+			m_gestureLastPoint = pCurrent;
+
+			SetViewingCtrl();
+
+			return;
 		}
-		//m_bGestureHandled = TRUE;
-		// update last location
-		m_gestureLastPoint = pCurrent;
-		return;
-	}
 
 
-	// 5. Swipe up from the bottom of the screen to bring up tool bar; opposite gesture hides toolbar
+		// 5. Swipe up from the bottom of the screen to bring up tool bar; opposite gesture hides toolbar
 
-	// gesture starts at bottom of monitor. that mean y should be around monitor height
-	// we setting the limit for this gesture within the bottom 12% of screen
-	if (m_gestureStartPoint.y >= (iMonitor_height - iMonitor_width/8)) {
-		if (abs(iDistY) < iMonitor_width/8) {
-			DisplayToolbarGesture(pCurrent);
+		// gesture starts at bottom of monitor. that mean y should be around monitor height
+		// we setting the limit for this gesture within the bottom 12% of screen
+		if (m_gestureStartPoint.y >= (iMonitor_height - iMonitor_width/8)) {
+			if (abs(iDistY) < iMonitor_width/8) {
+				DisplayToolbarGesture(pCurrent);
+			}
+			//m_bGestureHandled = TRUE;
+			// update last location
+			m_gestureLastPoint = pCurrent;
+
+			SetViewingCtrl();
+
+			return;
 		}
-		//m_bGestureHandled = TRUE;
-		// update last location
-		m_gestureLastPoint = pCurrent;
-		return;
-	}
 
 
-	// 3. Swipe right to left to advance to the next page and swipe left to right to go to the previous page
+		// 3. Swipe right to left to advance to the next page and swipe left to right to go to the previous page
 
-	// check for inertia
-	// check if distnace between stating and ending point is greater than 1/4 of screen
-	// check time interval to find if its pan or swipe
-	if ((abs(iDistX) > iMonitor_width/4 && abs(iDistY) < iMonitor_height/8) && 
-		gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
-		// use keyboard arrow key to navigate to next "slide"
-		// next page will take to next page insted of slide
-		if (iDistX > 0) {
-			// swipe was made from left to right
-			//OnPreviousPage();
-			BYTE keyState[256];
-			// Simulate a key press
-			keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | 0, 0);
-			// Simulate a key release
-			keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
+		// check for inertia
+		// check if distnace between stating and ending point is greater than 1/4 of screen
+		// check time interval to find if its pan or swipe
+		if ((abs(iDistX) > iMonitor_width/4 && abs(iDistY) < iMonitor_height/8) && 
+			gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
+			// use keyboard arrow key to navigate to next "slide"
+			// next page will take to next page insted of slide
+			if (iDistX > 0) {
+				// swipe was made from left to right
+				//OnPreviousPage();
+				BYTE keyState[256];
+				// Simulate a key press
+				keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | 0, 0);
+				// Simulate a key release
+				keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
 
-		} else {
-			//OnNextPage();
-			BYTE keyState[256];
-			// Simulate a key press
-			keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | 0, 0);
-			// Simulate a key release
-			keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
+			} else {
+				//OnNextPage();
+				BYTE keyState[256];
+				// Simulate a key press
+				keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | 0, 0);
+				// Simulate a key release
+				keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
+			}
+			m_bGestureHandled = TRUE;
+			// update last location
+			m_gestureLastPoint = pCurrent;
+
+			SetViewingCtrl();
+
+			return;
 		}
-		m_bGestureHandled = TRUE;
-		// update last location
-		m_gestureLastPoint = pCurrent;
-		return;
-	}
 
-	if (abs(iDistY) > iMonitor_height/4 && abs(iDistX) < iMonitor_width/8 && 
-		gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
+		// gesture zoom
+		if (abs(iDistY) > iMonitor_height/4 && abs(iDistX) < iMonitor_width/8 && 
+			gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
 
-		// check if the document suport zooming
-		if (IsCommandEnabled(TMAX_ZOOM))
-			m_ctrlTMView->SetZoomedNextPage(true);
-		else
-			m_ctrlTMView->SetZoomedNextPage(false);
+			// check if the document suport zooming
+			if (IsCommandEnabled(TMAX_ZOOM)) {
+				m_ctrlTMView->SetZoomedNextPage(true);
+			}
+			else {
+				m_ctrlTMView->SetZoomedNextPage(false);
+			}
 
-		if (iDistY > 0) {
-			BYTE keyState[256];
-			keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | 0, 0);
-			keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
-		} else {
-			BYTE keyState[256];
-			keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | 0, 0);
-			keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
-		}
+			if (iDistY > 0) {
+				BYTE keyState[256];
+				keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | 0, 0);
+				keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
+			} else {
+				BYTE keyState[256];
+				keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | 0, 0);
+				keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
+			}
 			
 
-		m_bGestureHandled = TRUE;
-		// update last location
-		m_gestureLastPoint = pCurrent;
-		return;
+			m_bGestureHandled = TRUE;
+			// update last location
+			m_gestureLastPoint = pCurrent;
+			return;
+		}
 	}
+
+	if(m_sState != S_DOCUMENT) return;
 
 	// 1. Moving the page with your finger on the screen; similar to what happens now when grabbing and moving the page with the mouse button
 	//	Toggle the visibility of the toolbar
-	if(m_pToolbar->IsWindowVisible()) {
-		SetControlBar(CONTROL_BAR_NONE);
-		toolbarForcedHidden = true;
-	}
 
 	bool *bSmooth = new bool;
 	*bSmooth = false;
 
 	if(!loadNextInOtherPanes) {
+		m_ctrlTMView = m_arrTmView[0];
+		LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
+		if(IsPrevPageAvailable()) {		
+			OnPreviousPage();
+			hasPage[0] = true;
 
-		int curPage = m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE);
+		} else {
+			hasPage[0] = false;
+		}
 
-		SetPage(0, curPage - 1);
-		SetPage(2, curPage + 1);
+		m_ctrlTMView = m_arrTmView[2];
+		LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
+		if(IsNextPageAvailable()) {
+			OnNextPage();
+			hasPage[2] = true;
+
+		} else {
+			hasPage[2] = false;
+		}
+			
+		for(int j = 0; j < SZ_ARR_TM_VW; j++) {
+			if(j==1) continue;
 		
+			m_ctrlTMView = m_arrTmView[j];
+			for(int i = 0; i < abs(curPageNavCount); i++) {
+				if(curPageNavCount > 0) { // +ve
+
+					if(j == 0 && i == 0 && !hasPage[j]) {
+						hasPage[j] = true;
+						continue;
+					}
+
+					if(IsNextPageAvailable()) {
+						OnNextPage();
+						hasPage[j] = true;
+					} else {
+						hasPage[j] = false;
+						break;
+					}
+				} else {
+
+					if(j == SZ_ARR_TM_VW - 1 && i == 0 && !hasPage[j]) {
+						hasPage[j] = true;
+						continue;
+					}
+
+					if(IsPrevPageAvailable()) {
+						OnPreviousPage();
+						hasPage[j] = true;
+					} else {
+						hasPage[j] = false;
+						break;
+					}
+				}
+			}
+		}
+
 		m_ctrlTMView = m_arrTmView[1];
 		loadNextInOtherPanes = true;
-		return;
+
 	}
 
+	if(scale != 0) {
+		m_arrTmView[0]->DoGestureZoom(scale);
+		m_arrTmView[2]->DoGestureZoom(scale);
+	}
+	
 	if(!m_ctrlTMView->DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth)) {
 		
-		int totalScroll = m_ScreenResolution.bottom;
 		int diff = pCurrent.y - m_gestureLastPoint.y;
 
 		// pan or not
 		if(diff < 0) {
 			// pan up
 			if(!hasPage[2]) diff = 0;
-			diff = -1 * min(abs(diff), m_ScreenResolution.bottom/10);
+			diff = -1 * min(abs(diff), m_ScreenResolution.bottom);
 
 		} else if(diff > 0) {
 			// pan down
 			if(!hasPage[0]) diff = 0;
-			diff = min(abs(diff), m_ScreenResolution.bottom/10);
+		    diff = min(abs(diff), m_ScreenResolution.bottom);
 		}
 
+		if(!scrollUpDownInProgress &&
+			abs(diff) < m_ScreenResolution.bottom / 10) return;
 
 		if(diff != 0) {
+
+			if(m_pToolbar->IsWindowVisible()) {
+				SetControlBar(CONTROL_BAR_NONE);
+				toolbarForcedHidden = true;
+			}
 
 			ScrollWindow(0, diff);
 			threeViewsTop += diff;
 			UpdateWindow();
+			scrollUpDownInProgress = true;
 		}
-
-		RECT curRect;
-		m_ctrlTMView->GetWindowRect(&curRect);
-		if(curRect.top < -1 * (m_ScreenResolution.bottom / 5)) { // 20%
-			curIndexView = 2;
-		} else if(curRect.top > (m_ScreenResolution.bottom / 5)) { // 20%
-			curIndexView = 0;
-		}
-
-		// reorder views to mimic continuous pages view
-		if(curIndexView == 0) {
-		
-			RECT lastRect,
-				nextRect;
-
-			m_arrTmView[0]->GetWindowRect(&lastRect);
-			nextRect.left = 0;
-			nextRect.top = lastRect.top - (lastRect.bottom + PAGES_MARGIN);
-			nextRect.right = lastRect.right;
-			nextRect.bottom = nextRect.top + lastRect.bottom;
-			m_arrTmView[2]->MoveWindow(&nextRect);
-
-			CTm_view *tmpVu = m_arrTmView[2];
-			m_arrTmView[2] = m_arrTmView[1];
-			m_arrTmView[1] = m_arrTmView[0];
-			m_arrTmView[0] = tmpVu;
-
-			bool tmpHasPage = hasPage[2];
-			hasPage[2] = hasPage[1];
-			hasPage[1] = hasPage[0];
-			hasPage[0] = tmpHasPage;
-
-			m_ctrlTMView = m_arrTmView[0];
-			int loopLimit = 3;
-			if(!hasPage[0])
-				loopLimit = 2;
-			for(int i = 0; i < loopLimit; i++)
-				if(IsPrevPageAvailable()) {
-					OnPreviousPage();
-					hasPage[0] = true;
-				} else {
-					hasPage[0] = false;
-					break;
-				}
-
-			RECT firstRect;
-			m_arrTmView[0]->GetWindowRect(&firstRect);
-
-			threeViewsTop = firstRect.top;
-			m_bGestureHandled = TRUE;
-
-		} else if(curIndexView == 2) {
-
-			RECT lastRect,
-				nextRect;
-
-			m_arrTmView[2]->GetWindowRect(&lastRect);
-			nextRect.left = 0;
-			nextRect.top = lastRect.bottom + PAGES_MARGIN;
-			nextRect.right = lastRect.right;
-			nextRect.bottom = nextRect.top + lastRect.bottom;
-			m_arrTmView[0]->MoveWindow(&nextRect);
-
-			CTm_view *tmpVu = m_arrTmView[0];
-			m_arrTmView[0] = m_arrTmView[1];
-			m_arrTmView[1] = m_arrTmView[2];
-			m_arrTmView[2] = tmpVu;
-
-			bool tmpHasPage = hasPage[0];
-			hasPage[0] = hasPage[1];
-			hasPage[1] = hasPage[2];
-			hasPage[2] = tmpHasPage;
-
-			m_ctrlTMView = m_arrTmView[2];
-			int loopLimit = 3;
-			if(!hasPage[2])
-				loopLimit = 2;
-			for(int i = 0; i < loopLimit; i++)
-				if(IsNextPageAvailable()) {
-					OnNextPage();
-					hasPage[2] = true;
-				} else {
-					hasPage[2] = false;
-					break;
-				}
-
-			RECT firstRect;
-			m_arrTmView[0]->GetWindowRect(&firstRect);
-
-			threeViewsTop = firstRect.top;
-			m_bGestureHandled = TRUE;
-
-		} // else no page change, do nothing
-
-		curIndexView = 1;
-		m_ctrlTMView = m_arrTmView[curIndexView];
-		
 	}
 
-	if(m_bGestureHandled) {
+	/*if(m_bGestureHandled) {
 
 		SetViewingCtrl();
-	}
+	}*/
 
 	delete bSmooth;
 	bSmooth = NULL;
@@ -14102,7 +14117,6 @@ void CMainView::HandlePan(GESTUREINFO gi)
 void CMainView::HandleZoom(GESTUREINFO gi)
 {
 	// 2. Pinch to zoom and un-pinch to expand the image
-	FLOAT scale;
 
 	// ullArguments is distance between two points
 	// we save the first distance
@@ -14112,7 +14126,7 @@ void CMainView::HandleZoom(GESTUREINFO gi)
 	else {
 
 		// zoom factor
-		scale = (FLOAT)gi.ullArguments / (FLOAT)m_ullArguments;
+		scale = (float)gi.ullArguments / (float)m_ullArguments;
 		m_ctrlTMView->DoGestureZoom(scale);
 
 		// update current point and distance
@@ -14433,6 +14447,8 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 			{
 				LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);	
 				loadNextInOtherPanes = false;
+				curPageNavCount = 0;
+				scale = 0.0;
 				m_bIsBinderOpen = FALSE;
 			}
 			else
@@ -14472,6 +14488,8 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 			//m_currentBinderItem = m_parentBinderItem;
 			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
 			loadNextInOtherPanes = false;
+			curPageNavCount = 0;
+			scale = 0.0;
 			m_bIsBinderOpen = FALSE;
 		}
 		return;
@@ -14511,6 +14529,8 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 			}			
 			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
 			loadNextInOtherPanes = false;
+			curPageNavCount = 0;
+			scale = 0.0;
 			m_bIsBinderOpen = FALSE;
 		}
 		return;
@@ -14526,6 +14546,8 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 		m_currentBinderItem = m_pDatabase->GetTertiaryMediaById(m_currentBinderItem.m_ParentId);		
 		LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
 		loadNextInOtherPanes = false;
+		curPageNavCount = 0;
+		scale = 0.0;
 		m_bIsBinderOpen = FALSE;
 		return;
 	}

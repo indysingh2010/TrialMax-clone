@@ -654,6 +654,8 @@ class CMainView : public CFormView
 		CColorPickerList* m_ColorPickerList;
 		bool			toolbarForcedHidden;
 		bool			loadNextInOtherPanes;
+		int				curPageNavCount;
+		float			scale;
 		
 	public:
 		
@@ -818,9 +820,6 @@ class CMainView : public CFormView
 		bool			IsNextPageAvailable();
 		bool			IsPrevPageAvailable();
 		void			SetViewingCtrl();
-		void			OnNextDocumentPage(SMultipageInfo *Info);
-		void			OnPreviousDocumentPage(SMultipageInfo *Info);
-		void			SetPage(int, int);
 
 	//	Class Wizard Maintained
 	public:
