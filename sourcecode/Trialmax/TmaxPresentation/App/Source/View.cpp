@@ -571,7 +571,9 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMVie
 	toolbarForcedHidden = false;
 	loadNextInOtherPanes = false;
 	curPageNavCount = 0;
-	scale = 0.0;
+	countFrom = COUNT_FROM_CUR;
+	scaleHist.clear();
+	zoomFullWidth = false;
 }
 
 //==============================================================================
@@ -1765,7 +1767,9 @@ void CMainView::InitializeTest()
 	//	Disable all the runtime error handlers
 	m_Errors.Enable(FALSE);
 	m_ctrlTMMovie.SetEnableErrors(FALSE);
-	m_ctrlTMView->SetEnableErrors(FALSE);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++) {
+		m_arrTmView[i]->SetEnableErrors(FALSE);
+	}
 	m_pDatabase->SetErrorHandler(FALSE, 0);
 
 	//	Mark the start of this test in the activity log
@@ -4776,7 +4780,8 @@ void CMainView::OnCallout()
 	if(!IsCommandEnabled(TMAX_CALLOUT))
 		return;
 	
-	m_ctrlTMView->SetAction(CALLOUT);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetAction(CALLOUT);
 }
 
 //==============================================================================
@@ -5464,7 +5469,8 @@ void CMainView::OnDrawTool()
 	short drawToolColor =(short)m_Ini.ReadLong(ANNCOLOR_LINE);
 	ChangeColorOfColorButton(drawToolColor);
 
-	m_ctrlTMView->SetAction(DRAW);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetAction(DRAW);
 }
 
 //==============================================================================
@@ -5702,6 +5708,14 @@ void CMainView::OnFirstPage()
 		case S_GRAPHIC:		
 		case S_LINKEDIMAGE:
 
+			if(m_ctrlTMView == m_arrTmView[1]) {
+				countFrom = COUNT_FROM_FIRST;
+				curPageNavCount=0;
+				loadNextInOtherPanes = false;
+				scaleHist.clear();
+				zoomFullWidth = false;
+			}
+
 			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) > 1)
 			{
 				m_ctrlTMView->FirstPage(TMV_ACTIVEPANE);
@@ -5938,7 +5952,8 @@ void CMainView::OnHighlight()
 	short highliterColor = (short)m_Ini.ReadLong(HIGHLIGHTCOLOR_LINE);
 	ChangeColorOfColorButton(highliterColor);
 
-	m_ctrlTMView->SetAction(HIGHLIGHT);	
+	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetAction(HIGHLIGHT);	
 }
 
 //==============================================================================
@@ -6217,6 +6232,14 @@ void CMainView::OnLastPage()
 		case S_DOCUMENT:
 		case S_GRAPHIC:		
 		case S_LINKEDIMAGE:
+
+			if(m_ctrlTMView == m_arrTmView[1]) {
+				countFrom = COUNT_FROM_LAST;
+				curPageNavCount=0;
+				loadNextInOtherPanes = false;
+				scaleHist.clear();
+				zoomFullWidth = false;
+			}
 
 			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) < 
 			   m_ctrlTMView->GetPageCount(TMV_ACTIVEPANE))
@@ -6736,6 +6759,8 @@ void CMainView::OnNextPage()
 			if(m_ctrlTMView == m_arrTmView[1]) {
 				curPageNavCount++;
 				loadNextInOtherPanes = false;
+				scaleHist.clear();
+				zoomFullWidth = false;
 			}
 
 			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) < 
@@ -6977,7 +7002,10 @@ void CMainView::OnNormal()
 	if(!IsCommandEnabled(TMAX_NORMAL))
 		return;
 	
-	m_ctrlTMView->ResetZoom(TMV_ACTIVEPANE);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->ResetZoom(TMV_ACTIVEPANE);
+	scaleHist.clear();
+	zoomFullWidth = false;
 }
 
 //==============================================================================
@@ -6995,8 +7023,9 @@ void CMainView::OnPan()
 {
 	if(!IsCommandEnabled(TMAX_PAN))
 		return;
-	
-	m_ctrlTMView->SetAction(PAN);
+
+	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetAction(PAN);
 }
 
 //==============================================================================
@@ -7171,6 +7200,8 @@ void CMainView::OnPreviousPage()
 			if(m_ctrlTMView == m_arrTmView[1]) {
 				curPageNavCount--;
 				loadNextInOtherPanes = false;
+				scaleHist.clear();
+				zoomFullWidth = false;
 			}
 
 			if(m_ctrlTMView->GetCurrentPage(TMV_ACTIVEPANE) > 1)
@@ -7454,7 +7485,8 @@ void CMainView::OnRedact()
 	short redactColor = (short)m_Ini.ReadLong(REDACTCOLOR_LINE);
 	ChangeColorOfColorButton(redactColor);
 
-	m_ctrlTMView->SetAction(REDACT);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetAction(REDACT);
 }
 
 //==============================================================================
@@ -7567,7 +7599,8 @@ void CMainView::OnSelect()
 	if(!IsCommandEnabled(TMAX_SELECT))
 		return;
 	
-	m_ctrlTMView->SetAction(SELECT);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetAction(SELECT);
 }
 
 //==============================================================================
@@ -7695,7 +7728,8 @@ void CMainView::OnShadeOnCallout()
 	if(!IsCommandEnabled(TMAX_SHADEONCALLOUT))
 		return;
 	
-	m_ctrlTMView->SetShadeOnCallout(!m_ctrlTMView->GetShadeOnCallout());
+	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+		m_arrTmView[i]->SetShadeOnCallout(!m_ctrlTMView->GetShadeOnCallout());
 	
 	//	Update the ini file
 	m_Ini.SetTMSection(PRESENTATION_APP);
@@ -8590,8 +8624,10 @@ void CMainView::OnZoom()
 	if(!IsCommandEnabled(TMAX_ZOOM))
 		return;
 	
-	m_ctrlTMView->SetAction(ZOOM);
-	m_ctrlTMView->SetZoomToRect(FALSE);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++) {
+		m_arrTmView[i]->SetAction(ZOOM);
+		m_arrTmView[i]->SetZoomToRect(FALSE);
+	}
 }
 
 //==============================================================================
@@ -8610,8 +8646,10 @@ void CMainView::OnZoomRestricted()
 	if(!IsCommandEnabled(TMAX_ZOOM))
 		return;
 	
-	m_ctrlTMView->SetAction(ZOOM);
-	m_ctrlTMView->SetZoomToRect(TRUE);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++) {
+		m_arrTmView[i]->SetAction(ZOOM);
+		m_arrTmView[i]->SetZoomToRect(TRUE);
+	}
 }
 
 //==============================================================================
@@ -8634,8 +8672,11 @@ void CMainView::OnZoomWidth()
 	//	Are we already zoomed to full width?
 	if(m_ctrlTMView->GetZoomState(TMV_ACTIVEPANE) == ZOOMED_FULLWIDTH)
 		OnNormal();
-	else
+	else {
 		m_ctrlTMView->ZoomFullWidth(TMV_ACTIVEPANE);
+		scaleHist.clear();
+		zoomFullWidth = true;
+	}
 }
 
 //==============================================================================
@@ -11985,7 +12026,6 @@ void CMainView::SetControlBar(int iId)
 //
 //==============================================================================
 #define PAGES_MARGIN 15
-int threeViewsTop = 0;
 void CMainView::SetDisplay(short sState)   
 {
 	//	Prevent attempts to update the toolbar buttons while we change
@@ -12037,7 +12077,6 @@ void CMainView::SetDisplay(short sState)
 			RecalcLayout(sState);
 
 			//	Size the TMView control
-			threeViewsTop = -1 * (m_ScreenResolution.bottom + PAGES_MARGIN);
 			for(int i = 0; i < SZ_ARR_TM_VW; i++) {
 				m_arrTmView[i]->MoveWindow(0, (i-1)*(m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
 				// m_ctrlTMView->SetFocus();
@@ -12356,8 +12395,10 @@ void CMainView::SetDrawingTool(short sTool)
 		ShowLightPen(TRUE);
 
 	//	Change the drawing tool
-	m_ctrlTMView->SetAnnTool(sTool);
-	m_ctrlTMView->SetAction(DRAW);
+	for(int i = 0; i < SZ_ARR_TM_VW; i++) {
+		m_arrTmView[i]->SetAnnTool(sTool);
+		m_arrTmView[i]->SetAction(DRAW);
+	}
 
 	//	Update the ini file
 	m_Ini.SetTMSection(PRESENTATION_APP);
@@ -13682,109 +13723,140 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				m_gestureStartTime = GetTickCount();
 				break;
 			case GID_END:
-				LogMe("--------------Gesture Ended---------------/n");
-				m_bMouseMode = TRUE;
+				{
+					LogMe("--------------Gesture Ended---------------/n");
+					m_bMouseMode = TRUE;
 
-				RECT curRect;
-				m_ctrlTMView->GetWindowRect(&curRect);
-				if(curRect.top <= -1 * (m_ScreenResolution.bottom / 3)) { // 50%
-					curIndexView = 2;
-				} else if(curRect.top > (m_ScreenResolution.bottom / 3)) { // 50%
-					curIndexView = 0;
+					RECT curRect;
+					m_ctrlTMView->GetWindowRect(&curRect);
+					if(curRect.top <= -1 * (m_ScreenResolution.bottom / 3)) { // 50%
+						curIndexView = 2;
+					} else if(curRect.top > (m_ScreenResolution.bottom / 3)) { // 50%
+						curIndexView = 0;
+					}
+
+					int lastIndexView = curIndexView;
+					// reorder views to mimic continuous pages view
+					if(curIndexView == 0) {
+						// pan down
+						RECT lastRect,
+							nextRect;
+
+						m_arrTmView[0]->GetWindowRect(&lastRect);
+						nextRect.left = 0;
+						nextRect.top = lastRect.top - (lastRect.bottom + PAGES_MARGIN);
+						nextRect.right = lastRect.right;
+						nextRect.bottom = nextRect.top + lastRect.bottom;
+						m_arrTmView[2]->MoveWindow(&nextRect);
+
+						CTm_view *tmpVu = m_arrTmView[2];
+						m_arrTmView[2] = m_arrTmView[1];
+						m_arrTmView[1] = m_arrTmView[0];
+						m_arrTmView[0] = tmpVu;
+
+						bool tmpHasPage = hasPage[2];
+						hasPage[2] = hasPage[1];
+						hasPage[1] = hasPage[0];
+						hasPage[0] = tmpHasPage;
+
+						m_ctrlTMView = m_arrTmView[0];
+						int loopLimit = 3;
+						if(!hasPage[0])
+							loopLimit = 2;
+						for(int i = 0; i < loopLimit; i++)
+							if(IsPrevPageAvailable()) {
+								OnPreviousPage();
+								hasPage[0] = true;
+							} else {
+								hasPage[0] = false;
+								break;
+							}
+
+						m_bGestureHandled = TRUE;
+						curPageNavCount--;
+
+						/*if(hasPage[0] && scaleHist.size() > 0) {
+
+							if(IsCommandEnabled(TMAX_NORMAL)) {
+								m_ctrlTMView->ResetZoom(TMV_ACTIVEPANE);
+								for(vector<float>::iterator scale=scaleHist.begin();
+									scale != scaleHist.end(); scale++)
+									m_ctrlTMView->DoGestureZoomBottom(*scale);
+							}
+						}*/
+
+					} else if(curIndexView == 2) {
+						// pan up
+						RECT lastRect,
+							nextRect;
+
+						m_arrTmView[2]->GetWindowRect(&lastRect);
+						nextRect.left = 0;
+						nextRect.top = lastRect.bottom + PAGES_MARGIN;
+						nextRect.right = lastRect.right;
+						nextRect.bottom = nextRect.top + lastRect.bottom;
+						m_arrTmView[0]->MoveWindow(&nextRect);
+
+						CTm_view *tmpVu = m_arrTmView[0];
+						m_arrTmView[0] = m_arrTmView[1];
+						m_arrTmView[1] = m_arrTmView[2];
+						m_arrTmView[2] = tmpVu;
+
+						bool tmpHasPage = hasPage[0];
+						hasPage[0] = hasPage[1];
+						hasPage[1] = hasPage[2];
+						hasPage[2] = tmpHasPage;
+
+						m_ctrlTMView = m_arrTmView[2];
+						m_ctrlTMView->ResetZoom(TMV_ACTIVEPANE);
+						int loopLimit = 3;
+						if(!hasPage[2])
+							loopLimit = 2;
+						for(int i = 0; i < loopLimit; i++)
+							if(IsNextPageAvailable()) {
+								OnNextPage();
+								hasPage[2] = true;
+							} else {
+								hasPage[2] = false;
+								break;
+							}
+
+						m_bGestureHandled = TRUE;
+						curPageNavCount++;
+
+					} // else no page change, do nothing
+
+					SetViewingCtrl();
+				
+					if(lastIndexView == 0) {
+						if(hasPage[0]) {
+
+							if(zoomFullWidth) {
+								m_arrTmView[0]->ZoomFullWidth(TMV_ACTIVEPANE);
+							}
+
+							for(vector<float>::iterator scale=scaleHist.begin();
+								scale != scaleHist.end(); scale++)
+									m_arrTmView[0]->DoGestureZoomBottom(*scale);
+						}
+					} else if(lastIndexView == 2) {
+						if(hasPage[2]) {
+
+							if(zoomFullWidth) {
+								m_arrTmView[2]->ZoomFullWidth(TMV_ACTIVEPANE);
+							}
+
+							for(vector<float>::iterator scale=scaleHist.begin();
+								scale != scaleHist.end(); scale++)
+									m_arrTmView[2]->DoGestureZoomTop(*scale);
+						}
+					}
+
+					curIndexView = 1;
+					m_ctrlTMView = m_arrTmView[curIndexView];
+					scrollUpDownInProgress = false;
+
 				}
-
-				// reorder views to mimic continuous pages view
-				if(curIndexView == 0) {
-		
-					RECT lastRect,
-						nextRect;
-
-					m_arrTmView[0]->GetWindowRect(&lastRect);
-					nextRect.left = 0;
-					nextRect.top = lastRect.top - (lastRect.bottom + PAGES_MARGIN);
-					nextRect.right = lastRect.right;
-					nextRect.bottom = nextRect.top + lastRect.bottom;
-					m_arrTmView[2]->MoveWindow(&nextRect);
-
-					CTm_view *tmpVu = m_arrTmView[2];
-					m_arrTmView[2] = m_arrTmView[1];
-					m_arrTmView[1] = m_arrTmView[0];
-					m_arrTmView[0] = tmpVu;
-
-					bool tmpHasPage = hasPage[2];
-					hasPage[2] = hasPage[1];
-					hasPage[1] = hasPage[0];
-					hasPage[0] = tmpHasPage;
-
-					m_ctrlTMView = m_arrTmView[0];
-					int loopLimit = 3;
-					if(!hasPage[0])
-						loopLimit = 2;
-					for(int i = 0; i < loopLimit; i++)
-						if(IsPrevPageAvailable()) {
-							OnPreviousPage();
-							hasPage[0] = true;
-						} else {
-							hasPage[0] = false;
-							break;
-						}
-
-					RECT firstRect;
-					m_arrTmView[0]->GetWindowRect(&firstRect);
-
-					threeViewsTop = firstRect.top;
-					m_bGestureHandled = TRUE;
-					curPageNavCount--;
-
-				} else if(curIndexView == 2) {
-
-					RECT lastRect,
-						nextRect;
-
-					m_arrTmView[2]->GetWindowRect(&lastRect);
-					nextRect.left = 0;
-					nextRect.top = lastRect.bottom + PAGES_MARGIN;
-					nextRect.right = lastRect.right;
-					nextRect.bottom = nextRect.top + lastRect.bottom;
-					m_arrTmView[0]->MoveWindow(&nextRect);
-
-					CTm_view *tmpVu = m_arrTmView[0];
-					m_arrTmView[0] = m_arrTmView[1];
-					m_arrTmView[1] = m_arrTmView[2];
-					m_arrTmView[2] = tmpVu;
-
-					bool tmpHasPage = hasPage[0];
-					hasPage[0] = hasPage[1];
-					hasPage[1] = hasPage[2];
-					hasPage[2] = tmpHasPage;
-
-					m_ctrlTMView = m_arrTmView[2];
-					int loopLimit = 3;
-					if(!hasPage[2])
-						loopLimit = 2;
-					for(int i = 0; i < loopLimit; i++)
-						if(IsNextPageAvailable()) {
-							OnNextPage();
-							hasPage[2] = true;
-						} else {
-							hasPage[2] = false;
-							break;
-						}
-
-					RECT firstRect;
-					m_arrTmView[0]->GetWindowRect(&firstRect);
-
-					threeViewsTop = firstRect.top;
-					m_bGestureHandled = TRUE;
-					curPageNavCount++;
-
-				} // else no page change, do nothing
-
-				curIndexView = 1;
-				m_ctrlTMView = m_arrTmView[curIndexView];
-
-				SetViewingCtrl();
-				scrollUpDownInProgress = false;
 				break;
 			case GID_ZOOM:
 				if(!scrollUpDownInProgress)
@@ -13826,11 +13898,25 @@ void CMainView::SetViewingCtrl() {
 
 	for(int i=0; i < abs(diff); i+= m_ScreenResolution.bottom / 50) {
 		if(diff > 0) {
+			
 			ScrollWindow(0, -m_ScreenResolution.bottom / 50);
-			UpdateWindow();
+			
+			RECT rect;
+			rect.top = 0;
+			rect.left = 0;
+			rect.bottom = m_ScreenResolution.bottom / 50;
+			rect.right = m_ScreenResolution.right;
+			RedrawWindow(&rect);
+
 		} else {
 			ScrollWindow(0, m_ScreenResolution.bottom / 50);
-			UpdateWindow();
+
+			RECT rect;
+			rect.top = m_ScreenResolution.bottom - (m_ScreenResolution.bottom/50);
+			rect.left = 0;
+			rect.bottom = m_ScreenResolution.bottom;
+			rect.right = m_ScreenResolution.right;
+			RedrawWindow(&rect);
 		}
 	}
 
@@ -13964,35 +14050,6 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 			return;
 		}
-
-		// gesture zoom
-		if (abs(iDistY) > iMonitor_height/4 && abs(iDistX) < iMonitor_width/8 && 
-			gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
-
-			// check if the document suport zooming
-			if (IsCommandEnabled(TMAX_ZOOM)) {
-				m_ctrlTMView->SetZoomedNextPage(true);
-			}
-			else {
-				m_ctrlTMView->SetZoomedNextPage(false);
-			}
-
-			if (iDistY > 0) {
-				BYTE keyState[256];
-				keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | 0, 0);
-				keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
-			} else {
-				BYTE keyState[256];
-				keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | 0, 0);
-				keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
-			}
-			
-
-			m_bGestureHandled = TRUE;
-			// update last location
-			m_gestureLastPoint = pCurrent;
-			return;
-		}
 	}
 
 	if(m_sState != S_DOCUMENT) return;
@@ -14006,6 +14063,13 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	if(!loadNextInOtherPanes) {
 		m_ctrlTMView = m_arrTmView[0];
 		LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
+		
+		if(countFrom == COUNT_FROM_FIRST) {
+			OnFirstPage();
+		} else if(countFrom == COUNT_FROM_LAST) {
+			OnLastPage();
+		}
+
 		if(IsPrevPageAvailable()) {		
 			OnPreviousPage();
 			hasPage[0] = true;
@@ -14016,6 +14080,13 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 		m_ctrlTMView = m_arrTmView[2];
 		LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
+
+		if(countFrom == COUNT_FROM_FIRST) {
+			OnFirstPage();
+		} else if(countFrom == COUNT_FROM_LAST) {
+			OnLastPage();
+		}
+
 		if(IsNextPageAvailable()) {
 			OnNextPage();
 			hasPage[2] = true;
@@ -14061,30 +14132,66 @@ void CMainView::HandlePan(GESTUREINFO gi)
 			}
 		}
 
+		if(hasPage[0]) {
+			
+			if(zoomFullWidth) {
+				m_arrTmView[0]->ZoomFullWidth(TMV_ACTIVEPANE);
+			}
+
+			for(vector<float>::iterator scale=scaleHist.begin();
+				scale != scaleHist.end(); scale++)
+					m_arrTmView[0]->DoGestureZoomBottom(*scale);
+		}
+	
+		if(hasPage[2]) {
+			
+			if(zoomFullWidth) {
+				m_arrTmView[2]->ZoomFullWidth(TMV_ACTIVEPANE);
+			}
+			
+			for(vector<float>::iterator scale=scaleHist.begin();
+				scale != scaleHist.end(); scale++)
+					m_arrTmView[2]->DoGestureZoomTop(*scale);	
+		}
+	
 		m_ctrlTMView = m_arrTmView[1];
 		loadNextInOtherPanes = true;
 
 	}
-
-	if(scale != 0) {
-		m_arrTmView[0]->DoGestureZoom(scale);
-		m_arrTmView[2]->DoGestureZoom(scale);
-	}
-	
-	if(!m_ctrlTMView->DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth)) {
 		
+	if(scrollUpDownInProgress ||
+		!m_ctrlTMView->DoGesturePan(pCurrent.x, pCurrent.y, m_gestureLastPoint.x, m_gestureLastPoint.y, bSmooth)) {
+		
+		RECT wndRect;
+		m_ctrlTMView->GetWindowRect(&wndRect);
+		int top = wndRect.top;
+
 		int diff = pCurrent.y - m_gestureLastPoint.y;
 
 		// pan or not
 		if(diff < 0) {
-			// pan up
-			if(!hasPage[2]) diff = 0;
-			diff = -1 * min(abs(diff), m_ScreenResolution.bottom);
+			// pan down
+			if(!hasPage[2] && top <= 0) 
+				diff = 0;
+			else
+				diff = -1 * min(abs(diff), m_ScreenResolution.bottom);
+
+			if(top - diff <= -m_ScreenResolution.bottom) {
+				diff = -1 * (m_ScreenResolution.bottom - abs(top));
+				m_bGestureHandled = TRUE;
+			}
 
 		} else if(diff > 0) {
-			// pan down
-			if(!hasPage[0]) diff = 0;
-		    diff = min(abs(diff), m_ScreenResolution.bottom);
+			// pan up
+			if(!hasPage[0] && top >= 0) 
+				diff = 0;
+			else
+				diff = min(abs(diff), m_ScreenResolution.bottom);
+
+			if(top + diff >= m_ScreenResolution.bottom) {
+				diff = m_ScreenResolution.bottom - top;
+				m_bGestureHandled = TRUE;
+			}
 		}
 
 		if(!scrollUpDownInProgress &&
@@ -14098,16 +14205,29 @@ void CMainView::HandlePan(GESTUREINFO gi)
 			}
 
 			ScrollWindow(0, diff);
-			threeViewsTop += diff;
-			UpdateWindow();
+
+			if(diff < 0) {
+
+				RECT rect;
+				rect.top = m_ScreenResolution.bottom - abs(diff);
+				rect.left = 0;
+				rect.bottom = m_ScreenResolution.bottom;
+				rect.right = m_ScreenResolution.right;
+				RedrawWindow(&rect);
+
+			} else {
+
+				RECT rect;
+				rect.top = 0;
+				rect.left = 0;
+				rect.bottom = diff;
+				rect.right = m_ScreenResolution.right;
+				RedrawWindow(&rect);
+			}
+
 			scrollUpDownInProgress = true;
 		}
 	}
-
-	/*if(m_bGestureHandled) {
-
-		SetViewingCtrl();
-	}*/
 
 	delete bSmooth;
 	bSmooth = NULL;
@@ -14140,8 +14260,14 @@ void CMainView::HandleZoom(GESTUREINFO gi)
 	else {
 
 		// zoom factor
-		scale = (float)gi.ullArguments / (float)m_ullArguments;
-		m_ctrlTMView->DoGestureZoom(scale);
+		float scaleNew = (float)gi.ullArguments / (float)m_ullArguments;
+
+		if(scaleNew != 1.0) {
+			m_arrTmView[0]->DoGestureZoomBottom(scaleNew);
+			m_arrTmView[1]->DoGestureZoom(scaleNew);
+			m_arrTmView[2]->DoGestureZoomTop(scaleNew);
+			scaleHist.push_back(scaleNew);
+		}
 
 		// update current point and distance
 		m_gestureLastPoint = gi.ptsLocation;
@@ -14461,6 +14587,11 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 			if(m_currentBinderItem.m_MediaType > 4)
 			{
 				LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);	
+				loadNextInOtherPanes = false;
+				curPageNavCount = 0;
+				countFrom = COUNT_FROM_CUR;
+				scaleHist.clear();
+				zoomFullWidth = false;
 				m_bIsBinderOpen = FALSE;
 			}
 			else
@@ -14491,8 +14622,14 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 			else
 			{
 				m_currentBinderItem.m_ParentId = binderItemForParent.m_ParentId;
-			}			
-			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);	
+			}
+			//m_currentBinderItem = m_parentBinderItem;
+			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
+			loadNextInOtherPanes = false;
+			curPageNavCount = 0;
+			countFrom = COUNT_FROM_CUR;
+			scaleHist.clear();
+			zoomFullWidth = false;
 			m_bIsBinderOpen = FALSE;
 		}
 		break;
@@ -14520,6 +14657,11 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 				}	
 						
 			LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
+			loadNextInOtherPanes = false;
+			curPageNavCount = 0;
+			countFrom = COUNT_FROM_CUR;
+			scaleHist.clear();
+			zoomFullWidth = false;
 			m_bIsBinderOpen = FALSE;
 		}
 		break;
@@ -14528,7 +14670,12 @@ void CMainView::OnBinderDialogButtonClickEvent(CBinderEntry pBinderEntry)
 		// Blank Folder or show Presentation
 		m_currentBinderItem = m_pDatabase->GetQuarternaryMediaById(m_currentBinderItem.m_AutoId);
 		m_currentBinderItem = m_pDatabase->GetTertiaryMediaById(m_currentBinderItem.m_ParentId);		
-		LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);		
+		LoadFromBarcode(pBinderEntry.m_Name,TRUE,FALSE);
+		loadNextInOtherPanes = false;
+		curPageNavCount = 0;
+		countFrom = COUNT_FROM_CUR;
+		scaleHist.clear();
+		zoomFullWidth = false;
 		m_bIsBinderOpen = FALSE;
 		break;
 

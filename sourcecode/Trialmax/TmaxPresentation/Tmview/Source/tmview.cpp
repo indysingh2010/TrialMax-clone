@@ -298,6 +298,8 @@ BEGIN_DISPATCH_MAP(CTMViewCtrl, COleControl)
 	DISP_FUNCTION_ID(CTMViewCtrl, "DoGesturePan", dispidDoGesturePan, DoGesturePan, VT_BOOL, VTS_I4 VTS_I4 VTS_I4 VTS_I4 VTS_BOOL)
 	DISP_FUNCTION_ID(CTMViewCtrl, "DoGestureZoom", dispidDoGestureZoom, DoGestureZoom, VT_EMPTY, VTS_R4)
 	DISP_FUNCTION_ID(CTMViewCtrl, "SetZoomedNextPage", dispidZoomedNextPage, SetZoomedNextPage, VT_EMPTY, VTS_BOOL)
+	DISP_FUNCTION_ID(CTMViewCtrl, "DoGestureZoomTop", dispidDoGestureZoomTop, DoGestureZoomTop, VT_EMPTY, VTS_R4)
+	DISP_FUNCTION_ID(CTMViewCtrl, "DoGestureZoomBottom", dispidDoGestureZoomBottom, DoGestureZoomBottom, VT_EMPTY, VTS_R4)
 	END_DISPATCH_MAP()
 
 BEGIN_EVENT_MAP(CTMViewCtrl, COleControl)
@@ -8731,6 +8733,56 @@ void CTMViewCtrl::DoGestureZoom(FLOAT zoomFactor)
 		return;
 
 	GetPane(TMV_ACTIVEPANE)->GestureZoom(zoomFactor);
+
+}
+
+//==============================================================================
+//
+// 	Function Name:	CTMViewCtrl::DoGestureZoomTop()
+//
+// 	Description:	This external method is used to zoom in / zoom out 
+//					object on pinch pinch gestures, on top
+//
+// 	Returns:		None
+//
+//	Notes:			zoomfactor > 1 = zoom in 
+//					zoomfactor < 1 = zoom out
+//
+//==============================================================================
+void CTMViewCtrl::DoGestureZoomTop(FLOAT zoomFactor)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	// if there is no zoom factor
+	if (zoomFactor <= 0 || zoomFactor == 1)
+		return;
+
+	GetPane(TMV_ACTIVEPANE)->GestureZoomTop(zoomFactor);
+
+}
+
+//==============================================================================
+//
+// 	Function Name:	CTMViewCtrl::DoGestureZoomBottom()
+//
+// 	Description:	This external method is used to zoom in / zoom out 
+//					object on pinch pinch gestures, on bottom
+//
+// 	Returns:		None
+//
+//	Notes:			zoomfactor > 1 = zoom in 
+//					zoomfactor < 1 = zoom out
+//
+//==============================================================================
+void CTMViewCtrl::DoGestureZoomBottom(FLOAT zoomFactor)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+	// if there is no zoom factor
+	if (zoomFactor <= 0 || zoomFactor == 1)
+		return;
+
+	GetPane(TMV_ACTIVEPANE)->GestureZoomBottom(zoomFactor);
 
 }
 

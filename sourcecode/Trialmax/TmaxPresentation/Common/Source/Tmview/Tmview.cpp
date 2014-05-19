@@ -1761,6 +1761,18 @@ void CTm_view::DoGestureZoom(float zoomFactor)
 	InvokeHelper(0x93, DISPATCH_METHOD, VT_EMPTY, NULL, parms, zoomFactor);
 }
 
+void CTm_view::DoGestureZoomTop(float zoomFactor)
+{
+	static BYTE parms[] = VTS_R4 ;
+	InvokeHelper(0x95, DISPATCH_METHOD, VT_EMPTY, NULL, parms, zoomFactor);
+}
+
+void CTm_view::DoGestureZoomBottom(float zoomFactor)
+{
+	static BYTE parms[] = VTS_R4 ;
+	InvokeHelper(0x96, DISPATCH_METHOD, VT_EMPTY, NULL, parms, zoomFactor);
+}
+
 void CTm_view::SetZoomedNextPage(bool bZoomed)
 {
 	static BYTE parms[] = VTS_BOOL;

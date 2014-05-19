@@ -282,6 +282,8 @@ public:
 	void AboutBox();
 	bool DoGesturePan(long lCurrentX, long lCurrentY, long lLastX, long lLastY, bool* bSmooth);
 	void DoGestureZoom(float zoomFactor);
+	void DoGestureZoomTop(float zoomFactor);
+	void DoGestureZoomBottom(float zoomFactor);
 	void SetZoomedNextPage(bool bZoomed);
 };
 

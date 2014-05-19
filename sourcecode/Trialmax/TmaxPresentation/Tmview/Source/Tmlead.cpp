@@ -11544,8 +11544,169 @@ void CTMLead::GestureZoom(float zoomFactor)
 
 	//	Redraw the image
 	RedrawZoomed();
+
+	m_sZoomState = ZOOMED_USER;
 }
 
+//==============================================================================
+//
+// 	Function Name:	CTMLead::GestureZoomTop()
+//
+// 	Description:	Will zoomin/zoomout document on according to given
+//                  zoom factor, zoom top area
+//
+// 	Returns:		None
+//
+//	Notes:			zoomfactor > 1 = zoom in 
+//					zoomfactor < 1 = zoom out
+//
+//==============================================================================
+void CTMLead::GestureZoomTop(float zoomFactor)
+{
+	int		iWidth;
+	int		iHeight;
+    float   DstWidth;
+    float   DstHeight;
+    float   DstLeft;
+    float   DstTop;
+	POINT	pCenter;
+
+	iWidth  = m_rcMax.right/zoomFactor;
+	iHeight = m_rcMax.bottom/zoomFactor;
+	pCenter.x = (m_rcMax.right - iWidth )/2;
+	pCenter.y = (m_rcMax.bottom - iHeight)/2;
+	
+	// limit zoomin
+	if (m_fZoomFactor > m_fMaxZoom &&
+		(iWidth <= m_rcMax.right && iHeight <= m_rcMax.bottom)) {
+		return;
+	}
+
+	//	Always hide the Lead control
+	if(IsWindow(m_hWnd))
+		ShowWindow(SW_HIDE);
+
+    //	If the window is not already maximized we have to move it to take up the
+	//	full client area so that the Lead control knows the area it has 
+	//	available to do the zoom.
+	if((m_iWidth != m_rcMax.right) || (m_iHeight != m_rcMax.bottom))
+	{
+		//  Find the current size of the destination rectangle. We need these
+		//	to restore the destination rectangle after we make the move
+		DstLeft   = GetDstLeft();
+		DstTop	  = GetDstTop();
+		DstWidth  = GetDstWidth();
+		DstHeight = GetDstHeight();
+
+		// limit the window for zoomout
+		if (DstWidth < m_rcMax.right/4)
+			DstWidth = m_rcMax.right/4;
+
+		if (DstHeight < m_rcMax.bottom/2)
+			DstHeight = m_rcMax.bottom/2;
+
+		//	Move the window to take up the full client area
+		MoveWindow(0,0,m_rcMax.right,m_rcMax.bottom,TRUE);
+
+		//	Restore the destination rectangle
+		SetDstRect(DstLeft, DstTop, DstWidth, DstHeight);
+		SetDstClipRect(DstLeft, DstTop, DstWidth, DstHeight);
+
+	}
+
+	//	Zoom in on the selection
+	ZoomToRect((float)pCenter.x, (float)0,
+			   (float)iWidth, (float)iHeight);
+
+	// without this, image will go all funcky
+	ResizeWndToRatio((float)iWidth, (float)iHeight);
+
+	//	Redraw the image
+	RedrawZoomed();
+
+	m_sZoomState = ZOOMED_USER;
+}
+
+//==============================================================================
+//
+// 	Function Name:	CTMLead::GestureZoomBottom()
+//
+// 	Description:	Will zoomin/zoomout document on according to given
+//                  zoom factor, bottom area
+//
+// 	Returns:		None
+//
+//	Notes:			zoomfactor > 1 = zoom in 
+//					zoomfactor < 1 = zoom out
+//
+//==============================================================================
+void CTMLead::GestureZoomBottom(float zoomFactor)
+{
+	int		iWidth;
+	int		iHeight;
+    float   DstWidth;
+    float   DstHeight;
+    float   DstLeft;
+    float   DstTop;
+	POINT	pCenter;
+
+	iWidth  = m_rcMax.right/zoomFactor;
+	iHeight = m_rcMax.bottom/zoomFactor;
+	pCenter.x = (m_rcMax.right - iWidth )/2;
+	pCenter.y = (m_rcMax.bottom - iHeight)/2;
+	
+
+	// limit zoomin
+	if (m_fZoomFactor > m_fMaxZoom &&
+		(iWidth <= m_rcMax.right && iHeight <= m_rcMax.bottom)) {
+		return;
+	}
+
+	//	Always hide the Lead control
+	if(IsWindow(m_hWnd))
+		ShowWindow(SW_HIDE);
+
+    //	If the window is not already maximized we have to move it to take up the
+	//	full client area so that the Lead control knows the area it has 
+	//	available to do the zoom.
+	if((m_iWidth != m_rcMax.right) || (m_iHeight != m_rcMax.bottom))
+	{
+		//  Find the current size of the destination rectangle. We need these
+		//	to restore the destination rectangle after we make the move
+		DstLeft   = GetDstLeft();
+		DstTop	  = GetDstTop();
+		DstWidth  = GetDstWidth();
+		DstHeight = GetDstHeight();
+
+		// limit the window for zoomout
+		if (DstWidth < m_rcMax.right/4)
+			DstWidth = m_rcMax.right/4;
+
+		if (DstHeight < m_rcMax.bottom/2)
+			DstHeight = m_rcMax.bottom/2;
+
+		//	Move the window to take up the full client area
+		MoveWindow(0,0,m_rcMax.right,m_rcMax.bottom,TRUE);
+
+		//	Restore the destination rectangle
+		SetDstRect(DstLeft, DstTop, DstWidth, DstHeight);
+		SetDstClipRect(DstLeft, DstTop, DstWidth, DstHeight);
+
+	}
+
+
+	//	Zoom in on the selection
+	ZoomToRect((float)pCenter.x, (float)iHeight,
+			   (float)iWidth, (float)iHeight);
+
+	// without this, image will go all funcky
+	ResizeWndToRatio((float)iWidth, (float)iHeight);
+
+	//	Redraw the image
+	RedrawZoomed();
+
+	m_sZoomState = ZOOMED_USER;
+}
 //==============================================================================
 //
 // 	Function Name:	CTMLead::ZoomToFactor()

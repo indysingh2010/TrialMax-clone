@@ -663,6 +663,8 @@ class CTMLead : public CLead
 public:
 	void GesturePan(long lX, long lY);
 	void GestureZoom(float zoomFactor);
+	void GestureZoomTop(float zoomFactor);
+	void GestureZoomBottom(float zoomFactor);
 	void ZoomToFactor();
 };
 

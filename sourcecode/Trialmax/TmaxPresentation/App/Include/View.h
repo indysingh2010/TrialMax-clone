@@ -655,7 +655,12 @@ class CMainView : public CFormView
 		bool			toolbarForcedHidden;
 		bool			loadNextInOtherPanes;
 		int				curPageNavCount;
-		float			scale;
+		vector<float>			scaleHist;
+#define COUNT_FROM_CUR		0
+#define COUNT_FROM_FIRST	1
+#define COUNT_FROM_LAST	   -1
+		int				countFrom; // 0-currentPage, 1-firstpage, -1-lastPage
+		bool			zoomFullWidth;
 		
 	public:
 		
