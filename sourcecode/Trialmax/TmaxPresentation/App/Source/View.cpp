@@ -13722,9 +13722,12 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				m_gestureStartPoint = m_gestureLastPoint = gi.ptsLocation;
 				m_gestureStartTime = GetTickCount();
 
-				if(m_pToolbar->IsWindowVisible()) {
-					SetControlBar(CONTROL_BAR_NONE);
-					toolbarForcedHidden = true;
+				if(gi.ptsLocation.y < (m_ScreenResolution.bottom*8)/10 &&
+					gi.ptsLocation.y > (m_ScreenResolution.bottom*2)/10) {
+					if(m_pToolbar->IsWindowVisible()) {
+						SetControlBar(CONTROL_BAR_NONE);
+						toolbarForcedHidden = true;
+					}
 				}
 
 				break;
@@ -14045,7 +14048,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 			// update last location
 			m_gestureLastPoint = pCurrent;
 
-			SetViewingCtrl();
+			//etViewingCtrl();
 
 			return;
 		}
@@ -14333,6 +14336,7 @@ void CMainView::DisplayToolbarGesture(POINTS pCurrent)
 		if ((pCurrent.y -3) > m_gestureLastPoint.y) {
 			if(m_pToolbar->IsWindowVisible()) {
 				SetControlBar(CONTROL_BAR_NONE);
+				toolbarForcedHidden = false;
 			}
 		}
 		else if ((pCurrent.y + 3) < m_gestureLastPoint.y) {
