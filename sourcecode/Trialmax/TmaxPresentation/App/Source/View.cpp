@@ -557,7 +557,7 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMVie
 	ZeroMemory(&m_ControlBarExtra, sizeof(m_ControlBarExtra));
 	::GetWindowRect(::GetDesktopWindow(), &m_ScreenResolution);
 
-	for(int i=0; i < 3; i++) {
+	for(int i=0; i < SZ_ARR_TM_VW; i++) {
 
 		CTm_view *pTmView = new CTm_view();
 		m_arrTmView[i] = pTmView;
@@ -13721,9 +13721,17 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				m_bGestureHandled = FALSE;
 				m_gestureStartPoint = m_gestureLastPoint = gi.ptsLocation;
 				m_gestureStartTime = GetTickCount();
+
+				if(m_pToolbar->IsWindowVisible()) {
+					SetControlBar(CONTROL_BAR_NONE);
+					toolbarForcedHidden = true;
+				}
+
 				break;
+
 			case GID_END:
-				{
+
+				if(scrollUpDownInProgress) {
 					LogMe("--------------Gesture Ended---------------/n");
 					m_bMouseMode = TRUE;
 
@@ -13741,13 +13749,6 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 						// pan down
 						RECT lastRect,
 							nextRect;
-
-						m_arrTmView[0]->GetWindowRect(&lastRect);
-						nextRect.left = 0;
-						nextRect.top = lastRect.top - (lastRect.bottom + PAGES_MARGIN);
-						nextRect.right = lastRect.right;
-						nextRect.bottom = nextRect.top + lastRect.bottom;
-						m_arrTmView[2]->MoveWindow(&nextRect);
 
 						CTm_view *tmpVu = m_arrTmView[2];
 						m_arrTmView[2] = m_arrTmView[1];
@@ -13775,27 +13776,10 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 						m_bGestureHandled = TRUE;
 						curPageNavCount--;
 
-						/*if(hasPage[0] && scaleHist.size() > 0) {
-
-							if(IsCommandEnabled(TMAX_NORMAL)) {
-								m_ctrlTMView->ResetZoom(TMV_ACTIVEPANE);
-								for(vector<float>::iterator scale=scaleHist.begin();
-									scale != scaleHist.end(); scale++)
-									m_ctrlTMView->DoGestureZoomBottom(*scale);
-							}
-						}*/
-
 					} else if(curIndexView == 2) {
 						// pan up
 						RECT lastRect,
 							nextRect;
-
-						m_arrTmView[2]->GetWindowRect(&lastRect);
-						nextRect.left = 0;
-						nextRect.top = lastRect.bottom + PAGES_MARGIN;
-						nextRect.right = lastRect.right;
-						nextRect.bottom = nextRect.top + lastRect.bottom;
-						m_arrTmView[0]->MoveWindow(&nextRect);
 
 						CTm_view *tmpVu = m_arrTmView[0];
 						m_arrTmView[0] = m_arrTmView[1];
@@ -13825,9 +13809,7 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 						curPageNavCount++;
 
 					} // else no page change, do nothing
-
-					SetViewingCtrl();
-				
+			
 					if(lastIndexView == 0) {
 						if(hasPage[0]) {
 
@@ -13856,11 +13838,24 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 					m_ctrlTMView = m_arrTmView[curIndexView];
 					scrollUpDownInProgress = false;
 
+					SetViewingCtrl();
 				}
+
+				if(toolbarForcedHidden) {
+					RECT wndRect;
+					m_pToolbar->GetWindowRect(&wndRect);
+					wndRect.top = m_ScreenResolution.bottom;
+					wndRect.left = 0;
+					m_pToolbar->MoveWindow(&wndRect);
+					SetControlBar(CONTROL_BAR_TOOLS);
+					toolbarForcedHidden = false;
+				}
+
 				break;
 			case GID_ZOOM:
-				if(!scrollUpDownInProgress)
+				if(!scrollUpDownInProgress) {
 					HandleZoom(gi);
+				}
 				break;
 			case GID_PAN:
 				HandlePan(gi);
@@ -13890,50 +13885,54 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 	return (GID_END | GID_ZOOM | GID_PAN) << 1;	
 }
 
+void CMainView::EmptyMessageQueue() {
+	MSG msg;
+	while (PeekMessage(&msg,NULL,0,0,PM_REMOVE))
+	{
+		GetMessage(&msg, NULL, 0, 0);
+		if (msg.message == WM_PAINT)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+}
+
 void CMainView::SetViewingCtrl() {
 
 	RECT wndRect;
 	m_arrTmView[1]->GetWindowRect(&wndRect);
 	int diff = wndRect.top;
+	
+	int scrollDist = m_ScreenResolution.bottom / 100;
+	for(int i=0; i < abs(diff); i+=scrollDist) {
 
-	for(int i=0; i < abs(diff); i+= m_ScreenResolution.bottom / 50) {
-		if(diff > 0) {
+		RECT rect;
+		if(diff > 0) { // scroll Up
 			
-			ScrollWindow(0, -m_ScreenResolution.bottom / 50);
-			
-			RECT rect;
-			rect.top = 0;
-			rect.left = 0;
-			rect.bottom = m_ScreenResolution.bottom / 50;
-			rect.right = m_ScreenResolution.right;
-			RedrawWindow(&rect);
+			ScrollWindow(0,-scrollDist);
+			//m_arrTmView[0]->UpdateWindow();
 
-		} else {
-			ScrollWindow(0, m_ScreenResolution.bottom / 50);
+		} else { // scroll Down
 
-			RECT rect;
-			rect.top = m_ScreenResolution.bottom - (m_ScreenResolution.bottom/50);
-			rect.left = 0;
-			rect.bottom = m_ScreenResolution.bottom;
-			rect.right = m_ScreenResolution.right;
-			RedrawWindow(&rect);
+			ScrollWindow(0, scrollDist);
+			//m_arrTmView[2]->UpdateWindow();
 		}
+
+		m_arrTmView[1]->UpdateWindow();
 	}
 
 	m_arrTmView[1]->GetWindowRect(&wndRect);
 	diff = wndRect.top;
 	if(diff) {
 		ScrollWindow(0, -diff);
-		UpdateWindow();
+		m_arrTmView[1]->UpdateWindow();
 	}
 
 	m_arrTmView[0]->MoveWindow(0, -1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
 	m_arrTmView[2]->MoveWindow(0,  1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
 
-	if(toolbarForcedHidden) {
-		SetControlBar(CONTROL_BAR_TOOLS);
-		toolbarForcedHidden = false;
-	}
+	EmptyMessageQueue();
 }
 
 //==============================================================================
@@ -14061,6 +14060,7 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	*bSmooth = false;
 
 	if(!loadNextInOtherPanes) {
+
 		m_ctrlTMView = m_arrTmView[0];
 		LoadMedia(g_pMedia, g_lSecondary, g_lTertiary);
 		
@@ -14199,31 +14199,8 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 		if(diff != 0) {
 
-			if(m_pToolbar->IsWindowVisible()) {
-				SetControlBar(CONTROL_BAR_NONE);
-				toolbarForcedHidden = true;
-			}
-
 			ScrollWindow(0, diff);
-
-			if(diff < 0) {
-
-				RECT rect;
-				rect.top = m_ScreenResolution.bottom - abs(diff);
-				rect.left = 0;
-				rect.bottom = m_ScreenResolution.bottom;
-				rect.right = m_ScreenResolution.right;
-				RedrawWindow(&rect);
-
-			} else {
-
-				RECT rect;
-				rect.top = 0;
-				rect.left = 0;
-				rect.bottom = diff;
-				rect.right = m_ScreenResolution.right;
-				RedrawWindow(&rect);
-			}
+			UpdateWindow();
 
 			scrollUpDownInProgress = true;
 		}

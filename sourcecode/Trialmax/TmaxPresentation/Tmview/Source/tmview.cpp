@@ -5143,7 +5143,7 @@ void CTMViewCtrl::OnDraw(CDC* pdc, const CRect& rcBounds,const CRect& rcInvalid)
 		else
 			brBackground.CreateSolidBrush(TranslateColor(GetBackColor()));
 
-		pdc->FillRect(rcBounds, &brBackground);
+		pdc->FillRect(rcInvalid, &brBackground);
 		
 		//	Draw the highlight if we are in split screen mode
 		if(m_bSplitScreen)
@@ -5159,6 +5159,7 @@ void CTMViewCtrl::OnDraw(CDC* pdc, const CRect& rcBounds,const CRect& rcInvalid)
 		//	Redraw the right pane
 		if(m_bSplitScreen && m_pRight && m_pRight->IsLoaded() && IsWindow(m_pRight->m_hWnd))
 			m_pRight->ForceRepaint();
+;
 	}
 	else
 	{

@@ -646,12 +646,12 @@ class CMainView : public CFormView
 		CBinderEntry	m_currentBinderItem;
 		CBinderEntry	m_parentBinderItem;	
 		POINT			m_BinderListPosition;
-		CBinderList*	m_BinderList;
+		//CBinderList*	m_BinderList;
 		BOOL			m_bIsBinderOpen;
 		
 		POINT			m_ColorPickerListPosition;
 		BOOL			m_bIsColorPickerOpen;
-		CColorPickerList* m_ColorPickerList;
+		//CColorPickerList* m_ColorPickerList;
 		bool			toolbarForcedHidden;
 		bool			loadNextInOtherPanes;
 		int				curPageNavCount;
@@ -1003,6 +1003,7 @@ class CMainView : public CFormView
 
 	DECLARE_MESSAGE_MAP()
 public:
+	void EmptyMessageQueue();
 };
 
 #ifndef _DEBUG  
