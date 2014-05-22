@@ -13701,8 +13701,8 @@ bool scrollUpDownInProgress = false;
 LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 {
 	// check if tablet mode is on
-	if (!IsCommandChecked(TMAX_GESTURE_PAN))
-		return FALSE;
+	//if (!IsCommandChecked(TMAX_GESTURE_PAN))
+		//return FALSE;
 
 	GESTUREINFO gi;  
     ZeroMemory(&gi, sizeof(GESTUREINFO));   
@@ -13722,11 +13722,14 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				m_gestureStartPoint = m_gestureLastPoint = gi.ptsLocation;
 				m_gestureStartTime = GetTickCount();
 
-				if(gi.ptsLocation.y < (m_ScreenResolution.bottom*8)/10 &&
-					gi.ptsLocation.y > (m_ScreenResolution.bottom*2)/10) {
-					if(m_pToolbar->IsWindowVisible()) {
-						SetControlBar(CONTROL_BAR_NONE);
-						toolbarForcedHidden = true;
+				if(m_BinderList == NULL) 
+				{
+					if(gi.ptsLocation.y < (m_ScreenResolution.bottom*8)/10 &&
+						gi.ptsLocation.y > (m_ScreenResolution.bottom*2)/10) {
+						if(m_pToolbar->IsWindowVisible()) {
+							SetControlBar(CONTROL_BAR_NONE);
+							toolbarForcedHidden = true;
+						}
 					}
 				}
 
@@ -13855,13 +13858,25 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				}
 
 				break;
+
 			case GID_ZOOM:
-				if(!scrollUpDownInProgress) {
+				if(IsCommandChecked(TMAX_GESTURE_PAN) &&
+					!scrollUpDownInProgress) {
 					HandleZoom(gi);
 				}
 				break;
+
 			case GID_PAN:
-				HandlePan(gi);
+				if(m_BinderList != NULL) {
+					int diff = gi.ptsLocation.y - m_gestureLastPoint.y;
+					m_BinderList->HandlePan(diff);
+					if(abs(diff) > 30) {
+						m_gestureLastPoint = gi.ptsLocation;
+					}
+				} else {
+					if(IsCommandChecked(TMAX_GESTURE_PAN))
+						HandlePan(gi);
+				}
 				break;
 			/*case GID_ROTATE:
 				handleRotate(hWnd, gi);
@@ -13950,7 +13965,6 @@ void CMainView::SetViewingCtrl() {
 //	Notes:			None
 //
 //==============================================================================
-int lastCurrentPage=-1;
 void CMainView::HandlePan(GESTUREINFO gi)
 {
 	POINTS				pCurrent;					// new point

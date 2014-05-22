@@ -83,10 +83,13 @@ private:
 	BOOL		AddButtons();
 	CMFCButton*  CreateButton(CString sButtonName, DWORD pButtonStyle, int nButtonId, int nButtonWidth, int nButtonHeight, 
 	int			nXPosition, int nYPosition,int nButtonNumber, int nMediaType);
-	void		CBinderList::CleanButtons();
+	void		CleanButtons();
 	void		LogMe(LPCTSTR msg);
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);			
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+
+public:
+	void HandlePan(int diff);
 };

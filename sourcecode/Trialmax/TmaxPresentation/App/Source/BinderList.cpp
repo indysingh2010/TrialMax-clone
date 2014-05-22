@@ -85,6 +85,7 @@ BEGIN_MESSAGE_MAP(CBinderList, CDialog)
 	ON_WM_SIZE()
 	ON_WM_VSCROLL()		
 	ON_WM_MOUSEWHEEL()
+	ON_MESSAGE(WM_GESTURE, OnGesture)
 END_MESSAGE_MAP()
 
 
@@ -659,4 +660,28 @@ BOOL CBinderList::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	ScrollWindow(0, zDelta);
 	
 	return CDialog::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+//==============================================================================
+//
+// 	Function Name:	CBinderList::OnGesture()
+//
+// 	Description:	WM_GESTURE message handler. Scroll up/down binder list 
+//					on gesture pan
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
+
+void CBinderList::HandlePan(int diff)
+{
+	if(abs(diff) > 30) {
+		if(diff < 0) {
+			SendMessage(WM_VSCROLL, LOWORD(SB_LINEDOWN), NULL);
+		} else if (diff > 0) {
+			SendMessage(WM_VSCROLL, LOWORD(SB_LINEUP), NULL);
+		}
+	}
 }
