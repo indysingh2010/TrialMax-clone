@@ -11,16 +11,17 @@ namespace FTI.Trialmax.Encode
     {
         public enum SupportedExportFormats { WMV,MPEG,MPG,MP4,AVI,MOV,M2V };
         
-        // this file should in the Bin folder
+        // this file should be in the Bin folder
         private string m_FFMpegEncoder = @"ffmpeg.exe";
 
         // destination file property
         private string m_strFileSpec = "";
 
         // bit rate on which the video will be encoded
-        private string m_strBitrate = "768k";
+        // yet we have fixed it to 768k
+        private string m_strBitrate = "100k";
 
-        // used to stroe end time of current video that is in encoding
+        // used to store end time of current video that is in encoding
         private long m_lEndTime = 0;
 
         /// <summary>Local member bound to Status property</summary>
@@ -28,35 +29,54 @@ namespace FTI.Trialmax.Encode
 
         /// <summary>Local member to store status of active source while encoding is taking place</summary>
         private string m_strSourceStatus;
+
+        /// <summary>Local member to store current source while encoding is taking place</summary>
         private string m_strSourceFile;
 
+        // number of files complete encoding
         private long m_lCompleted = 0;
+
+        // this property define is the encoding complete
         private bool m_bIsEncodingCompleted = false;
+
+        // this property define is the encoding in progress
         private bool m_bIsEncodingInProgress = false;
 
+        // this property will show/hide cancel button on status form        
         private bool m_bShowCancel = true;
+
+        // this peroperty define is merging happening 
         private bool m_bIsFinalizing = false;
+
+        // this peroperty define is encoding or merging cancelled 
         private bool m_bIsCancelled = false;
 
         // local memeber bound to hold the sources that will be encoded in a single file
         public List<CFFMpegSource> Sources;
 
-
+        // delegate for encoding status
         public delegate bool EncoderStatusHandler(object sender, string strStatus);
 
         // event to notify the changing in encoding status
         public event EncoderStatusHandler EncoderStatusUpdate;
 
+        // contstructor
         public CFFMpegEncoder() { }
 
+        // Show or hide cancel button on status form
         public bool ShowCancel
         {
             get { return m_bShowCancel; }
             set { m_bShowCancel = value; }
         }
 
+        // this method will initialize and prepare the initial requirment for encoder
+        /// <summary>This method is called to initialize the object</summary>
+        /// <param name="strFileSpec">Fully qualified path to the output file to be encoded</param>
+        /// <returns>true if successful</returns>
         public bool Initialize(string strSourceFile)
         {
+            // reset the properties
             bool bSuccessful = false;
             m_lCompleted = 0;
             m_strSourceFile = string.Empty;
@@ -83,9 +103,16 @@ namespace FTI.Trialmax.Encode
             }
             catch (Exception ex)
             { }
+
             return bSuccessful;
         }
 
+        /// <summary>Called to add a new source descriptor to the encoder project</summary>
+        /// <param name="strName">The unique name used to identify the group</param>
+        /// <param name="strFileSpec">The fully qualified path to the source file</param>
+        /// <param name="dStart">The start time in seconds</param>
+        /// <param name="dStop">The stop time in seconds</param>
+        /// <returns>true if successful</returns>
         public bool AddSource(string strDestinationFile, string strSourceFileName, double dStartTime, double dEndTime)
         {
             if (this.Sources == null) 
@@ -96,6 +123,7 @@ namespace FTI.Trialmax.Encode
             
         }
 
+        /// <summary>This method is called to clear the existing interfaces and reset the object</summary>
         public void Clear()
         {
             try
@@ -107,20 +135,19 @@ namespace FTI.Trialmax.Encode
                         m_encodingStatus.Dispose();
                     m_encodingStatus = null;
                 }
-                
-                
             }
             catch
-            {
-
-            }
+            { }
         }
 
+        /// <summary>This method is called to cancel the encoding operation</summary>
         public void Cancel()
         {
             m_bIsCancelled = true;
         }
 
+        /// <summary>Called to check the flag to see if the user has cancelled</summary>
+        /// <returns>true if cancelled</returns>
         private bool GetCancelled()
         {
             if (m_bIsCancelled == false)
@@ -136,6 +163,9 @@ namespace FTI.Trialmax.Encode
             return m_bIsCancelled;
         }
 
+        /// <summary>This method is called to encode the specified source groups</summary>
+        /// <method name="GetCancelled()">Flag to indicate if the operation was cancelled by the user</param>
+        /// <returns>true if successful</returns>
         public bool Encode() 
         {
             if (!CreateStatusForm(m_strFileSpec) || !System.IO.File.Exists(m_FFMpegEncoder))
@@ -157,9 +187,7 @@ namespace FTI.Trialmax.Encode
                     }                    
                 }
                 else
-                    m_bIsEncodingCompleted = true;
-
-                //System.Threading.Thread.Sleep(500);
+                    m_bIsEncodingCompleted = true;                
             }
 
             // merging is only in the case of more than one script/source
@@ -173,15 +201,15 @@ namespace FTI.Trialmax.Encode
                     {
                         SetStatus("Finalizing Cancelled", 0);                        
                         return false;
-                    }
-
-                    //System.Threading.Thread.Sleep(500);
+                    }                    
                 }
             }
             return true;
         }
 
-
+        /// <summary>This method is called to start the process of encoding</summary>
+        /// <param name="param">The parameters for encoding</param>
+        /// <returns>true if successful</returns>
         private void RunProcess(object param)
         {
             try
@@ -234,7 +262,8 @@ namespace FTI.Trialmax.Encode
             }
         }
 
-        void proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        /// <summary>This method is an event handler of data recieved from the encoding process</summary>
+        private void proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {            
             // output metadata of process during encoding
             if (e.Data != null && e.Data.StartsWith("frame"))
@@ -295,7 +324,8 @@ namespace FTI.Trialmax.Encode
             }
         }
 
-        void proc_Exited(object sender, EventArgs e)
+        /// <summary>This method is an event handler, it will be called when encoding process ends</summary>
+        private void proc_Exited(object sender, EventArgs e)
         {           
             // handle event when process is exited                        
             if (GetCancelled()) 
@@ -305,6 +335,7 @@ namespace FTI.Trialmax.Encode
             }
         }
 
+        /// <summary>This method isused to calculated percentage of encoding progress</summary>
         private int getPercentage(TimeSpan initialProgress)
         {
             TimeSpan totalTime = TimeSpan.FromSeconds(m_lEndTime);
@@ -312,6 +343,9 @@ namespace FTI.Trialmax.Encode
             return (int)(prgress * 100);
         }
 
+        /// <summary>This method is called to create the status form for the operation</summary>
+        /// <param name="strFileSpec">The path to the output file</param>
+        /// <returns>true if successful</returns>
         private bool CreateStatusForm(string strFileSpec)
         {
             try
@@ -348,6 +382,8 @@ namespace FTI.Trialmax.Encode
 
         }
 
+        /// <summary>This method is called to update the status text on the status form</summary>
+        /// <param name="strStatus">The new status message</param>
         private void SetStatus(string strStatus, int iProgress)
         {
             try
@@ -356,18 +392,17 @@ namespace FTI.Trialmax.Encode
                 {
                     m_encodingStatus.Status = strStatus;
                     m_encodingStatus.SetProgress(iProgress);
-                    m_encodingStatus.Refresh();
-
-                    
+                    m_encodingStatus.Refresh();                    
                 }
 
             }
             catch
-            {
-            }
+            { }
 
         }
 
+        /// <summary>This method is called to prepare encoding prerequisites</summary>
+        /// <param name="Source">This contain the sources of encoding</param>
         private void PrepareAndStartEncode(List<CFFMpegSource> Source)
         {
             // if source is available and not cancelled by the user
@@ -415,9 +450,13 @@ namespace FTI.Trialmax.Encode
             }
         }
 
+        /// <summary>This method is called to prepare encoding for merge prerequisites</summary>        
         private void MergeFile()
         {
             string inputFiles = string.Empty;
+            
+            // endtime of current script
+            m_lEndTime = 0;
 
             // get the mpg files that is encoded to merge in a single file
             // m_lCompleted is a property that tell us how many number of files encoded for merging
@@ -431,7 +470,19 @@ namespace FTI.Trialmax.Encode
                 // check if the encoded file exist that pick it and add in the concat list
                 // after each file name append the pipe "|" sign which is the requirment for FFMPEG Encoder
                 if (System.IO.File.Exists(filename))
-                    inputFiles += filename + "|";
+                {
+                    inputFiles += filename + "|";                    
+                }
+            }
+
+            // when merging is happen it means there are more than one file in the source list
+            // get each source end time to calculate the length of total merging
+            if (Sources != null && Sources.Count > 0)
+            {
+                foreach (CFFMpegSource ffmpegSource in Sources)
+                {
+                    m_lEndTime += (long)ffmpegSource.m_dEndTime;
+                }
             }
 
             // after appending all filenames remove the last pipe sign it is appended extra at the end
@@ -457,6 +508,7 @@ namespace FTI.Trialmax.Encode
             }
         }
 
+        /// <summary>This method is called to delete the temporary encoding files that was created for merging</summary>        
         private void DeleteFiles()
         {            
             for (int f = 0; f < m_lCompleted; f++)
@@ -478,6 +530,7 @@ namespace FTI.Trialmax.Encode
             }
         }
 
+        /// <summary>This method is called to delete the permanent encoding file when user cancelled encoding</summary>
         private void DeleteEncodedFile()
         {
             string filename = m_strFileSpec;
@@ -493,6 +546,8 @@ namespace FTI.Trialmax.Encode
             }            
         }
 
+        /// <summary>This method is used to get codec for particular file for encoding</summary>
+        /// <param name="sourceFile">This contain the File based on which codec is decided</param>
         private string getCodec(string sourceFile)
         {
             string codec = string.Empty;
