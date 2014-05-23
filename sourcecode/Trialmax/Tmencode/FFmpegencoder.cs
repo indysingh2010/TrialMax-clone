@@ -187,7 +187,9 @@ namespace FTI.Trialmax.Encode
                     }                    
                 }
                 else
-                    m_bIsEncodingCompleted = true;                
+                    m_bIsEncodingCompleted = true;
+
+                System.Threading.Thread.Sleep(100);
             }
 
             // merging is only in the case of more than one script/source
@@ -201,7 +203,9 @@ namespace FTI.Trialmax.Encode
                     {
                         SetStatus("Finalizing Cancelled", 0);                        
                         return false;
-                    }                    
+                    }
+
+                    System.Threading.Thread.Sleep(100);
                 }
             }
             return true;
