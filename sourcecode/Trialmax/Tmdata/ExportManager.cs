@@ -1773,6 +1773,7 @@ namespace FTI.Trialmax.Database
 		private bool ExportAsWMV(CDxPrimary dxScript, CDxSecondaries dxScenes, string strFileSpec)
 		{
 			CWMEncoder	wmEncoder = null;
+            CFFMpegEncoder ffmpegEncoder = null;
 			bool		bSuccessful = false;
 			bool		bEncode = true;
 			CDxTertiary	dxTertiary = null;
@@ -1784,15 +1785,19 @@ namespace FTI.Trialmax.Database
 			Debug.Assert(dxScenes.Count > 0);
 			Debug.Assert(strFileSpec != null);
 			Debug.Assert(strFileSpec.Length > 0);
-			
+
+            // get extension of the output file
+            string ext = System.IO.Path.GetExtension(strFileSpec);
+            ext = ext.Replace(".", "");
+
 			//	Make the status form visible
-			SetStatus("Exporting " + dxScript.GetBarcode(false) + " to WMV ...");
+			SetStatus("Exporting " + dxScript.GetBarcode(false) + " to " + ext.ToUpper() + "...");
 
 			try
 			{
 				//	Substitute the appropriate extension for the WMV file
-				strFileSpec = System.IO.Path.ChangeExtension(strFileSpec, ".wmv");
-				
+				//strFileSpec = System.IO.Path.ChangeExtension(strFileSpec, ".wmv");
+                
 				//	Delete the existing file
 				if(System.IO.File.Exists(strFileSpec) == true)
 				{
@@ -1803,26 +1808,30 @@ namespace FTI.Trialmax.Database
 				SetStatusFilename(System.IO.Path.GetFileName(strFileSpec));
 				
 				//	Use our Windows Media Encoder wrapper to perform the operation
-				wmEncoder = new CWMEncoder();
-				m_tmaxEventSource.Attach(wmEncoder.EventSource);
-				wmEncoder.EncoderStatusUpdate += new FTI.Trialmax.Encode.CWMEncoder.EncoderStatusHandler(this.OnEncoderStatus);
-				wmEncoder.ShowCancel = false;
-				
+                //wmEncoder = new CWMEncoder();
+                //m_tmaxEventSource.Attach(wmEncoder.EventSource);
+                //wmEncoder.EncoderStatusUpdate += new FTI.Trialmax.Encode.CWMEncoder.EncoderStatusHandler(this.OnEncoderStatus);
+                //wmEncoder.ShowCancel = false;
+
+                ffmpegEncoder = new CFFMpegEncoder();
+                ffmpegEncoder.EncoderStatusUpdate += new CFFMpegEncoder.EncoderStatusHandler(this.OnEncoderStatus);
+                ffmpegEncoder.ShowCancel = false;
+
 				while(bSuccessful == false)
 				{
 					//	Initialize for this operation
-					if(wmEncoder.Initialize(strFileSpec) == false)
+                    if (ffmpegEncoder.Initialize(strFileSpec) == false)
 					{
 						OnError(m_tmaxErrorBuilder.Message(ERROR_INITIALIZE_WMV_ENCODER, strFileSpec), false);
 						break;
 					}
 				
 					//	Set the encoder profile
-					if(wmEncoder.SetProfile(m_wmEncoder.LastProfile) == false)
-					{
-						OnError(m_tmaxErrorBuilder.Message(ERROR_SET_WMV_PROFILE, m_wmEncoder.LastProfile), false);
-						break;
-					}
+                    //if(wmEncoder.SetProfile(m_wmEncoder.LastProfile) == false)
+                    //{
+                    //    OnError(m_tmaxErrorBuilder.Message(ERROR_SET_WMV_PROFILE, m_wmEncoder.LastProfile), false);
+                    //    break;
+                    //}
 					
 					//	Add a source descriptor for each scene
 					foreach(CDxSecondary O in dxScenes)
@@ -1845,7 +1854,7 @@ namespace FTI.Trialmax.Database
 							//	Make sure the video exists
 							if(System.IO.File.Exists(strVideo) == true)
 							{
-								if(wmEncoder.AddSource(O.GetBarcode(false), strVideo, dxTertiary.GetExtent().Start, dxTertiary.GetExtent().Stop) == false)
+								if(ffmpegEncoder.AddSource(O.GetBarcode(false), strVideo, dxTertiary.GetExtent().Start, dxTertiary.GetExtent().Stop) == false)
 								{
 									OnError(m_tmaxErrorBuilder.Message(ERROR_ADD_WMV_SOURCE, O.GetBarcode(false)), false);
 									bEncode = false;
@@ -1868,8 +1877,9 @@ namespace FTI.Trialmax.Database
 					//	Should we skip encoding
 					if(bEncode == false) break;
 					
-					if(wmEncoder.Encode() == false)
+					if(ffmpegEncoder.Encode() == false)
 					{
+                        /*
 						if(wmEncoder.Cancelled == false)
 						{
 							//	Did the encoder fail to process all source groups?
@@ -1878,6 +1888,7 @@ namespace FTI.Trialmax.Database
 							else
 								OnError(m_tmaxErrorBuilder.Message(ERROR_EXECUTE_WMV_ENCODER, dxScript.GetBarcode(false)), false);
 						}
+                         */                        
 						break;
 					}
 
@@ -1894,17 +1905,19 @@ namespace FTI.Trialmax.Database
 			finally
 			{
 				//	Clean up
-				if(wmEncoder != null)
+				if(ffmpegEncoder != null)
 				{
-					wmEncoder.Clear();
-					wmEncoder = null;
+					ffmpegEncoder.Clear();
+					ffmpegEncoder = null;
 				}
 
 			}	
 			
 			return bSuccessful;
 			
-		}// private bool ExportAsWMV(CDxPrimary dxScript, CDxSecondaries dxScenes, string strFileSpec)
+		}
+
+       // private bool ExportAsWMV(CDxPrimary dxScript, CDxSecondaries dxScenes, string strFileSpec)
 		
 		/// <summary>This method is called to export the specified script to an EDL clip descriptor file</summary>
 		/// <param name="dxScript">The script to be exported</param>
@@ -3239,7 +3252,7 @@ namespace FTI.Trialmax.Database
 					if(m_tmaxExportOptions.VideoWMV == true)
 					{
 						m_strExtension = "wmv";
-						m_strFileFilter = "WMV Files (*.wmv)|*.wmv|";
+                        m_strFileFilter = "WMV Files (*.wmv)|*.wmv|MP4 Files (*.mp4)|*.mp4|MPEG-1 Files (*.mpg)|*.mpg|MPEG-2 Files (*.m2v)|*.m2v|AVI Files (*.avi)|*.avi|MOV Files (*.mov)|*.mov|";
 					}
 					if(m_tmaxExportOptions.VideoEDL == true)
 					{
