@@ -677,6 +677,10 @@ BOOL CBinderList::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CBinderList::HandlePan(int diff)
 {
+	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	if(m_nListHeight < screenHeight)
+		return;
+
 	if(abs(diff) > 30) {
 		if(diff < 0) {
 			SendMessage(WM_VSCROLL, LOWORD(SB_LINEDOWN), NULL);
