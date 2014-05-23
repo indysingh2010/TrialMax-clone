@@ -13731,7 +13731,7 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				m_gestureStartPoint = m_gestureLastPoint = gi.ptsLocation;
 				m_gestureStartTime = GetTickCount();
 
-				if(m_BinderList == NULL) 
+				if(!m_bIsBinderOpen) 
 				{
 					if(gi.ptsLocation.y < (m_ScreenResolution.bottom*8)/10 &&
 						gi.ptsLocation.y > (m_ScreenResolution.bottom*2)/10) {
@@ -13876,7 +13876,7 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 				break;
 
 			case GID_PAN:
-				if(m_BinderList != NULL) {
+				if(m_bIsBinderOpen) {
 					int diff = gi.ptsLocation.y - m_gestureLastPoint.y;
 					m_BinderList->HandlePan(diff);
 					if(abs(diff) > 30) {
