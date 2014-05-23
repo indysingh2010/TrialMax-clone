@@ -661,7 +661,7 @@ class CMainView : public CFormView
 #define COUNT_FROM_LAST	   -1
 		int				countFrom; // 0-currentPage, 1-firstpage, -1-lastPage
 		bool			zoomFullWidth;
-		
+		bool			m_bOptimizedForTablet;
 	public:
 		
 
