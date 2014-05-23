@@ -10418,8 +10418,11 @@ void CMainView::ReadHotkeys()
 	ParseHotKeySpec(HK_MAGNIFY, szIniStr);
 
 	//	Print
-	m_Ini.ReadString(HK_PRINT_LINE, szIniStr, sizeof(szIniStr), DEFAULT_HK_PRINT);
-	ParseHotKeySpec(HK_PRINT, szIniStr);
+	// when optimized for tablet, no print on 'P' instead enable gesture
+	if(!m_bOptimizedForTablet) {
+		m_Ini.ReadString(HK_PRINT_LINE, szIniStr, sizeof(szIniStr), DEFAULT_HK_PRINT);
+		ParseHotKeySpec(HK_PRINT, szIniStr);
+	}
 
 	//	Erase
 	m_Ini.ReadString(HK_ERASE_LINE, szIniStr, sizeof(szIniStr), DEFAULT_HK_ERASE);
@@ -10650,7 +10653,12 @@ void CMainView::ReadHotkeys()
 	ParseHotKeySpec(HK_SPLIT_ZAP, szIniStr);
 
 	//	Enable Gestures
-	m_Ini.ReadString(HK_ENABLE_GESTURE, szIniStr, sizeof(szIniStr), DEFAULT_HK_ENABLE_GESTURE);
+	// when optimized for tablet, no print on 'P' instead enable gesture
+	if(m_bOptimizedForTablet) {
+		m_Ini.ReadString(HK_PRINT_LINE, szIniStr, sizeof(szIniStr), DEFAULT_HK_PRINT);
+	} else {
+		m_Ini.ReadString(HK_ENABLE_GESTURE, szIniStr, sizeof(szIniStr), DEFAULT_HK_ENABLE_GESTURE);
+	}
 	ParseHotKeySpec(HK_GESTURE_PAN, szIniStr);
 }
 
@@ -10858,6 +10866,7 @@ void CMainView::ReadSetup(BOOL bFirstTime)
 	m_ctrlTMMovie.SetDetachBeforeLoad(System.bOptimizeVideo);
 
 	//  Checking for "Optimize for Tablet" if true setting buttons' large size 
+	m_bOptimizedForTablet = System.bOptimizeTablet;
 	if (System.bOptimizeTablet)
 	{
 		m_Ini.SetSection(TMBARS_DOCUMENT_SECTION,0);
