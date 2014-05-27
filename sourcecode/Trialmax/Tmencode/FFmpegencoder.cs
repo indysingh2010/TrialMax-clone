@@ -17,9 +17,12 @@ namespace FTI.Trialmax.Encode
         // destination file property
         private string m_strFileSpec = "";
 
+        // this property hold the text filename for encoder
+        private string m_strInputFiles = "inputFiles.txt";
+
         // bit rate on which the video will be encoded
         // yet we have fixed it to 768k
-        private string m_strBitrate = "100k";
+        private string m_strBitrate = "768k";
 
         // used to store end time of current video that is in encoding
         private long m_lEndTime = 0;
@@ -253,6 +256,7 @@ namespace FTI.Trialmax.Encode
 
                         // delete the temp files when merging complete
                         DeleteFiles();
+                        
                     }
                     else // if it was encoding than increment the complete counter
                         m_lCompleted++;
@@ -412,18 +416,28 @@ namespace FTI.Trialmax.Encode
             // if source is available and not cancelled by the user
             if (Source != null && Source.Count > 0 && !GetCancelled())
             {
-                // We are using FFMPEG Encoder to encode videos, so it is limitation in concat or merge different scripts
-                // in single video to mutiple formats it is only possible in mpg
-                // so if there are multiple scripts than we first cut and encode it in mpg
-                // so we can add or concat them at last. (as we have done in MergeFile() method)
+                /*
+                 We are using FFMPEG Encoder to encode videos, so it is limitation in concat or merge different scripts
+                 in single video to mutiple formats it is only possible in mpg
+                 so if there are multiple scripts than we first cut and encode it in mpg
+                 so we can add or concat them at last. (as we have done in MergeFile() method)
+                 ********************************************************************************
+                 There is another way to encode and merge multiple videos in a single file using FFMPEG
+                 we first encode all files with their time duration in the required format
+                 than we add all those files name in a text file named here "inputfiles.txt"
+                 and than using this file in ffmpeg command to join all files
+                 before we was following the 1st approach define above now we are using this approach.
+                */
+
                 string param = string.Empty;
                 CFFMpegSource source = Sources[(int)m_lCompleted];
 
                 // if there are single script so we do not need to merge, we only need to encode directly
                 if (Source.Count == 1) 
                 {
+                    double differenceTime = source.m_dEndTime - source.m_dStartTime;
                     // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(source.m_dEndTime) + " -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";
+                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";
                 }
                 else
                 {
@@ -432,14 +446,16 @@ namespace FTI.Trialmax.Encode
                     // get the actual destination filename and change it to convert in mpg first
                     string extension = m_strFileSpec.Substring(m_strFileSpec.LastIndexOf("."));
                     destinationFileName = destinationFileName.Replace(extension, "");
-                    destinationFileName = destinationFileName + "_" + m_lCompleted + ".mpg";
+                    destinationFileName = destinationFileName + "_" + m_lCompleted + extension;
 
+
+                    double differenceTime = source.m_dEndTime - source.m_dStartTime;
                     // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(source.m_dEndTime) + " " + getCodec(destinationFileName) + " \"" + destinationFileName + "\"";
+                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " " + getCodec(destinationFileName) + " \"" + destinationFileName + "\"";
                 }
 
                 // endtime of current script
-                m_lEndTime = (long)source.m_dEndTime;
+                m_lEndTime = (long)(source.m_dEndTime - source.m_dStartTime);
 
                 // mark that encoding is in progress
                 m_bIsEncodingInProgress = true;
@@ -456,26 +472,25 @@ namespace FTI.Trialmax.Encode
 
         /// <summary>This method is called to prepare encoding for merge prerequisites</summary>        
         private void MergeFile()
-        {
-            string inputFiles = string.Empty;
+        {            
+            string inptFileName = string.Empty;
             
-            // endtime of current script
+            // reset the endtime property
             m_lEndTime = 0;
 
-            // get the mpg files that is encoded to merge in a single file
+            // get the pieces of files that is encoded to merge in a single file
             // m_lCompleted is a property that tell us how many number of files encoded for merging
             for (int f = 0; f < m_lCompleted; f++)
             {
                 string filename = m_strFileSpec;
                 string extension = m_strFileSpec.Substring(m_strFileSpec.LastIndexOf("."));
                 filename = filename.Replace(extension, "");
-                filename = filename + "_" + f + ".mpg";
+                filename = filename + "_" + f + extension;
 
-                // check if the encoded file exist that pick it and add in the concat list
-                // after each file name append the pipe "|" sign which is the requirment for FFMPEG Encoder
+                // check if the encoded file exist than pick it and add in the concat list                
                 if (System.IO.File.Exists(filename))
-                {
-                    inputFiles += filename + "|";                    
+                {                    
+                    inptFileName += "file '" + filename + "'" + Environment.NewLine;
                 }
             }
 
@@ -485,21 +500,35 @@ namespace FTI.Trialmax.Encode
             {
                 foreach (CFFMpegSource ffmpegSource in Sources)
                 {
-                    m_lEndTime += (long)ffmpegSource.m_dEndTime;
+                    m_lEndTime += (long)(ffmpegSource.m_dEndTime - ffmpegSource.m_dStartTime);
                 }
             }
 
-            // after appending all filenames remove the last pipe sign it is appended extra at the end
-            if (inputFiles.Length > 0 && inputFiles.Contains("|"))
+            // delete the txt file if exists
+            if (System.IO.File.Exists(m_strInputFiles))
             {
-                inputFiles = inputFiles.Substring(0, inputFiles.LastIndexOf("|"));
+                try
+                {
+                    System.IO.File.Delete(m_strInputFiles);
+                }
+                catch { }
+            }
+
+            // create a file stream to add filename that will encode for merge
+            using (System.IO.FileStream fStream = new System.IO.FileStream(m_strInputFiles, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite))
+            {
+                byte[] fileBytes = System.Text.Encoding.ASCII.GetBytes(inptFileName);
+                fStream.Write(fileBytes, 0, fileBytes.Count());
+                fStream.Close();
+                fStream.Dispose();
             }
 
             // if we got some files to merge
-            if (!string.IsNullOrEmpty(inputFiles))
+            if (!string.IsNullOrEmpty(inptFileName))
             {
                 // encoding and merging parameters
-                string concatParam = @"-i ""concat:" + inputFiles + "\" -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) +" \"" + m_strFileSpec + "\"";                
+                //string concatParam = @"-i ""concat:" + inputFiles + "\" -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) +" \"" + m_strFileSpec + "\"";
+                string concatParam = @"-f concat -i inputfiles.txt -c copy " + " \"" + m_strFileSpec + "\"";
                 
                 // mark that we start finalizing
                 m_bIsFinalizing = true;
@@ -520,7 +549,7 @@ namespace FTI.Trialmax.Encode
                 string filename = m_strFileSpec;
                 string extension = m_strFileSpec.Substring(m_strFileSpec.LastIndexOf("."));
                 filename = filename.Replace(extension, "");
-                filename = filename + "_" + f + ".mpg";
+                filename = filename + "_" + f + extension;
 
                 try
                 {
@@ -530,6 +559,16 @@ namespace FTI.Trialmax.Encode
                 catch (Exception ex)
                 {
                     //System.Windows.Forms.MessageBox.Show(filename + " unable to delete" + Environment.NewLine + ex.Message);
+                }
+
+                // delete txt file
+                if (System.IO.File.Exists(m_strInputFiles))
+                {
+                    try
+                    {
+                        System.IO.File.Delete(m_strInputFiles);
+                    }
+                    catch { }
                 }
             }
         }
@@ -578,14 +617,19 @@ namespace FTI.Trialmax.Encode
                (extension.ToUpper().Contains(
                Convert.ToString(SupportedExportFormats.AVI))) ||
                (extension.ToUpper().Contains(
-               Convert.ToString(SupportedExportFormats.MOV))) ||
-                (extension.ToUpper().Contains(
-               Convert.ToString(SupportedExportFormats.M2V))) 
+               Convert.ToString(SupportedExportFormats.MOV))) 
                 )
             {
                 // right now 
                 codec = "";//"-acodec libfaac -vcodec mpeg4";
             }
+            else if (               
+                (extension.ToUpper().Contains(
+               Convert.ToString(SupportedExportFormats.M2V)))
+                )
+            {
+                codec = "-vcodec mpeg2video";
+            }            
             else 
             {
                 codec = "";
