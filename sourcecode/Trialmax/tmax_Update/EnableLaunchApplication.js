@@ -7,6 +7,7 @@ var checkboxChecked = true;			// Is the checkbox on the finished dialog checked 
 var checkboxText = "Launch setup for the following other components on clicking \"Close\"";	// Text for the checkbox on the finished dialog
 var itemListText = "- Crystal Reports Engine";	// Text for the checkbox on the finished dialog
 var itemWMEncoderText = "- Windows Media Encoder";
+var itemKLiteCodecText = "- KLite Codec";
 var filename = "TmaxUtilityInsatller.exe";	// The name of the executable to launch - change this to match the file you want to launch at the end of your setup
 
 
@@ -106,7 +107,13 @@ try
 	view.Close();
 
 	// Insert the new CheckBox control
-	sql = "INSERT INTO `Control` (`Dialog_`, `Control`, `Type`, `X`, `Y`, `Width`, `Height`, `Attributes`, `Property`, `Text`, `Control_Next`, `Help`) VALUES ('FinishedForm', 'ItemWMEncoder', 'Text', '25', '162', '343', '12', '3', 'LAUNCHAPP', '{\\VSI_MS_Sans_Serif13.0_0_0}" + itemWMEncoderText + "', 'CloseButton', '|')";
+	sql = "INSERT INTO `Control` (`Dialog_`, `Control`, `Type`, `X`, `Y`, `Width`, `Height`, `Attributes`, `Property`, `Text`, `Control_Next`, `Help`) VALUES ('FinishedForm', 'ItemWMEncoder', 'Text', '25', '162', '343', '12', '3', 'LAUNCHAPP', '{\\VSI_MS_Sans_Serif13.0_0_0}" + itemWMEncoderText + "', 'ItemKLiteCodec', '|')";
+	view = database.OpenView(sql);
+	view.Execute();
+	view.Close();
+
+	// Insert the new CheckBox control
+	sql = "INSERT INTO `Control` (`Dialog_`, `Control`, `Type`, `X`, `Y`, `Width`, `Height`, `Attributes`, `Property`, `Text`, `Control_Next`, `Help`) VALUES ('FinishedForm', 'ItemKLiteCodec', 'Text', '25', '182', '343', '12', '3', 'LAUNCHAPP', '{\\VSI_MS_Sans_Serif13.0_0_0}" + itemKLiteCodecText + "', 'CloseButton', '|')";
 	view = database.OpenView(sql);
 	view.Execute();
 	view.Close();

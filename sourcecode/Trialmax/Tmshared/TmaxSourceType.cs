@@ -327,7 +327,7 @@ namespace FTI.Shared.Trialmax
 			Add(new CTmaxSourceType(TmaxMediaTypes.Document, RegSourceTypes.Document, "tif,tiff,png,pcx,bmp,jpg,jpeg,gif", "Documents"));
 			Add(new CTmaxSourceType(TmaxMediaTypes.Document, RegSourceTypes.Adobe, "pdf", "Adobe PDF"));
 			Add(new CTmaxSourceType(TmaxMediaTypes.Powerpoint, RegSourceTypes.Powerpoint, "ppt,pps", "PowerPoint Presentations"));
-			Add(new CTmaxSourceType(TmaxMediaTypes.Recording, RegSourceTypes.Recording, "avi,mpg,mpeg,wmv,mp3,wma,wav", "Recordings"));
+			Add(new CTmaxSourceType(TmaxMediaTypes.Recording, RegSourceTypes.Recording, "avi,mpg,mpeg,wmv,mp4,m2v,mov,mp3,wma,wav", "Recordings"));
 			Add(new CTmaxSourceType(TmaxMediaTypes.Deposition, RegSourceTypes.Deposition, "xmlt,log", "Depositions"));
 			
 			m_tmaxMultiPageTIFF = new CTmaxSourceType(TmaxMediaTypes.Document, RegSourceTypes.MultiPageTIFF, "tif,tiff,mpt", "MultiPageTIFF");

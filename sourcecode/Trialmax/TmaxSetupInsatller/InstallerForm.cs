@@ -88,6 +88,43 @@ namespace TmaxSetupInsatller
 
         }
 
+        private void InstallKLiteCodec()
+        {
+            try
+            {
+                string fileName = Application.StartupPath + "\\" + Config.KLiteCodec;
+
+                if (!File.Exists(fileName)) return;
+                _CRProcess = new Process();
+                _CRProcess.StartInfo.FileName = fileName;
+                _CRProcess.Start();
+                _CRProcess.Exited += new EventHandler(_KLiteCodecProcess_Exited);
+                _CRProcess.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            { 
+                // do nothing
+            }
+        }
+
+        void _KLiteCodecProcess_Exited(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_CRProcess != null)
+                {
+                    _CRProcess.Close();
+                }
+                SetControlPropertyValue(pbKLiteCodec, "Visible", true);                
+                InstallationCompleted();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+                // Do nothing
+            }
+        }
+
         void CRprocess_Exited(object sender, EventArgs e)
         {
             try
@@ -116,8 +153,7 @@ namespace TmaxSetupInsatller
                     _CRProcess.Close();
                 }
                 SetControlPropertyValue(pbWMEncoder, "Visible", true);
-                //InstallWMEncoder();
-                InstallationCompleted();
+                InstallKLiteCodec();                
             }
             catch (Exception ex)
             {
