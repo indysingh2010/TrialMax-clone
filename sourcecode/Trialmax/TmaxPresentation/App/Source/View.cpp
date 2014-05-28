@@ -13946,7 +13946,7 @@ void CMainView::SetViewingCtrl() {
 			//m_arrTmView[2]->UpdateWindow();
 		}
 
-		m_arrTmView[1]->UpdateWindow();
+		UpdateWindow();
 	}
 
 	m_arrTmView[1]->GetWindowRect(&wndRect);
