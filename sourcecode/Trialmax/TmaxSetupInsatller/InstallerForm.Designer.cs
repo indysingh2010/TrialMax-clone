@@ -33,16 +33,16 @@
             this.btnContinue = new System.Windows.Forms.Button();
             this.btnClose = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.pbKLiteCodec = new System.Windows.Forms.PictureBox();
             this.pbWMEncoder = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
             this.pbCRE = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.pbKLiteCodec = new System.Windows.Forms.PictureBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbKLiteCodec)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbWMEncoder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCRE)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbKLiteCodec)).BeginInit();
             this.SuspendLayout();
             // 
             // lblMessage
@@ -91,11 +91,32 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Components";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(41, 64);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "KLite Codec";
+            // 
+            // pbKLiteCodec
+            // 
+            this.pbKLiteCodec.BackColor = System.Drawing.Color.Transparent;
+            this.pbKLiteCodec.Image = global::TmaxSetupInsatller.Properties.Resources.icon_green_check;
+            this.pbKLiteCodec.Location = new System.Drawing.Point(19, 61);
+            this.pbKLiteCodec.Name = "pbKLiteCodec";
+            this.pbKLiteCodec.Size = new System.Drawing.Size(16, 16);
+            this.pbKLiteCodec.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pbKLiteCodec.TabIndex = 7;
+            this.pbKLiteCodec.TabStop = false;
+            this.pbKLiteCodec.Visible = false;
+            // 
             // pbWMEncoder
             // 
             this.pbWMEncoder.BackColor = System.Drawing.Color.Transparent;
             this.pbWMEncoder.Image = global::TmaxSetupInsatller.Properties.Resources.icon_green_check;
-            this.pbWMEncoder.Location = new System.Drawing.Point(19, 61);
+            this.pbWMEncoder.Location = new System.Drawing.Point(165, 61);
             this.pbWMEncoder.Name = "pbWMEncoder";
             this.pbWMEncoder.Size = new System.Drawing.Size(16, 16);
             this.pbWMEncoder.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -106,11 +127,12 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(41, 64);
+            this.label2.Location = new System.Drawing.Point(187, 64);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(126, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "Windows Media Encoder";
+            this.label2.Visible = false;
             // 
             // pbCRE
             // 
@@ -133,27 +155,6 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Crystal Reports Engine";
             // 
-            // pbKLiteCodec
-            // 
-            this.pbKLiteCodec.BackColor = System.Drawing.Color.Transparent;
-            this.pbKLiteCodec.Image = global::TmaxSetupInsatller.Properties.Resources.icon_green_check;
-            this.pbKLiteCodec.Location = new System.Drawing.Point(19, 92);
-            this.pbKLiteCodec.Name = "pbKLiteCodec";
-            this.pbKLiteCodec.Size = new System.Drawing.Size(16, 16);
-            this.pbKLiteCodec.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pbKLiteCodec.TabIndex = 7;
-            this.pbKLiteCodec.TabStop = false;
-            this.pbKLiteCodec.Visible = false;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(41, 95);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "KLite Codec";
-            // 
             // InstallerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -172,9 +173,9 @@
             this.Text = "Install components for TrialMax 7";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbKLiteCodec)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbWMEncoder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCRE)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbKLiteCodec)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
