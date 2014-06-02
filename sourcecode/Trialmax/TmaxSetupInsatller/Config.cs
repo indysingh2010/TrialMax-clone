@@ -20,7 +20,7 @@ namespace TmaxSetupInsatller
         internal static string CRRedist = "CRRedist2008_x86.msi";
         internal static string FTIORE = "ftiore_update.exe";
         internal static string WMEncoder = "WMEncoder.exe";
-        internal static string KLiteCodec = "K-Lite_Codec_Pack_1050_Full.exe";
+        internal static string KLiteCodec = "K-Lite_Codec_Pack_720_Full.exe";
 
     }
 }
