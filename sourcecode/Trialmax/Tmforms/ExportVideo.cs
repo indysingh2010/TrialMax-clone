@@ -413,7 +413,7 @@ namespace FTI.Trialmax.Forms
 				//	Do we have any encoder profiles?
 				if((m_wmEncoder != null) && (m_wmEncoder.Profiles != null))
 				{
-					m_ctrlVideoWMV.Enabled = (m_ctrlProfiles.Items.Count > 0);
+                    m_ctrlVideoWMV.Enabled = true;// (m_ctrlProfiles.Items.Count > 0);
 					m_ctrlViewCodecs.Enabled = true;
 					m_ctrlWMVGroup.Enabled = (m_wmEncoder.Profiles.Count > 0);
 					m_ctrlShowPreferred.Enabled = (m_wmEncoder.Profiles.Count > 0);
@@ -422,11 +422,11 @@ namespace FTI.Trialmax.Forms
 				}
 				else
 				{
-					m_ctrlVideoWMV.Enabled = false;
+                    m_ctrlVideoWMV.Enabled = true;//false;
 					m_ctrlWMVGroup.Enabled = false;
 					m_ctrlProfilesLabel.Enabled = false;
 					m_ctrlProfiles.Enabled = false;
-					m_ctrlVideoWMV.Checked = false;
+					//m_ctrlVideoWMV.Checked = false;
 					m_ctrlViewCodecs.Enabled = false;
 					m_ctrlShowPreferred.Checked = false;
 					m_ctrlShowPreferred.Enabled = false;
