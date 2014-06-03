@@ -329,9 +329,7 @@ namespace FTI.Trialmax.ActiveX
 					case "mpg":
 					case "mpeg":
 					case "wmv":
-                    case "mp4":
-                    case "m2v":
-                    case "mov":
+                    case "mp4":                    
 					case "mp3":
 					case "wma":
 					case "wav":
