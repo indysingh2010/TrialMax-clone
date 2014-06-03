@@ -54,6 +54,8 @@ namespace FTI.Trialmax.Encode
         // this peroperty define is encoding or merging cancelled 
         private bool m_bIsCancelled = false;
 
+        public bool m_bIsMpeg2Selected = false;
+
         // local memeber bound to hold the sources that will be encoded in a single file
         public List<CFFMpegSource> Sources;
 
@@ -609,7 +611,10 @@ namespace FTI.Trialmax.Encode
                 Convert.ToString(SupportedExportFormats.MPG))
                 )
             {
-                codec = "-qscale:v 1";
+                if(m_bIsMpeg2Selected)
+                    codec = "-vcodec mpeg2video";
+                else
+                    codec = "-qscale:v 1";
             }            
             else if (
                (extension.ToUpper().Contains(
