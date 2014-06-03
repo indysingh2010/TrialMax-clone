@@ -12111,9 +12111,10 @@ void CMainView::SetDisplay(short sState)
 
 				//::ShowCursor(true);
 				m_arrTmView[i]->ShowWindow(SW_SHOW);
-				m_arrTmView[i]->RedrawWindow();
 				m_arrTmView[i]->BringWindowToTop();
 			}
+			UpdateWindow();
+
 			// m_ctrlTMPower.SetFocus();
 			// m_ctrlTMView->GetActiveWindow();
 			// m_ctrlTMView->GetDSCCursor();
@@ -12261,9 +12262,9 @@ void CMainView::SetDisplay(short sState)
 				m_ctrlTMMovie.RedrawWindow();
 				for(int i = 0; i < SZ_ARR_TM_VW; i++) {
 					m_arrTmView[i]->ShowWindow(SW_SHOW);
-					m_arrTmView[i]->RedrawWindow();
 					m_arrTmView[i]->ShowCallouts(TRUE, TMV_ACTIVEPANE);
 				}
+				UpdateWindow();
 			}
 				
 			break;
@@ -13938,12 +13939,10 @@ void CMainView::SetViewingCtrl() {
 		if(diff > 0) { // scroll Up
 			
 			ScrollWindow(0,-scrollDist);
-			//m_arrTmView[0]->UpdateWindow();
 
 		} else { // scroll Down
 
 			ScrollWindow(0, scrollDist);
-			//m_arrTmView[2]->UpdateWindow();
 		}
 
 		UpdateWindow();
@@ -13953,7 +13952,7 @@ void CMainView::SetViewingCtrl() {
 	diff = wndRect.top;
 	if(diff) {
 		ScrollWindow(0, -diff);
-		m_arrTmView[1]->UpdateWindow();
+		UpdateWindow();
 	}
 
 	m_arrTmView[0]->MoveWindow(0, -1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
