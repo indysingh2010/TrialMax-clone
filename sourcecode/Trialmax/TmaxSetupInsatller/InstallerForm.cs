@@ -97,6 +97,7 @@ namespace TmaxSetupInsatller
                 if (!File.Exists(fileName)) return;
                 _CRProcess = new Process();
                 _CRProcess.StartInfo.FileName = fileName;
+                _CRProcess.StartInfo.Arguments = "/verysilent";
                 _CRProcess.Start();
                 _CRProcess.Exited += new EventHandler(_KLiteCodecProcess_Exited);
                 _CRProcess.EnableRaisingEvents = true;
