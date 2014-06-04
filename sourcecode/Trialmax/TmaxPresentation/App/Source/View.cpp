@@ -13852,19 +13852,10 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 
 					curIndexView = 1;
 					m_ctrlTMView = m_arrTmView[curIndexView];
-					scrollUpDownInProgress = false;
 
-					SetViewingCtrl();
-				}
-
-				if(toolbarForcedHidden) {
-					RECT wndRect;
-					m_pToolbar->GetWindowRect(&wndRect);
-					wndRect.top = m_ScreenResolution.bottom;
-					wndRect.left = 0;
-					m_pToolbar->MoveWindow(&wndRect);
-					SetControlBar(CONTROL_BAR_TOOLS);
-					toolbarForcedHidden = false;
+					m_ctrlTMView->GetWindowRect(&curRect);
+					if(abs(curRect.top) < m_ScreenResolution.bottom / 20)
+						SetViewingCtrl();
 				}
 
 				break;
@@ -13959,6 +13950,18 @@ void CMainView::SetViewingCtrl() {
 	m_arrTmView[2]->MoveWindow(0,  1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
 
 	EmptyMessageQueue();
+
+	if(toolbarForcedHidden) {
+		RECT wndRect;
+		m_pToolbar->GetWindowRect(&wndRect);
+		wndRect.top = m_ScreenResolution.bottom;
+		wndRect.left = 0;
+		m_pToolbar->MoveWindow(&wndRect);
+		SetControlBar(CONTROL_BAR_TOOLS);
+		toolbarForcedHidden = false;
+	}
+
+	scrollUpDownInProgress = false;
 }
 
 //==============================================================================
@@ -14002,78 +14005,77 @@ void CMainView::HandlePan(GESTUREINFO gi)
 	dwCurrentTime = GetTickCount();
 	lTimeInterval = dwCurrentTime - m_gestureStartTime;
 
-	if(!scrollUpDownInProgress) {
 
-		// 4. Swipe down from top of the screen to bring up the keyboard icon; opposite gesture hides keyboard
 
-		// gesture starts at top of monitor. that mean y should be around 0
-		// we setting the limit for this gesture within the top 12% of screen
-		if (m_gestureStartPoint.y <= iMonitor_width/8) {
-			if (abs(iDistY) < iMonitor_width/8) {
-				DisplayKeyboardIconGesture(pCurrent);
-			}
-			//m_bGestureHandled = TRUE;
-			// update last location
-			m_gestureLastPoint = pCurrent;
+	// 4. Swipe down from top of the screen to bring up the keyboard icon; opposite gesture hides keyboard
 
-			SetViewingCtrl();
-
-			return;
+	// gesture starts at top of monitor. that mean y should be around 0
+	// we setting the limit for this gesture within the top 12% of screen
+	if (m_gestureStartPoint.y <= iMonitor_width/8) {
+		if (abs(iDistY) < iMonitor_width/8) {
+			DisplayKeyboardIconGesture(pCurrent);
 		}
+		//m_bGestureHandled = TRUE;
+		// update last location
+		m_gestureLastPoint = pCurrent;
+
+		SetViewingCtrl();
+
+		return;
+	}
 
 
-		// 5. Swipe up from the bottom of the screen to bring up tool bar; opposite gesture hides toolbar
+	// 5. Swipe up from the bottom of the screen to bring up tool bar; opposite gesture hides toolbar
 
-		// gesture starts at bottom of monitor. that mean y should be around monitor height
-		// we setting the limit for this gesture within the bottom 12% of screen
-		if (m_gestureStartPoint.y >= (iMonitor_height - iMonitor_width/8)) {
-			if (abs(iDistY) < iMonitor_width/8) {
-				DisplayToolbarGesture(pCurrent);
-			}
-			//m_bGestureHandled = TRUE;
-			// update last location
-			m_gestureLastPoint = pCurrent;
-
-			SetViewingCtrl();
-
-			return;
+	// gesture starts at bottom of monitor. that mean y should be around monitor height
+	// we setting the limit for this gesture within the bottom 12% of screen
+	if (m_gestureStartPoint.y >= (iMonitor_height - iMonitor_width/8)) {
+		if (abs(iDistY) < iMonitor_width/8) {
+			DisplayToolbarGesture(pCurrent);
 		}
+		//m_bGestureHandled = TRUE;
+		// update last location
+		m_gestureLastPoint = pCurrent;
+
+		SetViewingCtrl();
+
+		return;
+	}
 
 
-		// 3. Swipe right to left to advance to the next page and swipe left to right to go to the previous page
+	// 3. Swipe right to left to advance to the next page and swipe left to right to go to the previous page
 
-		// check for inertia
-		// check if distnace between stating and ending point is greater than 1/4 of screen
-		// check time interval to find if its pan or swipe
-		if ((abs(iDistX) > iMonitor_width/4 && abs(iDistY) < iMonitor_height/8) && 
-			gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
-			// use keyboard arrow key to navigate to next "slide"
-			// next page will take to next page insted of slide
-			if (iDistX > 0) {
-				// swipe was made from left to right
-				//OnPreviousPage();
-				BYTE keyState[256];
-				// Simulate a key press
-				keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | 0, 0);
-				// Simulate a key release
-				keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
+	// check for inertia
+	// check if distnace between stating and ending point is greater than 1/4 of screen
+	// check time interval to find if its pan or swipe
+	if ((abs(iDistX) > iMonitor_width/4 && abs(iDistY) < iMonitor_height/8) && 
+		gi.dwFlags == GF_INERTIA && lTimeInterval < 600) {
+		// use keyboard arrow key to navigate to next "slide"
+		// next page will take to next page insted of slide
+		if (iDistX > 0) {
+			// swipe was made from left to right
+			//OnPreviousPage();
+			BYTE keyState[256];
+			// Simulate a key press
+			keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | 0, 0);
+			// Simulate a key release
+			keybd_event( VK_LEFT, 0x4B, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
 
-			} else {
-				//OnNextPage();
-				BYTE keyState[256];
-				// Simulate a key press
-				keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | 0, 0);
-				// Simulate a key release
-				keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
-			}
-			m_bGestureHandled = TRUE;
-			// update last location
-			m_gestureLastPoint = pCurrent;
-
-			//etViewingCtrl();
-
-			return;
+		} else {
+			//OnNextPage();
+			BYTE keyState[256];
+			// Simulate a key press
+			keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | 0, 0);
+			// Simulate a key release
+			keybd_event( VK_RIGHT, 0x4D, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP,0);
 		}
+		m_bGestureHandled = TRUE;
+		// update last location
+		m_gestureLastPoint = pCurrent;
+
+		//etViewingCtrl();
+
+		return;
 	}
 
 	if(m_sState != S_DOCUMENT) return;
