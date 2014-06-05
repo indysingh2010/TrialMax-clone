@@ -13743,6 +13743,9 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 					}
 				}
 
+				if(m_ColorPickerList)
+					m_ColorPickerList->OnCancel();
+
 				break;
 
 			case GID_END:
