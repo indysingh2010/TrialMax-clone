@@ -14234,8 +14234,8 @@ void CMainView::HandlePan(GESTUREINFO gi)
 				EmptyMessageQueue();
 			}
 
-			if(abs(diff) > 20)
-				diff = -20;
+			if(abs(diff) > 40)
+				diff = -40;
 
 		} else if(diff > 0) {
 			// pan down
@@ -14250,8 +14250,8 @@ void CMainView::HandlePan(GESTUREINFO gi)
 				EmptyMessageQueue();
 			}
 
-			if(diff > 20) {
-				diff = 20;
+			if(diff > 40) {
+				diff = 40;
 			}
 		}
 
