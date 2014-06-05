@@ -13941,7 +13941,7 @@ void CMainView::SetViewingCtrl() {
 	m_arrTmView[1]->GetWindowRect(&wndRect);
 	int diff = wndRect.top;
 	
-	/*int scrollDist = m_ScreenResolution.bottom / 100;
+	int scrollDist = m_ScreenResolution.bottom / 10;
 	for(int i=0; i < abs(diff); i+=scrollDist) {
 
 		RECT rect;
@@ -13958,7 +13958,7 @@ void CMainView::SetViewingCtrl() {
 	}
 
 	m_arrTmView[1]->GetWindowRect(&wndRect);
-	diff = wndRect.top;*/
+	diff = wndRect.top;
 	if(diff) {
 		ScrollWindow(0, -diff);
 		UpdateWindow();
