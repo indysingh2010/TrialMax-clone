@@ -13754,12 +13754,17 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 					LogMe("--------------Gesture Ended---------------/n");
 					m_bMouseMode = TRUE;
 
-					RECT curRect;
-					m_ctrlTMView->GetWindowRect(&curRect);
-					if(abs(curRect.top) < m_ScreenResolution.bottom / 20 ||
-						abs(curRect.top) > m_ScreenResolution.bottom * 19/20 ||
-						abs(curRect.bottom) < m_ScreenResolution.bottom / 20)
-						SetViewingCtrl();
+					for(int i = 0; i < SZ_ARR_TM_VW; i++) {
+						RECT curRect;
+						m_arrTmView[i]->GetWindowRect(&curRect);
+						if(
+							curRect.top > -m_ScreenResolution.bottom/20 && curRect.top < m_ScreenResolution.bottom / 20
+						) {
+					
+								SetViewingCtrl();
+								break;
+						}
+					}
 
 				} else {
 					// not pan, zooming, show toolbar
@@ -14211,32 +14216,35 @@ void CMainView::HandlePan(GESTUREINFO gi)
 		RECT wndRect;
 		m_ctrlTMView->GetWindowRect(&wndRect);
 		int top = wndRect.top;
+		int bottom = wndRect.bottom;
 
 		int diff = pCurrent.y - m_gestureLastPoint.y;
 
 		// pan or not
 		if(diff < 0) {
-			// pan down
+			// pan up
 			if(!hasPage[2] && top <= 0) 
 				diff = 0;
 			else
 				diff = -1 * min(abs(diff), m_ScreenResolution.bottom);
 
-			if(top - diff <= -m_ScreenResolution.bottom) {
-				diff = 0; //-1 * (m_ScreenResolution.bottom - abs(top));
+			if(bottom + diff <= 0) {
+				diff = -1 * (m_ScreenResolution.bottom - abs(top));
 				m_bGestureHandled = TRUE;
+				EmptyMessageQueue();
 			}
 
 		} else if(diff > 0) {
-			// pan up
+			// pan down
 			if(!hasPage[0] && top >= 0) 
 				diff = 0;
 			else
 				diff = min(abs(diff), m_ScreenResolution.bottom);
 
 			if(top + diff >= m_ScreenResolution.bottom) {
-				diff = 0; //m_ScreenResolution.bottom - top;
+				diff = m_ScreenResolution.bottom - top;
 				m_bGestureHandled = TRUE;
+				EmptyMessageQueue();
 			}
 		}
 
