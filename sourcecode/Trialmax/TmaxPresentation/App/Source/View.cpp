@@ -13946,7 +13946,7 @@ void CMainView::SetViewingCtrl() {
 	m_arrTmView[1]->GetWindowRect(&wndRect);
 	int diff = wndRect.top;
 	
-	int scrollDist = m_ScreenResolution.bottom / 10;
+	int scrollDist = m_ScreenResolution.bottom / 100;
 	for(int i=0; i < abs(diff); i+=scrollDist) {
 
 		RECT rect;
@@ -14234,6 +14234,9 @@ void CMainView::HandlePan(GESTUREINFO gi)
 				EmptyMessageQueue();
 			}
 
+			if(abs(diff) > 20)
+				diff = -20;
+
 		} else if(diff > 0) {
 			// pan down
 			if(!hasPage[0] && top >= 0) 
@@ -14246,10 +14249,14 @@ void CMainView::HandlePan(GESTUREINFO gi)
 				m_bGestureHandled = TRUE;
 				EmptyMessageQueue();
 			}
+
+			if(diff > 20) {
+				diff = 20;
+			}
 		}
 
-		if(!scrollUpDownInProgress &&
-			abs(diff) < m_ScreenResolution.bottom / 10) return;
+		/*if(!scrollUpDownInProgress &&
+			abs(diff) < m_ScreenResolution.bottom / 10) return;*/
 
 		if(diff != 0) {
 
