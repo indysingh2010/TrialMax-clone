@@ -14219,6 +14219,11 @@ void CMainView::HandlePan(GESTUREINFO gi)
 
 		int diff = pCurrent.y - m_gestureLastPoint.y;
 
+		// this is for the reason, if vertical scroll is very minimum
+		// means it is horizontal scroll
+		if(!scrollUpDownInProgress &&
+			abs(diff) < m_ScreenResolution.bottom / 10) return;
+
 		// pan or not
 		if(diff < 0) {
 			// pan up
@@ -14253,9 +14258,6 @@ void CMainView::HandlePan(GESTUREINFO gi)
 				diff = 40;
 			}
 		}
-
-		/*if(!scrollUpDownInProgress &&
-			abs(diff) < m_ScreenResolution.bottom / 10) return;*/
 
 		if(diff != 0) {
 
