@@ -13757,9 +13757,8 @@ LRESULT CMainView::OnGesture(WPARAM wParam, LPARAM lParam)
 					for(int i = 0; i < SZ_ARR_TM_VW; i++) {
 						RECT curRect;
 						m_arrTmView[i]->GetWindowRect(&curRect);
-						if(
-							curRect.top > -m_ScreenResolution.bottom/20 && curRect.top < m_ScreenResolution.bottom / 20
-						) {
+						if(curRect.top > -m_ScreenResolution.bottom/20 && curRect.top < m_ScreenResolution.bottom / 20 ||
+							abs(m_gestureStartPoint.y - gi.ptsLocation.y) > m_ScreenResolution.bottom * 5/7 ) {
 					
 								SetViewingCtrl();
 								break;
