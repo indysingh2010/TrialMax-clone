@@ -13945,6 +13945,7 @@ void CMainView::SetViewingCtrl() {
 	m_arrTmView[1]->GetWindowRect(&wndRect);
 	int diff = wndRect.top;
 	
+	bool stopScrollOnGesture = false;
 	int scrollDist = m_ScreenResolution.bottom / 100;
 	for(int i=0; i < abs(diff); i+=scrollDist) {
 
@@ -13958,32 +13959,58 @@ void CMainView::SetViewingCtrl() {
 			ScrollWindow(0, scrollDist);
 		}
 
+		MSG msg;
+		if(PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
+			GetMessage(&msg, NULL, 0, 0);
+			if (msg.message == WM_GESTURE || msg.message == WM_TOUCH || msg.message == WM_LBUTTONDOWN || msg.message == WM_MOUSEFIRST)
+			{
+				if(i < abs(diff))
+					stopScrollOnGesture = true;
+
+				break;
+			} else {
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+				printf("message [%d]", msg.message);
+			}
+		}
+
 		UpdateWindow();
 	}
 
-	m_arrTmView[1]->GetWindowRect(&wndRect);
-	diff = wndRect.top;
-	if(diff) {
-		ScrollWindow(0, -diff);
-		UpdateWindow();
-	}
+	if(!stopScrollOnGesture) {
+		m_arrTmView[1]->GetWindowRect(&wndRect);
+		diff = wndRect.top;
+		if(diff) {
+			ScrollWindow(0, -diff);
+			UpdateWindow();
+		}
 
-	m_arrTmView[0]->MoveWindow(0, -1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
-	m_arrTmView[2]->MoveWindow(0,  1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+		m_arrTmView[0]->MoveWindow(0, -1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+		m_arrTmView[2]->MoveWindow(0,  1 * (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+
+	} else {
+		m_arrTmView[1]->GetWindowRect(&wndRect);
+
+		m_arrTmView[0]->MoveWindow(0, wndRect.top - (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+		m_arrTmView[2]->MoveWindow(0, wndRect.top + (m_ScreenResolution.bottom + PAGES_MARGIN), m_ScreenResolution.right, m_ScreenResolution.bottom);
+	}
 
 	EmptyMessageQueue();
+	
+	if(!stopScrollOnGesture) {
+		if(toolbarForcedHidden) {
+			RECT wndRect;
+			m_pToolbar->GetWindowRect(&wndRect);
+			wndRect.top = m_ScreenResolution.bottom;
+			wndRect.left = 0;
+			m_pToolbar->MoveWindow(&wndRect);
+			SetControlBar(CONTROL_BAR_TOOLS);
+			toolbarForcedHidden = false;
+		}
 
-	if(toolbarForcedHidden) {
-		RECT wndRect;
-		m_pToolbar->GetWindowRect(&wndRect);
-		wndRect.top = m_ScreenResolution.bottom;
-		wndRect.left = 0;
-		m_pToolbar->MoveWindow(&wndRect);
-		SetControlBar(CONTROL_BAR_TOOLS);
-		toolbarForcedHidden = false;
+		scrollUpDownInProgress = false;
 	}
-
-	scrollUpDownInProgress = false;
 }
 
 //==============================================================================
