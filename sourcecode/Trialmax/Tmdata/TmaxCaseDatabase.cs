@@ -6865,9 +6865,7 @@ namespace FTI.Trialmax.Database
 		/// <returns>true if successful</returns>
 		private CDxBinderEntry AddBinderEntry(CDxBinderEntry dxParent, CTmaxItem tmaxItem, CDxBinderEntry dxInsertAt, bool bBefore, CTmaxItems tmaxAdded)
 		{
-
-            CDxBinderEntries entries = this.Binders;
-            CDxMediaRecord		dxRecord  = null;
+            CDxMediaRecord dxRecord = null;
 			CDxBinderEntry	dxEntry   = null;
 			CFAddBinder		cfBinder  = null;
 			CTmaxItem		tmaxEntry = null;
@@ -11866,9 +11864,7 @@ namespace FTI.Trialmax.Database
 		private bool AddBinderEntries(CTmaxItem tmaxParent, CTmaxItems tmaxAdded, CTmaxParameters tmaxParameters)
 		{
 
-
-            CDxBinderEntries entries = this.Binders;
-            CTmaxParameter	tmaxParameter = null;
+            CTmaxParameter tmaxParameter = null;
 			CDxBinderEntry	dxEntry  = null;
 			CDxBinderEntry	dxParent = null;
 			CDxBinderEntry	dxInsert = null;
@@ -15550,8 +15546,6 @@ namespace FTI.Trialmax.Database
 			CDxMediaRecord	dxMedia = null;
 			bool			bContinue = true;
 			string			strMsg = "";
-            CTmaxDatabaseResults tmaxResults = new CTmaxDatabaseResults();
-
 			
 			//	Don't bother if no source
 			if((tmaxSource == null) || (tmaxSource.Count == 0)) return true;
@@ -15619,14 +15613,7 @@ namespace FTI.Trialmax.Database
 							strMsg += (O.GetBarcode(false) + "\n");
 							
 						strMsg += "\nDo you want to continue?";
-						
-						//	Prompt the user for confirmation
-                        if (MessageBox.Show(strMsg, "Duplicates", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-                        {
-                            bContinue = false;
-                            dxParent.Collection.Delete(dxParent);
-                            this.Binders.Delete(dxParent);
-                        }
+												
 						
 					}// if(bNoDuplicates == true)
 					
