@@ -452,8 +452,7 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_ctrlTMView(NULL)
 	//{{AFX_DATA_INIT(CMainView)
 	//}}AFX_DATA_INIT
 
-	AfxMessageBox("constructor");
-
+	
 	m_pDatabase = 0;
 	m_pFrame = 0;
 	m_pMedia = 0;
