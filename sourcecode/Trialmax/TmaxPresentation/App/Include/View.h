@@ -632,7 +632,6 @@ class CMainView : public CFormView
 		int				m_iCaptureFileIndex;
 		int				m_iCapturedBarcodes;
 
-		CVKBDlg			*m_pVKBDlg;
 		DWORD			g_tcLastLeftButtonClickTime;
 
 		// WM_GESTURE variables

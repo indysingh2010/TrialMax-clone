@@ -63,7 +63,7 @@ static char THIS_FILE[] = __FILE__;
 //------------------------------------------------------------------------------
 extern CApp theApp;
 HHOOK			g_hDesktopHook;
-CVKBDlg			*m_pVKBDlgPtr;
+CVKBDlg			*m_pVKBDlg;
 CBinderList*	m_BinderList; // declare these properties globaly here because we want to handle hook
 CColorPickerList* m_ColorPickerList; // declare these properties globaly here because we want to handle hook
 
@@ -447,10 +447,12 @@ void CMainView::CloseDatabase()
 //	Notes:			None
 //
 //==============================================================================
-CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMView(NULL) 
+CMainView::CMainView() : CFormView(CMainView::IDD), m_ctrlTMView(NULL) 
 {
 	//{{AFX_DATA_INIT(CMainView)
 	//}}AFX_DATA_INIT
+
+	AfxMessageBox("constructor");
 
 	m_pDatabase = 0;
 	m_pFrame = 0;
@@ -574,6 +576,9 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_pVKBDlg(NULL), m_ctrlTMVie
 	countFrom = COUNT_FROM_CUR;
 	scaleHist.clear();
 	zoomFullWidth = false;
+
+	m_bOptimizedForTablet = false;
+	m_pVKBDlg = NULL;
 }
 
 //==============================================================================
@@ -5158,12 +5163,14 @@ LRESULT CALLBACK OnDTMouseEvent(int nCode, WPARAM wParam, LPARAM lParam)
 			int y;
 			POINT cursorPos;
 
-			if (GetCursorPos(&cursorPos) && m_pVKBDlgPtr)
+			if (GetCursorPos(&cursorPos) && m_pVKBDlg)
 			{
 				RECT VKBRect;
-				m_pVKBDlgPtr->GetWindowRect(&VKBRect);
+				m_pVKBDlg->GetWindowRect(&VKBRect);
 
-				if ((cursorPos.x >=VKBRect.left && cursorPos.x <=(VKBRect.right-5)) &&  (cursorPos.y >=VKBRect.top && cursorPos.y <= VKBRect.bottom) && m_pVKBDlgPtr->IsWindowVisible())
+				if ((cursorPos.x >=VKBRect.left && cursorPos.x <=(VKBRect.right-5)) && 
+					(cursorPos.y >=VKBRect.top && cursorPos.y <= VKBRect.bottom) && 
+					m_pVKBDlg->IsWindowVisible())
 				{
 					ShellExecute( NULL, "open", "C:\\Program Files\\Common Files\\microsoft shared\\ink\\TabTip.exe", 
 						NULL, NULL, SW_SHOWNORMAL );
@@ -5200,24 +5207,6 @@ int CMainView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if(CFormView::OnCreate(lpCreateStruct) == -1)
 		return -1;
 	
-	m_pVKBDlg = new CVKBDlg(this);
-	m_pVKBDlg->Create(CVKBDlg::IDD);
-	m_pVKBDlgPtr = m_pVKBDlg;
-	m_pVKBDlg->GetClientRect(&bmpRect);
-	m_pVKBDlg->MoveWindow(m_ScreenResolution.right - bmpRect.right - kbIconPadding ,  kbIconPadding , bmpRect.right , bmpRect.bottom );
-
-	if((g_hDesktopHook = SetWindowsHookEx(WH_MOUSE_LL, OnDTMouseEvent, NULL, 0)) == NULL)
-	{
-		//AfxMessageBox("no hook");
-		// Sorry, no hook for you...
-	}	
-
-	//CRect rect2 = m_ScreenResolution;
-	//rect2.bottom = 2 * m_ScreenResolution.bottom;
-
-	//MoveWindow(&rect2);
-	//SetWindowPos(NULL, 0,0,m_ScreenResolution.right*2, 2 * m_ScreenResolution.bottom, 0);
-
 	return 0;
 }
 
@@ -10656,8 +10645,28 @@ void CMainView::ReadHotkeys()
 	// when optimized for tablet, no print on 'P' instead enable gesture
 	if(m_bOptimizedForTablet) {
 		m_Ini.ReadString(HK_PRINT_LINE, szIniStr, sizeof(szIniStr), DEFAULT_HK_PRINT);
+
+		CRect bmpRect;
+		if(!m_pVKBDlg) {
+			
+			m_pVKBDlg = new CVKBDlg(this);
+			m_pVKBDlg->Create(CVKBDlg::IDD);
+			m_pVKBDlg->GetClientRect(&bmpRect);
+			m_pVKBDlg->MoveWindow(m_ScreenResolution.right - bmpRect.right - kbIconPadding ,  kbIconPadding , bmpRect.right , bmpRect.bottom );
+
+			if((g_hDesktopHook = SetWindowsHookEx(WH_MOUSE_LL, OnDTMouseEvent, NULL, 0)) == NULL)
+			{
+				//AfxMessageBox("no hook");
+				// Sorry, no hook for you...
+			}	
+		}
+
 	} else {
 		m_Ini.ReadString(HK_ENABLE_GESTURE, szIniStr, sizeof(szIniStr), DEFAULT_HK_ENABLE_GESTURE);
+		if(m_pVKBDlg) {
+			delete m_pVKBDlg;
+			m_pVKBDlg = NULL;
+		}
 	}
 	ParseHotKeySpec(HK_GESTURE_PAN, szIniStr);
 }
@@ -11499,7 +11508,8 @@ void CMainView::RestoreDisplay()
 			m_ctrlTMPower.Show(TRUE);
 			m_ctrlTMPower.BringWindowToTop();
 			m_ctrlTMStat.SetMode(TMSTAT_TEXTMODE);
-			m_pVKBDlg->ShowWindow(SW_SHOWNORMAL);
+			if(m_pVKBDlg)
+				m_pVKBDlg->ShowWindow(SW_SHOWNORMAL);
 
 			/*
 			if(m_pVKBDlg) {
@@ -13183,8 +13193,11 @@ BOOL CMainView::Shutdown()
 	CDialog Confirm(IDD_CONFIRM_EXIT);
 
 	// close virtual keyboard
-	if (m_pVKBDlgPtr)
-		m_pVKBDlgPtr->CloseWindow();
+	if (m_pVKBDlg) {
+		m_pVKBDlg->CloseWindow();
+		delete m_pVKBDlg;
+		m_pVKBDlg = NULL;
+	}
 
 	//	Make sure the video is paused before we pop up the confirmation dialog
 	if(m_bPlaying)
@@ -14381,16 +14394,24 @@ void CMainView::DisplayKeyboardIconGesture(POINTS pCurrent)
 		// same code as in OnCreate()
 		CRect bmpRect;
 
-		m_pVKBDlg = new CVKBDlg(this);
-		m_pVKBDlg->Create(CVKBDlg::IDD);
-		m_pVKBDlgPtr = m_pVKBDlg;
-		m_pVKBDlg->GetClientRect(&bmpRect);
-		m_pVKBDlg->MoveWindow(m_ScreenResolution.right - bmpRect.right - kbIconPadding ,  kbIconPadding , bmpRect.right , bmpRect.bottom );
+		if(m_bOptimizedForTablet) {
+			if(!m_pVKBDlg) {
+				m_pVKBDlg = new CVKBDlg(this);
+				m_pVKBDlg->Create(CVKBDlg::IDD);
+				m_pVKBDlg->GetClientRect(&bmpRect);
+				m_pVKBDlg->MoveWindow(m_ScreenResolution.right - bmpRect.right - kbIconPadding ,  kbIconPadding , bmpRect.right , bmpRect.bottom );
 
-		if((g_hDesktopHook = SetWindowsHookEx(WH_MOUSE_LL, OnDTMouseEvent, NULL, 0)) == NULL)
-		{
-			//AfxMessageBox("no hook");
-			// Sorry, no hook for you...
+				if((g_hDesktopHook = SetWindowsHookEx(WH_MOUSE_LL, OnDTMouseEvent, NULL, 0)) == NULL)
+				{
+					//AfxMessageBox("no hook");
+					// Sorry, no hook for you...
+				}
+			}
+		} else {
+			if(m_pVKBDlg) {
+				delete m_pVKBDlg;
+				m_pVKBDlg = NULL;
+			}
 		}
 		
 	}
