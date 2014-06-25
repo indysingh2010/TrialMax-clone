@@ -27,6 +27,12 @@ namespace FTI.Trialmax.Encode
         // used to store end time of current video that is in encoding
         private long m_lEndTime = 0;
 
+        // used to store total end time of all videos that is going to be encoded
+        private long m_lEndTimeTotal = 0;
+
+        // used to store total end time of all videos that is going to be encoded
+        private double m_lProgressTimeTotal = 0;
+
         /// <summary>Local member bound to Status property</summary>
         private CFEncoderStatus m_encodingStatus = null;
 
@@ -188,6 +194,9 @@ namespace FTI.Trialmax.Encode
                 {
                     if (!m_bIsEncodingInProgress)
                     {
+                        if(m_lCompleted == 0)
+                            CalculateTotalLength();
+                        
                         PrepareAndStartEncode(Sources);
                     }                    
                 }
@@ -258,10 +267,15 @@ namespace FTI.Trialmax.Encode
 
                         // delete the temp files when merging complete
                         DeleteFiles();
-                        
+
                     }
                     else // if it was encoding than increment the complete counter
+                    {
                         m_lCompleted++;
+
+                        // calculate the total initial progress of encoded video
+                        CalculateTotalEncodingProgress();
+                    }
                 }
                 return;
             }
@@ -298,7 +312,7 @@ namespace FTI.Trialmax.Encode
                 int encodedDuration = getPercentage(durationEncoded);
 
                 // set the status
-                SetStatus(m_bIsFinalizing == true ? "Finalizing" : "Encoding " + m_strSourceFile.Substring(m_strSourceFile.LastIndexOf("\\")+1), encodedDuration);
+                SetStatus(m_bIsFinalizing == true ? "Finalizing" : "Encoding " + m_strSourceFile.Substring(m_strSourceFile.LastIndexOf("\\") + 1), encodedDuration);
                 
                 if (EncoderStatusUpdate != null)
                 {
@@ -348,8 +362,9 @@ namespace FTI.Trialmax.Encode
         /// <summary>This method isused to calculated percentage of encoding progress</summary>
         private int getPercentage(TimeSpan initialProgress)
         {
-            TimeSpan totalTime = TimeSpan.FromSeconds(m_lEndTime);
-            double prgress = (initialProgress.TotalMilliseconds / totalTime.TotalMilliseconds);
+            TimeSpan totalTime = TimeSpan.FromSeconds(m_lEndTimeTotal);
+            //m_lProgressTimeTotal += initialProgress.TotalMilliseconds;
+            double prgress = ((TimeSpan.FromSeconds(m_lProgressTimeTotal).TotalMilliseconds + initialProgress.TotalMilliseconds) / totalTime.TotalMilliseconds);
             return (int)(prgress * 100);
         }
 
@@ -589,6 +604,31 @@ namespace FTI.Trialmax.Encode
             {
                 
             }            
+        }
+
+        /// <summary>This method is called to calculate the total length/time of video that is going to be encoded </summary>
+        private void CalculateTotalLength()
+        {
+            if (Sources != null && Sources.Count > 0)
+            {
+                foreach (CFFMpegSource source in Sources)
+                {
+                    double differenceTime = source.m_dEndTime - source.m_dStartTime;
+                    m_lEndTimeTotal += (int)Math.Ceiling(differenceTime);
+                }
+            }
+        }
+
+        /// <summary>This method is called to calculate the total progress of video that is encoded </summary>
+        private void CalculateTotalEncodingProgress()
+        {
+            if (Sources != null && Sources.Count > 0 && m_lCompleted > 0)
+            {
+                CFFMpegSource source = Sources[(int)m_lCompleted - 1];                
+                 double differenceTime = source.m_dEndTime - source.m_dStartTime;
+                 m_lProgressTimeTotal += (int)Math.Ceiling(differenceTime);
+                
+            }
         }
 
         /// <summary>This method is used to get codec for particular file for encoding</summary>
