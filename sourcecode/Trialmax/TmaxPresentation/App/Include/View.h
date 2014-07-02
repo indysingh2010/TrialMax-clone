@@ -865,6 +865,8 @@ class CMainView : public CFormView
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnDraw(CDC* pDC);
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual void OnLButtonDblClk(UINT flags, CPoint clkPoint);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	//}}AFX_VIRTUAL
 
 	protected:
