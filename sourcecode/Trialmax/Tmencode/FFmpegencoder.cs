@@ -43,7 +43,7 @@ namespace FTI.Trialmax.Encode
         private string m_strSourceFile;
 
         // number of files complete encoding
-        private long m_lCompleted = 0;
+        private volatile int m_lCompleted = 0;
 
         // this property define is the encoding complete
         private bool m_bIsEncodingCompleted = false;
@@ -59,6 +59,10 @@ namespace FTI.Trialmax.Encode
 
         // this peroperty define is encoding or merging cancelled 
         private bool m_bIsCancelled = false;
+
+        private volatile int m_nProcessStarted = 0;
+
+        private int m_nMaximumEncodingThreads = 5;
 
         public bool m_bIsMpeg2Selected = false;
 
@@ -192,16 +196,20 @@ namespace FTI.Trialmax.Encode
 
                 if (Sources != null && Sources.Count() > 0 && Sources.Count() > m_lCompleted)
                 {
-                    if (!m_bIsEncodingInProgress)
+                    // if initiated threads are less than the maximum threads.
+                    if (m_nProcessStarted < m_nMaximumEncodingThreads)
                     {
-                        if(m_lCompleted == 0)
+                        if (m_lCompleted == 0)
                             CalculateTotalLength();
-                        
+
                         PrepareAndStartEncode(Sources);
-                    }                    
+                    }
                 }
                 else
-                    m_bIsEncodingCompleted = true;
+                {
+                    if(Sources.Count() == NumberOfEncodedFilesFound() && !m_bIsEncodingInProgress)
+                        m_bIsEncodingCompleted = true;
+                }
 
                 System.Threading.Thread.Sleep(100);
             }
@@ -271,7 +279,7 @@ namespace FTI.Trialmax.Encode
                     }
                     else // if it was encoding than increment the complete counter
                     {
-                        m_lCompleted++;
+                        //m_lCompleted++;
 
                         // calculate the total initial progress of encoded video
                         CalculateTotalEncodingProgress();
@@ -310,6 +318,9 @@ namespace FTI.Trialmax.Encode
                 TimeSpan durationEncoded = TimeSpan.FromSeconds(0);
                 TimeSpan.TryParse(parts[9], out durationEncoded);
                 int encodedDuration = getPercentage(durationEncoded);
+
+                // mark that encoding is in progress
+                m_bIsEncodingInProgress = true;
 
                 // set the status
                 SetStatus(m_bIsFinalizing == true ? "Finalizing" : "Encoding " + m_strSourceFile.Substring(m_strSourceFile.LastIndexOf("\\") + 1), encodedDuration);
@@ -357,6 +368,9 @@ namespace FTI.Trialmax.Encode
                 DeleteFiles();
                 DeleteEncodedFile();
             }
+
+            m_lCompleted++;
+            m_nProcessStarted--;
         }
 
         /// <summary>This method isused to calculated percentage of encoding progress</summary>
@@ -364,7 +378,7 @@ namespace FTI.Trialmax.Encode
         {
             TimeSpan totalTime = TimeSpan.FromSeconds(m_lEndTimeTotal);
             //m_lProgressTimeTotal += initialProgress.TotalMilliseconds;
-            double prgress = ((TimeSpan.FromSeconds(m_lProgressTimeTotal).TotalMilliseconds + initialProgress.TotalMilliseconds) / totalTime.TotalMilliseconds);
+            double prgress = (TimeSpan.FromSeconds(m_lProgressTimeTotal).TotalMilliseconds / totalTime.TotalMilliseconds);
             return (int)(prgress * 100);
         }
 
@@ -430,67 +444,86 @@ namespace FTI.Trialmax.Encode
         /// <param name="Source">This contain the sources of encoding</param>
         private void PrepareAndStartEncode(List<CFFMpegSource> Source)
         {
-            // if source is available and not cancelled by the user
-            if (Source != null && Source.Count > 0 && !GetCancelled())
+            // Initiate no. of threads as defined inm_nMaximumEncodingThreads
+            for (int t = m_nProcessStarted; t <= m_nMaximumEncodingThreads; t++)
             {
-                /*
-                 We are using FFMPEG Encoder to encode videos, so it is limitation in concat or merge different scripts
-                 in single video to mutiple formats it is only possible in mpg
-                 so if there are multiple scripts than we first cut and encode it in mpg
-                 so we can add or concat them at last. (as we have done in MergeFile() method)
-                 ********************************************************************************
-                 There is another way to encode and merge multiple videos in a single file using FFMPEG
-                 we first encode all files with their time duration in the required format
-                 than we add all those files name in a text file named here "inputfiles.txt"
-                 and than using this file in ffmpeg command to join all files
-                 before we was following the 1st approach define above now we are using this approach.
-                */
+                // get the total no of files that is in processed and completed
+                int totalEncodingProcess = m_nProcessStarted + (int)m_lCompleted;
 
-                string param = string.Empty;
-                CFFMpegSource source = Sources[(int)m_lCompleted];
-
-                // if there are single script so we do not need to merge, we only need to encode directly
-                if (Source.Count == 1) 
+                // if there are remaining files to start
+                if (Source.Count() > totalEncodingProcess)
                 {
-                    double differenceTime = source.m_dEndTime - source.m_dStartTime;
-                    // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";
+                    // if source is available and not cancelled by the user
+                    if (Source != null && Source.Count > 0 && !GetCancelled())
+                    {
+                        /*
+                         We are using FFMPEG Encoder to encode videos, so it is limitation in concat or merge different scripts
+                         in single video to mutiple formats it is only possible in mpg
+                         so if there are multiple scripts than we first cut and encode it in mpg
+                         so we can add or concat them at last. (as we have done in MergeFile() method)
+                         ********************************************************************************
+                         There is another way to encode and merge multiple videos in a single file using FFMPEG
+                         we first encode all files with their time duration in the required format
+                         than we add all those files name in a text file named here "inputfiles.txt"
+                         and than using this file in ffmpeg command to join all files
+                         before we was following the 1st approach define above now we are using this approach.
+                        */
+
+                        string param = string.Empty;
+                        CFFMpegSource source = Sources[(int)totalEncodingProcess];
+                        double differenceTime = source.m_dEndTime - source.m_dStartTime;
+
+                        // if there are single script so we do not need to merge, we only need to encode directly
+                        if (Source.Count == 1)
+                        {
+                            
+                            // encoding parameters
+                            param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";
+                        }
+                        else
+                        {
+                            // if there is a need to merge the file than 
+                            // we first encode the file with changed the name by appending number in the filename
+                            string destinationFileName = m_strFileSpec;
+
+                            // get the actual destination filename and change it to convert in mpg first
+                            string extension = m_strFileSpec.Substring(m_strFileSpec.LastIndexOf("."));
+                            destinationFileName = destinationFileName.Replace(extension, "");
+                            destinationFileName = destinationFileName + "_" + totalEncodingProcess + extension;
+
+                            // encoding parameters
+                            param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " " + getCodec(destinationFileName) + " \"" + destinationFileName + "\"";
+                        }
+
+                        // endtime of current script
+                        m_lEndTime = (long)(source.m_dEndTime - source.m_dStartTime);
+
+                        // mark that encoding is in progress
+                        m_bIsEncodingInProgress = true;
+
+                        // current source file
+                        m_strSourceFile = source.m_strSourceFile;
+
+                        // Increment the no of thread in process
+                        m_nProcessStarted++;
+
+                        // start encoding in a seperate thread, so we can cancel the encoding in UI thread
+                        System.Threading.ParameterizedThreadStart threadStart = new System.Threading.ParameterizedThreadStart(RunProcess);
+                        System.Threading.Thread thread = new System.Threading.Thread(threadStart);                        
+                        thread.Start(param);
+                    }
                 }
                 else
                 {
-                    string destinationFileName = m_strFileSpec;
-
-                    // get the actual destination filename and change it to convert in mpg first
-                    string extension = m_strFileSpec.Substring(m_strFileSpec.LastIndexOf("."));
-                    destinationFileName = destinationFileName.Replace(extension, "");
-                    destinationFileName = destinationFileName + "_" + m_lCompleted + extension;
-
-
-                    double differenceTime = source.m_dEndTime - source.m_dStartTime;
-                    // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " " + getCodec(destinationFileName) + " \"" + destinationFileName + "\"";
+                    break;
                 }
-
-                // endtime of current script
-                m_lEndTime = (long)(source.m_dEndTime - source.m_dStartTime);
-
-                // mark that encoding is in progress
-                m_bIsEncodingInProgress = true;
-
-                // current source file
-                m_strSourceFile = source.m_strSourceFile;
-
-                // start encoding in a seperate thread, so we can cancel the encoding in UI thread
-                System.Threading.ParameterizedThreadStart threadStart = new System.Threading.ParameterizedThreadStart(RunProcess);
-                System.Threading.Thread thread = new System.Threading.Thread(threadStart);
-                thread.Start(param);                
-            }
+            }                
         }
 
         /// <summary>This method is called to prepare encoding for merge prerequisites</summary>        
         private void MergeFile()
         {            
-            string inptFileName = string.Empty;
+            string inputFileNames = string.Empty;
             
             // reset the endtime property
             m_lEndTime = 0;
@@ -507,7 +540,7 @@ namespace FTI.Trialmax.Encode
                 // check if the encoded file exist than pick it and add in the concat list                
                 if (System.IO.File.Exists(filename))
                 {                    
-                    inptFileName += "file '" + filename + "'" + Environment.NewLine;
+                    inputFileNames += "file '" + filename + "'" + Environment.NewLine;
                 }
             }
 
@@ -534,18 +567,18 @@ namespace FTI.Trialmax.Encode
             // create a file stream to add filename that will encode for merge
             using (System.IO.FileStream fStream = new System.IO.FileStream(m_strInputFiles, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite))
             {
-                byte[] fileBytes = System.Text.Encoding.ASCII.GetBytes(inptFileName);
+                byte[] fileBytes = System.Text.Encoding.ASCII.GetBytes(inputFileNames);
                 fStream.Write(fileBytes, 0, fileBytes.Count());
                 fStream.Close();
                 fStream.Dispose();
             }
 
             // if we got some files to merge
-            if (!string.IsNullOrEmpty(inptFileName))
+            if (!string.IsNullOrEmpty(inputFileNames))
             {
                 // encoding and merging parameters
                 //string concatParam = @"-i ""concat:" + inputFiles + "\" -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) +" \"" + m_strFileSpec + "\"";
-                string concatParam = @"-f concat -i inputfiles.txt -c copy " + " \"" + m_strFileSpec + "\"";
+                string concatParam = @"-f concat -i " + m_strInputFiles + "  -c copy " + " \"" + m_strFileSpec + "\"";
                 
                 // mark that we start finalizing
                 m_bIsFinalizing = true;
@@ -681,6 +714,25 @@ namespace FTI.Trialmax.Encode
             }
 
             return codec;
+        }
+
+        private int NumberOfEncodedFilesFound()
+        {
+            int encodedFiles = 0;
+            for (int f = 0; f < m_lCompleted; f++)
+            {
+                string filename = m_strFileSpec;
+                string extension = m_strFileSpec.Substring(m_strFileSpec.LastIndexOf("."));
+                filename = filename.Replace(extension, "");
+                filename = filename + "_" + f + extension;
+
+                // check if the encoded file exist than pick it and add in the concat list                
+                if (System.IO.File.Exists(filename))
+                {
+                    encodedFiles++;
+                }
+            }
+            return encodedFiles;
         }
     }
 }
