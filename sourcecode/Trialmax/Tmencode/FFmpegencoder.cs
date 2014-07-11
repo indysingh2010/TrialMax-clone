@@ -660,13 +660,19 @@ namespace FTI.Trialmax.Encode
                (extension.ToUpper().Contains(
                Convert.ToString(SupportedExportFormats.MP4))) ||
                (extension.ToUpper().Contains(
-               Convert.ToString(SupportedExportFormats.AVI))) ||
-               (extension.ToUpper().Contains(
                Convert.ToString(SupportedExportFormats.MOV))) 
                 )
             {
                 // right now 
                 codec = "";//"-acodec libfaac -vcodec mpeg4";
+            }
+            else if (          
+          (extension.ToUpper().Contains(
+          Convert.ToString(SupportedExportFormats.AVI)))
+           )
+            {
+                // right now 
+                codec = "-acodec copy -vcodec copy ";//"-acodec libfaac -vcodec mpeg4";
             }
             else if (               
                 (extension.ToUpper().Contains(
