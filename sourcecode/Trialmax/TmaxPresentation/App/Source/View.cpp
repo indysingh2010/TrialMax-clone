@@ -7835,6 +7835,9 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 		m_ScreenResolution.right = cx;
 		SetDisplay(m_sState);
 
+		//	Set the display to 1:1 ratio (100% zoom)
+		OnNormal();
+
 		//	Recalculate the control rectangles
 		RecalcLayout(m_sState);	
 	}
