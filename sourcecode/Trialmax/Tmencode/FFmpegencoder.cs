@@ -60,6 +60,8 @@ namespace FTI.Trialmax.Encode
         // this peroperty define is encoding or merging cancelled 
         private bool m_bIsCancelled = false;
 
+        private bool m_bIsFinalEncoding = false;
+
         public bool m_bIsMpeg2Selected = false;
 
         // local memeber bound to hold the sources that will be encoded in a single file
@@ -222,6 +224,23 @@ namespace FTI.Trialmax.Encode
                     System.Threading.Thread.Sleep(100);
                 }
             }
+
+            if (!m_bIsFinalEncoding)
+            {
+                m_bIsFinalEncoding = true;
+                FinalEncodeFile();
+                while (m_bIsFinalEncoding)
+                {
+                    if (GetCancelled())
+                    {
+                        SetStatus("Finalizing Cancelled", 0);
+                        return false;
+                    }
+
+                    System.Threading.Thread.Sleep(100);
+                }
+            }
+
             return true;
         }
 
@@ -255,7 +274,7 @@ namespace FTI.Trialmax.Encode
                                         
                     proc.Close();
                     proc.Dispose();
-                    
+
                     // mark that encoding is done and no more in progress now
                     m_bIsEncodingInProgress = false;
 
@@ -309,7 +328,7 @@ namespace FTI.Trialmax.Encode
                 // get the duration encoded from the metadata output of process
                 TimeSpan durationEncoded = TimeSpan.FromSeconds(0);
                 TimeSpan.TryParse(parts[9], out durationEncoded);
-                int encodedDuration = getPercentage(durationEncoded);
+                int encodedDuration = GetPercentage(durationEncoded);
 
                 // set the status
                 SetStatus(m_bIsFinalizing == true ? "Finalizing" : "Encoding " + m_strSourceFile.Substring(m_strSourceFile.LastIndexOf("\\") + 1), encodedDuration);
@@ -356,11 +375,18 @@ namespace FTI.Trialmax.Encode
             {
                 DeleteFiles();
                 DeleteEncodedFile();
+                DeleteMergeFile();
             }
+
+            if (m_bIsFinalEncoding)
+            {
+                m_bIsFinalEncoding = false;
+                DeleteMergeFile();
+            }            
         }
 
         /// <summary>This method isused to calculated percentage of encoding progress</summary>
-        private int getPercentage(TimeSpan initialProgress)
+        private int GetPercentage(TimeSpan initialProgress)
         {
             TimeSpan totalTime = TimeSpan.FromSeconds(m_lEndTimeTotal);
             //m_lProgressTimeTotal += initialProgress.TotalMilliseconds;
@@ -454,7 +480,7 @@ namespace FTI.Trialmax.Encode
                 {
                     double differenceTime = source.m_dEndTime - source.m_dStartTime;
                     // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";
+                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " -b:v " + m_strBitrate + " " + GetCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";
                 }
                 else
                 {
@@ -468,7 +494,7 @@ namespace FTI.Trialmax.Encode
 
                     double differenceTime = source.m_dEndTime - source.m_dStartTime;
                     // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " " + getCodec(destinationFileName) + " \"" + destinationFileName + "\"";
+                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " -acodec copy -vcodec copy \"" + destinationFileName + "\"";
                 }
 
                 // endtime of current script
@@ -493,7 +519,7 @@ namespace FTI.Trialmax.Encode
             string inptFileName = string.Empty;
             
             // reset the endtime property
-            m_lEndTime = 0;
+            //m_lEndTime = 0;
 
             // get the pieces of files that is encoded to merge in a single file
             // m_lCompleted is a property that tell us how many number of files encoded for merging
@@ -513,13 +539,13 @@ namespace FTI.Trialmax.Encode
 
             // when merging is happen it means there are more than one file in the source list
             // get each source end time to calculate the length of total merging
-            if (Sources != null && Sources.Count > 0)
-            {
-                foreach (CFFMpegSource ffmpegSource in Sources)
-                {
-                    m_lEndTime += (long)(ffmpegSource.m_dEndTime - ffmpegSource.m_dStartTime);
-                }
-            }
+            //if (Sources != null && Sources.Count > 0)
+            //{
+            //    foreach (CFFMpegSource ffmpegSource in Sources)
+            //    {
+            //        m_lEndTime += (long)(ffmpegSource.m_dEndTime - ffmpegSource.m_dStartTime);
+            //    }
+            //}
 
             // delete the txt file if exists
             if (System.IO.File.Exists(m_strInputFiles))
@@ -540,12 +566,17 @@ namespace FTI.Trialmax.Encode
                 fStream.Dispose();
             }
 
+            // reset the encoded time
+            m_lProgressTimeTotal = 0;
+
             // if we got some files to merge
             if (!string.IsNullOrEmpty(inptFileName))
             {
                 // encoding and merging parameters
                 //string concatParam = @"-i ""concat:" + inputFiles + "\" -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) +" \"" + m_strFileSpec + "\"";
-                string concatParam = @"-f concat -i inputfiles.txt -c copy " + " \"" + m_strFileSpec + "\"";
+
+                string mergeFileName = GetMergeFilename();
+                string concatParam = @"-f concat -i inputfiles.txt -c copy " + " \"" + mergeFileName + "\"";
                 
                 // mark that we start finalizing
                 m_bIsFinalizing = true;
@@ -556,6 +587,23 @@ namespace FTI.Trialmax.Encode
                 thread.Start(concatParam);
                 
             }
+        }
+
+        /// <summary>This method is called to encode the final merge file </summary>        
+        private void FinalEncodeFile()
+        {
+            // reset the encoded time
+            m_lProgressTimeTotal = 0;
+
+            string finalInput = GetMergeFilename();
+
+            // encoding and merging parameters            
+            string param = "-i \"" + finalInput + "\" " + GetCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";            
+
+            // start encoding in a seperate thread, so we can cancel the encoding in UI thread
+            System.Threading.ParameterizedThreadStart threadStart = new System.Threading.ParameterizedThreadStart(RunProcess);
+            System.Threading.Thread thread = new System.Threading.Thread(threadStart);
+            thread.Start(param);
         }
 
         /// <summary>This method is called to delete the temporary encoding files that was created for merging</summary>        
@@ -606,6 +654,22 @@ namespace FTI.Trialmax.Encode
             }            
         }
 
+        /// <summary>This method is called to delete the merge file</summary>
+        private void DeleteMergeFile()
+        {
+            string filename = GetMergeFilename();
+
+            try
+            {
+                if (System.IO.File.Exists(filename))
+                    System.IO.File.Delete(filename);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         /// <summary>This method is called to calculate the total length/time of video that is going to be encoded </summary>
         private void CalculateTotalLength()
         {
@@ -633,7 +697,7 @@ namespace FTI.Trialmax.Encode
 
         /// <summary>This method is used to get codec for particular file for encoding</summary>
         /// <param name="sourceFile">This contain the File based on which codec is decided</param>
-        private string getCodec(string sourceFile)
+        private string GetCodec(string sourceFile)
         {
             string codec = string.Empty;
             string extension = sourceFile.Substring(sourceFile.LastIndexOf("."));
@@ -664,7 +728,7 @@ namespace FTI.Trialmax.Encode
                 )
             {
                 // right now 
-                codec = "";//"-acodec libfaac -vcodec mpeg4";
+                codec = "-vcodec mpeg4 -b:v 1200k";//"-acodec libfaac -vcodec mpeg4";
             }
             else if (          
           (extension.ToUpper().Contains(
@@ -672,7 +736,7 @@ namespace FTI.Trialmax.Encode
            )
             {
                 // right now 
-                codec = "-acodec copy -vcodec copy ";//"-acodec libfaac -vcodec mpeg4";
+                codec = "-vcodec msmpeg4v2";//"-acodec libfaac -vcodec mpeg4";
             }
             else if (               
                 (extension.ToUpper().Contains(
@@ -687,6 +751,23 @@ namespace FTI.Trialmax.Encode
             }
 
             return codec;
+        }
+
+        private string GetMergeFilename()
+        {
+            string mergeFilename = string.Empty;
+
+            try
+            {
+                mergeFilename = m_strFileSpec.Substring(0, m_strFileSpec.LastIndexOf(".") - 1);
+                mergeFilename += "1";
+                mergeFilename += m_strFileSpec.Substring(m_strFileSpec.LastIndexOf("."));
+
+                return mergeFilename;
+            }
+            catch { }
+
+            return mergeFilename;
         }
     }
 }
