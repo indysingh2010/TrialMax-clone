@@ -7830,6 +7830,11 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 	   IsWindow(m_ctrlTMMovie) &&
 	   IsWindow(m_ctrlTMText))
 	{
+		//	Set the display according to the change in resolution.
+		m_ScreenResolution.bottom = cy;
+		m_ScreenResolution.right = cx;
+		SetDisplay(m_sState);
+
 		//	Recalculate the control rectangles
 		RecalcLayout(m_sState);	
 	}
@@ -10347,6 +10352,7 @@ BOOL CMainView::ProcessVirtualKey(WORD wKey)
 			break;
 
 		case VK_ESCAPE:
+			OnClear();
 			OnExit();			
 			break;
 
