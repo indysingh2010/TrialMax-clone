@@ -5158,6 +5158,8 @@ LRESULT CALLBACK OnDTMouseEvent(int nCode, WPARAM wParam, LPARAM lParam)
 		if(wParam == WM_LBUTTONDOWN)
         {
 			
+			TRACE("OnDTMouseEvent LBUTTONDOWN\n");
+
 			int x;
 			int y;
 			POINT cursorPos;
@@ -5343,7 +5345,7 @@ void CMainView::OnDestroy()
 		m_ctrlTMGrab.Stop();
 
 	//	Make sure the DAO stuff is shut down OK
-	//AfxDaoTerm();
+	AfxDaoTerm();
 
 	//	Do the base class cleanup
 	CFormView::OnDestroy();
@@ -7828,6 +7830,14 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 	   IsWindow(m_ctrlTMMovie) &&
 	   IsWindow(m_ctrlTMText))
 	{
+		//	Set the display according to the change in resolution.
+		m_ScreenResolution.bottom = cy;
+		m_ScreenResolution.right = cx;
+		SetDisplay(m_sState);
+
+		//	Set the display to 1:1 ratio (100% zoom)
+		OnNormal();
+
 		//	Recalculate the control rectangles
 		RecalcLayout(m_sState);	
 	}
@@ -9855,8 +9865,12 @@ BOOL CMainView::ProcessMouseMessage(MSG* pMsg)
 	//	What message?
 	switch(pMsg->message)
 	{
+		case WM_LBUTTONDBLCLK:
+			TRACE("Double Click here\n");
 		case WM_LBUTTONDOWN:
-			
+
+			TRACE("ProcessMouseMessage LBUTTONDOWN\n");
+
 			PostMessage(WM_MOUSEMODE, 0);
 			return TRUE;
 
@@ -10341,7 +10355,7 @@ BOOL CMainView::ProcessVirtualKey(WORD wKey)
 			break;
 
 		case VK_ESCAPE:
-
+			OnClear();
 			OnExit();			
 			break;
 
@@ -13675,6 +13689,7 @@ LRESULT CMainView::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 
 						if(ProcessNotification(LOWORD(lParam), HIWORD(lParam)))
 							PostMessage(WM_MOUSEMODE, 0);
+						TRACE("WindowProc LBUTTONDOWN\n");
 						return 1;
 
 					case WM_RBUTTONDOWN:
@@ -13974,6 +13989,7 @@ void CMainView::SetViewingCtrl() {
 		MSG msg;
 		if(PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
 			GetMessage(&msg, NULL, 0, 0);
+
 			if (msg.message == WM_GESTURE || msg.message == WM_TOUCH || msg.message == WM_LBUTTONDOWN || msg.message == WM_MOUSEFIRST)
 			{
 				if(i < abs(diff))
@@ -15335,4 +15351,18 @@ void CMainView::ChangeColorOfColorButton(short sColorToChange)
 			m_pToolbar->SetButtonImage(48,CColorPickerList::ColorType::LIGHTGREEN);
 	else if(sColorToChange == TMV_LIGHTBLUE)
 			m_pToolbar->SetButtonImage(48,CColorPickerList::ColorType::LIGHTBLUE);
+}
+
+void CMainView::OnLButtonDblClk(UINT flags, CPoint clkPoint) {
+	OnNormal();
+	CFormView::OnLButtonDblClk(flags, clkPoint);
+}
+
+BOOL CMainView::PreTranslateMessage(MSG* pMsg){
+	if( pMsg->message == WM_LBUTTONDBLCLK ) {
+		OnNormal();
+		//TRACE("DoubleClickDetected");
+	} else {
+		return CFormView::PreTranslateMessage( pMsg );
+	}
 }
