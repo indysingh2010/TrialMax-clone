@@ -340,44 +340,9 @@ namespace FTI.Trialmax.Encode
                 int encodedDuration = GetPercentage(durationEncoded);
 
                 // set the status
-                SetStatus(m_bIsFinalizing == true ? "Finalizing" : "Encoding " + m_strSourceFile.Substring(m_strSourceFile.LastIndexOf("\\") + 1), encodedDuration);
+                SetStatus(m_bIsFinalizing == true ? "Merging " : (m_bIsFinalEncoding == true ? "Encoding " : "Converting ") + m_strSourceFile.Substring(m_strSourceFile.LastIndexOf("\\") + 1), encodedDuration);
 
                 CheckForEncodingCancelled(sender);
-            }
-        }
-
-        /// <summary>This method is is used to check for encoding cancelled</summary>
-        private void CheckForEncodingCancelled(object sender)
-        {
-            if (EncoderStatusUpdate != null)
-            {
-                // this event return true if the encoding is aborted by User from ExportStatus Form
-                if (!EncoderStatusUpdate(this, m_bIsFinalizing == true ? "Finalizing" : "Encoding") ||
-                    GetCancelled())
-                {
-                    Process proc = sender as Process;
-                    if (proc != null)
-                    {
-                        try
-                        {
-                            Cancel();
-                            SetStatus("Encoding Cancelled", 0);
-                            if ((m_encodingStatus != null) && (m_encodingStatus.IsDisposed == false))
-                            {
-                                m_encodingStatus.Cancelled = true;
-                                m_encodingStatus.Status = "Cancelled";
-                            }
-
-                            EncoderStatusUpdate(this, "Cancelled");
-                            m_lCompleted++; // increment so current file can be deleted                        
-                            proc.Kill();
-                            proc.Close();
-                            proc.Dispose();                            
-                        }
-                        catch (Exception ex)
-                        { }
-                    }
-                }
             }
         }
 
@@ -397,6 +362,48 @@ namespace FTI.Trialmax.Encode
                 m_bIsFinalEncoding = false;
                 DeleteMergeFile();
             }            
+        }
+
+        /// <summary>This method is is used to check for encoding cancelled</summary>
+        private void CheckForEncodingCancelled(object sender)
+        {
+            if (EncoderStatusUpdate != null)
+            {
+                // this event return true if the encoding is aborted by User from ExportStatus Form
+                if (!EncoderStatusUpdate(this, m_bIsFinalizing == true ? "Merging" : (m_bIsFinalEncoding == true ? "Encoding" : "Converting")) ||
+                    GetCancelled())
+                {
+                    Process proc = sender as Process;
+                    if (proc != null)
+                    {
+                        try
+                        {
+                            Cancel();
+                            SetStatus("Encoding Cancelled", 0);
+                            if ((m_encodingStatus != null) && (m_encodingStatus.IsDisposed == false))
+                            {
+                                m_encodingStatus.Cancelled = true;
+                                m_encodingStatus.Status = "Cancelled";
+                            }
+
+                            EncoderStatusUpdate(this, "Cancelled");
+                            m_lCompleted++; // increment so current file can be deleted                        
+                            
+                            // kill the process
+                            proc.Close();
+                            proc.Dispose();
+                            Process[] processes = Process.GetProcessesByName("ffmpeg");
+                            foreach (Process process in processes)
+                            {
+                                process.Kill();
+                            }
+                            
+                        }
+                        catch (Exception ex)
+                        { }
+                    }
+                }
+            }
         }
 
         /// <summary>This method isused to calculated percentage of encoding progress</summary>
@@ -499,12 +506,14 @@ namespace FTI.Trialmax.Encode
                 string param = string.Empty;
                 CFFMpegSource source = Sources[(int)m_lCompleted];
 
+                // endtime of current script
+                m_lEndTime = (long)(source.m_dEndTime - source.m_dStartTime);
+
                 // if there are single script so we do not need to merge, we only need to encode directly
                 if (Source.Count == 1) 
                 {
-                    double differenceTime = source.m_dEndTime - source.m_dStartTime;
                     // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " -b:v " + m_strBitrate + " " + GetCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";
+                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(m_lEndTime) + " -b:v " + m_strBitrate + " " + GetCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";
                 }
                 else
                 {
@@ -515,14 +524,9 @@ namespace FTI.Trialmax.Encode
                     destinationFileName = destinationFileName.Replace(extension, "");
                     destinationFileName = destinationFileName + "_" + m_lCompleted + extension;
 
-
-                    double differenceTime = source.m_dEndTime - source.m_dStartTime;
                     // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(differenceTime) + " -acodec copy -vcodec copy \"" + destinationFileName + "\"";
-                }
-
-                // endtime of current script
-                m_lEndTime = (long)(source.m_dEndTime - source.m_dStartTime);
+                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(m_lEndTime) + " -acodec copy -vcodec copy \"" + destinationFileName + "\"";
+                }               
 
                 // mark that encoding is in progress
                 m_bIsEncodingInProgress = true;
@@ -700,8 +704,7 @@ namespace FTI.Trialmax.Encode
             {
                 CFFMpegSource source = Sources[(int)m_lCompleted - 1];                
                  double differenceTime = source.m_dEndTime - source.m_dStartTime;
-                 m_lProgressTimeTotal += (int)Math.Ceiling(differenceTime);
-                
+                 m_lProgressTimeTotal += (int)Math.Ceiling(differenceTime);                
             }
         }
 
