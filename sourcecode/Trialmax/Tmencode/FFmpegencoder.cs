@@ -211,7 +211,9 @@ namespace FTI.Trialmax.Encode
             // merging is only in the case of more than one script/source
             if (m_lCompleted > 0 && Sources != null && Sources.Count() > 1 && !GetCancelled())
             {
-                m_bIsFinalizing = true;                
+                m_bIsFinalizing = true;     
+           
+                // start merging the converted files
                 MergeFile();
                 while (m_bIsFinalizing) 
                 {
@@ -223,23 +225,30 @@ namespace FTI.Trialmax.Encode
 
                     System.Threading.Thread.Sleep(100);
                 }
-            }
 
-            if (!m_bIsFinalEncoding)
-            {
-                m_bIsFinalEncoding = true;
-                FinalEncodeFile();
-                while (m_bIsFinalEncoding)
+                // Final Encoding (Encode the merged file with codec)
+                if (!m_bIsFinalEncoding)
                 {
-                    if (GetCancelled())
-                    {
-                        SetStatus("Finalizing Cancelled", 0);
-                        return false;
-                    }
+                    // mark final encoding is in progress
+                    m_bIsFinalEncoding = true;
 
-                    System.Threading.Thread.Sleep(100);
+                    // Start the final encoding process
+                    FinalEncodeFile();
+
+                    while (m_bIsFinalEncoding)
+                    {
+                        if (GetCancelled())
+                        {
+                            SetStatus("Finalizing Cancelled", 0);
+                            return false;
+                        }
+
+                        System.Threading.Thread.Sleep(100);
+                    }
                 }
             }
+
+            
 
             return true;
         }
@@ -332,36 +341,41 @@ namespace FTI.Trialmax.Encode
 
                 // set the status
                 SetStatus(m_bIsFinalizing == true ? "Finalizing" : "Encoding " + m_strSourceFile.Substring(m_strSourceFile.LastIndexOf("\\") + 1), encodedDuration);
-                
-                if (EncoderStatusUpdate != null)
+
+                CheckForEncodingCancelled(sender);
+            }
+        }
+
+        /// <summary>This method is is used to check for encoding cancelled</summary>
+        private void CheckForEncodingCancelled(object sender)
+        {
+            if (EncoderStatusUpdate != null)
+            {
+                // this event return true if the encoding is aborted by User from ExportStatus Form
+                if (!EncoderStatusUpdate(this, m_bIsFinalizing == true ? "Finalizing" : "Encoding") ||
+                    GetCancelled())
                 {
-                    // this event return true if the encoding is aborted by User from ExportStatus Form
-                    if (!EncoderStatusUpdate(this, m_bIsFinalizing == true ? "Finalizing" : "Encoding") || 
-                        GetCancelled())
+                    Process proc = sender as Process;
+                    if (proc != null)
                     {
-                        Process proc = sender as Process;
-                        if (proc != null)
+                        try
                         {
-                            try
+                            Cancel();
+                            SetStatus("Encoding Cancelled", 0);
+                            if ((m_encodingStatus != null) && (m_encodingStatus.IsDisposed == false))
                             {
-                                Cancel();
-                                SetStatus("Encoding Cancelled", 0);
-                                if ((m_encodingStatus != null) && (m_encodingStatus.IsDisposed == false))
-                                {
-                                    m_encodingStatus.Cancelled = true;
-                                    m_encodingStatus.Status = "Cancelled";
-                                }
-                                                              
-                                EncoderStatusUpdate(this, "Cancelled");
-                                m_lCompleted++; // increment so current file can be deleted                        
-                                proc.Kill();
-                                proc.Close();                                
-                                proc.Dispose();                                
-                                //System.Threading.Thread.CurrentThread.Abort();
+                                m_encodingStatus.Cancelled = true;
+                                m_encodingStatus.Status = "Cancelled";
                             }
-                            catch (Exception ex)
-                            { }
+
+                            EncoderStatusUpdate(this, "Cancelled");
+                            m_lCompleted++; // increment so current file can be deleted                        
+                            proc.Kill();
+                            proc.Close();
+                            proc.Dispose();                            
                         }
+                        catch (Exception ex)
+                        { }
                     }
                 }
             }
@@ -459,17 +473,27 @@ namespace FTI.Trialmax.Encode
             // if source is available and not cancelled by the user
             if (Source != null && Source.Count > 0 && !GetCancelled())
             {
-                /*
+                /*                 
                  We are using FFMPEG Encoder to encode videos, so it is limitation in concat or merge different scripts
                  in single video to mutiple formats it is only possible in mpg
                  so if there are multiple scripts than we first cut and encode it in mpg
                  so we can add or concat them at last. (as we have done in MergeFile() method)
                  ********************************************************************************
                  There is another way to encode and merge multiple videos in a single file using FFMPEG
-                 we first encode all files with their time duration in the required format
+                 we first encode all files with their time duration in the required format with copy codec
                  than we add all those files name in a text file named here "inputfiles.txt"
-                 and than using this file in ffmpeg command to join all files
+                 and than using this file in ffmpeg command to join all files in a single file and than
+                 we encode that single file in the required format with actual codec.
+                 
+                 Now the process of converting ffmpeg is
+                 1. Convert all files to the required format with copy codec
+                 2. Merge all the converted files in a single file.
+                 3. Encode the single merged file with the codec. 
+                 
+                 
                  before we was following the 1st approach define above now we are using this approach.
+                 ********************************************************************************
+                 
                 */
 
                 string param = string.Empty;
@@ -506,7 +530,7 @@ namespace FTI.Trialmax.Encode
                 // current source file
                 m_strSourceFile = source.m_strSourceFile;
 
-                // start encoding in a seperate thread, so we can cancel the encoding in UI thread
+                // start converting files in a seperate thread
                 System.Threading.ParameterizedThreadStart threadStart = new System.Threading.ParameterizedThreadStart(RunProcess);
                 System.Threading.Thread thread = new System.Threading.Thread(threadStart);
                 thread.Start(param);                
@@ -537,16 +561,6 @@ namespace FTI.Trialmax.Encode
                 }
             }
 
-            // when merging is happen it means there are more than one file in the source list
-            // get each source end time to calculate the length of total merging
-            //if (Sources != null && Sources.Count > 0)
-            //{
-            //    foreach (CFFMpegSource ffmpegSource in Sources)
-            //    {
-            //        m_lEndTime += (long)(ffmpegSource.m_dEndTime - ffmpegSource.m_dStartTime);
-            //    }
-            //}
-
             // delete the txt file if exists
             if (System.IO.File.Exists(m_strInputFiles))
             {
@@ -572,10 +586,9 @@ namespace FTI.Trialmax.Encode
             // if we got some files to merge
             if (!string.IsNullOrEmpty(inptFileName))
             {
-                // encoding and merging parameters
-                //string concatParam = @"-i ""concat:" + inputFiles + "\" -b:v " + m_strBitrate + " " + getCodec(m_strFileSpec) +" \"" + m_strFileSpec + "\"";
-
                 string mergeFileName = GetMergeFilename();
+
+                // merging parameters
                 string concatParam = @"-f concat -i inputfiles.txt -c copy " + " \"" + mergeFileName + "\"";
                 
                 // mark that we start finalizing
@@ -589,7 +602,7 @@ namespace FTI.Trialmax.Encode
             }
         }
 
-        /// <summary>This method is called to encode the final merge file </summary>        
+        /// <summary>This method is called to encode the merged file </summary>        
         private void FinalEncodeFile()
         {
             // reset the encoded time
@@ -597,7 +610,7 @@ namespace FTI.Trialmax.Encode
 
             string finalInput = GetMergeFilename();
 
-            // encoding and merging parameters            
+            // encoding parameters            
             string param = "-i \"" + finalInput + "\" " + GetCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";            
 
             // start encoding in a seperate thread, so we can cancel the encoding in UI thread
@@ -664,10 +677,7 @@ namespace FTI.Trialmax.Encode
                 if (System.IO.File.Exists(filename))
                     System.IO.File.Delete(filename);
             }
-            catch (Exception ex)
-            {
-
-            }
+            catch { }
         }
 
         /// <summary>This method is called to calculate the total length/time of video that is going to be encoded </summary>
@@ -726,16 +736,14 @@ namespace FTI.Trialmax.Encode
                (extension.ToUpper().Contains(
                Convert.ToString(SupportedExportFormats.MOV))) 
                 )
-            {
-                // right now 
-                codec = "-vcodec mpeg4 -b:v 1200k";//"-acodec libfaac -vcodec mpeg4";
+            {                 
+                codec = "-vcodec mpeg4";
             }
             else if (          
           (extension.ToUpper().Contains(
           Convert.ToString(SupportedExportFormats.AVI)))
            )
-            {
-                // right now 
+            {                
                 codec = "-vcodec msmpeg4v2";//"-acodec libfaac -vcodec mpeg4";
             }
             else if (               
@@ -753,14 +761,21 @@ namespace FTI.Trialmax.Encode
             return codec;
         }
 
+
+        /// <summary>This method is called to get the mergerd file name</summary>
         private string GetMergeFilename()
         {
             string mergeFilename = string.Empty;
 
             try
             {
+                // get the filename without extension
                 mergeFilename = m_strFileSpec.Substring(0, m_strFileSpec.LastIndexOf(".") - 1);
+
+                // append the "1" in the end of the filename
                 mergeFilename += "1";
+
+                // appned extension in the filename
                 mergeFilename += m_strFileSpec.Substring(m_strFileSpec.LastIndexOf("."));
 
                 return mergeFilename;
