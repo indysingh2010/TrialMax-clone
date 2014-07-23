@@ -7830,13 +7830,23 @@ void CMainView::OnSize(UINT nType, int cx, int cy)
 	   IsWindow(m_ctrlTMMovie) &&
 	   IsWindow(m_ctrlTMText))
 	{
-		//	Set the display according to the change in resolution.
+		//	Update the local resolution variable to the new resolution.
 		m_ScreenResolution.bottom = cy;
 		m_ScreenResolution.right = cx;
+
+		//	Recreate Toolbars using new resolution.
+		InitializeToolbars();
+		m_pToolbar = m_aToolbars[m_sState].pControl;
+		
+		//	Show the new toolbar
+		OnShowToolbar();
+		
+		//	Set the display according to the new resolution
 		SetDisplay(m_sState);
 
 		//	Set the display to 1:1 ratio (100% zoom)
-		OnNormal();
+		if (m_sState == S_GRAPHIC || m_sState == S_DOCUMENT)
+			OnNormal();
 
 		//	Recalculate the control rectangles
 		RecalcLayout(m_sState);	
