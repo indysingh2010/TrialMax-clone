@@ -714,11 +714,13 @@ namespace FTI.Trialmax.Encode
         {
             string codec = string.Empty;
             string extension = sourceFile.Substring(sourceFile.LastIndexOf("."));
-                        
+
 
             if (extension.ToUpper().Contains(
-                Convert.ToString(SupportedExportFormats.WMV))
-                )
+               Convert.ToString(SupportedExportFormats.WMV)) ||
+               extension.ToUpper().Contains(
+               Convert.ToString(SupportedExportFormats.AVI))
+               )
             {
                 codec = "-vcodec msmpeg4 -acodec wmav2";
             }
@@ -741,13 +743,6 @@ namespace FTI.Trialmax.Encode
                 )
             {                 
                 codec = "-vcodec mpeg4";
-            }
-            else if (          
-          (extension.ToUpper().Contains(
-          Convert.ToString(SupportedExportFormats.AVI)))
-           )
-            {                
-                codec = "-vcodec msmpeg4v2";//"-acodec libfaac -vcodec mpeg4";
             }
             else if (               
                 (extension.ToUpper().Contains(
