@@ -2638,7 +2638,7 @@ void CTMToolCtrl::ReadIniFile()
 //==============================================================================
 void CTMToolCtrl::Reposition() 
 {
-	
+	::GetWindowRect(::GetDesktopWindow(), &m_ScreenResolution);
 	
 	int	iMaxWidth;
 	int	iMaxHeight;
