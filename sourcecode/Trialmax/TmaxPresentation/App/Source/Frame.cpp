@@ -481,3 +481,9 @@ void CMainFrame::OnMove(int x, int y)
 	SetWindowText(M);
 */	
 }
+
+
+void CMainFrame::UpdateBarcode(CString Barcode)
+{
+	((CMainView*)GetActiveView())->UpdateBarcodeText(Barcode);
+}

@@ -520,6 +520,7 @@ class CMainView : public CFormView
 	
 		CBarcodeBuffer	m_aBarcodes;
 		CBarcode		m_Barcode;
+		CBarcode		m_CurrentPageBarcode;
 
 		vector<SMultipageInfo *> m_arrMultiPageInfo;
 
@@ -661,6 +662,9 @@ class CMainView : public CFormView
 		int				countFrom; // 0-currentPage, 1-firstpage, -1-lastPage
 		bool			zoomFullWidth;
 		bool			m_bOptimizedForTablet;
+		bool			m_bEnableBarcodeKeystrokes;
+		bool			m_IsShowingBarcode;
+		bool			m_IsStatusBarShowing;
 	public:
 		
 
@@ -706,7 +710,7 @@ class CMainView : public CFormView
 		void            OnGesturePan();
 		void			OnColorPickerButtonClickEvent(int iColorType);				
 		void			OnColorPickerCloseButtonClickEvent();
-
+		void			UpdateBarcodeText(CString);
 	protected: 		
 		void			SetTaskBarVisible(BOOL bVisible);
 		void			UpdateToolColor();

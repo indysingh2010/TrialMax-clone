@@ -639,19 +639,27 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 		case WM_CHAR:
 		
 			cKey = (TCHAR)(pMsg->wParam);
-
 			// check if specail characters, not supported, entered.
 			// for windows8 onscreen keyboard
 			if (cKey < 0 )
 			{
 				return false;
 			}
-
+			if (pMsg->wParam == 8) // Backspace pressed
+			{
+				if (!m_strKBBuffer.IsEmpty())
+				{
+					m_strKBBuffer.Delete(m_strKBBuffer.GetLength()-1,1);
+					m_pFrame->UpdateBarcode(m_strKBBuffer);
+				}
+				return true;
+			}
 			//	Is the buffer full?
 			if(m_strKBBuffer.GetLength() >= MAXLEN_KBBUFFER)
 			{
 				m_sHookState = WAITING_START;
 				m_strKBBuffer.Empty();
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 			}
 
 			//	Are we waiting for a start character?
@@ -661,6 +669,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				if(cKey == m_cVK)
 				{
 					m_strKBBuffer.Empty();
+					m_pFrame->UpdateBarcode(m_strKBBuffer);
 					m_sHookState = WAITING_VIRTUAL_CODE;
 					return TRUE;
 				}
@@ -669,6 +678,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				else if(toupper(cKey) == m_cPrimary)
 				{
 					m_strKBBuffer.Empty();
+					m_pFrame->UpdateBarcode(m_strKBBuffer);
 					m_sHookState = WAITING_MEDIA_DELIMITER;
 					m_bAlternate = FALSE;
 					return TRUE;
@@ -679,6 +689,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				else if(toupper(cKey) == m_cAlternate)
 				{
 					m_strKBBuffer.Empty();
+					m_pFrame->UpdateBarcode(m_strKBBuffer);
 					m_sHookState = WAITING_MEDIA_DELIMITER;
 					m_bAlternate = TRUE;
 					return TRUE;
@@ -690,7 +701,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				{
 					m_szKey[0] = cKey;
 					m_strKBBuffer += m_szKey;
-					m_sHookState = WAITING_PAGE_NUMBER;
+					//m_pFrame->UpdateBarcode(m_strKBBuffer);
 					return TRUE;
 				}
 			
@@ -702,7 +713,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				//	Add the character to the buffer
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
-
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 				//	Is this the delimiter?
 				if(cKey == TMAX_BARCODE_DELIMITER)
 					m_sHookState = WAITING_SECONDARY_DELIMITER;
@@ -716,7 +727,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				//	Add the character to the buffer
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
-
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 				//	Is this the delimiter?
 				if(cKey == TMAX_BARCODE_DELIMITER)
 					m_sHookState = WAITING_RETURN;
@@ -729,6 +740,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			{
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 				return TRUE;
 			}
 
@@ -739,6 +751,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				{ 
 					m_szKey[0] = cKey;
 					m_strKBBuffer += m_szKey;
+					//m_pFrame->UpdateBarcode(m_strKBBuffer);
 					return TRUE;
 				}
 			}
@@ -750,6 +763,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				{ 
 					m_szKey[0] = cKey;
 					m_strKBBuffer += m_szKey;
+					//m_pFrame->UpdateBarcode(m_strKBBuffer);
 					return TRUE;
 				}
 			}
@@ -758,6 +772,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			if(m_pFrame->ProcessCommandKey(cKey))
 			{
 				m_strKBBuffer.Empty();
+				//m_pFrame->UpdateBarcode(m_strKBBuffer);
 				m_sHookState = WAITING_START;
 				return TRUE;
 			}
@@ -765,6 +780,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			{
 				//	If we get this far the barcode must be invalid
 				m_strKBBuffer.Empty();
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 				m_sHookState = WAITING_START;
 			}
 
@@ -784,11 +800,13 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 					   m_sHookState == WAITING_SECONDARY_DELIMITER ||
 					   m_sHookState == WAITING_RETURN)
 					{
+						//m_pFrame->UpdateBarcode("");
 						m_pFrame->LoadFromBarcode(m_strKBBuffer, TRUE, m_bAlternate);
 					}
 					//	Load a new page if this is a page number
 					else if(m_sHookState == WAITING_PAGE_NUMBER)
 					{
+						//m_pFrame->UpdateBarcode("");
 						long lPage = atol(m_strKBBuffer);
 						m_pFrame->LoadPageFromKeyboard(lPage);
 					}
@@ -796,11 +814,16 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 					//	Process the virtual key if that's what we're waiting for
 					else if(m_sHookState == WAITING_VIRTUAL_CODE)
 					{
+						m_pFrame->UpdateBarcode("");
 						m_pFrame->ProcessVirtualKey(atoi(m_strKBBuffer));
 					}
-					
+					else
+					{
+						//m_pFrame->UpdateBarcode("");
+					}
 					//	Clear the buffer
 					m_strKBBuffer.Empty();
+					
 					m_sHookState = WAITING_START;
 
 					return TRUE;

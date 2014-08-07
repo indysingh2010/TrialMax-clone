@@ -451,8 +451,8 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_ctrlTMView(NULL)
 {
 	//{{AFX_DATA_INIT(CMainView)
 	//}}AFX_DATA_INIT
-
-	
+	m_IsStatusBarShowing = false;
+	m_IsShowingBarcode = false;
 	m_pDatabase = 0;
 	m_pFrame = 0;
 	m_pMedia = 0;
@@ -2826,6 +2826,13 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	CString		strActivity;
 	char		szBarcode[512];
 	
+
+	if (m_IsShowingBarcode)
+	{
+		SetControlBar(CONTROL_BAR_NONE);
+		m_IsShowingBarcode = false;
+	}
+
 	//	Make sure the automatic transition is turned off if this is not a link event
 	if(m_AppLink.GetIsEvent() == FALSE)
 		StopAutoTransition();
@@ -2890,6 +2897,7 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	//	Load the media object
 	if(LoadMedia(pMedia, Barcode.m_lSecondaryId, Barcode.m_lTertiaryId))
 	{
+		m_CurrentPageBarcode.SetBarcode(Barcode.GetBarcode());
 		//	Reset the persistant custom show information if this is not
 		//	a new custom show and not a linked image or presentation
 		//
@@ -2920,6 +2928,8 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	}
 	else
 	{
+		//	Update the status bar
+		m_ctrlTMStat.SetStatusText(m_CurrentPageBarcode.GetBarcode());
 		return FALSE;
 	}
 
@@ -7753,7 +7763,12 @@ void CMainView::OnShowToolbar()
 	{
 		//	Toggle the visibility of the toolbar
 		if(m_pToolbar->IsWindowVisible())
+		{
 			SetControlBar(CONTROL_BAR_NONE);
+			m_pToolbar->ShowWindow(SW_HIDE);
+			if (m_IsStatusBarShowing)
+				SetControlBar(CONTROL_BAR_STATUS);
+		}
 		else
 			SetControlBar(CONTROL_BAR_TOOLS);
 	}
@@ -10896,7 +10911,8 @@ void CMainView::ReadSetup(BOOL bFirstTime)
 	m_ctrlTMMovie.SetUseSnapshots(FALSE);
 	m_ctrlTMMovie.SetDefaultRate(m_dFrameRate);
 	m_ctrlTMMovie.SetDetachBeforeLoad(System.bOptimizeVideo);
-
+	
+	m_bEnableBarcodeKeystrokes = System.bEnableBarcodeKeystrokes;
 	//  Checking for "Optimize for Tablet" if true setting buttons' large size 
 	m_bOptimizedForTablet = System.bOptimizeTablet;
 	if (System.bOptimizeTablet)
@@ -11913,12 +11929,16 @@ void CMainView::SetControlBar(int iId)
 			break;
 
 		case CONTROL_BAR_STATUS:
+			{
+			m_IsStatusBarShowing = !m_IsStatusBarShowing;
 			m_ControlBar.pWnd = &m_ctrlTMStat;
 			//	Make sure the status bar is properly sized
+			CRect temp = &m_rcStatus;
+			temp.right = 150;
 			if(IsWindow(m_ctrlTMStat.m_hWnd))
-				m_ctrlTMStat.MoveWindow(&m_rcStatus);
+				m_ctrlTMStat.MoveWindow(&temp);
 			break;
-
+			}
 		case CONTROL_BAR_SHOW_LARGE:
 			m_ControlBar.pWnd = m_pToolbar;
 			m_ControlBarExtra = m_ControlBar;
@@ -12978,7 +12998,7 @@ BOOL CMainView::SetPageFromId(SMultipageInfo* pInfo, long lPage, int iLookup)
 		m_Barcode.m_lSecondaryId = pInfo->pSecondary->m_lBarcodeId;
 		m_Barcode.m_lTertiaryId  = -1;
 		UpdateStatusBar();
-
+		m_CurrentPageBarcode = m_Barcode;
 		return TRUE;
 	}
 	else
@@ -15372,7 +15392,31 @@ BOOL CMainView::PreTranslateMessage(MSG* pMsg){
 	if( pMsg->message == WM_LBUTTONDBLCLK ) {
 		OnNormal();
 		//TRACE("DoubleClickDetected");
-	} else {
+	}
+	else {
 		return CFormView::PreTranslateMessage( pMsg );
 	}
+}
+
+void CMainView::UpdateBarcodeText(CString Barcode)
+{
+	if (!m_bEnableBarcodeKeystrokes)
+		return;
+	m_ctrlTMStat.SetStatusText(Barcode);
+	if(m_ControlBar.iId == CONTROL_BAR_STATUS)
+	{
+		//m_IsShowingBarcode = false;
+	}
+	else // if (m_ControlBar.iId == CONTROL_BAR_NONE)
+	{
+		SetControlBar(CONTROL_BAR_STATUS);
+		m_IsShowingBarcode = true;
+	}
+	//ProcessCommand(TMAX_STATUSBAR);
+	//SetControlBar(CONTROL_BAR_NONE);
+	//SetControlBar(CONTROL_BAR_STATUS);
+	/*if (Barcode.IsEmpty())
+		m_ctrlTMStat.SetStatusText(m_CurrentPageBarcode.GetBarcode());
+	else*/
+		
 }
