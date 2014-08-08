@@ -180,7 +180,8 @@ class CTMStatCtrl : public COleControl
 
 	public:
 	enum {
-	//{{AFX_DISP_ID(CTMStatCtrl)
+		dispidGetStatusBarWidth = 26L,
+		//{{AFX_DISP_ID(CTMStatCtrl)
 	dispidAutoInit = 1L,
 	dispidBuild = 2L,
 	dispidMajorVer = 3L,
@@ -208,6 +209,8 @@ class CTMStatCtrl : public COleControl
 	dispidGetRegisteredPath = 25L,
 	//}}AFX_DISP_ID
 	};
+protected:
+	LONG GetStatusBarWidth(void);
 };
 
 //{{AFX_INSERT_LOCATION}}

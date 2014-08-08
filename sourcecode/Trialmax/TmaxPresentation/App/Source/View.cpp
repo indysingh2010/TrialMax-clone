@@ -2930,6 +2930,9 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	{
 		//	Update the status bar
 		m_ctrlTMStat.SetStatusText(m_CurrentPageBarcode.GetBarcode());
+		CRect temp = &m_rcStatus;
+		temp.right = m_ctrlTMStat.GetStatusBarWidth();
+		m_ctrlTMStat.MoveWindow(&temp);
 		return FALSE;
 	}
 
@@ -11934,7 +11937,7 @@ void CMainView::SetControlBar(int iId)
 			m_ControlBar.pWnd = &m_ctrlTMStat;
 			//	Make sure the status bar is properly sized
 			CRect temp = &m_rcStatus;
-			temp.right = 150;
+			temp.right = m_ctrlTMStat.GetStatusBarWidth();
 			if(IsWindow(m_ctrlTMStat.m_hWnd))
 				m_ctrlTMStat.MoveWindow(&temp);
 			break;
@@ -13554,6 +13557,9 @@ void CMainView::UpdateStatusBar()
 			m_ctrlTMStat.SetPlaylistInfo((long)&m_PlaylistStatus);	
 			m_ctrlTMStat.SetStatusText(m_Barcode.GetBarcode());
 		}
+		CRect temp = &m_rcStatus;
+		temp.right = m_ctrlTMStat.GetStatusBarWidth();
+		m_ctrlTMStat.MoveWindow(&temp);
 	}
 	else
 	{
@@ -15383,11 +15389,35 @@ void CMainView::ChangeColorOfColorButton(short sColorToChange)
 			m_pToolbar->SetButtonImage(48,CColorPickerList::ColorType::LIGHTBLUE);
 }
 
+//==============================================================================
+//
+// 	Function Name:	CMainView::OnLButtonDblClk()
+//
+// 	Description:	This function will set all pages to 1:1 Display ratio on 
+//					double tap
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
 void CMainView::OnLButtonDblClk(UINT flags, CPoint clkPoint) {
 	OnNormal();
 	CFormView::OnLButtonDblClk(flags, clkPoint);
 }
 
+//==============================================================================
+//
+// 	Function Name:	CMainView::PreTranslateMessage()
+//
+// 	Description:	This function will set all pages to 1:1 Display ratio on 
+//					double tap
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
 BOOL CMainView::PreTranslateMessage(MSG* pMsg){
 	if( pMsg->message == WM_LBUTTONDBLCLK ) {
 		OnNormal();
@@ -15398,25 +15428,31 @@ BOOL CMainView::PreTranslateMessage(MSG* pMsg){
 	}
 }
 
+//==============================================================================
+//
+// 	Function Name:	CMainView::UpdateBarcodeText()
+//
+// 	Description:	This functions updates the status bar with the current value
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
 void CMainView::UpdateBarcodeText(CString Barcode)
 {
 	if (!m_bEnableBarcodeKeystrokes)
 		return;
 	m_ctrlTMStat.SetStatusText(Barcode);
+	CRect temp = &m_rcStatus;
+	temp.right = m_ctrlTMStat.GetStatusBarWidth();
+	m_ctrlTMStat.MoveWindow(&temp);
 	if(m_ControlBar.iId == CONTROL_BAR_STATUS)
 	{
-		//m_IsShowingBarcode = false;
 	}
-	else // if (m_ControlBar.iId == CONTROL_BAR_NONE)
+	else
 	{
 		SetControlBar(CONTROL_BAR_STATUS);
 		m_IsShowingBarcode = true;
 	}
-	//ProcessCommand(TMAX_STATUSBAR);
-	//SetControlBar(CONTROL_BAR_NONE);
-	//SetControlBar(CONTROL_BAR_STATUS);
-	/*if (Barcode.IsEmpty())
-		m_ctrlTMStat.SetStatusText(m_CurrentPageBarcode.GetBarcode());
-	else*/
-		
 }

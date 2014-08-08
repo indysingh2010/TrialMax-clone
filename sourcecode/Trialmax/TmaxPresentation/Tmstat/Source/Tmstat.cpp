@@ -115,6 +115,7 @@ BEGIN_DISPATCH_MAP(CTMStatCtrl, COleControl)
 
 	DISP_FUNCTION_ID(CTMStatCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
 
+	DISP_FUNCTION_ID(CTMStatCtrl, "GetStatusBarWidth", dispidGetStatusBarWidth, GetStatusBarWidth, VT_I4, VTS_NONE)
 END_DISPATCH_MAP()
 
 // Event map
@@ -1553,4 +1554,23 @@ void CTMStatCtrl::TimeToStr(long lTime, CString& strTime)
 	strTime.Format("%.01d:%.02d:%.02d", lHours, lMinutes, lSeconds);
 }
 
+//==============================================================================
+//
+// 	Function Name:	CTMStatCtrl::GetStatusBarWidth()
+//
+// 	Description:	This function is called to calculate the length of the 
+//					status bar
+//
+// 	Returns:		Length of the status bar
+//
+//	Notes:			None
+//
+//==============================================================================
+LONG CTMStatCtrl::GetStatusBarWidth(void)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
+	// TODO: Add your dispatch handler code here
+
+	return CWnd::GetDC()->GetTextExtent(m_strStatusText).cx + ((CWnd::GetDC()->GetTextExtent("M")).cx * (m_strStatusText.GetLength()*0.85));//m_rcText.right;
+}

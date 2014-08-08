@@ -107,6 +107,7 @@ public:
 	CString GetClassIdString();
 	CString GetRegisteredPath();
 	void AboutBox();
+	LONG GetStatusBarWidth(void);
 };
 
 //{{AFX_INSERT_LOCATION}}
