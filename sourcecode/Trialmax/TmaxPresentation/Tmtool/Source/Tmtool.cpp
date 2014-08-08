@@ -2311,6 +2311,7 @@ BOOL CTMToolCtrl::OnSetExtent(LPSIZEL lpSizeL)
 //==============================================================================
 void CTMToolCtrl::OnSize(UINT nType, int cx, int cy) 
 {
+	::GetWindowRect(::GetDesktopWindow(), &m_ScreenResolution);
 	//	Resize the toolbar to the frame
 	ResetFrame();
 }
@@ -3779,8 +3780,9 @@ short CTMToolCtrl::GetButtonXPosition(short sId)
 //
 //==============================================================================
 short CTMToolCtrl::GetNumberOfButtonsToAdd()
-{		
-	 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+{	
+	 ::GetWindowRect(::GetDesktopWindow(), &m_ScreenResolution);
+	 int screenWidth = m_ScreenResolution.right;
 	 int buttonWidth = GetButtonWidth() + 7;
 
 	 int numberOfButtonsToAdd = screenWidth/buttonWidth;	
