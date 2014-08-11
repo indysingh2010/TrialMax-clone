@@ -1703,7 +1703,9 @@ namespace FTI.Trialmax.Database
 					strFileSpec = GetExportFileSpec(dxScript);
 					if((strFileSpec == null) || (strFileSpec.Length == 0))
 						break;
-						
+
+                    m_strExtension = System.IO.Path.GetExtension(strFileSpec);
+                    m_strExtension = m_strExtension.Replace(".", "");
 					//	Are we exporting to WMV?
 					if((CheckAborted() == false) && (m_tmaxExportOptions.VideoWMV == true))
 					{
