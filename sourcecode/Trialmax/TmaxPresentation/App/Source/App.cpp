@@ -701,6 +701,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				{
 					m_szKey[0] = cKey;
 					m_strKBBuffer += m_szKey;
+					m_sHookState = WAITING_PAGE_NUMBER;
 					//m_pFrame->UpdateBarcode(m_strKBBuffer);
 					return TRUE;
 				}
