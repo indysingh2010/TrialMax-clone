@@ -4501,7 +4501,7 @@ namespace FTI.Trialmax.TmaxManager
 				//	Process the request
 				Args.Successful = m_tmaxDatabase.Import(Args.Parameters, Args.Items[0], tmaxResults);
 				Args.Items[0].State = TmaxItemStates.Processed;
-
+				OnAppReloadCase();
 				if(Args.Successful == true)
 				{
 					//	Notify each pane
