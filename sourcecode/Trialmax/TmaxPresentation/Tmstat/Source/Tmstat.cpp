@@ -1571,6 +1571,29 @@ LONG CTMStatCtrl::GetStatusBarWidth(void)
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	// TODO: Add your dispatch handler code here
+	
+	CBrush		brBackground;
+	CFont*		pOldFont;
+	COLORREF	crOldColor;
+	int			iOldMode;
+	CDC*		pdc = CWnd::GetDC();
+	//	Create a brush using the background color
+	brBackground.CreateSolidBrush(TranslateColor(GetBackColor()));
+		
+	//	Set up the dc
+	if(m_pFont)
+		pOldFont = pdc->SelectObject(m_pFont);
+	else
+		pOldFont = SelectStockFont(pdc);
+	iOldMode = pdc->SetBkMode(TRANSPARENT);
+	crOldColor = pdc->SetTextColor(TranslateColor(GetForeColor()));
 
-	return CWnd::GetDC()->GetTextExtent(m_strStatusText).cx + ((CWnd::GetDC()->GetTextExtent("M")).cx * (m_strStatusText.GetLength()*0.85));//m_rcText.right;
+	long size = ((pdc->GetTextExtent(m_strStatusText)).cx) + ((pdc->GetTextExtent("M")).cx); // Size of the cropped status bar displaying the Barcode
+	
+	//	Restore the dc
+	if(pOldFont) pdc->SelectObject(pOldFont);
+	pdc->SetBkMode(iOldMode);
+	pdc->SetTextColor(crOldColor);
+	
+	return size;
 }
