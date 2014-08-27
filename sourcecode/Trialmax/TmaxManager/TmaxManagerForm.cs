@@ -4501,7 +4501,7 @@ namespace FTI.Trialmax.TmaxManager
 				//	Process the request
 				Args.Successful = m_tmaxDatabase.Import(Args.Parameters, Args.Items[0], tmaxResults);
 				Args.Items[0].State = TmaxItemStates.Processed;
-
+				OnAppReloadCase();
 				if(Args.Successful == true)
 				{
 					//	Notify each pane
@@ -9723,7 +9723,11 @@ namespace FTI.Trialmax.TmaxManager
 				}
 				
 			}
-			
+
+            /// <summary>This function called after TmaxManagerForm is created to solve in issue caused by DPI Change</summary>
+            /// <summary>in which Media Viewer Pane does not resize until it gets focus or the window is resized</summary>
+            this.m_paneViewer.Focus();
+
 		}// protected void OnLoad(System.EventArgs e)
 		
 		/// <summary>This method traps events fired when the form is closing</summary>
