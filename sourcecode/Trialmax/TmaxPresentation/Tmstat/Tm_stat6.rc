@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,0,1,884
- PRODUCTVERSION 7,0,1,884
+ FILEVERSION 7,0,2,8274
+ PRODUCTVERSION 7,0,2,8274
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FTI Consulting"
             VALUE "FileDescription", "TrialMax Status Bar ActiveX Control"
-            VALUE "FileVersion", "7.0.1.884"
+            VALUE "FileVersion", "7.0.2.8274"
             VALUE "InternalName", "TMSTAT"
             VALUE "LegalCopyright", "Copyright (C) FTI Consulting 2004"
             VALUE "OriginalFilename", "TM_STAT6.OCX"
             VALUE "ProductName", "TrialMax Status Bar ActiveX Control"
-            VALUE "ProductVersion", "7.0.1.884"
+            VALUE "ProductVersion", "7.0.2.8274"
         END
     END
     BLOCK "VarFileInfo"
