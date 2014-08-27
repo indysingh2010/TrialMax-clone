@@ -781,7 +781,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			{
 				//	If we get this far the barcode must be invalid
 				m_strKBBuffer.Empty();
-				m_pFrame->UpdateBarcode(m_strKBBuffer);
+				//m_pFrame->UpdateBarcode(m_strKBBuffer);
 				m_sHookState = WAITING_START;
 			}
 

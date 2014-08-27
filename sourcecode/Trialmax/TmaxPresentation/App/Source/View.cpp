@@ -11928,7 +11928,7 @@ void CMainView::SetControlBar(int iId)
 
 			m_ControlBar.pWnd = m_pToolbar;
 			if(IsWindow(m_ctrlTMStat.m_hWnd))
-				m_ctrlTMStat.MoveWindow(0,0,1,1);
+				m_ctrlTMStat.ShowWindow(SW_HIDE);
 			break;
 
 		case CONTROL_BAR_STATUS:
@@ -11948,7 +11948,7 @@ void CMainView::SetControlBar(int iId)
 			m_ControlBarExtra.iId = CONTROL_BAR_SHOW_LARGE;
 			m_ControlBarExtra.pWnd =  m_aToolbars[S_DOCUMENT_LARGE].pControl;
 			if(IsWindow(m_ctrlTMStat.m_hWnd))
-				m_ctrlTMStat.MoveWindow(0,0,1,1);
+				m_ctrlTMStat.ShowWindow(SW_HIDE);
 			break;
 
 		case CONTROL_BAR_HIDE_LARGE:
@@ -11962,7 +11962,7 @@ void CMainView::SetControlBar(int iId)
 			m_ControlBarExtra.pWnd = 0;
 			//	Make sure the status bar remains invisible
 			if(IsWindow(m_ctrlTMStat.m_hWnd))
-				m_ctrlTMStat.MoveWindow(0,0,1,1);
+				m_ctrlTMStat.ShowWindow(SW_HIDE);
 			break;
 	}
 
