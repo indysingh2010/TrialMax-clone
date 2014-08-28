@@ -2827,7 +2827,7 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	char		szBarcode[512];
 	
 
-	if (m_IsShowingBarcode)
+	if (!m_IsStatusBarShowing)
 	{
 		SetControlBar(CONTROL_BAR_NONE);
 		m_IsShowingBarcode = false;
@@ -2882,6 +2882,8 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	{
 		HandleError(0, IDS_NOMEDIARECORD, szBarcode);
 		theApp.ResetHook();
+		Barcode = m_CurrentPageBarcode;
+		UpdateStatusBar();
 		return FALSE;
 	}
 
@@ -8134,9 +8136,15 @@ void CMainView::OnStatusBar()
 
 	//	Toggle the visibility
 	if(m_ControlBar.iId == CONTROL_BAR_STATUS)
+	{
+		m_IsStatusBarShowing = false;
 		SetControlBar(CONTROL_BAR_NONE);
+	}
 	else
+	{
+		m_IsStatusBarShowing = true;
 		SetControlBar(CONTROL_BAR_STATUS);
+	}
 }
 
 //==============================================================================
@@ -11933,7 +11941,7 @@ void CMainView::SetControlBar(int iId)
 
 		case CONTROL_BAR_STATUS:
 			{
-			m_IsStatusBarShowing = !m_IsStatusBarShowing;
+			//m_IsStatusBarShowing = true;
 			m_ControlBar.pWnd = &m_ctrlTMStat;
 			//	Make sure the status bar is properly sized
 			CRect temp = &m_rcStatus;
