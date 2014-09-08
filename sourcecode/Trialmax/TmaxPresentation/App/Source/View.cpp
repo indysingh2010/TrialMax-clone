@@ -14530,7 +14530,8 @@ void CMainView::BlankPresentationToolbar()
 {
 	// we are shwoing docmuent toolbar, for now, on blank presentation
 	SelectToolbar(S_DOCUMENT);
-	SetControlBar(CONTROL_BAR_TOOLS);
+	if (m_bOptimizedForTablet)
+		SetControlBar(CONTROL_BAR_TOOLS);
 }
 
 //==============================================================================
