@@ -40,7 +40,7 @@ class CTMStatCtrl : public COleControl
 	private:
 
 						DECLARE_DYNCREATE(CTMStatCtrl)
-
+		CString			m_strBarcode;
 		CErrorHandler	m_Errors;
 		CTMVersion		m_tmVersion;
 		RECT			m_rcText;
@@ -180,6 +180,7 @@ class CTMStatCtrl : public COleControl
 
 	public:
 	enum {
+		dispidSetStatusBarcode = 27L,
 		dispidGetStatusBarWidth = 26L,
 		//{{AFX_DISP_ID(CTMStatCtrl)
 	dispidAutoInit = 1L,
@@ -211,6 +212,7 @@ class CTMStatCtrl : public COleControl
 	};
 protected:
 	LONG GetStatusBarWidth(void);
+	void SetStatusBarcode(BSTR *barcode);
 };
 
 //{{AFX_INSERT_LOCATION}}

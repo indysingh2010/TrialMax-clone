@@ -665,6 +665,7 @@ class CMainView : public CFormView
 		bool			m_bEnableBarcodeKeystrokes;
 		bool			m_IsShowingBarcode;
 		bool			m_IsStatusBarShowing;
+		bool			m_IsXPressed;
 	public:
 		
 
@@ -711,7 +712,8 @@ class CMainView : public CFormView
 		void			OnColorPickerButtonClickEvent(int iColorType);				
 		void			OnColorPickerCloseButtonClickEvent();
 		void			UpdateBarcodeText(CString);
-	protected: 		
+	protected:
+ 		void			SetStatusBarcode(CString barcode);
 		void			SetTaskBarVisible(BOOL bVisible);
 		void			UpdateToolColor();
 		void			UpdateStatusBar();

@@ -399,3 +399,10 @@ LONG CTMStat::GetStatusBarWidth(void)
 	InvokeHelper(0x1a, DISPATCH_METHOD, VT_I4, (void*)&result, NULL);
 	return result;
 }
+
+void CTMStat::SetStatusBarcode(BSTR *barcode)
+{
+	static BYTE parms[] =
+		VTS_PBSTR;
+	InvokeHelper(0x1b, DISPATCH_METHOD, VT_EMPTY, NULL, parms, barcode);
+}

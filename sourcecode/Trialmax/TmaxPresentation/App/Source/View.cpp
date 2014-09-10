@@ -451,6 +451,7 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_ctrlTMView(NULL)
 {
 	//{{AFX_DATA_INIT(CMainView)
 	//}}AFX_DATA_INIT
+	m_IsXPressed = false;
 	m_IsStatusBarShowing = false;
 	m_IsShowingBarcode = false;
 	m_pDatabase = 0;
@@ -2883,6 +2884,10 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 		HandleError(0, IDS_NOMEDIARECORD, szBarcode);
 		theApp.ResetHook();
 		Barcode = m_CurrentPageBarcode;
+		SetStatusBarcode(Barcode.GetBarcode());
+		CRect temp = &m_rcStatus;
+		temp.right = m_ctrlTMStat.GetStatusBarWidth();
+		m_ctrlTMStat.MoveWindow(&temp);
 		UpdateStatusBar();
 		return FALSE;
 	}
@@ -2931,7 +2936,8 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	else
 	{
 		//	Update the status bar
-		m_ctrlTMStat.SetStatusText(m_CurrentPageBarcode.GetBarcode());
+		SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
+		UpdateStatusBar();
 		CRect temp = &m_rcStatus;
 		temp.right = m_ctrlTMStat.GetStatusBarWidth();
 		m_ctrlTMStat.MoveWindow(&temp);
@@ -2958,6 +2964,7 @@ long g_lTertiary;
 
 BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 {
+	m_IsXPressed = false;
 	SMultipageInfo	MPInfo;
 	SPlaylistParams	PLParams;
 	SShowInfo		ShowInfo;
@@ -2987,7 +2994,6 @@ BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 	m_Barcode.m_strMediaId   = pMedia->m_strMediaId;
 	m_Barcode.m_lSecondaryId = lSecondary;
 	m_Barcode.m_lTertiaryId  = lTertiary;
-
 	//	What type of media is this?
 	switch(pMedia->m_lPlayerType)
 	{
@@ -3223,7 +3229,9 @@ BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 			HandleError(0, IDS_INVALIDMEDIATYPE, pMedia->m_strMediaId);
 			break;
 	}			
-
+	m_CurrentPageBarcode = m_Barcode;
+	SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
+	UpdateStatusBar();
 	return TRUE;
 }
 
@@ -6723,7 +6731,7 @@ void CMainView::OnNextMedia()
 			m_pMedia = pMedia;
 		}
 	}
-
+	UpdateStatusBar();
 }
 
 //==============================================================================
@@ -6817,6 +6825,7 @@ void CMainView::OnNextPage()
 
 			break;
 	}
+	UpdateStatusBar();
 }
 
 //==============================================================================
@@ -7257,6 +7266,7 @@ void CMainView::OnPreviousPage()
 
 			break;
 	}
+	UpdateStatusBar();
 }
 
 //==============================================================================
@@ -7368,7 +7378,7 @@ void CMainView::OnPreviousMedia()
 			m_pMedia = pMedia;
 		}
 	}
-
+	UpdateStatusBar();
 }
 
 //==============================================================================
@@ -13008,8 +13018,9 @@ BOOL CMainView::SetPageFromId(SMultipageInfo* pInfo, long lPage, int iLookup)
 		m_Barcode.m_strMediaId   = pInfo->pMultipage->m_strMediaId;
 		m_Barcode.m_lSecondaryId = pInfo->pSecondary->m_lBarcodeId;
 		m_Barcode.m_lTertiaryId  = -1;
-		UpdateStatusBar();
+		
 		m_CurrentPageBarcode = m_Barcode;
+		UpdateStatusBar();
 		return TRUE;
 	}
 	else
@@ -13562,12 +13573,35 @@ void CMainView::UpdateStatusBar()
 		}
 		else
 		{
-			m_ctrlTMStat.SetPlaylistInfo((long)&m_PlaylistStatus);	
-			m_ctrlTMStat.SetStatusText(m_Barcode.GetBarcode());
+			if (m_IsShowingBarcode)
+			{
+				// m_ctrlTMStat.SetStatusText(m_Barcode.GetBarcode());
+			}
+			else
+			{
+				m_ctrlTMStat.SetPlaylistInfo((long)&m_PlaylistStatus);
+				if (m_PlaylistStatus.bShowPlaylist && strlen(m_PlaylistStatus.szMediaId) != 0){
+					m_CurrentPageBarcode.SetBarcode(m_PlaylistStatus.szMediaId);
+					if (!m_IsXPressed)
+						SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
+				}
+				else
+				{
+					SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
+					m_CurrentPageBarcode = m_Barcode;
+				}
+			}
 		}
-		CRect temp = &m_rcStatus;
-		temp.right = m_ctrlTMStat.GetStatusBarWidth();
-		m_ctrlTMStat.MoveWindow(&temp);
+
+		// If video is running, we dont crop the bar and check the size again and again as the status bar is
+		// updating each second because of updating the m_PlaylistStatus i.e. playtime etc and updating the
+		// bar each second would cause flicker in status bar
+		if (!IsVideoVisible()) 
+		{
+			CRect temp = &m_rcStatus;
+			temp.right = m_ctrlTMStat.GetStatusBarWidth();
+			m_ctrlTMStat.MoveWindow(&temp);
+		}
 	}
 	else
 	{
@@ -15452,9 +15486,10 @@ void CMainView::UpdateBarcodeText(CString Barcode)
 {
 	if (!m_bEnableBarcodeKeystrokes)
 		return;
-	m_ctrlTMStat.SetStatusText(Barcode);
+	SetStatusBarcode(Barcode);
 	CRect temp = &m_rcStatus;
-	temp.right = m_ctrlTMStat.GetStatusBarWidth();
+	if (!m_PlaylistStatus.bShowPlaylist)
+		temp.right = m_ctrlTMStat.GetStatusBarWidth();
 	m_ctrlTMStat.MoveWindow(&temp);
 	if(m_ControlBar.iId == CONTROL_BAR_STATUS)
 	{
@@ -15464,4 +15499,24 @@ void CMainView::UpdateBarcodeText(CString Barcode)
 		SetControlBar(CONTROL_BAR_STATUS);
 		m_IsShowingBarcode = true;
 	}
+	m_IsXPressed = true;
+}
+
+//==============================================================================
+//
+// 	Function Name:	CMainView::SetStatusBarcode()
+//
+// 	Description:	This functions updates the barcode portion of the status bar 
+//					with the current barcode value
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
+void CMainView::SetStatusBarcode(CString barcode)
+{
+	BSTR bstr = barcode.AllocSysString();
+	m_ctrlTMStat.SetStatusBarcode(&bstr);
+	::SysFreeString(bstr);
 }
