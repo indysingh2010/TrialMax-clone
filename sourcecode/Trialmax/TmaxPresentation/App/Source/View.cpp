@@ -2925,6 +2925,8 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 
 		//	Update the persistant barcode information
 		m_Barcode = Barcode;
+		m_CurrentPageBarcode = Barcode;
+		SetStatusBarcode(Barcode.GetBarcode());
 		if(bAddBuffer == TRUE)
 			m_aBarcodes.Add(m_Barcode);
 
@@ -3231,6 +3233,10 @@ BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 	}			
 	m_CurrentPageBarcode = m_Barcode;
 	SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
+	CRect temp = &m_rcStatus;
+	if (!m_bSplitScreenLink && !m_PlaylistStatus.bShowPlaylist)
+		temp.right = m_ctrlTMStat.GetStatusBarWidth();
+	m_ctrlTMStat.MoveWindow(&temp);
 	UpdateStatusBar();
 	return TRUE;
 }
@@ -6825,6 +6831,10 @@ void CMainView::OnNextPage()
 
 			break;
 	}
+	CRect temp = &m_rcStatus;
+	if (!m_bSplitScreenLink)
+		temp.right = m_ctrlTMStat.GetStatusBarWidth();
+	m_ctrlTMStat.MoveWindow(&temp);
 	UpdateStatusBar();
 }
 
@@ -11955,7 +11965,8 @@ void CMainView::SetControlBar(int iId)
 			m_ControlBar.pWnd = &m_ctrlTMStat;
 			//	Make sure the status bar is properly sized
 			CRect temp = &m_rcStatus;
-			temp.right = m_ctrlTMStat.GetStatusBarWidth();
+			if (!m_bSplitScreenLink && !m_PlaylistStatus.bShowPlaylist)
+				temp.right = m_ctrlTMStat.GetStatusBarWidth();
 			if(IsWindow(m_ctrlTMStat.m_hWnd))
 				m_ctrlTMStat.MoveWindow(&temp);
 			break;
@@ -13588,7 +13599,6 @@ void CMainView::UpdateStatusBar()
 				else
 				{
 					SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
-					m_CurrentPageBarcode = m_Barcode;
 				}
 			}
 		}
@@ -15488,7 +15498,7 @@ void CMainView::UpdateBarcodeText(CString Barcode)
 		return;
 	SetStatusBarcode(Barcode);
 	CRect temp = &m_rcStatus;
-	if (!m_PlaylistStatus.bShowPlaylist)
+	if (!m_bSplitScreenLink && !m_PlaylistStatus.bShowPlaylist)
 		temp.right = m_ctrlTMStat.GetStatusBarWidth();
 	m_ctrlTMStat.MoveWindow(&temp);
 	if(m_ControlBar.iId == CONTROL_BAR_STATUS)
