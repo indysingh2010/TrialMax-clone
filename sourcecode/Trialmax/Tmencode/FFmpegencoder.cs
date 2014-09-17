@@ -25,7 +25,7 @@ namespace FTI.Trialmax.Encode
         private string m_strBitrate = "768k";
 
         // used to store end time of current video that is in encoding
-        private long m_lEndTime = 0;
+        private double m_lEndTime = 0;
 
         // used to store total end time of all videos that is going to be encoded
         private long m_lEndTimeTotal = 0;
@@ -507,7 +507,7 @@ namespace FTI.Trialmax.Encode
                 CFFMpegSource source = Sources[(int)m_lCompleted];
 
                 // endtime of current script
-                m_lEndTime = (long)(source.m_dEndTime - source.m_dStartTime);
+                m_lEndTime = (double)(source.m_dEndTime - source.m_dStartTime);
 
                 // if there are single script so we do not need to merge, we only need to encode directly
                 if (Source.Count == 1) 
