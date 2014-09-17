@@ -1597,7 +1597,7 @@ LONG CTMStatCtrl::GetStatusBarWidth(void)
 	crOldColor = pdc->SetTextColor(TranslateColor(GetForeColor()));
 
 	long size;
-	if (m_bShowPlaylist) // Check if current media running is video i.e. Will have more details then just barcode
+	if (m_sMode == TMSTAT_PLAYLISTMODE) // Check if current media running is video i.e. Will have more details then just barcode
 		size = m_rcClient.right; // Size of the full status bar displaying the Barcode (Not cropped)
 	else
 		size = ((pdc->GetTextExtent(m_strBarcode)).cx) + ((pdc->GetTextExtent("M")).cx); // Size of the cropped status bar displaying the Barcode
