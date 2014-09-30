@@ -61,7 +61,9 @@ namespace FTI.Shared.Database
         /// <summary>This is called if Color is selected for conversion</summary>
         private bool ConvertColor()
         {
-            return true;
+            CTmaxLtPdfManager LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_OutputType, m_CustomDPI);
+            LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
+            return LtManager.Process();
         }// private bool ConvertColor()
 
         /// <summary>This is called if BW is selected for conversion</summary>
