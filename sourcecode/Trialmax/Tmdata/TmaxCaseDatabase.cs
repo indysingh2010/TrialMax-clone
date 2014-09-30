@@ -10167,7 +10167,7 @@ namespace FTI.Trialmax.Database
                 PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
                 //m_cfRegisterProgress.
                 bool status = PDFManager.StartConversion();
-                
+
                 // If the new PDF Manager fails to convert, use FTIP2I
                 if (!status)
                 {
@@ -10318,6 +10318,7 @@ namespace FTI.Trialmax.Database
                                 //	Update the progress form
                                 if (iFile > 1)
                                     SetRegisterProgress("Exported " + System.IO.Path.GetFileName(strAdobeFileSpec) + " page " + (iFile - 1).ToString());
+                                iPages = iFile - 1;
                                 break;
                             }
 
