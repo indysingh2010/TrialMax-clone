@@ -95,9 +95,24 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ghostscript.NET">
+      <HintPath>..\packages\Ghostscript.NET.1.1.9\lib\net40\Ghostscript.NET.dll</HintPath>
+    </Reference>
     <Reference Include="Interop.TiffPageSplitDLL, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Install\Sherrod\Interop.TiffPageSplitDLL.dll</HintPath>
+    </Reference>
+    <Reference Include="Leadtools, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.dll</HintPath>
+    </Reference>
+    <Reference Include="Leadtools.Codecs, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Codecs.dll</HintPath>
+    </Reference>
+    <Reference Include="Leadtools.Pdf, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Pdf.dll</HintPath>
     </Reference>
     <Reference Include="stdole">
       <Name>stdole</Name>
@@ -218,9 +233,11 @@
     <Compile Include="ExportManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GsPdfManager.cs" />
     <Compile Include="ImportManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="LtPdfManager.cs" />
     <Compile Include="OExportManager.cs" />
     <Compile Include="OImportManager.cs" />
     <Compile Include="Oxcase.cs" />
@@ -244,6 +261,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ObjectionsDatabase.cs" />
+    <Compile Include="TmaxPDFManager.cs" />
     <Compile Include="TmaxRecordSorter.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -302,6 +320,14 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Leadtools.PdfEngine.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
