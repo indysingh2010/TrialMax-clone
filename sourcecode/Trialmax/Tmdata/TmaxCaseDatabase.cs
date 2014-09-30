@@ -18,10 +18,13 @@ using FTI.Trialmax.ActiveX;
 using FTI.Trialmax.MSOffice.MSPowerPoint;
 using FTI.Trialmax.Encode;
 
-
+using Leadtools;
+using Leadtools.Codecs;
+using Ghostscript.NET;
 
 using Interop.TiffPageSplitDLL;
 using System.Collections.Generic;
+using FTI.Shared.Database;
 
 namespace FTI.Trialmax.Database
 {
@@ -401,7 +404,16 @@ namespace FTI.Trialmax.Database
 
 		/// <summary>Local member bound to PaneId property</summary>
 		private int m_iPaneId = 0;
-		
+
+        /// <summary>Total number of pages that will be converted</summary>
+        private long m_totalPages = 0;
+
+        /// <summary>Leadtools codec to count total number of pages</summary>
+        private RasterCodecs codecs = null;
+
+        /// <summary>Leadtools CodecsImageInfo to get PDF info</summary>
+        private CodecsImageInfo info = null;
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -8768,6 +8780,10 @@ namespace FTI.Trialmax.Database
 				SetSourceTypes(m_RegSourceFolder, m_eRegSourceType);
 			}
 
+            // Count total number of pages in all the files that needs to be converted
+            CalculateTotalPages(m_RegSourceFolder);
+            m_cfRegisterProgress.TotalPages = m_totalPages;
+            
 			//	Add the new records to the database
 			if((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
 				AddSource(m_RegSourceFolder);
@@ -8780,7 +8796,50 @@ namespace FTI.Trialmax.Database
 			}
 
 		}// private void RegisterThreadProc()
-		
+
+        private void  CalculateTotalPages(CTmaxSourceFolder tmaxSource)
+        {
+
+            Debug.Assert(tmaxSource != null);
+            Debug.Assert(tmaxSource.Files != null);
+            Debug.Assert(tmaxSource.SubFolders != null);
+
+            //	Are there any files in the source folder?
+            if (tmaxSource.Files.Count > 0)
+            {
+                for (int i = 0; i < tmaxSource.Files.Count; i++)
+                {
+                    GhostscriptVersionInfo m_gvi = new GhostscriptVersionInfo("PDFManager/gsdll32.dll");
+                    GhostscriptPdfInfo tempInfo = new GhostscriptPdfInfo();
+                    //GhostscriptPdfInfo.GetInkCoverage("").Count;
+                    
+                    CTmaxSourceFile temp = (CTmaxSourceFile)tmaxSource.Files.GetAt(0);
+                    if (codecs == null)
+                        codecs = new RasterCodecs();
+                    info = codecs.GetInformation(temp.Path, true);
+                    m_totalPages += info.TotalPages;
+                }
+
+            }// if(tmaxSource.Files.Count > 0)
+
+            //	Add each subfolder
+            foreach (CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
+            {
+                if (m_bRegisterCancelled == false)
+                {
+                    CalculateTotalPages(tmaxSubFolder);
+
+                    //	Mark this parent as being registered if its subfolder got registered
+                    //
+                    //	NOTE:	This allows us to maintain the registration chain when a folder
+                    //			has nothing but subfolders
+                    if (tmaxSubFolder.Registered == true)
+                        tmaxSource.Registered = true;
+                }
+
+            }//foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
+        }
+
 		/// <summary>This method runs in its own thread to validate the database contents</summary>
 		/// <remarks>This method runs in a local worker thread executed by the Validate() method</remarks>
 		private void ValidateThreadProc()
@@ -10103,130 +10162,212 @@ namespace FTI.Trialmax.Database
 			
 			try
 			{
-				//	Create the process for launching the converter
-				pdfConverter = new Process();
-				
-				//	Initialize the startup information
-				//
-				//	NOTE:	All command line parameters are converted to lower case
-				//			because the exporter has trouble with some upper case
-				//			values. Specifically, it will fail if the PDF extension is
-				//			all upper case
-				pdfConverter.StartInfo.FileName = m_strAdobeConverter.ToLower();
-				pdfConverter.StartInfo.Arguments = (" -in \"" + strAdobeFileSpec.ToLower() + "\" -out \"" + strTarget.ToLower() + "\"");
-				pdfConverter.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                // Start the PDF Manager and provide the data needed for conversion
+                CTmaxPDFManager PDFManager = new CTmaxPDFManager(strAdobeFileSpec.ToLower(), strTarget.ToLower(), m_tmaxRegisterOptions.OutputType, m_tmaxRegisterOptions.CustomDPI);
+                PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
+                //m_cfRegisterProgress.
+                bool status = PDFManager.StartConversion();
+                
+                // If the new PDF Manager fails to convert, use FTIP2I
+                if (!status)
+                {
+                    //	Create the process for launching the converter
+                    pdfConverter = new Process();
+                    //	Initialize the startup information
+                    //
+                    //	NOTE:	All command line parameters are converted to lower case
+                    //			because the exporter has trouble with some upper case
+                    //			values. Specifically, it will fail if the PDF extension is
+                    //			all upper case
+                    pdfConverter.StartInfo.FileName = m_strAdobeConverter.ToLower();
+                    pdfConverter.StartInfo.Arguments = (" -in \"" + strAdobeFileSpec.ToLower() + "\" -out \"" + strTarget.ToLower() + "\"");
+                    pdfConverter.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-				//	Display the hour glass
-				Cursor.Current = Cursors.WaitCursor;
-					
-				//	Start the conversion process
-				if(pdfConverter.Start() == false) 
-				{
-                    FireError(this,"ExportAdobe",this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_START_CONVERT_FAILED,m_strAdobeConverter));
-					
-					Cursor.Current = oldCursor != null ? oldCursor : Cursors.Default;
-					return 0;
-				}
+                    //	Display the hour glass
+                    Cursor.Current = Cursors.WaitCursor;
+                    //	Start the conversion process
+                    if (pdfConverter.Start() == false)
+                    {
+                        FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_START_CONVERT_FAILED, m_strAdobeConverter));
 
-				//	Now that we've launched the converter, make sure the
-				//	target has a trailing backslash
-				//
-				//	NOTE:	We really don't need to check to see if the
-				//			target already has a backslash because we know
-				//			the converter can't handle one but I'm just anal
-				//			that way
-				if(strTarget.EndsWith("\\") == false)
-					strTarget += "\\";
-					
-				//	Block this thread until the process completes
-				//
-				//	NOTE:	We could just call pdfConverter.WaitForExit() but this
-				//			approach allows us to do some processing while the 
-				//			converter is active
-				while(pdfConverter.HasExited == false)
-				{
-					Thread.Sleep(250);
-				
-					while(true)
-					{
-						strFilename = String.Format("{0}{1:0000}.png", strTarget, iFile);
-						if(System.IO.File.Exists(strFilename) == true)
-						{
-							iFile++;
-						}
-						else
-						{
-							strFilename = String.Format("{0}{1:0000}.tif", strTarget, iFile);
-							if(System.IO.File.Exists(strFilename) == true)
-							{
-								iFile++;
-							}
-							else
-							{
-								//	Update the progress form
-								if(iFile > 1)
-									SetRegisterProgress("Exported " + System.IO.Path.GetFileName(strAdobeFileSpec) + " page " + (iFile - 1).ToString());
-								break;
-							}
-						
-						}
-						
-					}// while(true)
-						
-				}// while(pdfConverter.HasExited == false)
+                        Cursor.Current = oldCursor != null ? oldCursor : Cursors.Default;
+                        return 0;
+                    }
 
-				//	Was the conversion successful?
-				if(pdfConverter.ExitCode == 0)
-				{
-					//	Build the path to the conversion results file
-					strResults = (strTarget + "conv.xml");
-					
-					//	Allocate and initialize the XML reader
-					xmlResults = new CXmlAdobeConversion();
-					xmlResults.EventSource.ErrorEvent += new FTI.Shared.Trialmax.ErrorEventHandler(this.OnError);
-					xmlResults.EventSource.DiagnosticEvent += new FTI.Shared.Trialmax.DiagnosticEventHandler(this.OnDiagnostic);
-						
-					//	Open the XML results file
-					if(xmlResults.Open(strResults) == true)
-					{
-						//	Was there a fatal error during the conversion?
-						if(xmlResults.FatalError.Length > 0)
-						{
-							FireError(this, "ExportAdobe", ("PDF Fatal Error: " + xmlResults.FatalError));
-						}
-						else
-						{						
-							//	Display errors and warnings
-							if(xmlResults.Error.Length > 0)
-								FireError(this, "ExportAdobe", ("PDF Error: " + xmlResults.Error + " - filename = " + strAdobeFileSpec));
-							if(xmlResults.Warning.Length > 0)
-								FireError(this, "ExportAdobe", ("PDF Warning: " + xmlResults.Warning + " - filename = " + strAdobeFileSpec));
-							
-							//	Get the page count stored in the file
-							iPages = xmlResults.Pages;
-						}
-						
-					}
-					else
-					{
-						//	Invalidate the return result so that it gets ignored
-						iPages = -1;
-					
-					}// if(xmlResults.Open(strResults) == true)
-					
-				}
-				else
-				{
-                    FireError(this,"ExportAdobe",this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_CONVERSION_FAILED,strAdobeFileSpec,pdfConverter.ExitCode.ToString()));
-				
-				}// if(pdfConverter.ExitCode == 0)
-					
-				//	Clean up so that it's not left with our source files
-				if(System.IO.File.Exists(strResults) == true)
-				{
-					try { System.IO.File.Delete(strResults); }
-					catch {}	
-				}				
+                    //	Now that we've launched the converter, make sure the
+                    //	target has a trailing backslash
+                    //
+                    //	NOTE:	We really don't need to check to see if the
+                    //			target already has a backslash because we know
+                    //			the converter can't handle one but I'm just anal
+                    //			that way
+                    if (strTarget.EndsWith("\\") == false)
+                        strTarget += "\\";
+
+                    //	Block this thread until the process completes
+                    //
+                    //	NOTE:	We could just call pdfConverter.WaitForExit() but this
+                    //			approach allows us to do some processing while the 
+                    //			converter is active
+                    while (pdfConverter.HasExited == false)
+                    {
+                        Thread.Sleep(250);
+
+                        while (true)
+                        {
+                            strFilename = String.Format("{0}{1:0000}.png", strTarget, iFile);
+                            if (System.IO.File.Exists(strFilename) == true)
+                            {
+                                iFile++;
+                            }
+                            else
+                            {
+                                strFilename = String.Format("{0}{1:0000}.tif", strTarget, iFile);
+                                if (System.IO.File.Exists(strFilename) == true)
+                                {
+                                    iFile++;
+                                }
+                                else
+                                {
+                                    //	Update the progress form
+                                    if (iFile > 1)
+                                        SetRegisterProgress("Exported " + System.IO.Path.GetFileName(strAdobeFileSpec) + " page " + (iFile - 1).ToString());
+                                    break;
+                                }
+
+                            }
+
+                        }// while(true)
+
+                    }// while(pdfConverter.HasExited == false)
+
+                    //	Was the conversion successful?
+                    if (pdfConverter.ExitCode == 0)
+                    {
+                        //	Build the path to the conversion results file
+                        strResults = (strTarget + "conv.xml");
+
+                        //	Allocate and initialize the XML reader
+                        xmlResults = new CXmlAdobeConversion();
+                        xmlResults.EventSource.ErrorEvent += new FTI.Shared.Trialmax.ErrorEventHandler(this.OnError);
+                        xmlResults.EventSource.DiagnosticEvent += new FTI.Shared.Trialmax.DiagnosticEventHandler(this.OnDiagnostic);
+
+                        //	Open the XML results file
+                        if (xmlResults.Open(strResults) == true)
+                        {
+                            //	Was there a fatal error during the conversion?
+                            if (xmlResults.FatalError.Length > 0)
+                            {
+                                FireError(this, "ExportAdobe", ("PDF Fatal Error: " + xmlResults.FatalError));
+                            }
+                            else
+                            {
+                                //	Display errors and warnings
+                                if (xmlResults.Error.Length > 0)
+                                    FireError(this, "ExportAdobe", ("PDF Error: " + xmlResults.Error + " - filename = " + strAdobeFileSpec));
+                                if (xmlResults.Warning.Length > 0)
+                                    FireError(this, "ExportAdobe", ("PDF Warning: " + xmlResults.Warning + " - filename = " + strAdobeFileSpec));
+
+                                //	Get the page count stored in the file
+                                iPages = xmlResults.Pages;
+                            }
+
+                        }
+                        else
+                        {
+                            //	Invalidate the return result so that it gets ignored
+                            iPages = -1;
+
+                        }// if(xmlResults.Open(strResults) == true)
+
+                    }
+                    else
+                    {
+                        FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_CONVERSION_FAILED, strAdobeFileSpec, pdfConverter.ExitCode.ToString()));
+
+                    }// if(pdfConverter.ExitCode == 0)
+
+                    //	Clean up so that it's not left with our source files
+                    if (System.IO.File.Exists(strResults) == true)
+                    {
+                        try { System.IO.File.Delete(strResults); }
+                        catch { }
+                    }
+
+                }
+                else
+                {
+                    if (strTarget.EndsWith("\\") == false)
+                        strTarget += "\\";
+                    while (true)
+                    {
+                        strFilename = String.Format("{0}{1:0000}.png", strTarget, iFile);
+                        if (System.IO.File.Exists(strFilename) == true)
+                        {
+                            iFile++;
+                        }
+                        else
+                        {
+                            strFilename = String.Format("{0}{1:0000}.tif", strTarget, iFile);
+                            if (System.IO.File.Exists(strFilename) == true)
+                            {
+                                iFile++;
+                            }
+                            else
+                            {
+                                //	Update the progress form
+                                if (iFile > 1)
+                                    SetRegisterProgress("Exported " + System.IO.Path.GetFileName(strAdobeFileSpec) + " page " + (iFile - 1).ToString());
+                                break;
+                            }
+
+                        }
+                    }
+                    /*
+                    //	Build the path to the conversion results file
+                    strResults = (strTarget + "conv.xml");
+
+                    //	Allocate and initialize the XML reader
+                    xmlResults = new CXmlAdobeConversion();
+                    xmlResults.EventSource.ErrorEvent += new FTI.Shared.Trialmax.ErrorEventHandler(this.OnError);
+                    xmlResults.EventSource.DiagnosticEvent += new FTI.Shared.Trialmax.DiagnosticEventHandler(this.OnDiagnostic);
+
+                    //	Open the XML results file
+                    if (xmlResults.Open(strResults) == true)
+                    {
+                        //	Was there a fatal error during the conversion?
+                        if (xmlResults.FatalError.Length > 0)
+                        {
+                            FireError(this, "ExportAdobe", ("PDF Fatal Error: " + xmlResults.FatalError));
+                        }
+                        else
+                        {
+                            //	Display errors and warnings
+                            if (xmlResults.Error.Length > 0)
+                                FireError(this, "ExportAdobe", ("PDF Error: " + xmlResults.Error + " - filename = " + strAdobeFileSpec));
+                            if (xmlResults.Warning.Length > 0)
+                                FireError(this, "ExportAdobe", ("PDF Warning: " + xmlResults.Warning + " - filename = " + strAdobeFileSpec));
+
+                            //	Get the page count stored in the file
+                            iPages = xmlResults.Pages;
+                        }
+
+                    }
+                    else
+                    {
+                        //	Invalidate the return result so that it gets ignored
+                        iPages = -1;
+
+                    }// if(xmlResults.Open(strResults) == true)
+
+                    //	Clean up so that it's not left with our source files
+                    if (System.IO.File.Exists(strResults) == true)
+                    {
+                        try { System.IO.File.Delete(strResults); }
+                        catch { }
+                    }*/
+                }
+			
 			}
 			catch(System.Exception Ex)
 			{
@@ -14146,6 +14287,20 @@ namespace FTI.Trialmax.Database
 			}
 			
 		}// private void StepProgressCompleted()
+
+        /// <summary>This method is fired when TmaxPDFManager to update the progress form's completed pages value</summary>
+        private void UpdateProgressBar(object sender, EventArgs e)
+        {
+            try
+            {
+                if ((m_cfRegisterProgress != null) && (m_cfRegisterProgress.IsDisposed == false))
+                    m_cfRegisterProgress.CompletedPages = m_cfRegisterProgress.CompletedPages + 1;
+            }
+            catch
+            {
+            }
+
+        }
 
 		/// <summary>This method will get the collection of scenes referenced by the specified record</summary> 
 		/// <param name="dxRecord">The source record</param>
