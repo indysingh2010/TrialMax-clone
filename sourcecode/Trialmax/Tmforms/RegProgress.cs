@@ -589,7 +589,7 @@ namespace FTI.Trialmax.Forms
 				
 				//	Update the progress bar
 				m_lCompleted = m_lMaximum;
-				OnProgressChanged();
+				//OnProgressChanged();
 				
 				FTI.Shared.Win32.User.MessageBeep(FTI.Shared.Win32.User.MB_OK);
 				
@@ -787,7 +787,7 @@ namespace FTI.Trialmax.Forms
 				m_lMaximum = value;
 				
 				//	Update the progress bar
-				OnProgressChanged();
+				//OnProgressChanged();
 			
 			}
 		}
@@ -804,7 +804,7 @@ namespace FTI.Trialmax.Forms
 				m_lCompleted = value;
 				
 				//	Update the progress bar
-				OnProgressChanged();
+				//OnProgressChanged();
 			
 			}
 		}
