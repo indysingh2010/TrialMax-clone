@@ -68,7 +68,16 @@ namespace FTI.Shared.Trialmax
 		
 		/// <summary>Local member bound to UseSherrodSplitter property</summary>
 		private bool m_bUseSherrodSplitter = true;
-		
+
+        /// <summary>Local member bound to Output Type property</summary>
+        private TmaxPDFOutputType m_bOutputType = TmaxPDFOutputType.Autodetect;
+
+        /// <summary>Local member bound to Custom DPI property</summary>
+        private short m_bCustomDPI = 0;
+
+        /// <summary>Local member bound to Use Custom DPI property</summary>
+        private bool m_bUseCustomDPI = false;
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -523,8 +532,50 @@ namespace FTI.Shared.Trialmax
 		{
 			get { return m_bUseSherrodSplitter; }
 		}
-		
-		#endregion Properties
+
+        /// <summary>This property provides access to the Output type for PDF</summary>
+        public TmaxPDFOutputType OutputType
+        {
+            get
+            {
+                return m_bOutputType;
+            }
+            set
+            {
+                m_bOutputType = value;
+            }
+
+        }// m_bOutputType property
+
+        /// <summary>This property provides access to the Custom DPI for PDF</summary>
+        public short CustomDPI
+        {
+            get
+            {
+                return m_bCustomDPI;
+            }
+            set
+            {
+                m_bCustomDPI = value;
+            }
+
+        }// m_bCustomDPI property
+
+        /// <summary>This property provides access to the Use Custom DPI for PDF</summary>
+        public bool UseCustomDPI
+        {
+            get
+            {
+                return m_bUseCustomDPI;
+            }
+            set
+            {
+                m_bUseCustomDPI = value;
+            }
+
+        }// m_bUseCustomDPI property
+
+        #endregion Properties
 
 	}//	CTmaxRegOptions
 
