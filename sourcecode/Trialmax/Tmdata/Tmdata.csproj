@@ -110,6 +110,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Codecs.dll</HintPath>
     </Reference>
+    <Reference Include="Leadtools.Codecs.Png, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Codecs.Png.dll</HintPath>
+    </Reference>
     <Reference Include="Leadtools.Pdf, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Pdf.dll</HintPath>
@@ -238,6 +242,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LtPdfManager.cs" />
+    <Compile Include="MuPdfManager.cs" />
     <Compile Include="OExportManager.cs" />
     <Compile Include="OImportManager.cs" />
     <Compile Include="Oxcase.cs" />
