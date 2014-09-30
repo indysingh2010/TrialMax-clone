@@ -9,7 +9,6 @@ using FTI.Shared.Trialmax;
 using FTI.Trialmax.Forms;
 using FTI.Shared.Database;
 
-using Ghostscript.NET;
 using FTI.Trialmax.Database;
 
 namespace FTI.Shared.Database
@@ -55,13 +54,15 @@ namespace FTI.Shared.Database
         /// <summary>This is called if AutoDetect is selected for conversion</summary>
         private bool ConvertAutoDetect()
         {
-            return true;
+            CTmaxMuPdfManager MuManager = new CTmaxMuPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            MuManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
+            return MuManager.Process();
         }// private bool ConvertAutoDetect()
 
         /// <summary>This is called if Color is selected for conversion</summary>
         private bool ConvertColor()
         {
-            CTmaxLtPdfManager LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_OutputType, m_CustomDPI);
+            CTmaxLtPdfManager LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
             LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return LtManager.Process();
         }// private bool ConvertColor()
@@ -69,7 +70,7 @@ namespace FTI.Shared.Database
         /// <summary>This is called if BW is selected for conversion</summary>
         private bool ConvertBW()
         {
-            CTmaxGsPdfManager GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_OutputType, m_CustomDPI);
+            CTmaxGsPdfManager GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
             GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return GsManager.Process();
         }// private bool ConvertBW()

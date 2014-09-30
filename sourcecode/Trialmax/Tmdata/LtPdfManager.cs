@@ -29,9 +29,6 @@ namespace FTI.Trialmax.Database
         /// <summary>Local path where the document is present</summary>
         private string m_documentNameWithPath = string.Empty;
 
-        /// <summary>Indicate if auto detect color, grayscale or colored for output files /// </summary>
-        private TmaxPDFOutputType m_outputMode;
-
         /// <summary>Number of threads to be used. If set to 0, auto manage</summary>
         private short m_totalThreads;
 
@@ -58,28 +55,35 @@ namespace FTI.Trialmax.Database
 
         #region Public Methods
 
-        public CTmaxLtPdfManager(string docPath, string outPath, TmaxPDFOutputType outMode = TmaxPDFOutputType.Autodetect, short outResolution = 0, short totThreads = 0)
+        ///<summary>Constructor</summary>
+        public CTmaxLtPdfManager(string docPath, string outPath, short outResolution = 0, short totThreads = 0)
         {
             m_documentNameWithPath = docPath;
             m_outputPath = outPath;
-            m_outputMode = outMode;
             m_totalThreads = totThreads;
             m_resolution = outResolution;
             InitializeLeadtools();
         }
-
+        
         ///<summary>Start the conversion process using Leadtools</summary>
         public bool Process()
         {
-            try
-            {
-
                 int pageCount = m_pdfInfo.TotalPages;
                 for (int i = 1; i <= pageCount; i++)
                 {
-                    RasterImage image = m_codecs.Load(m_documentNameWithPath, i);
-                    m_codecs.Save(image, m_outputPath + "/" + i.ToString("D4") + ".png", RasterImageFormat.Png, image.BitsPerPixel);
+                    if (!ProcessPage(i))
+                        return false;
                 }
+                return true;
+        }
+
+        ///<summary>Process a single page</summary>
+        public bool ProcessPage(int pageNum)
+        {
+            try
+            {
+                RasterImage image = m_codecs.Load(m_documentNameWithPath, pageNum);
+                m_codecs.Save(image, m_outputPath+ "\\\\" + pageNum.ToString("D4") + ".png", RasterImageFormat.Png, 0);
                 return true;
             }
             catch
@@ -87,6 +91,12 @@ namespace FTI.Trialmax.Database
                 m_conversionErrors.Add("Exception thrown when saving RasterImage");
                 return false;
             }
+        }
+
+        /// <summary>Number of pages in the current loaded PDF</summary>
+        public int GetTotalPages()
+        {
+            return m_pdfInfo.TotalPages;
         }
 
         #endregion Public Methods
@@ -127,7 +137,9 @@ namespace FTI.Trialmax.Database
                 m_codecs.Options.RasterizeDocument.Load.XResolution = m_resolution;
                 m_codecs.Options.RasterizeDocument.Load.YResolution = m_resolution;
             }
+            m_codecs.Options.Pdf.Load.DisplayDepth = 8;
             m_codecs.SavePage += new EventHandler<CodecsPageEventArgs>(codecs_SavePage);
+            //m_codecs.SaveImage += new EventHandler<CodecsSaveImageEventArgs>(codecs_SaveImage);
             return (m_codecs != null);
         }
 
@@ -137,9 +149,12 @@ namespace FTI.Trialmax.Database
             return (m_pdfInfo != null);
         }
 
-        void codecs_SavePage(object sender, CodecsPageEventArgs e)
+        
+        //void codecs_SavePage(object sender, CodecsPageEventArgs e)
+        // private void codecs_SaveImage(object sender, CodecsSaveImageEventArgs e)    
+        private void codecs_SavePage(object sender, CodecsPageEventArgs e)    
         {
-            if (notifyPDFManager != null)
+            if (notifyPDFManager != null && e!= null && e.State == CodecsPageEventState.After)
                 notifyPDFManager(sender, e);
             //Console.WriteLine("{0} saving page {1}:{2}",
             //   e.State == CodecsPageEventState.After ? "After" : "Before",
