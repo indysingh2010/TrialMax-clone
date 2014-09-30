@@ -49,6 +49,7 @@ namespace FTI.Trialmax.Database
 
         #region Public Members
 
+        /// <summary> Notify Parent to update Progress bar on a single task completion </summary>
         public event EventHandler notifyPDFManager;
 
         #endregion Public Members
@@ -95,9 +96,6 @@ namespace FTI.Trialmax.Database
             return m_conversionErrors;
             //Console.WriteLine(e.CurrentPage.ToString() + " / " + e.TotalPages.ToString());
         }
-
-        ///<summary>Notify parent that a page is completed so that the status bar can be updated</summary>
-        
 
         #endregion Public Methods
 
