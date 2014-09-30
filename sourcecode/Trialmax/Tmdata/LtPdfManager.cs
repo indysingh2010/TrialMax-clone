@@ -4,41 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//using Leadtools;
-//using Leadtools.Codecs;
-//using Leadtools.ImageProcessing;
-//using Leadtools.ImageProcessing.Color;
+using Leadtools;
+using Leadtools.Codecs;
 
 using FTI.Shared;
 using FTI.Shared.Xml;
 using FTI.Shared.Trialmax;
 using FTI.Trialmax.Forms;
 
-namespace FTI.Trialmax.Trialmax
+namespace FTI.Trialmax.Database
 {
     /// <summary>This class manages the import operations using Leadtools</summary>
-    public class CLtPdfManager
+    public class CTmaxLtPdfManager
     {
         #region Constants
 
         #endregion Constants
 
         #region Private Members
-        
-        /// <summary> Notify Parent to update Progress bar on a single task completion </summary>
-        public event EventHandler notifyExited;
-
-        /// <summary>Local member used display registration progress form</summary>
-        private CFRegProgress m_cfRegisterProgress = null;
 
         /// <summary>Local path where to output files</summary>
         private string m_outputPath = string.Empty;
 
         /// <summary>Local path where the document is present</summary>
-        private string m_documentPath = string.Empty;
-
-        /// <summary>Name of the document that is to be loaded</summary>
-        private string m_documentName = string.Empty;
+        private string m_documentNameWithPath = string.Empty;
 
         /// <summary>Indicate if auto detect color, grayscale or colored for output files /// </summary>
         private TmaxPDFOutputType m_outputMode;
@@ -47,167 +36,121 @@ namespace FTI.Trialmax.Trialmax
         private short m_totalThreads;
 
         /// <summary>Codecs that will load the pages </summary>
-        //private RasterCodecs m_codecs = null;
+        private RasterCodecs m_codecs = null;
 
         ///// <summary>Information about the input PDF</summary>
-        //private CodecsImageInfo m_pdfInfo = null;
+        private CodecsImageInfo m_pdfInfo = null;
 
-        ///// <summary>ByteOrder in which the PDF is to be loaded</summary>
-        //private CodecsLoadByteOrder m_byteOrder;
+        /// <summary>Resolution for Output images</summary>
+        private short m_resolution;
 
-        ///// <summary>BitsPerPixel in which the PDF is to be loaded</summary>
-        //private short m_bitsPerPixel;
+        /// <summary>List containing errors if occured</summary>
+        private List<string> m_conversionErrors = null;
 
-        //private bool InitializeRasterCodecs()
-        //{
-        //    m_codecs = new RasterCodecs();
-        //    m_codecs.SaveImage += 
-        //    if (m_codecs != null)
-        //        return true;
+        #endregion Private Members
 
-        //    return false;
-        //}
+        #region Public Members
 
-        //private bool InitializePdfInfo()
-        //{
-        //    if (string.IsNullOrEmpty(m_documentPath) && string.IsNullOrEmpty(m_documentName) )
-        //        m_pdfInfo = m_codecs.GetInformation(m_documentPath, true);
+        /// <summary> Notify Parent to update Progress bar on a single task completion </summary>
+        public event EventHandler notifyPDFManager;
+        
+        #endregion Public Members
 
-        //    if (m_pdfInfo != null)
-        //        return true;
-            
-        //    return false;
-        //}
+        #region Public Methods
 
-        //#endregion Private Members
+        public CTmaxLtPdfManager(string docPath, string outPath, TmaxPDFOutputType outMode = TmaxPDFOutputType.Autodetect, short outResolution = 0, short totThreads = 0)
+        {
+            m_documentNameWithPath = docPath;
+            m_outputPath = outPath;
+            m_outputMode = outMode;
+            m_totalThreads = totThreads;
+            m_resolution = outResolution;
+            InitializeLeadtools();
+        }
 
-        //#region Public Methods
+        ///<summary>Start the conversion process using Leadtools</summary>
+        public bool Process()
+        {
+            try
+            {
 
-        //public CLtPdfManager(string docPath, string docName, string outPath, short totThreads = 0, TmaxPDFOutputType outMode = TmaxPDFOutputType.Autodetect)
-        //{
-        //    m_documentPath = docPath;
-        //    m_documentName = docName;
-        //    m_outputPath = outPath;
-        //    m_outputMode = outMode;
-        //}
-
-        //private bool Initialize()
-        //{
-        //    if (InitializeRasterCodecs() && InitializePdfInfo())
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
-        //public bool IsColor(RasterImage img)
-        //{
-        //    ColorCountCommand command = new ColorCountCommand();
-        //    command.Run(img);
-
-        //    if (command.ColorCount > 2 && command.ColorCount <= 256) //could be gray
-        //    {
-        //        ColorResolutionCommand colorRes = new ColorResolutionCommand(ColorResolutionCommandMode.InPlace, 8,
-        //           RasterByteOrder.Bgr, RasterDitheringMethod.None, ColorResolutionCommandPaletteFlags.Optimized, null);
-        //        colorRes.Run(img);
-        //        if (img.GrayscaleMode == RasterGrayscaleMode.None)
-        //            return false;//MessageBox.Show("image is NOT grayscale");
-        //        else
-        //            return true;//MessageBox.Show("image is grayscale, its mode is: " + image.GrayscaleMode);
-        //    }
-        //    else
-        //    {
-        //        return false;// MessageBox.Show("image is NOT grayscale");
-        //    }  
-        //}
-
-        //public void ConvertPdf()
-        //{
-        //    Task.Factory.StartNew(() =>
-        //    {
-        //        switch (m_outputMode)
-        //        {
-        //            case 0:             // auto detect color
-        //                m_bitsPerPixel = 24;
-        //                m_byteOrder = CodecsLoadByteOrder.BgrOrGray;
-        //                ConvertAutoDetect();
-        //                break;
-        //            case 1:             // force colored
-        //                m_bitsPerPixel = 24;
-        //                m_byteOrder = CodecsLoadByteOrder.Bgr;
-        //                ConvertToColor();
-        //                break;
-        //            case 2:             // force gray
-        //                m_bitsPerPixel = 8;
-        //                m_byteOrder = CodecsLoadByteOrder.Gray;
-        //                ConvertToGrayscale();
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //    });
-        //}
-
-        //public bool ConvertToColor()
-        //{
-        //    ParallelOptions po = new ParallelOptions();
-        //    if (m_totalThreads != 0)
-        //        po.MaxDegreeOfParallelism = m_totalThreads;
-        //    int count = 0;
-        //    Parallel.For(1, m_pdfInfo.TotalPages, po, i =>
-        //    {
-        //        RasterImage image = m_codecs.Load(m_documentPath, 8, CodecsLoadByteOrder.Gray, i, i);
-        //        m_codecs.Save(image, m_outputPath + "/" + m_documentName + (i) + ".png", RasterImageFormat.Png, 24, i, i, 1, CodecsSavePageMode.Overwrite);
-        //        count++;
-        //    });
-        //    return (count == m_pdfInfo.TotalPages);
-        //}
-
-        //public bool ConvertToGrayscale()
-        //{
-        //    ParallelOptions po = new ParallelOptions();
-        //    if (m_totalThreads != 0)
-        //        po.MaxDegreeOfParallelism = m_totalThreads;
-        //    int count = 0;
-        //    Parallel.For(1, m_pdfInfo.TotalPages, po, i =>
-        //    {
-        //        RasterImage image = m_codecs.Load(m_documentPath, 8, CodecsLoadByteOrder.Gray, i, i);
-        //        if (IsColor(image))
-        //            m_codecs.Save(image, m_outputPath + "/" + m_documentName + (i) + ".png", RasterImageFormat.Png, 24, i, i, 1, CodecsSavePageMode.Overwrite);
-        //        else
-        //            m_codecs.Save(image, m_outputPath + "/" + m_documentName + (i) + ".tif", RasterImageFormat.TifJpeg411, 8, i, i, 1, CodecsSavePageMode.Overwrite);
-        //        count++;
-        //    });
-        //    return (count == m_pdfInfo.TotalPages);
-        //}
-
-        //public bool ConvertAutoDetect()
-        //{
-        //    ParallelOptions po = new ParallelOptions();
-        //    if (m_totalThreads != 0)
-        //        po.MaxDegreeOfParallelism = m_totalThreads;
-        //    int count = 0;
-        //    Parallel.For(1, m_pdfInfo.TotalPages, po, i =>
-        //    {
-        //        RasterImage image = m_codecs.Load(m_documentPath, 8, m_byteOrder, i, i);
-        //        if (IsColor(image))
-        //            m_codecs.Save(image, m_outputPath + "/"+ m_documentName + (i) + ".png", RasterImageFormat.Png, 24, i, i, 1, CodecsSavePageMode.Overwrite);
-        //        else
-        //            m_codecs.Save(image, m_outputPath + "/" + m_documentName + (i) + ".tif", RasterImageFormat.TifJpeg411, 8, i, i, 1, CodecsSavePageMode.Overwrite);
-        //        count++;
-        //    });
-        //    return (count == m_pdfInfo.TotalPages);
-        //}
+                int pageCount = m_pdfInfo.TotalPages;
+                for (int i = 1; i <= pageCount; i++)
+                {
+                    RasterImage image = m_codecs.Load(m_documentNameWithPath, i);
+                    m_codecs.Save(image, m_outputPath + "/" + i.ToString("D4") + ".png", RasterImageFormat.Png, image.BitsPerPixel);
+                }
+                return true;
+            }
+            catch
+            {
+                m_conversionErrors.Add("Exception thrown when saving RasterImage");
+                return false;
+            }
+        }
 
         #endregion Public Methods
 
-        //#region Private Methods
+        #region Private Methods
 
-        //#endregion Private Methods
+        private bool InitializeLeadtools()
+        {
+            m_conversionErrors = new List<string>();
+            if (InitializeRasterCodecs())
+            {
+                if (InitializePdfInfo())
+                {
+                    return true;
+                }
+                else
+                {
+                    m_conversionErrors.Add("Error in initialzing CodecsImageInfo Leadtools");
+                }
+            }
+            else
+            {
+                m_conversionErrors.Add("Error in initialzing RasterCodecs Leadtools");
+            }
+            return false;
+        }
 
-        //#region Properties
+        private bool InitializeRasterCodecs()
+        {
+            m_codecs = new RasterCodecs();
+            if (m_resolution == 0)
+            {
+                m_codecs.Options.RasterizeDocument.Load.XResolution = 300;
+                m_codecs.Options.RasterizeDocument.Load.YResolution = 300;
+            }
+            else
+            {
+                m_codecs.Options.RasterizeDocument.Load.XResolution = m_resolution;
+                m_codecs.Options.RasterizeDocument.Load.YResolution = m_resolution;
+            }
+            m_codecs.SavePage += new EventHandler<CodecsPageEventArgs>(codecs_SavePage);
+            return (m_codecs != null);
+        }
 
-        //#endregion Properties
+        private bool InitializePdfInfo()
+        {
+            m_pdfInfo = m_codecs.GetInformation(m_documentNameWithPath, true);
+            return (m_pdfInfo != null);
+        }
+
+        void codecs_SavePage(object sender, CodecsPageEventArgs e)
+        {
+            if (notifyPDFManager != null)
+                notifyPDFManager(sender, e);
+            //Console.WriteLine("{0} saving page {1}:{2}",
+            //   e.State == CodecsPageEventState.After ? "After" : "Before",
+            //   e.Page, e.PageCount);
+        }
+
+        #endregion Private Methods
+
+        #region Properties
+
+        #endregion Properties
 
     }// class CTmaxLeadtoolsManager
 
