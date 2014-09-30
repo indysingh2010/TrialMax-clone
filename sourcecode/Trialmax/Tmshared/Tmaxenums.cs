@@ -846,5 +846,13 @@ namespace FTI.Shared.Trialmax
 		Export,
 		Import,
 	}
+
+    /// <summary>Enumerations for form-specific status message types</summary>
+    public enum TmaxPDFOutputType
+    {
+        Autodetect,
+        ForceColor,
+        ForceBW,
+    }
 	
 }// namespace FTI.Shared.Trialmax
