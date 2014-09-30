@@ -8781,6 +8781,7 @@ namespace FTI.Trialmax.Database
 			}
 
             // Count total number of pages in all the files that needs to be converted
+            m_totalPages = 0;
             CalculateTotalPages(m_RegSourceFolder);
             m_cfRegisterProgress.TotalPages = m_totalPages;
             
