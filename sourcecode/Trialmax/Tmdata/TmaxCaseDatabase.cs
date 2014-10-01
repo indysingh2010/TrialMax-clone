@@ -415,6 +415,8 @@ namespace FTI.Trialmax.Database
         /// <summary>Leadtools CodecsImageInfo to get PDF info</summary>
         private CodecsImageInfo info = null;
 
+        private Thread RegThread = null;
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -1290,7 +1292,6 @@ namespace FTI.Trialmax.Database
             {
                 var threadPoolDoneEvents = new ManualResetEvent[tmaxSource.SubFolders.Count];
                 //	Add each subfolder
-
                 //foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
                 for (int i = 0; i < tmaxSource.SubFolders.Count; i++)
                 {
@@ -1304,6 +1305,10 @@ namespace FTI.Trialmax.Database
                             variables.tmaxSubFolder = tmaxSource.SubFolders[i];
                             variables.DoneEvents = threadPoolDoneEvents[i];
                             ThreadPool.QueueUserWorkItem(AddSourceProcess, variables);
+                        }
+                        else
+                        {
+                            break;
                         }
 
                     }
@@ -5526,18 +5531,23 @@ namespace FTI.Trialmax.Database
 				
 			//	Create the progress form before launching the registration thread
 			CreateRegisterProgress("Registration Progress", ("Registering " + lFiles.ToString() + " source files"), lFiles);
-			
-			try
-			{
-				//	Run the registration in it's own thread
-				Thread RegThread = new Thread(new ThreadStart(this.RegisterThreadProc));
-				RegThread.Start();
-			}
-			catch(System.Exception Ex)
-			{
-                FireError(this,"Register",this.ExBuilder.Message(ERROR_CASE_DATABASE_REGISTER_THREAD_EX),Ex);
-				return false;
-			}
+
+            try
+            {
+                //	Run the registration in it's own thread
+                if (RegThread != null)
+                {
+                    RegThread.Abort();
+                    RegThread = null;
+                }
+                RegThread = new Thread(new ThreadStart(this.RegisterThreadProc));
+                RegThread.Start();
+            }
+            catch (System.Exception Ex)
+            {
+                FireError(this, "Register", this.ExBuilder.Message(ERROR_CASE_DATABASE_REGISTER_THREAD_EX), Ex);
+                return false;
+            }
 			
 			//	Open the progress form
 			if(m_cfRegisterProgress != null)
@@ -5546,6 +5556,10 @@ namespace FTI.Trialmax.Database
 				if(m_cfRegisterProgress.ShowDialog() == DialogResult.Cancel)
 				{
 					m_bRegisterCancelled = true;
+                    if (RegThread != null)
+                    {
+                        RegThread.Abort();
+                    }
 				}
 				
 				//	Clean up
@@ -8819,9 +8833,10 @@ namespace FTI.Trialmax.Database
 
             // Count total number of pages in all the files that needs to be converted
             m_totalPages = 0;
+            m_cfRegisterProgress.CompletedPages = 0;
             CalculateTotalPages(m_RegSourceFolder);
             m_cfRegisterProgress.TotalPages = m_totalPages;
-            
+            SetRegisterProgress("Registration in progress ...");
 			//	Add the new records to the database
 			if((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
 				AddSource(m_RegSourceFolder);
@@ -9705,7 +9720,7 @@ namespace FTI.Trialmax.Database
 							if((tmaxSource.SourceType != RegSourceTypes.Adobe) &&
 							   (tmaxSource.SourceType != RegSourceTypes.MultiPageTIFF))
 								StepProgressCompleted();
-							SetRegisterProgress("Added: " + tmaxFile.Path);
+							// SetRegisterProgress("Added: " + tmaxFile.Path);
 						
 						}
 						
@@ -10197,9 +10212,9 @@ namespace FTI.Trialmax.Database
                 FireError(this,"ExportAdobe",this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_CREATE_TARGET_FAILED,strTarget));
 				return 0; 
 			}
-			
-			try
-			{
+
+            try
+            {
                 // Start the PDF Manager and provide the data needed for conversion
                 CTmaxPDFManager PDFManager = new CTmaxPDFManager(strAdobeFileSpec.ToLower(), strTarget.ToLower(), m_tmaxRegisterOptions.OutputType, m_tmaxRegisterOptions.CustomDPI);
                 PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
@@ -10269,7 +10284,9 @@ namespace FTI.Trialmax.Database
                                 {
                                     //	Update the progress form
                                     if (iFile > 1)
-                                        SetRegisterProgress("Exported " + System.IO.Path.GetFileName(strAdobeFileSpec) + " page " + (iFile - 1).ToString());
+                                    {
+                                        //SetRegisterProgress("Exported " + System.IO.Path.GetFileName(strAdobeFileSpec) + " page " + (iFile - 1).ToString());
+                                    }
                                     break;
                                 }
 
@@ -10355,7 +10372,9 @@ namespace FTI.Trialmax.Database
                             {
                                 //	Update the progress form
                                 if (iFile > 1)
-                                    SetRegisterProgress("Exported " + System.IO.Path.GetFileName(strAdobeFileSpec) + " page " + (iFile - 1).ToString());
+                                {
+                                    //SetRegisterProgress("Exported " + System.IO.Path.GetFileName(strAdobeFileSpec) + " page " + (iFile - 1).ToString());
+                                }
                                 iPages = iFile - 1;
                                 break;
                             }
@@ -10406,12 +10425,16 @@ namespace FTI.Trialmax.Database
                         catch { }
                     }*/
                 }
-			
-			}
-			catch(System.Exception Ex)
-			{
-                FireError(this,"ExportAdobe",this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX,strAdobeFileSpec),Ex);
-			}
+
+            }
+            catch (ThreadAbortException Ex)
+            {
+                Console.WriteLine(Ex.ToString());
+            }
+            catch (System.Exception Ex)
+            {
+                FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec), Ex);
+            }
 			
 			//	Make sure the converter process is closed
 			if(pdfConverter != null)
@@ -10461,7 +10484,7 @@ namespace FTI.Trialmax.Database
 			if(strFileSpec.Length == 0) return false;
 
 			//	Update the progress form
-			SetRegisterProgress("Exporting " + System.IO.Path.GetFileName(strFileSpec) + " pages ...");
+			// SetRegisterProgress("Exporting " + System.IO.Path.GetFileName(strFileSpec) + " pages ...");
 			
 			//	Export the PDF pages to the target folder
 			if((iPages = ExportAdobe(strFileSpec, strTarget)) != 0)
@@ -13329,89 +13352,93 @@ namespace FTI.Trialmax.Database
 		{
 			CDxPrimary	dxPrimary = null;
 			bool		bSuccessful = false;
-			
-			try
-			{
-				//	Do some preprocessing if required
-				switch(tmaxSource.SourceType)
-				{
-					case RegSourceTypes.Deposition:
 
-						//	Make sure we have the transcript and segments
-						//	before attempting to add a deposition
-						if(tmaxSource.UserData == null)
-						{
-							if(GetDepoSegments(tmaxSource) == false)
-							{
-								return null;
-							}
-						}
-						break;
-						
-					case RegSourceTypes.Adobe:
-					
-						//	Make sure the PDF converter is ready
-						if(PrepAdobeConverter(tmaxSource) == false)
-							return null;
-						
-						break;
-						
-				}// switch(tmaxSource.SourceType)
+            try
+            {
+                //	Do some preprocessing if required
+                switch (tmaxSource.SourceType)
+                {
+                    case RegSourceTypes.Deposition:
 
-				//	Create a default object
-				if((dxPrimary = CreatePrimary(tmaxSource.MediaType)) == null)
-					return null;
-			
-				//	Make sure the media id field is unique when we initially add the record
-				dxPrimary.MediaId = System.Guid.NewGuid().ToString();
-				dxPrimary.RegisterPath = tmaxSource.Path;
-				dxPrimary.Attributes   = tmaxSource.PrimaryAttributes;
+                        //	Make sure we have the transcript and segments
+                        //	before attempting to add a deposition
+                        if (tmaxSource.UserData == null)
+                        {
+                            if (GetDepoSegments(tmaxSource) == false)
+                            {
+                                return null;
+                            }
+                        }
+                        break;
 
-				//	Add the record to the database
-				//
-				//	NOTE:	We have to do this now to get a valid AutoId value for the record
-				if(m_dxPrimaries.Add(dxPrimary) == null)
-					return null;
+                    case RegSourceTypes.Adobe:
 
-				//	Finish initializing this record
-				while(bSuccessful == false)
-				{
-					//	Set the path to the secondary files
-					if(SetTargetPath(tmaxSource, dxPrimary) == false)
-						break;
+                        //	Make sure the PDF converter is ready
+                        if (PrepAdobeConverter(tmaxSource) == false)
+                            return null;
 
-					//	Make sure we have the secondary source files
-					if(ExtractSourceFiles(tmaxSource, dxPrimary) == false)
-						break;
+                        break;
 
-					//	Use the source folder to set the requested primary properties
-					if(SetProperties(tmaxSource, dxPrimary) == false)
-						break;
+                }// switch(tmaxSource.SourceType)
 
-					//	Perform an update now that we've set the properties
-					//
-					//	NOTE:	We used to wait to add the record until all the properties were
-					//			set but we can't do that any more because we want to be able to
-					//			use the AutoId value to resolve the target path if necessary
-					m_dxPrimaries.Update(dxPrimary);
+                //	Create a default object
+                if ((dxPrimary = CreatePrimary(tmaxSource.MediaType)) == null)
+                    return null;
 
-					//	Set the MediaId
-					//
-					//	NOTE:	We perform this as a separate operation because we need to
-					//			assume that an exception is because of duplicate values
-					if(SetMediaId(dxPrimary, tmaxSource) == false)
-						break;
+                //	Make sure the media id field is unique when we initially add the record
+                dxPrimary.MediaId = System.Guid.NewGuid().ToString();
+                dxPrimary.RegisterPath = tmaxSource.Path;
+                dxPrimary.Attributes = tmaxSource.PrimaryAttributes;
 
-					//	All done...
-					bSuccessful = true;
-					
-				}// while(bSuccessful == false)
-				
-			}
-			catch(System.Exception Ex)
-			{
-                FireError(this,"CreatePrimary",this.ExBuilder.Message(ERROR_CASE_DATABASE_CREATE_PRIMARY_FOLDER_EX,tmaxSource.Path),Ex);
-			}
+                //	Add the record to the database
+                //
+                //	NOTE:	We have to do this now to get a valid AutoId value for the record
+                if (m_dxPrimaries.Add(dxPrimary) == null)
+                    return null;
+
+                //	Finish initializing this record
+                while (bSuccessful == false)
+                {
+                    //	Set the path to the secondary files
+                    if (SetTargetPath(tmaxSource, dxPrimary) == false)
+                        break;
+
+                    //	Make sure we have the secondary source files
+                    if (ExtractSourceFiles(tmaxSource, dxPrimary) == false)
+                        break;
+
+                    //	Use the source folder to set the requested primary properties
+                    if (SetProperties(tmaxSource, dxPrimary) == false)
+                        break;
+
+                    //	Perform an update now that we've set the properties
+                    //
+                    //	NOTE:	We used to wait to add the record until all the properties were
+                    //			set but we can't do that any more because we want to be able to
+                    //			use the AutoId value to resolve the target path if necessary
+                    m_dxPrimaries.Update(dxPrimary);
+
+                    //	Set the MediaId
+                    //
+                    //	NOTE:	We perform this as a separate operation because we need to
+                    //			assume that an exception is because of duplicate values
+                    if (SetMediaId(dxPrimary, tmaxSource) == false)
+                        break;
+
+                    //	All done...
+                    bSuccessful = true;
+
+                }// while(bSuccessful == false)
+
+            }
+            catch (ThreadAbortException Ex)
+            {
+                Console.WriteLine(Ex.ToString());
+            }
+            catch (System.Exception Ex)
+            {
+                FireError(this, "CreatePrimary", this.ExBuilder.Message(ERROR_CASE_DATABASE_CREATE_PRIMARY_FOLDER_EX, tmaxSource.Path), Ex);
+            }
 			
 			//	Should we delete the record?
 			if((dxPrimary != null) && (bSuccessful == false))
