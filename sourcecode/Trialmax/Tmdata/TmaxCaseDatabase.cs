@@ -6,6 +6,7 @@ using System.Data.OleDb;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Threading;
+using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Win32;
 
@@ -1285,36 +1286,72 @@ namespace FTI.Trialmax.Database
 				}// if((dxPrimary = CreatePrimary(tmaxSource)) != null)
 				
 			}// if(tmaxSource.Files.Count > 0)
-			
-			//	Add each subfolder
-			foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
-			{
-				try
-				{
-					if(m_bRegisterCancelled == false)
-					{
-						AddSource(tmaxSubFolder);
-						
-						//	Mark this parent as being registered if its subfolder got registered
-						//
-						//	NOTE:	This allows us to maintain the registration chain when a folder
-						//			has nothing but subfolders
-						if(tmaxSubFolder.Registered == true)
-							tmaxSource.Registered = true;
-					}
-						
-				}
-				catch(System.Exception Ex)
-				{
-                    FireError(this,"AddSource",this.ExBuilder.Message(ERROR_CASE_DATABASE_ADD_SOURCE_EX),Ex);
-				}
-			
-			}//foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
-					
+            if (tmaxSource.SubFolders.Count > 0)
+            {
+                var threadPoolDoneEvents = new ManualResetEvent[tmaxSource.SubFolders.Count];
+                //	Add each subfolder
+
+                //foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
+                for (int i = 0; i < tmaxSource.SubFolders.Count; i++)
+                {
+                    try
+                    {
+                        if (m_bRegisterCancelled == false)
+                        {
+                            threadPoolDoneEvents[i] = new ManualResetEvent(false);
+                            AddSourceAgs variables = new AddSourceAgs();
+                            variables.tmaxSource = tmaxSource;
+                            variables.tmaxSubFolder = tmaxSource.SubFolders[i];
+                            variables.DoneEvents = threadPoolDoneEvents[i];
+                            ThreadPool.QueueUserWorkItem(AddSourceProcess, variables);
+                        }
+
+                    }
+                    catch (System.Exception Ex)
+                    {
+                        FireError(this, "AddSource", this.ExBuilder.Message(ERROR_CASE_DATABASE_ADD_SOURCE_EX), Ex);
+                    }
+
+                }//foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
+
+                WaitHandle.WaitAll(threadPoolDoneEvents);
+            }
+
 			return true;
 		
 		}// public bool AddSource(CTmaxSourceFolder tmaxSource)
-		
+
+        class AddSourceAgs
+        {
+            public CTmaxSourceFolder tmaxSource { get; set; }
+            public CTmaxSourceFolder tmaxSubFolder { get; set; }
+            public ManualResetEvent DoneEvents { get; set; }
+        }
+
+        public void AddSourceProcess(Object arguments)
+        {
+            AddSourceAgs args = (AddSourceAgs)arguments;
+            try
+            {
+                if (m_bRegisterCancelled == false)
+                {
+                    AddSource(args.tmaxSubFolder);
+
+                    //	Mark this parent as being registered if its subfolder got registered
+                    //
+                    //	NOTE:	This allows us to maintain the registration chain when a folder
+                    //			has nothing but subfolders
+                    if (args.tmaxSubFolder.Registered == true)
+                        args.tmaxSource.Registered = true;
+                }
+
+            }
+            catch (System.Exception Ex)
+            {
+                FireError(this, "AddSource", this.ExBuilder.Message(ERROR_CASE_DATABASE_ADD_SOURCE_EX), Ex);
+            }
+            args.DoneEvents.Set();
+        }
 		/// <summary>This method will add the specified case codes to the database</summary>
 		/// <param name="tmaxCaseCodes">The collection of codes to be added</param>
 		/// <param name="tmaxInsertAt">The object that defines where the new objects are to be inserted</param>
@@ -10168,7 +10205,7 @@ namespace FTI.Trialmax.Database
                 PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
                 //m_cfRegisterProgress.
                 bool status = PDFManager.StartConversion();
-
+                status = true;
                 // If the new PDF Manager fails to convert, use FTIP2I
                 if (!status)
                 {
