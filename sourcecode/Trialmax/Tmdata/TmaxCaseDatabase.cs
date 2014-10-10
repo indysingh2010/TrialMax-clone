@@ -410,12 +410,14 @@ namespace FTI.Trialmax.Database
         private long m_totalPages = 0;
 
         /// <summary>Leadtools codec to count total number of pages</summary>
-        private RasterCodecs codecs = null;
+        private RasterCodecs m_rasterCodecs = null;
 
         /// <summary>Leadtools CodecsImageInfo to get PDF info</summary>
-        private CodecsImageInfo info = null;
+        private CodecsImageInfo m_codecsInfo = null;
 
         private Thread RegThread = null;
+
+        private static object lockForConflictForm = true;
 
 		#endregion Private Members
 		
@@ -8867,10 +8869,10 @@ namespace FTI.Trialmax.Database
                     //GhostscriptPdfInfo.GetInkCoverage("").Count;
                     
                     CTmaxSourceFile temp = (CTmaxSourceFile)tmaxSource.Files.GetAt(0);
-                    if (codecs == null)
-                        codecs = new RasterCodecs();
-                    info = codecs.GetInformation(temp.Path, true);
-                    m_totalPages += info.TotalPages;
+                    if (m_rasterCodecs == null)
+                        m_rasterCodecs = new RasterCodecs();
+                    m_codecsInfo = m_rasterCodecs.GetInformation(temp.Path, true);
+                    m_totalPages += m_codecsInfo.TotalPages;
                 }
 
             }// if(tmaxSource.Files.Count > 0)
@@ -10205,8 +10207,8 @@ namespace FTI.Trialmax.Database
 			//	Verify that the source file exists
 			Debug.Assert(System.IO.File.Exists(strAdobeFileSpec) == true);
 			if(System.IO.File.Exists(strAdobeFileSpec) == false) return 0;
-
-			//	Make sure the target folder exists
+                
+            //	Make sure the target folder exists
 			if(CreateFolder(TmaxMediaTypes.Page, strTarget, true) == false)
 			{
                 FireError(this,"ExportAdobe",this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_CREATE_TARGET_FAILED,strTarget));
@@ -10220,7 +10222,6 @@ namespace FTI.Trialmax.Database
                 PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
                 //m_cfRegisterProgress.
                 bool status = PDFManager.StartConversion();
-                status = true;
                 // If the new PDF Manager fails to convert, use FTIP2I
                 if (!status)
                 {
@@ -10485,10 +10486,104 @@ namespace FTI.Trialmax.Database
 
 			//	Update the progress form
 			// SetRegisterProgress("Exporting " + System.IO.Path.GetFileName(strFileSpec) + " pages ...");
-			
+
+            //------------------------------------------------------------------------------//
+            
+            bool isDuplicate = Directory.Exists(strTarget.ToLower());
+
+            //CTmaxSourceFolder tmaxSource = new CTmaxSourceFolder(strTarget);
+            //CDxPrimary dxPrimary = new CDxPrimary();
+            //dxPrimary.MediaId = tmaxSource.Name;
+            //dxPrimary.RegisterPath = tmaxSource.Path;
+            //dxPrimary.Attributes = tmaxSource.PrimaryAttributes;
+            string strNewName = string.Empty;
+            lock (lockForConflictForm)
+            {
+                while (isDuplicate)
+                {
+                    CFResolveConflict wndResolve = new CFResolveConflict();
+                    SetHandlers(wndResolve.EventSource);
+                    string tempName = string.Empty;
+                    string path = GetCasePath(TmaxMediaTypes.Document);
+                    strNewName = m_tmaxRegisterOptions.Resolve(dxPrimary, dxPrimary.RelativePath, RegConflictResolutions.Automatic);
+                    if (m_bAutoResolve == true)
+                    {
+                        path += strNewName;
+                    }
+                    else if (m_tmaxRegisterOptions.ConflictResolution == RegConflictResolutions.Prompt)
+                    {
+                        //	Initialize the form
+                        wndResolve.IsMediaId = true;
+                        wndResolve.Conflict = dxPrimary.RelativePath;// the locally adjusted conflict 
+                        wndResolve.Resolution = strNewName; // Initialize with last value
+                        if (wndResolve.Source.Length == 0)
+                            wndResolve.Source = tmaxSource.Path + "\\" + dxPrimary.RelativePath;
+                        //	Open the form
+                        DisableTmaxKeyboard(true);
+                        FTI.Shared.Win32.User.MessageBeep(0);
+                        if (wndResolve.ShowDialog() == DialogResult.OK)
+                        {
+                            DisableTmaxKeyboard(false);
+                        }
+                        else
+                        {
+                            if (m_rasterCodecs == null)
+                                m_rasterCodecs = new RasterCodecs();
+                            m_codecsInfo = m_rasterCodecs.GetInformation(strFileSpec, true);
+                            if ((m_cfRegisterProgress != null) && (m_cfRegisterProgress.IsDisposed == false))
+                                m_cfRegisterProgress.CompletedPages = m_cfRegisterProgress.CompletedPages + m_codecsInfo.TotalPages;
+                            bSuccessful = false;
+                            return bSuccessful;
+                        }
+                        if (wndResolve.AutoResolveAll == true)
+                            m_bAutoResolve = true;
+                        path += @wndResolve.Resolution;
+                        strNewName = wndResolve.Resolution;
+                    }
+                    else
+                    {
+                        strNewName = m_tmaxRegisterOptions.Resolve(dxPrimary, dxPrimary.RelativePath, RegConflictResolutions.Automatic);
+                        path += strNewName;
+                    }
+                    isDuplicate = Directory.Exists(path.ToLower());
+                    
+                }
+                if (!string.IsNullOrEmpty(strNewName))
+                {
+                    try
+                    {
+                        File.Copy(strFileSpec, System.IO.Path.GetTempPath() + strNewName + ".pdf");
+                    }
+                    catch (IOException Ex)
+                    {
+                        File.Delete(System.IO.Path.GetTempPath() + strNewName + ".pdf");
+                        File.Copy(strFileSpec, System.IO.Path.GetTempPath() + strNewName + ".pdf");
+                    }
+                    strFileSpec = System.IO.Path.GetTempPath() + strNewName + ".pdf";
+                    dxPrimary.RelativePath = strNewName;
+                    strTarget = GetFolderSpec(dxPrimary, true);
+                    if (strTarget.EndsWith("\\") == false)
+                        strTarget += "\\";
+                }
+            }
+            //------------------------------------------------------------------------------//
+
 			//	Export the PDF pages to the target folder
 			if((iPages = ExportAdobe(strFileSpec, strTarget)) != 0)
 			{
+                //  Delete PDF file that was copied to temporary folder
+                if (!string.IsNullOrEmpty(strNewName))
+                {
+                    try
+                    {
+                        File.Delete(strFileSpec);
+                    }
+                    catch (IOException Ex)
+                    {
+                        //  Do Nothing
+                    }
+                }
+
 				//	Change the source path to match the target
 				tmaxSource.Initialize(strTarget);
 				
@@ -13389,7 +13484,7 @@ namespace FTI.Trialmax.Database
                 dxPrimary.MediaId = System.Guid.NewGuid().ToString();
                 dxPrimary.RegisterPath = tmaxSource.Path;
                 dxPrimary.Attributes = tmaxSource.PrimaryAttributes;
-
+                
                 //	Add the record to the database
                 //
                 //	NOTE:	We have to do this now to get a valid AutoId value for the record
@@ -13434,6 +13529,13 @@ namespace FTI.Trialmax.Database
             catch (ThreadAbortException Ex)
             {
                 Console.WriteLine(Ex.ToString());
+                //	Should we delete the record?
+                if ((dxPrimary != null) && (bSuccessful == false))
+                {
+                    try { m_dxPrimaries.Delete(dxPrimary); }
+                    catch { };
+                    dxPrimary = null;
+                }
             }
             catch (System.Exception Ex)
             {
