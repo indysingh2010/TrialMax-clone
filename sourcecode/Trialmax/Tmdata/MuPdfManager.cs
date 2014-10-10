@@ -39,6 +39,9 @@ namespace FTI.Trialmax.Database
         /// <summary>Total number of Pages in the current loaded PDF</summary>
         private int m_TotalPages;
 
+        /// <summary>Flag that tells whether to convert files or not</summary>
+        private volatile bool DoConvert = true;
+
         #endregion Private Members
 
         #region Public Members
@@ -67,6 +70,8 @@ namespace FTI.Trialmax.Database
         {
             for (int i = 1; i <= m_TotalPages; i++)
             {
+                if (!DoConvert)
+                    return false;
                 if (isColor(i))
                 {
                     if (!m_LtManager.ProcessPage(i))
@@ -79,6 +84,15 @@ namespace FTI.Trialmax.Database
                 }
             }
             return true;
+        }
+
+        public void StopProcess()
+        {
+            DoConvert = false;
+            if (m_GsManager != null)
+                m_GsManager.StopProcess();
+            if (m_LtManager != null)
+                m_LtManager.StopProcess();
         }
 
         #endregion Public Methods

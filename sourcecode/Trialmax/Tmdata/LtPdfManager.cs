@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 using Leadtools;
 using Leadtools.Codecs;
@@ -44,6 +45,9 @@ namespace FTI.Trialmax.Database
         /// <summary>List containing errors if occured</summary>
         private List<string> m_conversionErrors = null;
 
+        /// <summary>Flag that tells whether to convert files or not</summary>
+        private volatile bool DoConvert = true;
+
         #endregion Private Members
 
         #region Public Members
@@ -71,7 +75,7 @@ namespace FTI.Trialmax.Database
                 int pageCount = m_pdfInfo.TotalPages;
                 for (int i = 1; i <= pageCount; i++)
                 {
-                    if (!ProcessPage(i))
+                    if (!DoConvert || !ProcessPage(i))
                         return false;
                 }
                 return true;
@@ -97,6 +101,12 @@ namespace FTI.Trialmax.Database
         public int GetTotalPages()
         {
             return m_pdfInfo.TotalPages;
+        }
+
+        /// <summary>Stop the current conversion process</summary>
+        public void StopProcess()
+        {
+            DoConvert = false;
         }
 
         #endregion Public Methods
@@ -148,10 +158,7 @@ namespace FTI.Trialmax.Database
             m_pdfInfo = m_codecs.GetInformation(m_documentNameWithPath, true);
             return (m_pdfInfo != null);
         }
-
-        
-        //void codecs_SavePage(object sender, CodecsPageEventArgs e)
-        // private void codecs_SaveImage(object sender, CodecsSaveImageEventArgs e)    
+ 
         private void codecs_SavePage(object sender, CodecsPageEventArgs e)    
         {
             if (notifyPDFManager != null && e!= null && e.State == CodecsPageEventState.After)

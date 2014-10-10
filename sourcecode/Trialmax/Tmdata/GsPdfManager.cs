@@ -42,6 +42,11 @@ namespace FTI.Trialmax.Database
         /// <summary>List containing errors if occured</summary>
         private List<string> m_conversionErrors = null;
 
+        /// <summary>Flag that tells whether to convert files or not</summary>
+        private volatile bool DoConvert = true;
+
+        private GhostscriptProcessor processor = null;
+
         #endregion Private Members
 
         #region Public Members
@@ -89,7 +94,7 @@ namespace FTI.Trialmax.Database
         ///<summary>Process a single page</summary>
         public bool ProcessPage(int pageNum)
         {
-            using (GhostscriptProcessor processor = new GhostscriptProcessor(m_gvi, true))
+            using (processor = new GhostscriptProcessor(m_gvi, true))
             {
                 AddPageSwitch(pageNum);
                 processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
@@ -114,6 +119,13 @@ namespace FTI.Trialmax.Database
         {
             return m_conversionErrors;
             //Console.WriteLine(e.CurrentPage.ToString() + " / " + e.TotalPages.ToString());
+        }
+
+        public void StopProcess()
+        {
+            DoConvert = false;
+            if (processor != null)
+                processor.StopProcessing();
         }
 
         #endregion Public Methods

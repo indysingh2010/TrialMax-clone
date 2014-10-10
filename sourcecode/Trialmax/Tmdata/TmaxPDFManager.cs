@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.IO;
 
 using FTI.Shared;
 using FTI.Shared.Win32;
@@ -30,6 +32,12 @@ namespace FTI.Shared.Database
         /// <summary>Local member to store CustomDPI </summary>
         private short m_CustomDPI = 0;
 
+        private CTmaxMuPdfManager MuManager = null;
+
+        private CTmaxLtPdfManager LtManager = null;
+
+        private CTmaxGsPdfManager GsManager = null;
+
         /// <summary>Constructor</summary>
         public CTmaxPDFManager(string _inputFile, string _ouputPath, TmaxPDFOutputType _outputType, short _customDPI)
         {
@@ -42,19 +50,48 @@ namespace FTI.Shared.Database
         /// <summary>Main process which will start the conversion</summary>
         public bool StartConversion()
         {
-            switch (m_OutputType)
+            try
             {
-                case TmaxPDFOutputType.Autodetect:  return ConvertAutoDetect();
-                case TmaxPDFOutputType.ForceColor:  return ConvertColor();
-                case TmaxPDFOutputType.ForceBW:     return ConvertBW();
-                default:                            return ConvertAutoDetect();
+                switch (m_OutputType)
+                {
+                    case TmaxPDFOutputType.Autodetect: return ConvertAutoDetect();
+                    case TmaxPDFOutputType.ForceColor: return ConvertColor();
+                    case TmaxPDFOutputType.ForceBW: return ConvertBW();
+                    default: return ConvertAutoDetect();
+                }
+            }
+            catch (ThreadAbortException Ex)
+            {
+                CleanUp();
+                return false;
             }
         }// public bool StartConversion()
+
+        private void CleanUp()
+        {
+            switch (m_OutputType)
+            {
+                case TmaxPDFOutputType.Autodetect:
+                    if (MuManager != null)
+                        MuManager.StopProcess();
+                    break;
+                case TmaxPDFOutputType.ForceColor: 
+                    if (LtManager != null)
+                        LtManager.StopProcess();
+                    break;
+                case TmaxPDFOutputType.ForceBW:
+                    if (GsManager != null)
+                        GsManager.StopProcess();
+                    break;
+                default: ConvertAutoDetect(); break;
+            }
+            Directory.Delete(m_OutputPath, true);
+        }
 
         /// <summary>This is called if AutoDetect is selected for conversion</summary>
         private bool ConvertAutoDetect()
         {
-            CTmaxMuPdfManager MuManager = new CTmaxMuPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            MuManager = new CTmaxMuPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
             MuManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return MuManager.Process();
         }// private bool ConvertAutoDetect()
@@ -62,7 +99,7 @@ namespace FTI.Shared.Database
         /// <summary>This is called if Color is selected for conversion</summary>
         private bool ConvertColor()
         {
-            CTmaxLtPdfManager LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
             LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return LtManager.Process();
         }// private bool ConvertColor()
@@ -70,7 +107,7 @@ namespace FTI.Shared.Database
         /// <summary>This is called if BW is selected for conversion</summary>
         private bool ConvertBW()
         {
-            CTmaxGsPdfManager GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
             GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return GsManager.Process();
         }// private bool ConvertBW()
