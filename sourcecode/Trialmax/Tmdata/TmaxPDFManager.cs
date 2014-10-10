@@ -85,7 +85,22 @@ namespace FTI.Shared.Database
                     break;
                 default: ConvertAutoDetect(); break;
             }
-            Directory.Delete(m_OutputPath, true);
+            try
+            {
+                Directory.Delete(m_OutputPath, true);
+
+                //  We will check if the path contains the path of windows temp folder.
+                //  If it does, we will assume that the pdf file was copied previously to the temp folder and needs to be deleted.
+                string temporaryDirectory = @System.IO.Path.GetTempPath();
+                if (m_InputFile.Contains(temporaryDirectory.ToLower()))
+                {
+                    File.Delete(m_InputFile);
+                }
+            }
+            catch (IOException Ex)
+            {
+                //  Do Nothing
+            }
         }
 
         /// <summary>This is called if AutoDetect is selected for conversion</summary>
