@@ -129,11 +129,11 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlForeignBarcodeAdjustments = new System.Windows.Forms.CheckedListBox();
             this.m_ctrlForeignBarcodeAdjustmentsGroup = new System.Windows.Forms.GroupBox();
             this.m_ctrlPDFOptionsGroup = new System.Windows.Forms.GroupBox();
-            this.m_ctrlAutoDetectRadio = new System.Windows.Forms.RadioButton();
-            this.m_ctrlBWRadio = new System.Windows.Forms.RadioButton();
-            this.m_ctrlColorRadio = new System.Windows.Forms.RadioButton();
-            this.m_ctrlCustomDPICheck = new System.Windows.Forms.CheckBox();
             this.m_ctrlCustomDPIMask = new System.Windows.Forms.MaskedTextBox();
+            this.m_ctrlCustomDPICheck = new System.Windows.Forms.CheckBox();
+            this.m_ctrlColorRadio = new System.Windows.Forms.RadioButton();
+            this.m_ctrlBWRadio = new System.Windows.Forms.RadioButton();
+            this.m_ctrlAutoDetectRadio = new System.Windows.Forms.RadioButton();
             this.m_ctrlMorphMethodsGroup.SuspendLayout();
             this.m_ctrlConflictResolutionsGroup.SuspendLayout();
             this.m_ctrlMediaCreationGroup.SuspendLayout();
@@ -361,37 +361,17 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlPDFOptionsGroup.TabStop = false;
             this.m_ctrlPDFOptionsGroup.Text = "PDF Options";
             // 
-            // m_ctrlAutoDetectRadio
+            // m_ctrlCustomDPIMask
             // 
-            this.m_ctrlAutoDetectRadio.AutoSize = true;
-            this.m_ctrlAutoDetectRadio.Checked = true;
-            this.m_ctrlAutoDetectRadio.Location = new System.Drawing.Point(7, 15);
-            this.m_ctrlAutoDetectRadio.Name = "m_ctrlAutoDetectRadio";
-            this.m_ctrlAutoDetectRadio.Size = new System.Drawing.Size(104, 17);
-            this.m_ctrlAutoDetectRadio.TabIndex = 0;
-            this.m_ctrlAutoDetectRadio.TabStop = true;
-            this.m_ctrlAutoDetectRadio.Text = "Autodetect Color";
-            this.m_ctrlAutoDetectRadio.UseVisualStyleBackColor = true;
-            // 
-            // m_ctrlBWRadio
-            // 
-            this.m_ctrlBWRadio.AutoSize = true;
-            this.m_ctrlBWRadio.Location = new System.Drawing.Point(7, 31);
-            this.m_ctrlBWRadio.Name = "m_ctrlBWRadio";
-            this.m_ctrlBWRadio.Size = new System.Drawing.Size(134, 17);
-            this.m_ctrlBWRadio.TabIndex = 1;
-            this.m_ctrlBWRadio.Text = "Force Black and White";
-            this.m_ctrlBWRadio.UseVisualStyleBackColor = true;
-            // 
-            // m_ctrlColorRadio
-            // 
-            this.m_ctrlColorRadio.AutoSize = true;
-            this.m_ctrlColorRadio.Location = new System.Drawing.Point(7, 47);
-            this.m_ctrlColorRadio.Name = "m_ctrlColorRadio";
-            this.m_ctrlColorRadio.Size = new System.Drawing.Size(79, 17);
-            this.m_ctrlColorRadio.TabIndex = 2;
-            this.m_ctrlColorRadio.Text = "Force Color";
-            this.m_ctrlColorRadio.UseVisualStyleBackColor = true;
+            this.m_ctrlCustomDPIMask.Enabled = false;
+            this.m_ctrlCustomDPIMask.Location = new System.Drawing.Point(149, 60);
+            this.m_ctrlCustomDPIMask.Mask = "0000";
+            this.m_ctrlCustomDPIMask.Name = "m_ctrlCustomDPIMask";
+            this.m_ctrlCustomDPIMask.PromptChar = ' ';
+            this.m_ctrlCustomDPIMask.Size = new System.Drawing.Size(34, 20);
+            this.m_ctrlCustomDPIMask.TabIndex = 4;
+            this.m_ctrlCustomDPIMask.Text = "300";
+            this.m_ctrlCustomDPIMask.TextChanged += new System.EventHandler(this.m_ctrlCustomDPIMask_TextChanged);
             // 
             // m_ctrlCustomDPICheck
             // 
@@ -404,14 +384,40 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlCustomDPICheck.UseVisualStyleBackColor = true;
             this.m_ctrlCustomDPICheck.CheckedChanged += new System.EventHandler(this.m_ctrlCustomDPICheck_CheckedChanged);
             // 
-            // m_ctrlCustomDPIMask
+            // m_ctrlColorRadio
             // 
-            this.m_ctrlCustomDPIMask.Enabled = false;
-            this.m_ctrlCustomDPIMask.Location = new System.Drawing.Point(149, 60);
-            this.m_ctrlCustomDPIMask.Mask = "0000";
-            this.m_ctrlCustomDPIMask.Name = "m_ctrlCustomDPIMask";
-            this.m_ctrlCustomDPIMask.Size = new System.Drawing.Size(31, 20);
-            this.m_ctrlCustomDPIMask.TabIndex = 4;
+            this.m_ctrlColorRadio.AutoSize = true;
+            this.m_ctrlColorRadio.Location = new System.Drawing.Point(7, 47);
+            this.m_ctrlColorRadio.Name = "m_ctrlColorRadio";
+            this.m_ctrlColorRadio.Size = new System.Drawing.Size(79, 17);
+            this.m_ctrlColorRadio.TabIndex = 2;
+            this.m_ctrlColorRadio.Text = "Force Color";
+            this.m_ctrlColorRadio.UseVisualStyleBackColor = true;
+            this.m_ctrlColorRadio.Click += new System.EventHandler(this.m_ctrlColorRadio_Click);
+            // 
+            // m_ctrlBWRadio
+            // 
+            this.m_ctrlBWRadio.AutoSize = true;
+            this.m_ctrlBWRadio.Location = new System.Drawing.Point(7, 31);
+            this.m_ctrlBWRadio.Name = "m_ctrlBWRadio";
+            this.m_ctrlBWRadio.Size = new System.Drawing.Size(134, 17);
+            this.m_ctrlBWRadio.TabIndex = 1;
+            this.m_ctrlBWRadio.Text = "Force Black and White";
+            this.m_ctrlBWRadio.UseVisualStyleBackColor = true;
+            this.m_ctrlBWRadio.Click += new System.EventHandler(this.m_ctrlBWRadio_Click);
+            // 
+            // m_ctrlAutoDetectRadio
+            // 
+            this.m_ctrlAutoDetectRadio.AutoSize = true;
+            this.m_ctrlAutoDetectRadio.Checked = true;
+            this.m_ctrlAutoDetectRadio.Location = new System.Drawing.Point(7, 15);
+            this.m_ctrlAutoDetectRadio.Name = "m_ctrlAutoDetectRadio";
+            this.m_ctrlAutoDetectRadio.Size = new System.Drawing.Size(104, 17);
+            this.m_ctrlAutoDetectRadio.TabIndex = 0;
+            this.m_ctrlAutoDetectRadio.TabStop = true;
+            this.m_ctrlAutoDetectRadio.Text = "Autodetect Color";
+            this.m_ctrlAutoDetectRadio.UseVisualStyleBackColor = true;
+            this.m_ctrlAutoDetectRadio.CheckedChanged += new System.EventHandler(this.m_ctrlAutoDetectRadio_CheckedChanged);
             // 
             // CFRegOptions
             // 
@@ -871,6 +877,11 @@ namespace FTI.Trialmax.Forms
         private void m_ctrlCustomDPICheck_CheckedChanged(object sender, EventArgs e)
         {
             m_ctrlCustomDPIMask.Enabled = !m_ctrlCustomDPIMask.Enabled;
+            if (m_ctrlCustomDPIMask.Enabled)
+            {
+                m_ctrlCustomDPIMask.Focus();
+                m_ctrlCustomDPIMask.SelectAll();
+            }
         }
 
 		#endregion Private Methods
@@ -885,6 +896,43 @@ namespace FTI.Trialmax.Forms
 		}
 		
 		#endregion Properties
+
+        private void m_ctrlBWRadio_Click(object sender, EventArgs e)
+        {
+            m_ctrlCustomDPIMask.Text = "300";
+        }
+
+        private void m_ctrlColorRadio_Click(object sender, EventArgs e)
+        {
+            m_ctrlCustomDPIMask.Text = "200";
+        }
+
+        private void m_ctrlAutoDetectRadio_CheckedChanged(object sender, EventArgs e)
+        {
+            m_ctrlCustomDPIMask.Text = "300";
+        }
+
+        private void m_ctrlCustomDPIMask_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                Int16 value = Convert.ToInt16(m_ctrlCustomDPIMask.Text);
+                if (value < 0)
+                {
+                    m_ctrlCustomDPIMask.Text = "0";
+                    m_ctrlCustomDPIMask.SelectAll();
+                }
+                else if (value > 1200)
+                {
+                    m_ctrlCustomDPIMask.Text = "1200";
+                    m_ctrlCustomDPIMask.SelectAll();
+                }
+            }
+            catch
+            {
+
+            }
+        }
 
 
 	}// CTmaxRegOptionsForm
