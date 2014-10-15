@@ -621,7 +621,41 @@ namespace FTI.Trialmax.Forms
                 }
             }
         }
-		
+
+        delegate void DisableFormCallback();
+        public void DisableForm()
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.InvokeRequired)
+            {
+                DisableFormCallback d = new DisableFormCallback(DisableForm);
+                this.Invoke(d, new object[] { });
+            }
+            else
+            {
+                this.Enabled = false;
+            }
+        }
+
+        delegate void EnableFormCallback();
+        public void EnableForm()
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.InvokeRequired)
+            {
+                EnableFormCallback d = new EnableFormCallback(EnableForm);
+                this.Invoke(d, new object[] { });
+            }
+            else
+            {
+                this.Enabled = true;
+            }
+        }
+
 		/// <summary>Flag to indicate that the operation should be blocked when an error occurs</summary>
 		public bool PauseOnError
 		{
