@@ -415,8 +415,16 @@ namespace FTI.Trialmax.Database
         /// <summary>Leadtools CodecsImageInfo to get PDF info</summary>
         private CodecsImageInfo m_codecsInfo = null;
 
-        private Thread RegThread = null;
+        /// <summary>Thread that does the entire Registration for PDF Imports</summary>
+        private static Thread RegThread = null;
 
+        /// <summary>List that will contain un-completed tasks</summary>
+        private List<CTmaxPDFManager> ConversionTasksArray = null;
+
+        /// <summary>Lock for accessing ConverstionTasksArray above</summary>
+        private static object lockConversionTasksArray = true;
+
+        /// <summary>Lock for Conflict Resolution form because only 1 form should appear at any given instance</summary>
         private static object lockForConflictForm = true;
 
 		#endregion Private Members
@@ -1324,7 +1332,7 @@ namespace FTI.Trialmax.Database
                 WaitHandle.WaitAll(threadPoolDoneEvents);
             }
 
-			return true;
+            return m_bRegisterCancelled;
 		
 		}// public bool AddSource(CTmaxSourceFolder tmaxSource)
 
@@ -5558,9 +5566,23 @@ namespace FTI.Trialmax.Database
 				if(m_cfRegisterProgress.ShowDialog() == DialogResult.Cancel)
 				{
 					m_bRegisterCancelled = true;
+                    
+                    //  Now we need to check if any tasks are pending. If there are then we need to signal each task to stop processing and perform cleanp.
                     if (RegThread != null)
                     {
-                        RegThread.Abort();
+                        lock (lockConversionTasksArray)
+                        {
+                            if (ConversionTasksArray != null)
+                            {
+                                for (int i = 0; i < ConversionTasksArray.Count; i++)
+                                {
+                                    ConversionTasksArray[i].StopConversionProcess();
+                                }
+                                ConversionTasksArray = null;                                    
+                            }
+                        }
+                        RegThread.Join();   // We need to wait for all tasks to be stopped (if any) and then proceed so proper cleanup is done.
+                        RegThread = null;
                     }
 				}
 				
@@ -7761,7 +7783,8 @@ namespace FTI.Trialmax.Database
 			}// if(bMediaId == true)
 			
 			//	Has automatic resolution be requested for this session?
-			if(m_bAutoResolve == true)
+            lock (lockForConflictForm)
+            if (m_bAutoResolve == true || tmaxSource.SourceType == RegSourceTypes.Adobe)
 			{
 				strModified = m_tmaxRegisterOptions.Resolve(dxPrimary, strResolve, RegConflictResolutions.Automatic);
 			}
@@ -7803,7 +7826,7 @@ namespace FTI.Trialmax.Database
 				//	Open the form
 				DisableTmaxKeyboard(true);
 				FTI.Shared.Win32.User.MessageBeep(0);
-				bSuccessful = (wndResolve.ShowDialog() == DialogResult.OK);
+                bSuccessful = (wndResolve.ShowDialog() == DialogResult.OK);
 				DisableTmaxKeyboard(false);
 				
 				//	Did the user specify a value?
@@ -8806,7 +8829,16 @@ namespace FTI.Trialmax.Database
 		private void RegisterThreadProc()
 		{
 			Debug.Assert(m_RegSourceFolder != null);
-	
+            if (ConversionTasksArray == null)
+            {
+                lock (lockConversionTasksArray)
+                {
+                    if (ConversionTasksArray == null)
+                    {
+                        ConversionTasksArray = new List<CTmaxPDFManager>();
+                    }
+                }
+            }
 			//	Are we merging all source files into a single primary media object?
 			if((m_tmaxRegisterOptions != null) && (m_tmaxRegisterOptions.MediaCreation == RegMediaCreations.Merge))
 			{
@@ -8846,6 +8878,7 @@ namespace FTI.Trialmax.Database
 			//	Notify the progress form
 			if((m_cfRegisterProgress != null) && (m_bRegisterCancelled == false))
 			{
+                m_cfRegisterProgress.CompletedPages = m_totalPages;
 				m_cfRegisterProgress.Finished = true;
 				SetRegisterProgress("Registration complete");
 			}
@@ -10221,7 +10254,30 @@ namespace FTI.Trialmax.Database
                 CTmaxPDFManager PDFManager = new CTmaxPDFManager(strAdobeFileSpec.ToLower(), strTarget.ToLower(), m_tmaxRegisterOptions.OutputType, m_tmaxRegisterOptions.CustomDPI);
                 PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
                 //m_cfRegisterProgress.
+                if (m_bRegisterCancelled == true)
+                    return iPages;
+                lock (lockConversionTasksArray)
+                {
+                    if (ConversionTasksArray == null)
+                        return iPages;
+                    ConversionTasksArray.Add(PDFManager);
+                }
                 bool status = PDFManager.StartConversion();
+                if (status == true)
+                {
+                    lock (lockConversionTasksArray)
+                    {
+                        if (ConversionTasksArray == null)
+                        {
+                            return iPages;
+                        }
+                        ConversionTasksArray.Remove(PDFManager);
+                    }
+                }
+                else
+                {
+                    return iPages;
+                }
                 // If the new PDF Manager fails to convert, use FTIP2I
                 if (!status)
                 {
@@ -10430,7 +10486,7 @@ namespace FTI.Trialmax.Database
             }
             catch (ThreadAbortException Ex)
             {
-                Console.WriteLine(Ex.ToString());
+                Console.WriteLine("Exception was thrown hear. Caught you." +Ex.ToString());
             }
             catch (System.Exception Ex)
             {
@@ -10456,7 +10512,7 @@ namespace FTI.Trialmax.Database
 			return iPages;
 
 		}// private bool ExportAdobe(string strAdobeFileSpec, CTmaxSourceFolder tmaxTarget)
-		
+
 		/// <summary>This method will get the source files for the specified Adobe PDF document</summary>
 		/// <param name="dxPrimary">The primary media object associated with the Adobe PDF</param>
 		/// <param name="tmaxSource">The source folder associated with the Adobe PDF</param>
@@ -10491,11 +10547,6 @@ namespace FTI.Trialmax.Database
             
             bool isDuplicate = Directory.Exists(strTarget.ToLower());
 
-            //CTmaxSourceFolder tmaxSource = new CTmaxSourceFolder(strTarget);
-            //CDxPrimary dxPrimary = new CDxPrimary();
-            //dxPrimary.MediaId = tmaxSource.Name;
-            //dxPrimary.RegisterPath = tmaxSource.Path;
-            //dxPrimary.Attributes = tmaxSource.PrimaryAttributes;
             string strNewName = string.Empty;
             lock (lockForConflictForm)
             {
@@ -10520,7 +10571,9 @@ namespace FTI.Trialmax.Database
                             wndResolve.Source = tmaxSource.Path + "\\" + dxPrimary.RelativePath;
                         //	Open the form
                         DisableTmaxKeyboard(true);
+                        wndResolve.TopMost = true;
                         FTI.Shared.Win32.User.MessageBeep(0);
+                        m_cfRegisterProgress.DisableForm(); // Disable the Progress Form when autoresolve screen appears
                         if (wndResolve.ShowDialog() == DialogResult.OK)
                         {
                             DisableTmaxKeyboard(false);
@@ -10533,8 +10586,10 @@ namespace FTI.Trialmax.Database
                             if ((m_cfRegisterProgress != null) && (m_cfRegisterProgress.IsDisposed == false))
                                 m_cfRegisterProgress.CompletedPages = m_cfRegisterProgress.CompletedPages + m_codecsInfo.TotalPages;
                             bSuccessful = false;
+                            m_cfRegisterProgress.EnableForm(); // Enable the Progress Form when autoresolve screen appears
                             return bSuccessful;
                         }
+                        m_cfRegisterProgress.EnableForm(); // Enable the Progress Form when autoresolve screen appears
                         if (wndResolve.AutoResolveAll == true)
                             m_bAutoResolve = true;
                         path += @wndResolve.Resolution;
@@ -10546,44 +10601,65 @@ namespace FTI.Trialmax.Database
                         path += strNewName;
                     }
                     isDuplicate = Directory.Exists(path.ToLower());
-                    
                 }
-                if (!string.IsNullOrEmpty(strNewName))
+            }
+            if (!string.IsNullOrEmpty(strNewName))
+            {
+                try
                 {
-                    try
+                    if (!Directory.Exists(Path.GetDirectoryName( System.IO.Path.GetTempPath() + strNewName)))
                     {
-                        File.Copy(strFileSpec, System.IO.Path.GetTempPath() + strNewName + ".pdf");
+                        Directory.CreateDirectory(Path.GetDirectoryName( System.IO.Path.GetTempPath() + strNewName));
                     }
-                    catch (IOException Ex)
-                    {
-                        File.Delete(System.IO.Path.GetTempPath() + strNewName + ".pdf");
-                        File.Copy(strFileSpec, System.IO.Path.GetTempPath() + strNewName + ".pdf");
-                    }
-                    strFileSpec = System.IO.Path.GetTempPath() + strNewName + ".pdf";
-                    dxPrimary.RelativePath = strNewName;
-                    strTarget = GetFolderSpec(dxPrimary, true);
-                    if (strTarget.EndsWith("\\") == false)
-                        strTarget += "\\";
+                    File.Copy(strFileSpec, System.IO.Path.GetTempPath() + strNewName + ".pdf");
                 }
+                catch (IOException Ex)
+                {
+                    File.Delete(System.IO.Path.GetTempPath() + strNewName + ".pdf");
+                    File.Copy(strFileSpec, System.IO.Path.GetTempPath() + strNewName + ".pdf");
+                }
+                strFileSpec = System.IO.Path.GetTempPath() + strNewName + ".pdf";
+                dxPrimary.RelativePath = strNewName;
+                strTarget = GetFolderSpec(dxPrimary, true);
+                if (strTarget.EndsWith("\\") == false)
+                    strTarget += "\\";
             }
             //------------------------------------------------------------------------------//
 
 			//	Export the PDF pages to the target folder
 			if((iPages = ExportAdobe(strFileSpec, strTarget)) != 0)
 			{
-                //  Delete PDF file that was copied to temporary folder
+                //  ------------------Delete PDF file that was copied to temporary folder---------------------------
                 if (!string.IsNullOrEmpty(strNewName))
                 {
                     try
                     {
-                        File.Delete(strFileSpec);
+                        string temporaryDirectory = @System.IO.Path.GetTempPath();
+                        string parentPath = strNewName;   // This will store the parent folder name in which the file was store if a folder was selected while importing
+                        while (true)
+                        {
+                            string temp = Path.GetDirectoryName(parentPath);
+                            if (String.IsNullOrEmpty(temp))
+                                break;
+                            parentPath = temp;
+                        }
+                        if (!string.IsNullOrEmpty(parentPath) && Directory.Exists(temporaryDirectory + parentPath))
+                        {
+                            Console.WriteLine("Deleting source folder = " + temporaryDirectory + parentPath);
+                            Directory.Delete(temporaryDirectory + parentPath,true);
+                        }
+                        else
+                        {
+                            File.Delete(strFileSpec);
+                        }
                     }
                     catch (IOException Ex)
                     {
+                        Console.WriteLine("Exception while deleting source folder = " + Ex.ToString());
                         //  Do Nothing
                     }
                 }
-
+                //  --------------------------------------------------------------------------------------------------
 				//	Change the source path to match the target
 				tmaxSource.Initialize(strTarget);
 				
@@ -10594,7 +10670,7 @@ namespace FTI.Trialmax.Database
 				if((iPages > 0) && (iPages != tmaxSource.GetFileCount(false)))
 				{
 					//	Warn the user that the page counts do not match
-//                    FireError(this,"GetAdobeSource",this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_PAGE_COUNTS,iPages.ToString(),tmaxSource.GetFileCount(false).ToString()));
+                    FireError(this,"GetAdobeSource",this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_PAGE_COUNTS,iPages.ToString(),tmaxSource.GetFileCount(false).ToString()));
 				}
 				
 				//	Make sure the files in the collection are in sorted order
@@ -10605,17 +10681,111 @@ namespace FTI.Trialmax.Database
 			}
 			else
 			{
+                //  -----------Delete exported files since there was an error or user cancelled the opertation-------
+                string caseDirectory = GetCasePath(TmaxMediaTypes.Document); ;
+                if (strTarget.Contains(caseDirectory.ToLower()))
+                {
+                    int index = strTarget.IndexOf(caseDirectory.ToLower());
+                    string cleanPath = (index < 0)
+                        ? strTarget
+                        : strTarget.Remove(index, caseDirectory.Length);
+
+                    try
+                    {
+                        string parentPath = cleanPath;   // This will store the parent folder name in which the file was store if a folder was selected while importing
+                        parentPath = Path.GetDirectoryName(parentPath);
+                        if (!string.IsNullOrEmpty(parentPath) && Directory.Exists(caseDirectory + parentPath))
+                        {
+                            Console.WriteLine("Deleting directory= " + caseDirectory + parentPath);
+
+                            DeleteDirectory(caseDirectory + parentPath);
+                        }
+                        else
+                        {
+                            File.Delete(strTarget);
+                        }
+                    }
+                    catch (IOException Ex)
+                    {
+                        //  Do Nothing
+                    }
+                }
+                //  ------------------Delete PDF file that was copied to temporary folder---------------------------
+                if (!string.IsNullOrEmpty(strNewName))
+                {
+                    try
+                    {
+                        string temporaryDirectory = @System.IO.Path.GetTempPath();
+                        string parentPath = strNewName;   // This will store the parent folder name in which the file was store if a folder was selected while importing
+                        while (true)
+                        {
+                            string temp = Path.GetDirectoryName(parentPath);
+                            if (String.IsNullOrEmpty(temp))
+                                break;
+                            parentPath = temp;
+                        }
+                        if (!string.IsNullOrEmpty(parentPath) && Directory.Exists(temporaryDirectory + parentPath))
+                        {
+                            Console.WriteLine("Deleting source folder = " + temporaryDirectory + parentPath);
+                            Directory.Delete(temporaryDirectory + parentPath, true);
+                        }
+                        else
+                        {
+                            File.Delete(strFileSpec);
+                        }
+                    }
+                    catch (IOException Ex)
+                    {
+                        Console.WriteLine("Exception while deleting source folder = " + Ex.ToString());
+                        //  Do Nothing
+                    }
+                }
+                //  -------------------------------------------------------------------------------------------------
+
 				//	Delete the target since no pages were exported
-				try   { System.IO.Directory.Delete(strTarget); }
+				try   { System.IO.Directory.Delete(strTarget,true); }
 				catch {}
-			
 				return false;
 			}
 			
 			return bSuccessful;
 		
 		}// private bool GetAdobeSource(CDxPrimary dxPrimary, CTmaxSourceFolder tmaxSource)
-		
+
+        /// <summary>This method will delete the directory and any files that exists in that directory.</summary> 
+        /// <summary>Used for deleting Temporary files and un-complete exported PDF's.</summary>
+        /// <param name="directoryPath">The directory path that will be deleted</param>
+        /// <returns>void</returns>
+        private void DeleteDirectory(string directoryPath)
+        {
+            string[] files = Directory.GetFiles(directoryPath);
+            string[] dirs = Directory.GetDirectories(directoryPath);
+
+            try
+            {
+                foreach (string file in files)
+                {
+                    File.SetAttributes(file, FileAttributes.Normal);
+                    File.Delete(file);
+                }
+            }
+            catch{ }
+
+            try
+            {
+                foreach (string dir in dirs)
+                {
+                    DeleteDirectory(dir);
+                }
+            }
+            catch{ }
+
+            try
+            {
+                Directory.Delete(directoryPath, false);
+            }
+            catch { }
+        }
 		/// <summary>This method will delete the specified media record</summary>
 		/// <param name="dxRecord">The record to be deleted</param>
 		/// <param name="tmaxDeleted">Collection of items representing deleted records</param>
@@ -13539,12 +13709,32 @@ namespace FTI.Trialmax.Database
             }
             catch (System.Exception Ex)
             {
-                FireError(this, "CreatePrimary", this.ExBuilder.Message(ERROR_CASE_DATABASE_CREATE_PRIMARY_FOLDER_EX, tmaxSource.Path), Ex);
+                if (!m_bRegisterCancelled)
+                    FireError(this, "CreatePrimary", this.ExBuilder.Message(ERROR_CASE_DATABASE_CREATE_PRIMARY_FOLDER_EX, tmaxSource.Path), Ex);
             }
 			
 			//	Should we delete the record?
 			if((dxPrimary != null) && (bSuccessful == false))
 			{
+                //  Make sure the output directory is deleted since those files wont be registered in the database
+                string caseDirectory = GetCasePath(TmaxMediaTypes.Document); ;
+                try
+                {
+                    if (!string.IsNullOrEmpty(dxPrimary.RelativePath) && Directory.Exists(caseDirectory + dxPrimary.RelativePath))
+                    {
+                        Console.WriteLine("Deleting directory= " + caseDirectory + dxPrimary.RelativePath);
+
+                        DeleteDirectory(caseDirectory + dxPrimary.RelativePath);
+                    }
+                    else
+                    {
+                    }
+                }
+                catch (IOException Ex)
+                {
+                    //  Do Nothing
+                }
+                //  ---
 				try { m_dxPrimaries.Delete(dxPrimary); }
 				catch {};
 				dxPrimary = null;
@@ -13986,7 +14176,7 @@ namespace FTI.Trialmax.Database
 				else
 				{
 					//	Delete the target since no pages were exported
-					try   { System.IO.Directory.Delete(strTarget); }
+					try   { System.IO.Directory.Delete(strTarget,true); }
 					catch {}
 				
 					return false;
