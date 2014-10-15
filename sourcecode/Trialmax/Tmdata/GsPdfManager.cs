@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 using FTI.Shared;
 using FTI.Shared.Win32;
@@ -45,6 +46,7 @@ namespace FTI.Trialmax.Database
         /// <summary>Flag that tells whether to convert files or not</summary>
         private volatile bool DoConvert = true;
 
+        /// <summary>Local variable for GhostScriptProcessor that processes files so we can stop it any time</summary>
         private GhostscriptProcessor processor = null;
 
         #endregion Private Members
@@ -73,20 +75,18 @@ namespace FTI.Trialmax.Database
         ///<summary>Start the conversion process using Ghostscript</summary>
         public bool Process()
         {
-            using (GhostscriptProcessor processor = new GhostscriptProcessor(m_gvi, true))
+            processor = new GhostscriptProcessor(m_gvi, true);
+            processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
+            try
             {
-                processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
-                try
-                {
-                    processor.StartProcessing(m_switches.ToArray(), null);
-                }
-                catch (Exception ex)
-                {
-                    if (m_conversionErrors == null)
-                        m_conversionErrors = new List<string>();
-                    m_conversionErrors.Add(ex.ToString());
-                    return false;
-                }
+                processor.StartProcessing(m_switches.ToArray(), null);
+            }
+            catch (Exception ex)
+            {
+                if (m_conversionErrors == null)
+                    m_conversionErrors = new List<string>();
+                m_conversionErrors.Add(ex.ToString());
+                return false;
             }
             return true;
         }
@@ -94,23 +94,21 @@ namespace FTI.Trialmax.Database
         ///<summary>Process a single page</summary>
         public bool ProcessPage(int pageNum)
         {
-            using (processor = new GhostscriptProcessor(m_gvi, true))
+            processor = new GhostscriptProcessor(m_gvi, true);
+            AddPageSwitch(pageNum);
+            processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
+            try
             {
-                AddPageSwitch(pageNum);
-                processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
-                try
-                {
-                    processor.StartProcessing(m_switches.ToArray(), null);
-                }
-                catch (Exception ex)
-                {
-                    if (m_conversionErrors == null)
-                        m_conversionErrors = new List<string>();
-                    m_conversionErrors.Add(ex.ToString());
-                    return false;
-                }
-                RemovePageSwitch();
+                processor.StartProcessing(m_switches.ToArray(), null);
             }
+            catch (Exception ex)
+            {
+                if (m_conversionErrors == null)
+                    m_conversionErrors = new List<string>();
+                m_conversionErrors.Add(ex.ToString());
+                return false;
+            }
+            RemovePageSwitch();
             return true;
         }
 
@@ -121,11 +119,19 @@ namespace FTI.Trialmax.Database
             //Console.WriteLine(e.CurrentPage.ToString() + " / " + e.TotalPages.ToString());
         }
 
+        ///<summary>TmaxPdfManager signalled to stop the conversion process</summary>
         public void StopProcess()
         {
             DoConvert = false;
             if (processor != null)
+            {
                 processor.StopProcessing();
+                while (processor.IsRunning) // Wait until processor stops and then proceed
+                {
+                    Thread.Sleep(1000);
+                }
+                processor.Dispose();
+            }
         }
 
         #endregion Public Methods
