@@ -25,17 +25,20 @@ namespace FTI.Shared.Database
 
         /// <summary>Local member to store the output directory where the converted files will be stored</summary>
         private string m_OutputPath = string.Empty;
-            
+
         /// <summary>Local member to store Output Type i.e. 0 = auto ; 1 = color ; 2 = black&white </summary>
         private TmaxPDFOutputType m_OutputType = TmaxPDFOutputType.Autodetect;
 
         /// <summary>Local member to store CustomDPI </summary>
         private short m_CustomDPI = 0;
 
+        /// <summary>Local member that will use MuManager</summary>
         private CTmaxMuPdfManager MuManager = null;
 
+        /// <summary>Local member that will use LtManager</summary>
         private CTmaxLtPdfManager LtManager = null;
 
+        /// <summary>Local member that will use GsManager</summary>
         private CTmaxGsPdfManager GsManager = null;
 
         /// <summary>Constructor</summary>
@@ -62,12 +65,12 @@ namespace FTI.Shared.Database
             }
             catch (ThreadAbortException Ex)
             {
-                CleanUp();
                 return false;
             }
         }// public bool StartConversion()
 
-        private void CleanUp()
+        /// <summary>Stop any running conversion process immediatelly</summary>
+        public void StopConversionProcess()
         {
             switch (m_OutputType)
             {
@@ -75,7 +78,7 @@ namespace FTI.Shared.Database
                     if (MuManager != null)
                         MuManager.StopProcess();
                     break;
-                case TmaxPDFOutputType.ForceColor: 
+                case TmaxPDFOutputType.ForceColor:
                     if (LtManager != null)
                         LtManager.StopProcess();
                     break;
@@ -85,17 +88,58 @@ namespace FTI.Shared.Database
                     break;
                 default: ConvertAutoDetect(); break;
             }
+            CleanUp();
+        }
+
+        /// <summary>Clean any temporary files if PDF was stored in Temp folder and exported files since the conversion was stopped</summary>
+        private void CleanUp()
+        {
             try
             {
-                Directory.Delete(m_OutputPath, true);
-
                 //  We will check if the path contains the path of windows temp folder.
                 //  If it does, we will assume that the pdf file was copied previously to the temp folder and needs to be deleted.
                 string temporaryDirectory = @System.IO.Path.GetTempPath();
                 if (m_InputFile.Contains(temporaryDirectory.ToLower()))
                 {
-                    File.Delete(m_InputFile);
+                    int index = m_InputFile.IndexOf(temporaryDirectory.ToLower());
+                    string cleanPath = (index < 0)
+                        ? m_InputFile
+                        : m_InputFile.Remove(index, temporaryDirectory.Length);
+
+                    try
+                    {
+                        string parentPath = cleanPath;   // This will store the parent folder name in which the file was store if a folder was selected while importing
+                        while (true)
+                        {
+                            string temp = Path.GetDirectoryName(parentPath);
+                            if (String.IsNullOrEmpty(temp))
+                                break;
+                            parentPath = temp;
+                        }
+                        if (!string.IsNullOrEmpty(parentPath) && Directory.Exists(temporaryDirectory + parentPath))
+                        {
+                            Console.WriteLine("Deleting temporary file = " + temporaryDirectory + parentPath);
+                            Directory.Delete(temporaryDirectory + parentPath, true);
+                        }
+                        else
+                        {
+                            File.Delete(m_InputFile);
+                        }
+                    }
+                    catch (IOException Ex)
+                    {
+                        Console.WriteLine("Exception while deleting temporary file = " + Ex.ToString());
+                        //  Do Nothing
+                    }
                 }
+            }
+            catch (IOException Ex)
+            {
+                //  Do Nothing
+            }
+            try
+            {
+                Directory.Delete(m_OutputPath, true);
             }
             catch (IOException Ex)
             {
