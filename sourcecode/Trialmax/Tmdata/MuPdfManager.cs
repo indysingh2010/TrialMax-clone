@@ -42,6 +42,9 @@ namespace FTI.Trialmax.Database
         /// <summary>Flag that tells whether to convert files or not</summary>
         private volatile bool DoConvert = true;
 
+        /// <summary>List containing errors if occured</summary>
+        private List<Exception> m_conversionErrors = null;
+
         #endregion Private Members
 
         #region Public Members
@@ -60,9 +63,24 @@ namespace FTI.Trialmax.Database
             m_outputPath            = outPath;
             m_resolution            = outResolution;
             m_totalThreads          = totThreads;
-            InitializeLeadtools();
-            InitializeGhostscript();
-            m_TotalPages            = m_LtManager.GetTotalPages();
+            m_conversionErrors = new List<Exception>();
+            if (InitializeLeadtools() && InitializeGhostscript())
+            {
+                m_TotalPages = m_LtManager.GetTotalPages();
+            }
+            else
+            {
+                if (m_LtManager != null && m_LtManager.GetConversionErrorList() != null)
+                    m_conversionErrors.AddRange(m_LtManager.GetConversionErrorList());
+                if (m_GsManager != null && m_GsManager.GetConversionErrorList() != null)
+                    m_conversionErrors.AddRange(m_GsManager.GetConversionErrorList());
+            }
+        }
+
+        ///<summary>Return the list of errors if occured any</summary>
+        public List<Exception> GetConversionErrorList()
+        {
+            return m_conversionErrors;
         }
 
         ///<summary>Start the conversion process using MuPdf/Leadtools/Ghostscript</summary>
@@ -130,7 +148,7 @@ namespace FTI.Trialmax.Database
         {
             m_LtManager = new CTmaxLtPdfManager(m_documentNameWithPath, m_outputPath, m_resolution);
             m_LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
-            return (m_LtManager != null);
+            return (m_LtManager != null && m_LtManager.GetConversionErrorList().Count ==0);
         }
 
         ///<summary>Initialize Ghostscript object for color conversions</summary>

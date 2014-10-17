@@ -91,6 +91,19 @@ namespace FTI.Shared.Database
             CleanUp();
         }
 
+        ///<summary>Return the list of errors if occured any</summary>
+        public List<Exception> GetConversionErrorList()
+        {
+            List<Exception> ErrorList = new List<Exception>();
+            if (MuManager != null && MuManager.GetConversionErrorList() != null)
+                ErrorList.AddRange(MuManager.GetConversionErrorList());
+            if (LtManager != null && LtManager.GetConversionErrorList() != null)
+                ErrorList.AddRange(LtManager.GetConversionErrorList());
+            if (GsManager != null && GsManager.GetConversionErrorList() != null)
+                ErrorList.AddRange(GsManager.GetConversionErrorList());
+            return ErrorList;
+        }
+
         /// <summary>Clean any temporary files if PDF was stored in Temp folder and exported files since the conversion was stopped</summary>
         private void CleanUp()
         {
@@ -151,6 +164,8 @@ namespace FTI.Shared.Database
         private bool ConvertAutoDetect()
         {
             MuManager = new CTmaxMuPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            if (MuManager == null || (MuManager != null && MuManager.GetConversionErrorList() != null && MuManager.GetConversionErrorList().Count != 0))
+                return false;
             MuManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return MuManager.Process();
         }// private bool ConvertAutoDetect()
@@ -159,6 +174,8 @@ namespace FTI.Shared.Database
         private bool ConvertColor()
         {
             LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            if (LtManager == null || (LtManager != null && LtManager.GetConversionErrorList() != null && LtManager.GetConversionErrorList().Count != 0))
+                return false;
             LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return LtManager.Process();
         }// private bool ConvertColor()
@@ -167,6 +184,8 @@ namespace FTI.Shared.Database
         private bool ConvertBW()
         {
             GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            if (GsManager == null || (GsManager != null && GsManager.GetConversionErrorList() != null && GsManager.GetConversionErrorList().Count != 0))
+                return false;
             GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return GsManager.Process();
         }// private bool ConvertBW()

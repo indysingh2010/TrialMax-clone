@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCopyright("FTI Consulting 2004")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
+[assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
 // Version information for an assembly consists of the following four values:
 //      Major Version
@@ -22,7 +22,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("7.0.43.10154")]
+[assembly: AssemblyVersion("7.0.44.10174")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

@@ -41,7 +41,7 @@ namespace FTI.Trialmax.Database
         private short m_resolution;
 
         /// <summary>List containing errors if occured</summary>
-        private List<string> m_conversionErrors = null;
+        private List<Exception> m_conversionErrors = null;
 
         /// <summary>Flag that tells whether to convert files or not</summary>
         private volatile bool DoConvert = true;
@@ -84,8 +84,8 @@ namespace FTI.Trialmax.Database
             catch (Exception ex)
             {
                 if (m_conversionErrors == null)
-                    m_conversionErrors = new List<string>();
-                m_conversionErrors.Add(ex.ToString());
+                    m_conversionErrors = new List<Exception>();
+                m_conversionErrors.Add(ex);
                 return false;
             }
             return true;
@@ -104,8 +104,8 @@ namespace FTI.Trialmax.Database
             catch (Exception ex)
             {
                 if (m_conversionErrors == null)
-                    m_conversionErrors = new List<string>();
-                m_conversionErrors.Add(ex.ToString());
+                    m_conversionErrors = new List<Exception>();
+                m_conversionErrors.Add(ex);
                 return false;
             }
             RemovePageSwitch();
@@ -113,10 +113,9 @@ namespace FTI.Trialmax.Database
         }
 
         ///<summary>Return the list of errors if occured any</summary>
-        public List<string> getErrorList()
+        public List<Exception> GetConversionErrorList()
         {
             return m_conversionErrors;
-            //Console.WriteLine(e.CurrentPage.ToString() + " / " + e.TotalPages.ToString());
         }
 
         ///<summary>TmaxPdfManager signalled to stop the conversion process</summary>

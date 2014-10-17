@@ -43,7 +43,7 @@ namespace FTI.Trialmax.Database
         private short m_resolution;
 
         /// <summary>List containing errors if occured</summary>
-        private List<string> m_conversionErrors = null;
+        private List<Exception> m_conversionErrors = null;
 
         /// <summary>Flag that tells whether to convert files or not</summary>
         private volatile bool DoConvert = true;
@@ -90,9 +90,9 @@ namespace FTI.Trialmax.Database
                 m_codecs.Save(image, m_outputPath+ "\\\\" + pageNum.ToString("D4") + ".png", RasterImageFormat.Png, 0);
                 return true;
             }
-            catch
+            catch (Exception Ex)
             {
-                m_conversionErrors.Add("Exception thrown when saving RasterImage");
+                m_conversionErrors.Add(Ex);
                 return false;
             }
         }
@@ -109,13 +109,19 @@ namespace FTI.Trialmax.Database
             DoConvert = false;
         }
 
+        /// <summary>Returns the list of errors</summary>
+        public List<Exception> GetConversionErrorList()
+        {
+            return m_conversionErrors;
+        }
+
         #endregion Public Methods
 
         #region Private Methods
 
         private bool InitializeLeadtools()
         {
-            m_conversionErrors = new List<string>();
+            m_conversionErrors = new List<Exception>();
             if (InitializeRasterCodecs())
             {
                 if (InitializePdfInfo())
@@ -124,38 +130,52 @@ namespace FTI.Trialmax.Database
                 }
                 else
                 {
-                    m_conversionErrors.Add("Error in initialzing CodecsImageInfo Leadtools");
+                    // Already handled in InitializePdfInfo()
                 }
             }
             else
             {
-                m_conversionErrors.Add("Error in initialzing RasterCodecs Leadtools");
+                // Already handled in InitializeRasterCodecs()
             }
             return false;
         }
 
         private bool InitializeRasterCodecs()
         {
-            m_codecs = new RasterCodecs();
-            if (m_resolution == 0)
+            try
             {
-                m_codecs.Options.RasterizeDocument.Load.XResolution = 300;
-                m_codecs.Options.RasterizeDocument.Load.YResolution = 300;
+                m_codecs = new RasterCodecs();
+                if (m_resolution == 0)
+                {
+                    m_codecs.Options.RasterizeDocument.Load.XResolution = 300;
+                    m_codecs.Options.RasterizeDocument.Load.YResolution = 300;
+                }
+                else
+                {
+                    m_codecs.Options.RasterizeDocument.Load.XResolution = m_resolution;
+                    m_codecs.Options.RasterizeDocument.Load.YResolution = m_resolution;
+                }
+                m_codecs.Options.Pdf.Load.DisplayDepth = 8;
+                m_codecs.SavePage += new EventHandler<CodecsPageEventArgs>(codecs_SavePage);
             }
-            else
+            catch (RasterException Ex)
             {
-                m_codecs.Options.RasterizeDocument.Load.XResolution = m_resolution;
-                m_codecs.Options.RasterizeDocument.Load.YResolution = m_resolution;
+                m_conversionErrors.Add(Ex);
             }
-            m_codecs.Options.Pdf.Load.DisplayDepth = 8;
-            m_codecs.SavePage += new EventHandler<CodecsPageEventArgs>(codecs_SavePage);
-            //m_codecs.SaveImage += new EventHandler<CodecsSaveImageEventArgs>(codecs_SaveImage);
             return (m_codecs != null);
         }
 
         private bool InitializePdfInfo()
         {
-            m_pdfInfo = m_codecs.GetInformation(m_documentNameWithPath, true);
+            try
+            {
+                m_pdfInfo = m_codecs.GetInformation(m_documentNameWithPath, true);
+            }
+            catch (RasterException Ex)
+            {
+                m_conversionErrors.Add(Ex);
+                return false;
+            }
             return (m_pdfInfo != null);
         }
  
@@ -163,9 +183,6 @@ namespace FTI.Trialmax.Database
         {
             if (notifyPDFManager != null && e!= null && e.State == CodecsPageEventState.After)
                 notifyPDFManager(sender, e);
-            //Console.WriteLine("{0} saving page {1}:{2}",
-            //   e.State == CodecsPageEventState.After ? "After" : "Before",
-            //   e.Page, e.PageCount);
         }
 
         #endregion Private Methods
