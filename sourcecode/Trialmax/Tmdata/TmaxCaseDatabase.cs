@@ -10295,7 +10295,7 @@ namespace FTI.Trialmax.Database
                     foreach (Exception error in ErrorList)
                     {
                         errors += error.Message;
-                        FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec), error);
+                        // FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec), error);
                     }
                     log.Error(Path.GetFileName(strAdobeFileSpec) + " Status: UnSuccessful       Details: " + errors);
                     return iPages;
