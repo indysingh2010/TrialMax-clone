@@ -23,10 +23,11 @@ using Leadtools;
 using Leadtools.Codecs;
 using Ghostscript.NET;
 
+using log4net;
+
 using Interop.TiffPageSplitDLL;
 using System.Collections.Generic;
 using FTI.Shared.Database;
-
 namespace FTI.Trialmax.Database
 {
 	/// <summary>This class serves as the outer wrapper for all Trialmax database services</summary>
@@ -427,6 +428,8 @@ namespace FTI.Trialmax.Database
         /// <summary>Lock for Conflict Resolution form because only 1 form should appear at any given instance</summary>
         private static object lockForConflictForm = true;
 
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -447,7 +450,7 @@ namespace FTI.Trialmax.Database
 		public CTmaxCaseDatabase()
 		{
 			m_lFirstCodesVersion = GetPackedVer(6,1,6);
-			
+            log4net.Config.XmlConfigurator.Configure();
 			m_tmaxImportManager.Database = this;
 			m_tmaxExportManager.Database = this;
 			m_tmaxDesignationEditor.Database = this;
@@ -1300,25 +1303,22 @@ namespace FTI.Trialmax.Database
 			}// if(tmaxSource.Files.Count > 0)
             if (tmaxSource.SubFolders.Count > 0)
             {
-                var threadPoolDoneEvents = new ManualResetEvent[tmaxSource.SubFolders.Count];
                 //	Add each subfolder
                 //foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
-                for (int i = 0; i < tmaxSource.SubFolders.Count; i++)
+                Parallel.For(0, tmaxSource.SubFolders.Count, (i, loopstate) =>
                 {
                     try
                     {
                         if (m_bRegisterCancelled == false)
                         {
-                            threadPoolDoneEvents[i] = new ManualResetEvent(false);
                             AddSourceAgs variables = new AddSourceAgs();
                             variables.tmaxSource = tmaxSource;
                             variables.tmaxSubFolder = tmaxSource.SubFolders[i];
-                            variables.DoneEvents = threadPoolDoneEvents[i];
-                            ThreadPool.QueueUserWorkItem(AddSourceProcess, variables);
+                            AddSourceProcess(variables);
                         }
                         else
                         {
-                            break;
+                            loopstate.Stop();
                         }
 
                     }
@@ -1327,9 +1327,7 @@ namespace FTI.Trialmax.Database
                         FireError(this, "AddSource", this.ExBuilder.Message(ERROR_CASE_DATABASE_ADD_SOURCE_EX), Ex);
                     }
 
-                }//foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
-
-                WaitHandle.WaitAll(threadPoolDoneEvents);
+                });//foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
             }
 
             return m_bRegisterCancelled;
@@ -1340,7 +1338,6 @@ namespace FTI.Trialmax.Database
         {
             public CTmaxSourceFolder tmaxSource { get; set; }
             public CTmaxSourceFolder tmaxSubFolder { get; set; }
-            public ManualResetEvent DoneEvents { get; set; }
         }
 
         public void AddSourceProcess(Object arguments)
@@ -1365,7 +1362,6 @@ namespace FTI.Trialmax.Database
             {
                 FireError(this, "AddSource", this.ExBuilder.Message(ERROR_CASE_DATABASE_ADD_SOURCE_EX), Ex);
             }
-            args.DoneEvents.Set();
         }
 		/// <summary>This method will add the specified case codes to the database</summary>
 		/// <param name="tmaxCaseCodes">The collection of codes to be added</param>
@@ -5563,10 +5559,10 @@ namespace FTI.Trialmax.Database
 			if(m_cfRegisterProgress != null)
 			{
 				//	Show modal to prevent returning until finished or canceled
-				if(m_cfRegisterProgress.ShowDialog() == DialogResult.Cancel)
-				{
-					m_bRegisterCancelled = true;
-                    
+                if (m_cfRegisterProgress.ShowDialog() == DialogResult.Cancel)
+                {
+                    m_bRegisterCancelled = true;
+
                     //  Now we need to check if any tasks are pending. If there are then we need to signal each task to stop processing and perform cleanp.
                     if (RegThread != null)
                     {
@@ -5578,13 +5574,21 @@ namespace FTI.Trialmax.Database
                                 {
                                     ConversionTasksArray[i].StopConversionProcess();
                                 }
-                                ConversionTasksArray = null;                                    
+                                ConversionTasksArray = null;
                             }
                         }
                         RegThread.Join();   // We need to wait for all tasks to be stopped (if any) and then proceed so proper cleanup is done.
                         RegThread = null;
                     }
-				}
+                }
+                else
+                {
+                    if (RegThread != null)
+                    {
+                        RegThread.Join();   // We need to wait for all tasks to be stopped (if any) and then proceed so proper cleanup is done.
+                        RegThread = null;
+                    }
+                }
 				
 				//	Clean up
 				m_cfRegisterProgress.Dispose();
@@ -8871,6 +8875,7 @@ namespace FTI.Trialmax.Database
             CalculateTotalPages(m_RegSourceFolder);
             m_cfRegisterProgress.TotalPages = m_totalPages;
             SetRegisterProgress("Registration in progress ...");
+            log.Info("********************************* STARTING PDF CONVERSION *********************************");
 			//	Add the new records to the database
 			if((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
 				AddSource(m_RegSourceFolder);
@@ -8897,15 +8902,19 @@ namespace FTI.Trialmax.Database
             {
                 for (int i = 0; i < tmaxSource.Files.Count; i++)
                 {
-                    GhostscriptVersionInfo m_gvi = new GhostscriptVersionInfo("PDFManager/gsdll32.dll");
-                    GhostscriptPdfInfo tempInfo = new GhostscriptPdfInfo();
-                    //GhostscriptPdfInfo.GetInkCoverage("").Count;
-                    
                     CTmaxSourceFile temp = (CTmaxSourceFile)tmaxSource.Files.GetAt(0);
                     if (m_rasterCodecs == null)
                         m_rasterCodecs = new RasterCodecs();
-                    m_codecsInfo = m_rasterCodecs.GetInformation(temp.Path, true);
-                    m_totalPages += m_codecsInfo.TotalPages;
+                    try
+                    {
+                        m_codecsInfo = m_rasterCodecs.GetInformation(temp.Path, true);
+                        m_totalPages += m_codecsInfo.TotalPages;
+                    }
+                    catch (RasterException Ex)
+                    {
+                        m_totalPages += 1;
+                        Console.WriteLine("There was an error while importing the file named = "+temp.Path);
+                    }
                 }
 
             }// if(tmaxSource.Files.Count > 0)
@@ -10262,9 +10271,12 @@ namespace FTI.Trialmax.Database
                         return iPages;
                     ConversionTasksArray.Add(PDFManager);
                 }
+                Console.WriteLine("Starting converting file = " + strAdobeFileSpec.ToLower());
                 bool status = PDFManager.StartConversion();
                 if (status == true)
                 {
+                    log.Info(Path.GetFileName(strAdobeFileSpec) + " Status: Successful");
+                    Console.WriteLine("File completed successfully" + strAdobeFileSpec.ToLower());
                     lock (lockConversionTasksArray)
                     {
                         if (ConversionTasksArray == null)
@@ -10276,6 +10288,16 @@ namespace FTI.Trialmax.Database
                 }
                 else
                 {
+                    
+                    Console.WriteLine("File completed un - successfully" + strAdobeFileSpec.ToLower());
+                    List<Exception> ErrorList = PDFManager.GetConversionErrorList();
+                    string errors = string.Empty;
+                    foreach (Exception error in ErrorList)
+                    {
+                        errors += error.Message;
+                        FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec), error);
+                    }
+                    log.Error(Path.GetFileName(strAdobeFileSpec) + " Status: UnSuccessful       Details: " + errors);
                     return iPages;
                 }
                 // If the new PDF Manager fails to convert, use FTIP2I
@@ -10486,7 +10508,7 @@ namespace FTI.Trialmax.Database
             }
             catch (ThreadAbortException Ex)
             {
-                Console.WriteLine("Exception was thrown hear. Caught you." +Ex.ToString());
+                Console.WriteLine("Exception was thrown here. Caught you." +Ex.ToString());
             }
             catch (System.Exception Ex)
             {
