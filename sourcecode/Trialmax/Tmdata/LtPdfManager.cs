@@ -67,7 +67,7 @@ namespace FTI.Trialmax.Database
             m_totalThreads = totThreads;
             m_resolution = outResolution;
             InitializeLeadtools();
-        }
+        }// public CTmaxLtPdfManager(string docPath, string outPath, short outResolution = 0, short totThreads = 0)
         
         ///<summary>Start the conversion process using Leadtools</summary>
         public bool Process()
@@ -79,7 +79,7 @@ namespace FTI.Trialmax.Database
                         return false;
                 }
                 return true;
-        }
+        }// public bool Process()
 
         ///<summary>Process a single page</summary>
         public bool ProcessPage(int pageNum)
@@ -95,30 +95,31 @@ namespace FTI.Trialmax.Database
                 m_conversionErrors.Add(Ex);
                 return false;
             }
-        }
+        }// public bool ProcessPage(int pageNum)
 
         /// <summary>Number of pages in the current loaded PDF</summary>
         public int GetTotalPages()
         {
             return m_pdfInfo.TotalPages;
-        }
+        }// public int GetTotalPages()
 
         /// <summary>Stop the current conversion process</summary>
         public void StopProcess()
         {
             DoConvert = false;
-        }
+        }// public void StopProcess()
 
         /// <summary>Returns the list of errors</summary>
         public List<Exception> GetConversionErrorList()
         {
             return m_conversionErrors;
-        }
+        }// public List<Exception> GetConversionErrorList()
 
         #endregion Public Methods
 
         #region Private Methods
 
+        ///<summary>Initialize the objects that leadtools will require for conversion</summary>
         private bool InitializeLeadtools()
         {
             m_conversionErrors = new List<Exception>();
@@ -138,8 +139,9 @@ namespace FTI.Trialmax.Database
                 // Already handled in InitializeRasterCodecs()
             }
             return false;
-        }
+        }// private bool InitializeLeadtools()
 
+        ///<summary>Initializes the RasterCodecs object that belongs to Leadtools. This is later used for saving a PDF page to Image</summary>
         private bool InitializeRasterCodecs()
         {
             try
@@ -163,8 +165,9 @@ namespace FTI.Trialmax.Database
                 m_conversionErrors.Add(Ex);
             }
             return (m_codecs != null);
-        }
+        }// private bool InitializeRasterCodecs()
 
+        ///<summary>Initializes the CodecsImageInfo that belongs to Leadtools. This will later tell us details about the loaded PDF</summary>
         private bool InitializePdfInfo()
         {
             try
@@ -177,13 +180,14 @@ namespace FTI.Trialmax.Database
                 return false;
             }
             return (m_pdfInfo != null);
-        }
- 
-        private void codecs_SavePage(object sender, CodecsPageEventArgs e)    
+        }// private bool InitializePdfInfo()
+
+        ///<summary>This is a leadtools method that is called after a page is exported successfully so we can notify parent to update Progress bar</summary>
+        private void codecs_SavePage(object sender, CodecsPageEventArgs e)
         {
             if (notifyPDFManager != null && e!= null && e.State == CodecsPageEventState.After)
                 notifyPDFManager(sender, e);
-        }
+        }// private void codecs_SavePage(object sender, CodecsPageEventArgs e)
 
         #endregion Private Methods
 

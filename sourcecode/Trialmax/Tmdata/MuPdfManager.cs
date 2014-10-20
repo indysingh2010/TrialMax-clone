@@ -9,6 +9,9 @@ using Leadtools.Codecs;
 
 namespace FTI.Trialmax.Database
 {
+    /// <summary>
+    ///          This class is the Manager that does the PDF to Image conversion for AutoDetect
+    /// </summary>
     public class CTmaxMuPdfManager
     {
 
@@ -75,13 +78,13 @@ namespace FTI.Trialmax.Database
                 if (m_GsManager != null && m_GsManager.GetConversionErrorList() != null)
                     m_conversionErrors.AddRange(m_GsManager.GetConversionErrorList());
             }
-        }
+        }// public CTmaxMuPdfManager(string docPath, string outPath, short outResolution = 0, short totThreads = 0)
 
         ///<summary>Return the list of errors if occured any</summary>
         public List<Exception> GetConversionErrorList()
         {
             return m_conversionErrors;
-        }
+        }// public List<Exception> GetConversionErrorList()
 
         ///<summary>Start the conversion process using MuPdf/Leadtools/Ghostscript</summary>
         public bool Process()
@@ -102,8 +105,9 @@ namespace FTI.Trialmax.Database
                 }
             }
             return true;
-        }
+        }// public bool Process()
 
+        /// <summary>Stop any running conversion process immediatelly</summary>
         public void StopProcess()
         {
             DoConvert = false;
@@ -111,11 +115,11 @@ namespace FTI.Trialmax.Database
                 m_GsManager.StopProcess();
             if (m_LtManager != null)
                 m_LtManager.StopProcess();
-        }
+        }// public void StopProcess()
 
         #endregion Public Methods
 
-        #region Private Members
+        #region Private Methods
 
         ///<summary>Check if the page is colored or not using MuDraw.exe</summary>
         private bool isColor(int pageNum)
@@ -141,7 +145,7 @@ namespace FTI.Trialmax.Database
                 proc.Dispose();
             }
             return result;
-        }
+        }// private bool isColor(int pageNum)
 
         ///<summary>Initialize Leadtools object for color conversions</summary>
         private bool InitializeLeadtools()
@@ -149,22 +153,27 @@ namespace FTI.Trialmax.Database
             m_LtManager = new CTmaxLtPdfManager(m_documentNameWithPath, m_outputPath, m_resolution);
             m_LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return (m_LtManager != null && m_LtManager.GetConversionErrorList().Count ==0);
-        }
+        }// private bool InitializeLeadtools()
 
-        ///<summary>Initialize Ghostscript object for color conversions</summary>
+        ///<summary>Initialize Ghostscript object for black and white conversions</summary>
         private bool InitializeGhostscript()
         {
             m_GsManager = new CTmaxGsPdfManager(m_documentNameWithPath, m_outputPath, m_resolution);
             m_GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return (m_GsManager != null);
-        }
+        }// private bool InitializeGhostscript()
+
+        #endregion Private Methods
+
+        #region Protected Method
 
         ///<summary>Notify PDFManager to update Statusbar</summary>
         protected void UpdateRegStatusBar(object sender, EventArgs e)
         {
             if (notifyPDFManager != null)
                 notifyPDFManager(sender, e);
-        }
-        #endregion Private Members
+        }// protected void UpdateRegStatusBar(object sender, EventArgs e)
+
+        #endregion Protected Method
     }
 }
