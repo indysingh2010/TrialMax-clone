@@ -15,8 +15,19 @@ using FTI.Trialmax.Database;
 
 namespace FTI.Shared.Database
 {
+    /// <summary>
+    ///          This class is the Manager that does the PDF to Image conversion for all 3 categories
+    ///          i.e. Force Black and White, Force Color, Auto Detect
+    ///          For Color conversion, we are using Leadtools Imaging SDK Technology
+    ///          For Black and White, we are using Ghostscript v9.14 and wrapper for C# i.e. Ghostscript.NET
+    ///          For Color Detection, we are using MuPDF (MuDraw) .exe process
+    ///          Incase the PDF Conversion is failed, perform Cleanup of any files that were already
+    ///          converted but needs to deleted now as the process was cancelled or there was any error.
+    /// </summary>
     public class CTmaxPDFManager
     {
+        #region Public Members
+
         /// <summary>Notify the RegOptionsForm to update the statusbar</summary>
         public event EventHandler notifyRegOptionsForm;
 
@@ -26,7 +37,7 @@ namespace FTI.Shared.Database
         /// <summary>Local member to store the output directory where the converted files will be stored</summary>
         private string m_OutputPath = string.Empty;
 
-        /// <summary>Local member to store Output Type i.e. 0 = auto ; 1 = color ; 2 = black&white </summary>
+        /// <summary>Local member to store Output Type</summary>
         private TmaxPDFOutputType m_OutputType = TmaxPDFOutputType.Autodetect;
 
         /// <summary>Local member to store CustomDPI </summary>
@@ -41,6 +52,10 @@ namespace FTI.Shared.Database
         /// <summary>Local member that will use GsManager</summary>
         private CTmaxGsPdfManager GsManager = null;
 
+        #endregion Public Members
+        
+        #region Public Methods
+        
         /// <summary>Constructor</summary>
         public CTmaxPDFManager(string _inputFile, string _ouputPath, TmaxPDFOutputType _outputType, short _customDPI)
         {
@@ -89,20 +104,33 @@ namespace FTI.Shared.Database
                 default: ConvertAutoDetect(); break;
             }
             CleanUp();
-        }
+        }// public void StopConversionProcess()
 
         ///<summary>Return the list of errors if occured any</summary>
         public List<Exception> GetConversionErrorList()
         {
             List<Exception> ErrorList = new List<Exception>();
-            if (MuManager != null && MuManager.GetConversionErrorList() != null)
-                ErrorList.AddRange(MuManager.GetConversionErrorList());
-            if (LtManager != null && LtManager.GetConversionErrorList() != null)
-                ErrorList.AddRange(LtManager.GetConversionErrorList());
-            if (GsManager != null && GsManager.GetConversionErrorList() != null)
-                ErrorList.AddRange(GsManager.GetConversionErrorList());
+            switch (m_OutputType)
+            {
+                case TmaxPDFOutputType.Autodetect:
+                    if (MuManager != null && MuManager.GetConversionErrorList() != null)
+                        ErrorList.AddRange(MuManager.GetConversionErrorList());
+                    break;
+                case TmaxPDFOutputType.ForceColor:
+                    if (LtManager != null && LtManager.GetConversionErrorList() != null)
+                        ErrorList.AddRange(LtManager.GetConversionErrorList());
+                    break;
+                case TmaxPDFOutputType.ForceBW:
+                    if (GsManager != null && GsManager.GetConversionErrorList() != null)
+                        ErrorList.AddRange(GsManager.GetConversionErrorList());
+                    break;
+            }
             return ErrorList;
-        }
+        }// public List<Exception> GetConversionErrorList()
+
+        #endregion Public Methods
+
+        #region Private Methods
 
         /// <summary>Clean any temporary files if PDF was stored in Temp folder and exported files since the conversion was stopped</summary>
         private void CleanUp()
@@ -150,15 +178,7 @@ namespace FTI.Shared.Database
             {
                 //  Do Nothing
             }
-            try
-            {
-                Directory.Delete(m_OutputPath, true);
-            }
-            catch (IOException Ex)
-            {
-                //  Do Nothing
-            }
-        }
+        }// private void CleanUp()
 
         /// <summary>This is called if AutoDetect is selected for conversion</summary>
         private bool ConvertAutoDetect()
@@ -190,10 +210,19 @@ namespace FTI.Shared.Database
             return GsManager.Process();
         }// private bool ConvertBW()
 
+        #endregion Private Methods
+
+        #region Protected Methods
+
+        /// <summary>This method notifies the parent to update the registration progress bar</summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void UpdateRegStatusBar(object sender, EventArgs e)
         {
             if (notifyRegOptionsForm != null)
                 notifyRegOptionsForm(sender, e);
-        }
+        }// protected void UpdateRegStatusBar(object sender, EventArgs e)
+
+        #endregion Protected Methods
     }
 }
