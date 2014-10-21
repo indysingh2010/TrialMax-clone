@@ -14,6 +14,7 @@ using Ghostscript.NET.Processor;
 
 namespace FTI.Trialmax.Database
 {
+    /// <summary>This class manages the import operations using GhostScript.NET wrapper for Ghostscript</summary>
     public class CTmaxGsPdfManager
     {
         #region Constants
@@ -70,7 +71,7 @@ namespace FTI.Trialmax.Database
             m_switches = new List<string>();
             InitializeGhostScript();
             AddRequiredSwitches();
-        }
+        }// public CTmaxGsPdfManager(string docPath, string outPath, short outResolution = 0, short totThreads = 0)
 
         ///<summary>Start the conversion process using Ghostscript</summary>
         public bool Process()
@@ -89,7 +90,7 @@ namespace FTI.Trialmax.Database
                 return false;
             }
             return true;
-        }
+        }// public bool Process()
 
         ///<summary>Process a single page</summary>
         public bool ProcessPage(int pageNum)
@@ -110,13 +111,13 @@ namespace FTI.Trialmax.Database
             }
             RemovePageSwitch();
             return true;
-        }
+        }// public bool ProcessPage(int pageNum)
 
         ///<summary>Return the list of errors if occured any</summary>
         public List<Exception> GetConversionErrorList()
         {
             return m_conversionErrors;
-        }
+        }// public List<Exception> GetConversionErrorList()
 
         ///<summary>TmaxPdfManager signalled to stop the conversion process</summary>
         public void StopProcess()
@@ -131,7 +132,7 @@ namespace FTI.Trialmax.Database
                 }
                 processor.Dispose();
             }
-        }
+        }// public void StopProcess()
 
         #endregion Public Methods
 
@@ -143,7 +144,7 @@ namespace FTI.Trialmax.Database
             //m_gvi = GhostscriptVersionInfo.GetLastInstalledVersion();
             m_gvi = new GhostscriptVersionInfo("PDFManager/gsdll32.dll");
             return !(m_gvi == null);
-        }
+        }// private bool InitializeGhostScript()
 
         ///<summary>Add all required switch for output</summary>
         private void AddRequiredSwitches()
@@ -154,7 +155,7 @@ namespace FTI.Trialmax.Database
             AddOutputSwitch();
             AddPdfOpenSwitch();
             //AddErrorLogSwitch();
-        }
+        }// private void AddRequiredSwitches()
 
         ///<summary>Add default switch for output</summary>
         private void AddDefaultSwitches()
@@ -165,13 +166,13 @@ namespace FTI.Trialmax.Database
             m_switches.Add("-dUseCropBox");
             m_switches.Add("-dNOPAUSE");
             m_switches.Add("-sPDFPassword=\"\"");
-        }
+        }// private void AddDefaultSwitches()
 
         ///<summary>Add color switch for output</summary>
         private void AddColorSwitch()
         {
             m_switches.Add("-sDEVICE=tiffg4");
-        }
+        }// private void AddColorSwitch()
 
         ///<summary>Add resolution switch for output</summary>
         private void AddResolutionSwitch()
@@ -182,26 +183,26 @@ namespace FTI.Trialmax.Database
                 return;
             }
             m_switches.Add("-r" + m_resolution);
-        }
+        }// private void AddResolutionSwitch()
 
         ///<summary>Add output target switch</summary>
         private void AddOutputSwitch()
         {
             m_switches.Add(@"-sOutputFile=" + m_outputPath + "\\%04d.tif");
-        }
+        }// private void AddOutputSwitch()
 
         ///<summary>Add PDF open switch</summary>
         private void AddPdfOpenSwitch()
         {
             m_switches.Add(m_documentNameWithPath);
-        }
+        }// private void AddPdfOpenSwitch()
 
         ///<summary>Add error logging switch</summary>
         private void AddErrorLogSwitch()
         {
             m_switches.Add(">> \"" + m_outputPath + "\\conv.tmp");
             m_switches.Add("2>> \"" + m_outputPath + "\\conv.err");
-        }
+        }// private void AddErrorLogSwitch()
 
         ///<summary>Progress of the current task if performing any</summary>
         private void processor_Processing(object sender, GhostscriptProcessorProcessingEventArgs e)
@@ -209,7 +210,7 @@ namespace FTI.Trialmax.Database
             if (notifyPDFManager != null)
                 notifyPDFManager(sender, e);
             //Console.WriteLine(e.CurrentPage.ToString() + " / " + e.TotalPages.ToString());
-        }
+        }// private void processor_Processing(object sender, GhostscriptProcessorProcessingEventArgs e)
 
         ///<summary>Add PDF open switch</summary>
         private void AddPageSwitch(int pageNum)
@@ -217,7 +218,7 @@ namespace FTI.Trialmax.Database
             m_switches.Insert(8,"-dFirstPage=" + pageNum);
             m_switches.Insert(9,"-dLastPage=" + pageNum);
             m_switches[10] = @"-sOutputFile=" + m_outputPath + "\\"+pageNum.ToString("D4")+".tif";
-        }
+        }// private void AddPageSwitch(int pageNum)
 
         ///<summary>Remove Page Switch</summary>
         private void RemovePageSwitch()
@@ -227,7 +228,7 @@ namespace FTI.Trialmax.Database
                 m_switches.RemoveAt(8);
                 m_switches.RemoveAt(8);
             }
-        }
+        }// private void RemovePageSwitch()
 
         #endregion Private Methods
 
@@ -235,5 +236,5 @@ namespace FTI.Trialmax.Database
 
         #endregion Properties
 
-    }
-}
+    }// public class CTmaxGsPdfManager
+}// namespace FTI.Trialmax.Database
