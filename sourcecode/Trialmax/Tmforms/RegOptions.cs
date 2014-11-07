@@ -365,7 +365,7 @@ namespace FTI.Trialmax.Forms
             // 
             this.m_ctrlCustomDPIMask.Enabled = false;
             this.m_ctrlCustomDPIMask.Location = new System.Drawing.Point(149, 60);
-            this.m_ctrlCustomDPIMask.Mask = "0000";
+            this.m_ctrlCustomDPIMask.Mask = "000";
             this.m_ctrlCustomDPIMask.Name = "m_ctrlCustomDPIMask";
             this.m_ctrlCustomDPIMask.PromptChar = ' ';
             this.m_ctrlCustomDPIMask.Size = new System.Drawing.Size(34, 20);
@@ -922,9 +922,9 @@ namespace FTI.Trialmax.Forms
                     m_ctrlCustomDPIMask.Text = "0";
                     m_ctrlCustomDPIMask.SelectAll();
                 }
-                else if (value > 1200)
+                else if (value > 500)
                 {
-                    m_ctrlCustomDPIMask.Text = "1200";
+                    m_ctrlCustomDPIMask.Text = "500";
                     m_ctrlCustomDPIMask.SelectAll();
                 }
             }
