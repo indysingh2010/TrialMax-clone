@@ -428,7 +428,11 @@ namespace FTI.Trialmax.Database
         /// <summary>Lock for Conflict Resolution form because only 1 form should appear at any given instance</summary>
         private static object lockForConflictForm = true;
 
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        /// <summary>Local variable to log detail errors with stacktrace</summary>
+        private static readonly log4net.ILog logDetailed = log4net.LogManager.GetLogger("DetailedLog");
+
+        /// <summary>Local variable to log user level details</summary>
+        private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
 		#endregion Private Members
 		
@@ -1305,7 +1309,8 @@ namespace FTI.Trialmax.Database
             {
                 //	Add each subfolder
                 //foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
-                Parallel.For(0, tmaxSource.SubFolders.Count, (i, loopstate) =>
+                int numberOfThreads = Math.Min(Environment.ProcessorCount, 4);
+                Parallel.For(0, tmaxSource.SubFolders.Count, new ParallelOptions{ MaxDegreeOfParallelism = numberOfThreads}, (i, loopstate) =>
                 {
                     try
                     {
@@ -8832,61 +8837,69 @@ namespace FTI.Trialmax.Database
 		/// <remarks>This method runs in a local worker thread executed by the Register() method</remarks>
 		private void RegisterThreadProc()
 		{
-			Debug.Assert(m_RegSourceFolder != null);
-            if (ConversionTasksArray == null)
+            try
             {
-                lock (lockConversionTasksArray)
+                Debug.Assert(m_RegSourceFolder != null);
+                if (ConversionTasksArray == null)
                 {
-                    if (ConversionTasksArray == null)
+                    lock (lockConversionTasksArray)
                     {
-                        ConversionTasksArray = new List<CTmaxPDFManager>();
+                        if (ConversionTasksArray == null)
+                        {
+                            ConversionTasksArray = new List<CTmaxPDFManager>();
+                        }
                     }
                 }
-            }
-			//	Are we merging all source files into a single primary media object?
-			if((m_tmaxRegisterOptions != null) && (m_tmaxRegisterOptions.MediaCreation == RegMediaCreations.Merge))
-			{
-				//	Search for the first folder that contains at least 1 file
-				//	or more than one subfolder
-				while((m_RegSourceFolder.Files.Count == 0) && (m_RegSourceFolder.SubFolders.Count == 1))
-					m_RegSourceFolder = m_RegSourceFolder.SubFolders[0];
-					
-				//	Merge the files
-				MergeSource(m_RegSourceFolder);
-				
-				//	Set the folder type information
-				SetSourceTypes(m_RegSourceFolder, m_eRegSourceType);
-			}
-			//	Are we splitting all the files into individual media objects?
-			else if((m_tmaxRegisterOptions != null) && (m_tmaxRegisterOptions.MediaCreation == RegMediaCreations.Split))
-			{
-				//	Create one folder for each file
-				SetOnePerFile(m_RegSourceFolder, m_eRegSourceType);
-			}
-			else
-			{
-				//	Set the media types
-				SetSourceTypes(m_RegSourceFolder, m_eRegSourceType);
-			}
+                //	Are we merging all source files into a single primary media object?
+                if ((m_tmaxRegisterOptions != null) && (m_tmaxRegisterOptions.MediaCreation == RegMediaCreations.Merge))
+                {
+                    //	Search for the first folder that contains at least 1 file
+                    //	or more than one subfolder
+                    while ((m_RegSourceFolder.Files.Count == 0) && (m_RegSourceFolder.SubFolders.Count == 1))
+                        m_RegSourceFolder = m_RegSourceFolder.SubFolders[0];
 
-            // Count total number of pages in all the files that needs to be converted
-            m_totalPages = 0;
-            m_cfRegisterProgress.CompletedPages = 0;
-            CalculateTotalPages(m_RegSourceFolder);
-            m_cfRegisterProgress.TotalPages = m_totalPages;
-            SetRegisterProgress("Registration in progress ...");
-            log.Info("********************************* STARTING PDF CONVERSION *********************************");
-			//	Add the new records to the database
-			if((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
-				AddSource(m_RegSourceFolder);
-			
-			//	Notify the progress form
-			if((m_cfRegisterProgress != null) && (m_bRegisterCancelled == false))
-			{
-                m_cfRegisterProgress.CompletedPages = m_totalPages;
-				m_cfRegisterProgress.Finished = true;
-				SetRegisterProgress("Registration complete");
-			}
+                    //	Merge the files
+                    MergeSource(m_RegSourceFolder);
+
+                    //	Set the folder type information
+                    SetSourceTypes(m_RegSourceFolder, m_eRegSourceType);
+                }
+                //	Are we splitting all the files into individual media objects?
+                else if ((m_tmaxRegisterOptions != null) && (m_tmaxRegisterOptions.MediaCreation == RegMediaCreations.Split))
+                {
+                    //	Create one folder for each file
+                    SetOnePerFile(m_RegSourceFolder, m_eRegSourceType);
+                }
+                else
+                {
+                    //	Set the media types
+                    SetSourceTypes(m_RegSourceFolder, m_eRegSourceType);
+                }
+
+                // Count total number of pages in all the files that needs to be converted
+                m_totalPages = 0;
+                m_cfRegisterProgress.CompletedPages = 0;
+                logDetailed.Info("********************************* STARTING PDF CONVERSION *********************************");
+                logUser.Info("********************************* STARTING PDF CONVERSION *********************************");
+                CalculateTotalPages(m_RegSourceFolder);
+                m_cfRegisterProgress.TotalPages = m_totalPages;
+                SetRegisterProgress("Registration in progress ...");
+                //	Add the new records to the database
+                if ((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
+                    AddSource(m_RegSourceFolder);
+
+                //	Notify the progress form
+                if ((m_cfRegisterProgress != null) && (m_bRegisterCancelled == false))
+                {
+                    m_cfRegisterProgress.CompletedPages = m_totalPages;
+                    m_cfRegisterProgress.Finished = true;
+                    SetRegisterProgress("Registration complete");
+                }
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
 
 		}// private void RegisterThreadProc()
 
@@ -8914,6 +8927,7 @@ namespace FTI.Trialmax.Database
                     {
                         m_totalPages += 1;
                         Console.WriteLine("There was an error while importing the file named = "+temp.Path);
+                        logDetailed.Error(Ex.ToString());
                     }
                 }
 
@@ -10274,20 +10288,11 @@ namespace FTI.Trialmax.Database
                 if (!status)
                 {
                     Console.WriteLine("File completed un - successfully" + strAdobeFileSpec.ToLower());
-                    List<Exception> ErrorList = PDFManager.GetConversionErrorList();
-                    string errors = string.Empty;
-                    foreach (Exception error in ErrorList)
-                    {
-                        errors += error.Message;
-                        // FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec), error);
-                    }
-                    log.Error(Path.GetFileName(strAdobeFileSpec) + " Status: UnSuccessful       Details: " + errors);
+                    logUser.Error(Path.GetFileName(strAdobeFileSpec) + "                Status: UnSuccessful");
                     return iPages;
                 }
                 else // File was converted successfully
                 {
-                    log.Info(Path.GetFileName(strAdobeFileSpec) + " Status: Successful");
-                    Console.WriteLine("File completed successfully" + strAdobeFileSpec.ToLower());
                     lock (lockConversionTasksArray)
                     {
                         if (ConversionTasksArray == null)
@@ -10328,14 +10333,24 @@ namespace FTI.Trialmax.Database
                         }
                     }
                 }
-
+                PDFManager.Dispose();
+                PDFManager = null;
+                if (iPages > 0)
+                    logUser.Info(Path.GetFileName(strAdobeFileSpec) + "             Status: Successful");
+                else
+                    logUser.Error(Path.GetFileName(strAdobeFileSpec) + "                Status: UnSuccessful");
+                // Console.WriteLine("File completed successfully" + strAdobeFileSpec.ToLower());
             }
             catch (ThreadAbortException Ex)
             {
+                logUser.Error(Path.GetFileName(strAdobeFileSpec) + "                Status: UnSuccessful");
+                logDetailed.Error(Ex.ToString());
                 Console.WriteLine("Exception was thrown here. Caught you." +Ex.ToString());
             }
             catch (System.Exception Ex)
             {
+                logUser.Error(Path.GetFileName(strAdobeFileSpec) + "                Status: UnSuccessful");
+                logDetailed.Error(Ex.ToString());
                 FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec), Ex);
             }
 		
@@ -10413,11 +10428,18 @@ namespace FTI.Trialmax.Database
                         }
                         else
                         {
-                            if (m_rasterCodecs == null)
-                                m_rasterCodecs = new RasterCodecs();
-                            m_codecsInfo = m_rasterCodecs.GetInformation(strFileSpec, true);
-                            if ((m_cfRegisterProgress != null) && (m_cfRegisterProgress.IsDisposed == false))
-                                m_cfRegisterProgress.CompletedPages = m_cfRegisterProgress.CompletedPages + m_codecsInfo.TotalPages;
+                            try
+                            {
+                                if (m_rasterCodecs == null)
+                                    m_rasterCodecs = new RasterCodecs();
+                                m_codecsInfo = m_rasterCodecs.GetInformation(strFileSpec, true);
+                                if ((m_cfRegisterProgress != null) && (m_cfRegisterProgress.IsDisposed == false))
+                                    m_cfRegisterProgress.CompletedPages = m_cfRegisterProgress.CompletedPages + m_codecsInfo.TotalPages;
+                            }
+                            catch (Exception Ex)
+                            {
+                                logDetailed.Error(Ex.ToString());
+                            }
                             bSuccessful = false;
                             m_cfRegisterProgress.EnableForm(); // Enable the Progress Form when autoresolve screen appears
                             return bSuccessful;
