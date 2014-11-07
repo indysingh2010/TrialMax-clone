@@ -42,11 +42,14 @@ namespace FTI.Trialmax.Database
         /// <summary>Resolution for Output images</summary>
         private short m_resolution;
 
-        /// <summary>List containing errors if occured</summary>
-        private List<Exception> m_conversionErrors = null;
-
         /// <summary>Flag that tells whether to convert files or not</summary>
         private volatile bool DoConvert = true;
+
+        /// <summary>Local variable to log detail errors with stacktrace</summary>
+        private static readonly log4net.ILog logDetailed = log4net.LogManager.GetLogger("DetailedLog");
+
+        /// <summary>Local variable to log user level details</summary>
+        private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
         #endregion Private Members
 
@@ -72,14 +75,43 @@ namespace FTI.Trialmax.Database
         ///<summary>Start the conversion process using Leadtools</summary>
         public bool Process()
         {
+            try
+            {
                 int pageCount = m_pdfInfo.TotalPages;
                 for (int i = 1; i <= pageCount; i++)
                 {
                     if (!DoConvert || !ProcessPage(i))
                         return false;
                 }
-                return true;
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+                return false;
+            }
+            return true;
         }// public bool Process()
+
+        ///<summary>Release all resources used by this class</summary>
+        public void Dispose()
+        {
+            try
+            {
+                m_codecs.Dispose();
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+            try
+            {
+                m_pdfInfo.Dispose();
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+        }// public void Dispose()
 
         ///<summary>Process a single page</summary>
         public bool ProcessPage(int pageNum)
@@ -88,11 +120,12 @@ namespace FTI.Trialmax.Database
             {
                 RasterImage image = m_codecs.Load(m_documentNameWithPath, pageNum);
                 m_codecs.Save(image, m_outputPath+ "\\\\" + pageNum.ToString("D4") + ".png", RasterImageFormat.Png, 0);
+                image.Dispose();
                 return true;
             }
             catch (Exception Ex)
             {
-                m_conversionErrors.Add(Ex);
+                logDetailed.Error(Ex.ToString());
                 return false;
             }
         }// public bool ProcessPage(int pageNum)
@@ -100,7 +133,16 @@ namespace FTI.Trialmax.Database
         /// <summary>Number of pages in the current loaded PDF</summary>
         public int GetTotalPages()
         {
-            return m_pdfInfo.TotalPages;
+            try
+            {
+                if (m_pdfInfo != null)
+                    return m_pdfInfo.TotalPages;
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+            return 0;
         }// public int GetTotalPages()
 
         /// <summary>Stop the current conversion process</summary>
@@ -109,12 +151,6 @@ namespace FTI.Trialmax.Database
             DoConvert = false;
         }// public void StopProcess()
 
-        /// <summary>Returns the list of errors</summary>
-        public List<Exception> GetConversionErrorList()
-        {
-            return m_conversionErrors;
-        }// public List<Exception> GetConversionErrorList()
-
         #endregion Public Methods
 
         #region Private Methods
@@ -122,7 +158,6 @@ namespace FTI.Trialmax.Database
         ///<summary>Initialize the objects that leadtools will require for conversion</summary>
         private bool InitializeLeadtools()
         {
-            m_conversionErrors = new List<Exception>();
             if (InitializeRasterCodecs())
             {
                 if (InitializePdfInfo())
@@ -149,8 +184,8 @@ namespace FTI.Trialmax.Database
                 m_codecs = new RasterCodecs();
                 if (m_resolution == 0)
                 {
-                    m_codecs.Options.RasterizeDocument.Load.XResolution = 300;
-                    m_codecs.Options.RasterizeDocument.Load.YResolution = 300;
+                    m_codecs.Options.RasterizeDocument.Load.XResolution = 200;
+                    m_codecs.Options.RasterizeDocument.Load.YResolution = 200;
                 }
                 else
                 {
@@ -160,9 +195,9 @@ namespace FTI.Trialmax.Database
                 m_codecs.Options.Pdf.Load.DisplayDepth = 8;
                 m_codecs.SavePage += new EventHandler<CodecsPageEventArgs>(codecs_SavePage);
             }
-            catch (RasterException Ex)
+            catch (Exception Ex)
             {
-                m_conversionErrors.Add(Ex);
+                logDetailed.Error(Ex.ToString());
             }
             return (m_codecs != null);
         }// private bool InitializeRasterCodecs()
@@ -174,9 +209,9 @@ namespace FTI.Trialmax.Database
             {
                 m_pdfInfo = m_codecs.GetInformation(m_documentNameWithPath, true);
             }
-            catch (RasterException Ex)
+            catch (Exception Ex)
             {
-                m_conversionErrors.Add(Ex);
+                logDetailed.Error(Ex.ToString());
                 return false;
             }
             return (m_pdfInfo != null);

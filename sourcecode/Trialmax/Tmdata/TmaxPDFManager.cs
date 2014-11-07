@@ -31,6 +31,10 @@ namespace FTI.Shared.Database
         /// <summary>Notify the RegOptionsForm to update the statusbar</summary>
         public event EventHandler notifyRegOptionsForm;
 
+        #endregion Public Members
+
+        #region Private Members
+
         /// <summary>Local member to store the PDF file name and location for conversion</summary>
         private string m_InputFile = string.Empty;
 
@@ -52,10 +56,16 @@ namespace FTI.Shared.Database
         /// <summary>Local member that will use GsManager</summary>
         private CTmaxGsPdfManager GsManager = null;
 
-        #endregion Public Members
-        
+        /// <summary>Local variable to log detail errors with stacktrace</summary>
+        private static readonly log4net.ILog logDetailed = log4net.LogManager.GetLogger("DetailedLog");
+
+        /// <summary>Local variable to log user level details</summary>
+        private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
+
+        #endregion Private Members
+
         #region Public Methods
-        
+
         /// <summary>Constructor</summary>
         public CTmaxPDFManager(string _inputFile, string _ouputPath, TmaxPDFOutputType _outputType, short _customDPI)
         {
@@ -80,53 +90,78 @@ namespace FTI.Shared.Database
             }
             catch (ThreadAbortException Ex)
             {
-                return false;
+                logDetailed.Error(Ex.ToString());
             }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+            return false;
         }// public bool StartConversion()
 
         /// <summary>Stop any running conversion process immediatelly</summary>
         public void StopConversionProcess()
         {
-            switch (m_OutputType)
+            try
             {
-                case TmaxPDFOutputType.Autodetect:
-                    if (MuManager != null)
-                        MuManager.StopProcess();
-                    break;
-                case TmaxPDFOutputType.ForceColor:
-                    if (LtManager != null)
-                        LtManager.StopProcess();
-                    break;
-                case TmaxPDFOutputType.ForceBW:
-                    if (GsManager != null)
-                        GsManager.StopProcess();
-                    break;
-                default: ConvertAutoDetect(); break;
+                switch (m_OutputType)
+                {
+                    case TmaxPDFOutputType.Autodetect:
+                        if (MuManager != null)
+                            MuManager.StopProcess();
+                        break;
+                    case TmaxPDFOutputType.ForceColor:
+                        if (LtManager != null)
+                            LtManager.StopProcess();
+                        break;
+                    case TmaxPDFOutputType.ForceBW:
+                        if (GsManager != null)
+                            GsManager.StopProcess();
+                        break;
+                }
+                CleanUp();
             }
-            CleanUp();
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
         }// public void StopConversionProcess()
 
-        ///<summary>Return the list of errors if occured any</summary>
-        public List<Exception> GetConversionErrorList()
+        ///<summary>Release all resources used by this class</summary>
+        public void Dispose()
         {
-            List<Exception> ErrorList = new List<Exception>();
-            switch (m_OutputType)
+            try
             {
-                case TmaxPDFOutputType.Autodetect:
-                    if (MuManager != null && MuManager.GetConversionErrorList() != null)
-                        ErrorList.AddRange(MuManager.GetConversionErrorList());
-                    break;
-                case TmaxPDFOutputType.ForceColor:
-                    if (LtManager != null && LtManager.GetConversionErrorList() != null)
-                        ErrorList.AddRange(LtManager.GetConversionErrorList());
-                    break;
-                case TmaxPDFOutputType.ForceBW:
-                    if (GsManager != null && GsManager.GetConversionErrorList() != null)
-                        ErrorList.AddRange(GsManager.GetConversionErrorList());
-                    break;
+                switch (m_OutputType)
+                {
+                    case TmaxPDFOutputType.Autodetect:
+                        if (MuManager != null)
+                        {
+                            MuManager.Dispose();
+                            MuManager = null;
+                        }
+                        break;
+                    case TmaxPDFOutputType.ForceColor:
+                        if (LtManager != null)
+                        {
+                            LtManager.Dispose();
+                            LtManager = null;
+                        }
+                        break;
+                    case TmaxPDFOutputType.ForceBW:
+                        if (GsManager != null)
+                        {
+                            GsManager.Dispose();
+                            GsManager = null;
+                        }
+                        break;
+                }
             }
-            return ErrorList;
-        }// public List<Exception> GetConversionErrorList()
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+        }// public void Dispose()
 
         #endregion Public Methods
 
@@ -169,14 +204,23 @@ namespace FTI.Shared.Database
                     }
                     catch (IOException Ex)
                     {
-                        Console.WriteLine("Exception while deleting temporary file = " + Ex.ToString());
+                        logDetailed.Error(Ex.ToString());
                         //  Do Nothing
+                    }
+                    catch (Exception Ex)
+                    {
+                        logDetailed.Error(Ex.ToString());
                     }
                 }
             }
             catch (IOException Ex)
             {
+                logDetailed.Error(Ex.ToString());
                 //  Do Nothing
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
             }
         }// private void CleanUp()
 
@@ -184,7 +228,7 @@ namespace FTI.Shared.Database
         private bool ConvertAutoDetect()
         {
             MuManager = new CTmaxMuPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
-            if (MuManager == null || (MuManager != null && MuManager.GetConversionErrorList() != null && MuManager.GetConversionErrorList().Count != 0))
+            if (MuManager == null)
                 return false;
             MuManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return MuManager.Process();
@@ -194,7 +238,7 @@ namespace FTI.Shared.Database
         private bool ConvertColor()
         {
             LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
-            if (LtManager == null || (LtManager != null && LtManager.GetConversionErrorList() != null && LtManager.GetConversionErrorList().Count != 0))
+            if (LtManager == null)
                 return false;
             LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return LtManager.Process();
@@ -204,7 +248,7 @@ namespace FTI.Shared.Database
         private bool ConvertBW()
         {
             GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
-            if (GsManager == null || (GsManager != null && GsManager.GetConversionErrorList() != null && GsManager.GetConversionErrorList().Count != 0))
+            if (GsManager == null)
                 return false;
             GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return GsManager.Process();

@@ -45,8 +45,11 @@ namespace FTI.Trialmax.Database
         /// <summary>Flag that tells whether to convert files or not</summary>
         private volatile bool DoConvert = true;
 
-        /// <summary>List containing errors if occured</summary>
-        private List<Exception> m_conversionErrors = null;
+        /// <summary>Local variable to log detail errors with stacktrace</summary>
+        private static readonly log4net.ILog logDetailed = log4net.LogManager.GetLogger("DetailedLog");
+
+        /// <summary>Local variable to log user level details</summary>
+        private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
         #endregion Private Members
 
@@ -66,29 +69,24 @@ namespace FTI.Trialmax.Database
             m_outputPath            = outPath;
             m_resolution            = outResolution;
             m_totalThreads          = totThreads;
-            m_conversionErrors = new List<Exception>();
-            if (InitializeLeadtools() && InitializeGhostscript())
+            try
             {
-                m_TotalPages = m_LtManager.GetTotalPages();
+                if (InitializeLeadtools() && InitializeGhostscript())
+                    m_TotalPages = m_LtManager.GetTotalPages();
+                else
+                    m_TotalPages = 0;
             }
-            else
+            catch (Exception Ex)
             {
-                if (m_LtManager != null && m_LtManager.GetConversionErrorList() != null)
-                    m_conversionErrors.AddRange(m_LtManager.GetConversionErrorList());
-                if (m_GsManager != null && m_GsManager.GetConversionErrorList() != null)
-                    m_conversionErrors.AddRange(m_GsManager.GetConversionErrorList());
+                logDetailed.Error(Ex.ToString());
             }
         }// public CTmaxMuPdfManager(string docPath, string outPath, short outResolution = 0, short totThreads = 0)
-
-        ///<summary>Return the list of errors if occured any</summary>
-        public List<Exception> GetConversionErrorList()
-        {
-            return m_conversionErrors;
-        }// public List<Exception> GetConversionErrorList()
 
         ///<summary>Start the conversion process using MuPdf/Leadtools/Ghostscript</summary>
         public bool Process()
         {
+            if (m_TotalPages == 0)
+                return false;
             for (int i = 1; i <= m_TotalPages; i++)
             {
                 if (!DoConvert)
@@ -117,6 +115,29 @@ namespace FTI.Trialmax.Database
                 m_LtManager.StopProcess();
         }// public void StopProcess()
 
+        ///<summary>Release all resources used by this class</summary>
+        public void Dispose()
+        {
+            try
+            {
+                if (m_LtManager != null)
+                    m_LtManager.Dispose();
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+            try
+            {
+                if (m_GsManager != null)
+                    m_GsManager.Dispose();
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+        }// public void Dispose()
+
         #endregion Public Methods
 
         #region Private Methods
@@ -125,24 +146,31 @@ namespace FTI.Trialmax.Database
         private bool isColor(int pageNum)
         {
             bool result = true;
-            string parameters = "-T \"" + m_documentNameWithPath + "\" " + pageNum;
-            System.Diagnostics.ProcessStartInfo oInfo = new System.Diagnostics.ProcessStartInfo("PDFManager/mudraw.exe", parameters);                
-            oInfo.UseShellExecute = false;
-            oInfo.CreateNoWindow = true;
-            oInfo.RedirectStandardOutput = true;
-            oInfo.RedirectStandardError = true;
-
-            using (System.Diagnostics.Process proc = System.Diagnostics.Process.Start(oInfo))
+            try
             {
-                // allow for reading asynhcronous Output
-                proc.BeginErrorReadLine();
+                string parameters = "-T \"" + m_documentNameWithPath + "\" " + pageNum;
+                System.Diagnostics.ProcessStartInfo oInfo = new System.Diagnostics.ProcessStartInfo(@"PDFManager\mudraw.exe", parameters);
+                oInfo.UseShellExecute = false;
+                oInfo.CreateNoWindow = true;
+                oInfo.RedirectStandardOutput = true;
+                oInfo.RedirectStandardError = true;
 
-                // Blocking untilt the encoding done
-                proc.WaitForExit();
-                result = proc.StandardOutput.ReadToEnd().Contains("color");
+                using (System.Diagnostics.Process proc = System.Diagnostics.Process.Start(oInfo))
+                {
+                    // allow for reading asynhcronous Output
+                    proc.BeginErrorReadLine();
 
-                proc.Close();
-                proc.Dispose();
+                    // Blocking until the process exits
+                    proc.WaitForExit();
+                    result = proc.StandardOutput.ReadToEnd().Contains("color");
+
+                    proc.Close();
+                    proc.Dispose();
+                }
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
             }
             return result;
         }// private bool isColor(int pageNum)
@@ -152,7 +180,7 @@ namespace FTI.Trialmax.Database
         {
             m_LtManager = new CTmaxLtPdfManager(m_documentNameWithPath, m_outputPath, m_resolution);
             m_LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
-            return (m_LtManager != null && m_LtManager.GetConversionErrorList().Count ==0);
+            return (m_LtManager != null);
         }// private bool InitializeLeadtools()
 
         ///<summary>Initialize Ghostscript object for black and white conversions</summary>

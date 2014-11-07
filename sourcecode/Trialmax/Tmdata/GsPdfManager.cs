@@ -41,14 +41,17 @@ namespace FTI.Trialmax.Database
         /// <summary>Resolution for Output images</summary>
         private short m_resolution;
 
-        /// <summary>List containing errors if occured</summary>
-        private List<Exception> m_conversionErrors = null;
-
         /// <summary>Flag that tells whether to convert files or not</summary>
         private volatile bool DoConvert = true;
 
         /// <summary>Local variable for GhostScriptProcessor that processes files so we can stop it any time</summary>
         private GhostscriptProcessor processor = null;
+
+        /// <summary>Local variable to log detail errors with stacktrace</summary>
+        private static readonly log4net.ILog logDetailed = log4net.LogManager.GetLogger("DetailedLog");
+
+        /// <summary>Local variable to log user level details</summary>
+        private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
         #endregion Private Members
 
@@ -76,17 +79,15 @@ namespace FTI.Trialmax.Database
         ///<summary>Start the conversion process using Ghostscript</summary>
         public bool Process()
         {
-            processor = new GhostscriptProcessor(m_gvi, true);
-            processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
             try
             {
+                processor = new GhostscriptProcessor(m_gvi, true);
+                processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
                 processor.StartProcessing(m_switches.ToArray(), null);
             }
             catch (Exception ex)
             {
-                if (m_conversionErrors == null)
-                    m_conversionErrors = new List<Exception>();
-                m_conversionErrors.Add(ex);
+                logDetailed.Error(ex.ToString());
                 return false;
             }
             return true;
@@ -95,44 +96,64 @@ namespace FTI.Trialmax.Database
         ///<summary>Process a single page</summary>
         public bool ProcessPage(int pageNum)
         {
-            processor = new GhostscriptProcessor(m_gvi, true);
-            AddPageSwitch(pageNum);
-            processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
             try
             {
+                processor = new GhostscriptProcessor(m_gvi, true);
+                AddPageSwitch(pageNum);
+                processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
                 processor.StartProcessing(m_switches.ToArray(), null);
+                RemovePageSwitch();
             }
-            catch (Exception ex)
+            catch (Exception Ex)
             {
-                if (m_conversionErrors == null)
-                    m_conversionErrors = new List<Exception>();
-                m_conversionErrors.Add(ex);
+                logDetailed.Error(Ex.ToString());
                 return false;
             }
-            RemovePageSwitch();
             return true;
         }// public bool ProcessPage(int pageNum)
-
-        ///<summary>Return the list of errors if occured any</summary>
-        public List<Exception> GetConversionErrorList()
-        {
-            return m_conversionErrors;
-        }// public List<Exception> GetConversionErrorList()
 
         ///<summary>TmaxPdfManager signalled to stop the conversion process</summary>
         public void StopProcess()
         {
-            DoConvert = false;
-            if (processor != null)
+            try
             {
-                processor.StopProcessing();
-                while (processor.IsRunning) // Wait until processor stops and then proceed
+                DoConvert = false;
+                if (processor != null)
                 {
-                    Thread.Sleep(1000);
+                    processor.StopProcessing();
+                    while (processor.IsRunning) // Wait until processor stops and then proceed
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    processor.Dispose();
                 }
-                processor.Dispose();
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
             }
         }// public void StopProcess()
+
+        ///<summary>Release all resources used by this class</summary>
+        public void Dispose()
+        {
+            try
+            {
+                if (processor != null)
+                {
+                    processor.StopProcessing();
+                    while (processor.IsRunning) // Wait until processor stops and then proceed
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    processor.Dispose();
+                }
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+        }// public void Dispose()
 
         #endregion Public Methods
 
@@ -142,19 +163,33 @@ namespace FTI.Trialmax.Database
         private bool InitializeGhostScript()
         {
             //m_gvi = GhostscriptVersionInfo.GetLastInstalledVersion();
-            m_gvi = new GhostscriptVersionInfo("PDFManager/gsdll32.dll");
+            try
+            {
+                m_gvi = new GhostscriptVersionInfo(@"PDFManager\gsdll32.dll");
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
             return !(m_gvi == null);
         }// private bool InitializeGhostScript()
 
         ///<summary>Add all required switch for output</summary>
         private void AddRequiredSwitches()
         {
-            AddDefaultSwitches();
-            AddColorSwitch();
-            AddResolutionSwitch();
-            AddOutputSwitch();
-            AddPdfOpenSwitch();
-            //AddErrorLogSwitch();
+            try
+            {
+                AddDefaultSwitches();
+                AddColorSwitch();
+                AddResolutionSwitch();
+                AddOutputSwitch();
+                AddPdfOpenSwitch();
+                //AddErrorLogSwitch();
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
         }// private void AddRequiredSwitches()
 
         ///<summary>Add default switch for output</summary>
@@ -177,7 +212,7 @@ namespace FTI.Trialmax.Database
         ///<summary>Add resolution switch for output</summary>
         private void AddResolutionSwitch()
         {
-            if (m_resolution == 0)
+            if (m_resolution == 0 || m_resolution > 300)
             {
                 m_switches.Add("-r300");
                 return;
