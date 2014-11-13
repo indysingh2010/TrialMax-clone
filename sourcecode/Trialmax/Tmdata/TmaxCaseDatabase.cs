@@ -428,12 +428,6 @@ namespace FTI.Trialmax.Database
         /// <summary>Lock for Conflict Resolution form because only 1 form should appear at any given instance</summary>
         private static object lockForConflictForm = true;
 
-        /// <summary>Semaphore for PDF Import Process for multi threading</summary>
-        private static Semaphore PdfSemaphore = new Semaphore(Math.Min(4, Environment.ProcessorCount), Math.Min(4, Environment.ProcessorCount));
-
-        /// <summary>Semaphore for Non PDF Import Process for NO multi threading</summary>
-        private static Semaphore NonPdfSemaphore = new Semaphore(1, 1);
-
         /// <summary>Local variable to log detail errors with stacktrace</summary>
         private static readonly log4net.ILog logDetailed = log4net.LogManager.GetLogger("DetailedLog");
 
@@ -1311,6 +1305,11 @@ namespace FTI.Trialmax.Database
 				}// if((dxPrimary = CreatePrimary(tmaxSource)) != null)
 				
 			}// if(tmaxSource.Files.Count > 0)
+                    /// <summary>Semaphore for PDF Import Process for multi threading</summary>
+            Semaphore PdfSemaphore = new Semaphore(Math.Min(4, Environment.ProcessorCount), Math.Min(4, Environment.ProcessorCount));
+
+            /// <summary>Semaphore for Non PDF Import Process for NO multi threading</summary>
+            Semaphore NonPdfSemaphore = new Semaphore(1, 1);
 
             List<Task> PdfTasks = new List<Task>();
             //	Add each subfolder
@@ -1333,6 +1332,10 @@ namespace FTI.Trialmax.Database
                                 }));
                             PdfTasks[PdfTasks.Count - 1].Start();
                         }
+                        else if (variables.tmaxSubFolder.SourceType == RegSourceTypes.NoSource)
+                        {
+                            AddSourceProcess(variables);
+                        }
                         else
                         {
                             PdfTasks.Add(new Task(delegate
@@ -1342,7 +1345,7 @@ namespace FTI.Trialmax.Database
                                 NonPdfSemaphore.Release();
                             }));
                             PdfTasks[PdfTasks.Count - 1].Start();
-                        }        
+                        }
                     }
 
                 }
@@ -5589,7 +5592,7 @@ namespace FTI.Trialmax.Database
                 if (m_cfRegisterProgress.ShowDialog() == DialogResult.Cancel)
                 {
                     m_bRegisterCancelled = true;
-                    Application.UseWaitCursor = true;
+                    Cursor.Current = Cursors.WaitCursor;
                     try
                     {
                         //  Now we need to check if any tasks are pending. If there are then we need to signal each task to stop processing and perform cleanp.
@@ -5616,7 +5619,7 @@ namespace FTI.Trialmax.Database
                     }
                     finally
                     {
-                        Application.UseWaitCursor = false;
+                        Cursor.Current = Cursors.Default;
                     }
                 }
                 else
