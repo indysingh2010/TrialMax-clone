@@ -120,6 +120,18 @@ namespace FTI.Trialmax.Panes
 			
 		}// public virtual void OnStartDragRecords(CTmaxItems tmaxItems)
 
+        public bool AddToBinderFromHotKey()
+        {
+            CTmaxMediaTreeNode tmaxTarget = GetSelection(); // get selected Binder where the Media will be added. Use GetSelections() to get multiple selected binder
+            CMediaTree mediaTree = (CMediaTree)this.Parent.Parent.Controls[1].Controls[0]; // get access to Media Tree
+            CTmaxItems tmaxSource = mediaTree.GetCmdPrintItems(); // get the selected items in the Media Tree (Documents, Scripts, Powerpoints, Recordings)
+            if (tmaxSource == null)
+                tmaxSource = mediaTree.GetCmdFindItems(); // get the selected items in the Media Tree (Depositions)
+            if (tmaxTarget == null || tmaxSource == null) return false;
+            Add(tmaxTarget, tmaxSource, false, false); // Add the selected items in the Media Tree to the selected Binder
+            return true;
+        }
+
 		/// <summary>This method is called when the user has dropped media records in the tree</summary>
 		/// <param name="eAction">The action to be taken</param>
 		protected override void OnDroppedRecords(TreeDropActions eAction)

@@ -7849,6 +7849,9 @@ namespace FTI.Trialmax.TmaxManager
 					break;
 					
 				case TmaxHotkeys.AddToBinder:
+                    m_paneBinders.AddToBinderFromHotKey();
+                    break;
+
 				case TmaxHotkeys.AddToScript:
 				case TmaxHotkeys.GoTo:
 				case TmaxHotkeys.Save:
