@@ -149,10 +149,6 @@ namespace FTI.Shared.Trialmax
 				{
 					return "TrialMax Presentation System";
 				}
-				else if(String.Compare(m_strName, TmaxComponents.FTIP2I.ToString(), true) == 0)
-				{
-					return "TrialMax PDF Converter";
-				}
 				else if(String.Compare(m_strName, TmaxComponents.FTIORE.ToString(), true) == 0)
 				{
 					return "TrialMax Objections Report Engine";
@@ -193,10 +189,6 @@ namespace FTI.Shared.Trialmax
 				else if(String.Compare(m_strName, TmaxComponents.VideoViewer.ToString(), true) == 0)
 				{
 					return "tmaxVideo.exe";
-				}
-				else if(String.Compare(m_strName, TmaxComponents.FTIP2I.ToString(), true) == 0)
-				{
-					return "ftip2i.exe";
 				}
 				else if(String.Compare(m_strName, TmaxComponents.FTIORE.ToString(), true) == 0)
 				{

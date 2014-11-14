@@ -157,9 +157,7 @@ namespace TmaxSetupInsatller
         #region Helper Methods
         private void RegisterPDF()
         {
-            string PDFRegKey = "FTIP2I";
             string ORERegKey = "FTIORE";
-            SetRegistryValue(PDFRegKey);
             SetRegistryValue(ORERegKey);
         }
 

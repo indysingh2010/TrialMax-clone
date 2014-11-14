@@ -48,7 +48,6 @@ namespace FTI.Shared.Trialmax
 		private const int ERROR_GET_INSTALLED_EX				= 0;
 		private const int ERROR_FILL_COMPONENTS_EX				= 1;
 		private const int ERROR_VERIFY_EX						= 2;
-		private const int ERROR_FTIP2I_NOT_FOUND				= 3;
 		private const int ERROR_FTIOBREP_NOT_FOUND				= 4;
 
 		private const string DEFAULT_UPDATE_SITE				= "http://tools.trialmax.com/";
@@ -556,56 +555,6 @@ namespace FTI.Shared.Trialmax
 
 						break;
 						
-					case TmaxComponents.FTIP2I:
-					
-						tmaxComponent.Folder = m_tmaxRegistry.GetKeyValue("Software\\FTIP2I", "");
-						
-						//	Is this component registered?
-						if(tmaxComponent.Folder.Length == 0)
-						{
-							tmaxComponent = null;
-							break;
-						}
-						
-						//	Make sure the executable exists
-						if(System.IO.File.Exists(tmaxComponent.GetFileSpec()) == false)
-						{
-							//	Display an error message
-							ShowError(m_tmaxErrorBuilder.Message(ERROR_FTIP2I_NOT_FOUND, tmaxComponent.GetFileSpec()));
-							
-							//	Force the user to reinstall
-							try
-							{
-								m_tmaxRegistry.RemoveSubKey("Software", "FTIP2I");
-							}
-							catch
-							{
-							}
-							
-							tmaxComponent = null;
-							break;
-						}
-						
-						try
-						{
-							//	Extract the version information from the executable file
-							FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(tmaxComponent.FileSpec);
-							tmaxComponent.Version = fvi.FileVersion;
-									
-							//	Set this to version one if this is the original release
-							//	before we started version stamping
-							if((tmaxComponent.Version.Length == 0) || (tmaxComponent.Version == "5,6,1,626"))
-								tmaxComponent.Version = "1.0.11.0";
-							else if((lVerPacked = CBaseVersion.GetPackedVersion(tmaxComponent.Version)) < 1011)
-								tmaxComponent.Version = "1.0.11.0";
-							
-						}
-						catch
-						{
-							tmaxComponent = null;
-						}
-						break;
-
 					case TmaxComponents.FTIORE:
 
 						tmaxComponent.Folder = m_tmaxRegistry.GetKeyValue("Software\\FTIORE", "");
@@ -773,7 +722,6 @@ namespace FTI.Shared.Trialmax
 				//	Check the known components to make sure they have the correct information
 				Verify(TmaxComponents.TrialMax, false);
 				Verify(TmaxComponents.VideoViewer, false);
-				Verify(TmaxComponents.FTIP2I, true);
 				Verify(TmaxComponents.FTIORE, true);
 				Verify(TmaxComponents.WMEncoder, true);
 				

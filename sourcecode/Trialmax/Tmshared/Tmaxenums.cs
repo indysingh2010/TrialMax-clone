@@ -6,7 +6,6 @@ namespace FTI.Shared.Trialmax
 	public enum TmaxComponents
 	{
 		TrialMax,	//	Applications,Assemblies,ActiveX,Configuration
-		FTIP2I,		//	FTI PDF Converter
 		FTIORE,		//	FTI Objections Report Engine
 		WMEncoder,	//	Windows Media Encoder (WMV)
 		VideoViewer,//	TrialMax video viewer / script builder

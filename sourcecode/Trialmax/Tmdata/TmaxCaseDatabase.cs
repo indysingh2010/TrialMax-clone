@@ -21,7 +21,6 @@ using FTI.Trialmax.Encode;
 
 using Leadtools;
 using Leadtools.Codecs;
-using Ghostscript.NET;
 
 using log4net;
 
@@ -394,9 +393,6 @@ namespace FTI.Trialmax.Database
 			
 		/// <summary>Temporary collection used for records being deleted</summary>
 		private CTmaxItems m_tmaxTrashCan = new CTmaxItems();
-		
-		/// <summary>Fully qualified path to the utility used to convert the PDF files</summary>
-		private string m_strAdobeConverter = "";
 		
 		/// <summary>Local member bound to TmaxRegistry property</summary>
 		private FTI.Shared.Trialmax.CTmaxRegistry m_tmaxRegistry = null;	
@@ -9822,7 +9818,7 @@ namespace FTI.Trialmax.Database
 							//	Update the progress form
 							if((tmaxSource.SourceType != RegSourceTypes.Adobe) &&
 							   (tmaxSource.SourceType != RegSourceTypes.MultiPageTIFF))
-								StepProgressCompleted();
+                                UpdateProgressBar(null, null); // StepProgressCompleted();
 							// SetRegisterProgress("Added: " + tmaxFile.Path);
 						
 						}
@@ -9833,10 +9829,9 @@ namespace FTI.Trialmax.Database
 			
 			}// foreach(CTmaxSourceFile tmaxFile in tmaxSource.Files)
 					
-			if((tmaxSource.SourceType == RegSourceTypes.Adobe) || 
-			   (tmaxSource.SourceType == RegSourceTypes.MultiPageTIFF))
-				StepProgressCompleted();
-				
+            if (tmaxSource.SourceType == RegSourceTypes.MultiPageTIFF) // Adobe conversion class (TmaxPdfManager) updates progress bar by itself 
+                UpdateProgressBar(null, null);
+
 			return true;
 			
 		}// AddSource(CTmaxSourceFolder tmaxSource, CDxPrimary dxPrimary)
@@ -10288,10 +10283,6 @@ namespace FTI.Trialmax.Database
 			int							iFile = 1;
 			string						strFilename = "";
 
-			//	Make sure we have the PDF converter application
-			Debug.Assert(m_strAdobeConverter.Length > 0);
-			if(m_strAdobeConverter.Length == 0) return 0;
-			
 			//	Make sure the caller specified a target
 			Debug.Assert(strTarget != null);
 			if(strTarget == null) return 0;
@@ -15263,52 +15254,35 @@ namespace FTI.Trialmax.Database
 			
 		}// private void ShowCasePathWarning(TmaxCaseFolders eFolder, string strPath, bool bCreate)
 			
-		/// <summary>This method is called to get the path to the utility for converting PDF files to TIF</summary>
-		/// <returns>true if successful</returns>
-		private bool GetAdobeConverter()
-		{
-			CTmaxComponent tmaxComponent = null;
-			
-			try
-			{
-				//	Clear the existing path
-				m_strAdobeConverter = "";
-				
-				//	Did the application provide the component descriptors?
-				if((this.TmaxProductManager != null) && (this.TmaxProductManager.Components != null))
-				{
-					if((tmaxComponent = this.TmaxProductManager.Components.Find(TmaxComponents.FTIP2I)) != null)
-					{
-						m_strAdobeConverter = tmaxComponent.GetFileSpec();
-					}
-					
-				}
-				
-			}
-			catch
-			{
-			}
-			
-			return (m_strAdobeConverter.Length > 0);
-			
-		}// private bool GetAdobeConverter()
-		
 		/// <summary>This method is called to prepare the Adobe converter to perform an operation</summary>
 		/// <param name="tmaxSource">The folder containing all source files to be merged</param>
 		/// <returns>true if successful</returns>
 		private bool PrepAdobeConverter(CTmaxSourceFolder tmaxSource)
 		{
 			string strWarning = "";
-			
-			//	Is the PDF converter registered on this machine?
-			if((m_strAdobeConverter.Length == 0) && (GetAdobeConverter() == false))
-			{
-                strWarning = this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_CONVERTER_NOT_INSTALLED,tmaxSource.Files.Count > 0 ? tmaxSource.Files[0].Path : tmaxSource.Path);
-			}
-			else if(System.IO.File.Exists(m_strAdobeConverter) == false)
-			{
-                strWarning = this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_CONVERTER_NOT_FOUND,tmaxSource.Files.Count > 0 ? tmaxSource.Files[0].Path : tmaxSource.Path,m_strAdobeConverter);
-			}
+
+            if (System.IO.File.Exists("PDFManager\\gsdll32.dll"))
+            {
+                if (System.IO.File.Exists("PDFManager\\gsdll32.lib"))
+                {
+                    if (System.IO.File.Exists("PDFManager\\mudraw.exe"))
+                    {
+                        // All files required for PDF conversion exists and we can proceed.
+                    }
+                    else
+                    {
+                        strWarning = @"PDFManager\mudraw.exe";
+                    }
+                }
+                else
+                {
+                    strWarning = @"PDFManager\gsdll32.lib";
+                }
+            }
+            else
+            {
+                strWarning = @"PDFManager\gsdll32.dll";
+            }
 						
 			//	Were we unable to get the converter?
 			if(strWarning.Length > 0)
@@ -15316,7 +15290,7 @@ namespace FTI.Trialmax.Database
 				//	Should we display the warning message?
 				if(m_bRegisterWarnAdobe == true)
 				{
-					MessageBox.Show(strWarning, "PDF Registration Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					MessageBox.Show(strWarning + " is missing. Please reinstall Trialmax.", "PDF Registration Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					m_bRegisterWarnAdobe = false;
 				}
 				return false;

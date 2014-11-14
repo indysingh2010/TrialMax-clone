@@ -3894,16 +3894,6 @@ namespace FTI.Trialmax.TmaxManager
 				//	Add a blank line
 				m_aVersions.Add(new CBaseVersion());
 				
-				//	Add PDF converter
-				if((m_tmaxProductManager != null) && (m_tmaxProductManager.Components != null))
-				{
-					if((tmaxComponent = m_tmaxProductManager.Components.Find(TmaxComponents.FTIP2I)) != null)
-					{
-						if((baseVersion = tmaxComponent.GetBaseVersion()) != null)
-							m_aVersions.Add(baseVersion);
-					}
-				}
-
 				//	Add Objections Report Generator
 				if((m_tmaxProductManager != null) && (m_tmaxProductManager.Components != null))
 				{

@@ -338,9 +338,6 @@
     <Compile Include="Winini.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="XmlAdobeConversion.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="XmlBase.cs">
       <SubType>Code</SubType>
     </Compile>

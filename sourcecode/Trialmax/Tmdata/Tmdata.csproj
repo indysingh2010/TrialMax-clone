@@ -114,10 +114,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Codecs.Png.dll</HintPath>
     </Reference>
-    <Reference Include="Leadtools.Pdf, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Pdf.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -334,14 +330,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Leadtools.PdfEngine.dll">
+    <Content Include="Leadtools.Pdf.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
