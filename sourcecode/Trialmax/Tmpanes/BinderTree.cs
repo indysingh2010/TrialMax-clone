@@ -122,13 +122,14 @@ namespace FTI.Trialmax.Panes
 
         public bool AddToBinderFromHotKey()
         {
-            CTmaxMediaTreeNode tmaxTarget = GetSelection(); // get selected Binder where the Media will be added. Use GetSelections() to get multiple selected binder
+            CTmaxMediaTreeNodes tmaxTargets = GetSelections(false); // get selected Binders where the Media will be added. Use GetSelection() to get single selected binder
             CMediaTree mediaTree = (CMediaTree)this.Parent.Parent.Controls[1].Controls[0]; // get access to Media Tree
             CTmaxItems tmaxSource = mediaTree.GetCmdPrintItems(); // get the selected items in the Media Tree (Documents, Scripts, Powerpoints, Recordings)
             if (tmaxSource == null)
                 tmaxSource = mediaTree.GetCmdFindItems(); // get the selected items in the Media Tree (Depositions)
-            if (tmaxTarget == null || tmaxSource == null) return false;
-            Add(tmaxTarget, tmaxSource, false, false); // Add the selected items in the Media Tree to the selected Binder
+            if (tmaxTargets == null || tmaxSource == null) return false;
+            foreach (CTmaxMediaTreeNode tmaxTarget in tmaxTargets) // Add all the items selected in media tree to all the binders selected in the binder tree
+                Add(tmaxTarget, tmaxSource, false, false); // Add the selected items in the Media Tree to the selected Binder
             return true;
         }
 
