@@ -266,7 +266,7 @@ namespace FTI.Trialmax.Forms
 			m_strParentFolder = m_strParentFolder.ToLower();
 			
 			//	Get the new name
-			m_strCaseName = m_ctrlCaseName.Text;
+			m_strCaseName = m_ctrlCaseName.Text.Trim();
 			if(m_strCaseName.Length == 0)
 			{
 				MessageBox.Show("You must provide a name for the new case", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
