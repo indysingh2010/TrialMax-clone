@@ -50,8 +50,8 @@ namespace FTI.Shared.Database
         /// <summary>Local member that will use MuManager</summary>
         private CTmaxMuPdfManager MuManager = null;
 
-        /// <summary>Local member that will use LtManager</summary>
-        private CTmaxLtPdfManager LtManager = null;
+        ///// <summary>Local member that will use LtManager</summary>
+        //private CTmaxLtPdfManager LtManager = null;
 
         /// <summary>Local member that will use GsManager</summary>
         private CTmaxGsPdfManager GsManager = null;
@@ -83,8 +83,8 @@ namespace FTI.Shared.Database
                 switch (m_OutputType)
                 {
                     case TmaxPDFOutputType.Autodetect: return ConvertAutoDetect();
-                    case TmaxPDFOutputType.ForceColor: return ConvertColor();
-                    case TmaxPDFOutputType.ForceBW: return ConvertBW();
+                    case TmaxPDFOutputType.ForceColor: 
+                    case TmaxPDFOutputType.ForceBW: return ConvertGS();
                     default: return ConvertAutoDetect();
                 }
             }
@@ -111,9 +111,9 @@ namespace FTI.Shared.Database
                             MuManager.StopProcess();
                         break;
                     case TmaxPDFOutputType.ForceColor:
-                        if (LtManager != null)
-                            LtManager.StopProcess();
-                        break;
+                        //if (LtManager != null)
+                        //    LtManager.StopProcess();
+                        //break;
                     case TmaxPDFOutputType.ForceBW:
                         if (GsManager != null)
                             GsManager.StopProcess();
@@ -142,12 +142,12 @@ namespace FTI.Shared.Database
                         }
                         break;
                     case TmaxPDFOutputType.ForceColor:
-                        if (LtManager != null)
-                        {
-                            LtManager.Dispose();
-                            LtManager = null;
-                        }
-                        break;
+                        //if (LtManager != null)
+                        //{
+                        //    LtManager.Dispose();
+                        //    LtManager = null;
+                        //}
+                        //break;
                     case TmaxPDFOutputType.ForceBW:
                         if (GsManager != null)
                         {
@@ -237,21 +237,32 @@ namespace FTI.Shared.Database
         /// <summary>This is called if Color is selected for conversion</summary>
         private bool ConvertColor()
         {
-            LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
-            if (LtManager == null)
-                return false;
-            LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
-            return LtManager.Process();
+            //LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            //if (LtManager == null)
+            //    return false;
+            //LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
+            //return LtManager.Process();
+            return false;
         }// private bool ConvertColor()
 
-        /// <summary>This is called if BW is selected for conversion</summary>
-        private bool ConvertBW()
+        private bool ConvertGS()
         {
-            GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_OutputType, m_CustomDPI);
             if (GsManager == null)
                 return false;
             GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return GsManager.Process();
+        }
+
+        /// <summary>This is called if BW is selected for conversion</summary>
+        private bool ConvertBW()
+        {
+            //GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            //if (GsManager == null)
+            //    return false;
+            //GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
+            //return GsManager.Process();
+            return false;
         }// private bool ConvertBW()
 
         #endregion Private Methods

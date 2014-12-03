@@ -102,18 +102,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Install\Sherrod\Interop.TiffPageSplitDLL.dll</HintPath>
     </Reference>
-    <Reference Include="Leadtools, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.dll</HintPath>
-    </Reference>
-    <Reference Include="Leadtools.Codecs, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Codecs.dll</HintPath>
-    </Reference>
-    <Reference Include="Leadtools.Codecs.Png, Version=18.0.4.0, Culture=neutral, PublicKeyToken=9cf889f53ea9b907, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\LEADTOOLS 18\Bin\Dotnet4\Win32\Leadtools.Codecs.Png.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>
@@ -238,7 +226,6 @@
     <Compile Include="ImportManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LtPdfManager.cs" />
     <Compile Include="MuPdfManager.cs" />
     <Compile Include="OExportManager.cs" />
     <Compile Include="OImportManager.cs" />
@@ -334,11 +321,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Leadtools.Pdf.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

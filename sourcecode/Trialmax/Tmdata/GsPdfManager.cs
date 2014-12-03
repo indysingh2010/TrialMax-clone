@@ -10,6 +10,7 @@ using FTI.Shared.Trialmax;
 using FTI.Trialmax.Forms;
 
 using Ghostscript.NET;
+using Ghostscript.NET.Rasterizer;
 using Ghostscript.NET.Processor;
 
 namespace FTI.Trialmax.Database
@@ -31,6 +32,11 @@ namespace FTI.Trialmax.Database
 
         /// <summary>Number of threads to be used. If set to 0, auto manage</summary>
         private short m_totalThreads;
+
+        /// <summary>Flag that tells whether to convert files or not</summary>
+        private TmaxPDFOutputType m_OutputType = TmaxPDFOutputType.ForceColor;
+
+        private int m_PageCount = 0;
 
         /// <summary>Reference to the Ghostscript.dll to use</summary>
         private GhostscriptVersionInfo m_gvi = null;
@@ -65,12 +71,13 @@ namespace FTI.Trialmax.Database
         #region Public Methods
 
         ///<summary>Constructor</summary>
-        public CTmaxGsPdfManager(string docPath, string outPath, short outResolution = 0, short totThreads = 0)
+        public CTmaxGsPdfManager(string docPath, string outPath, TmaxPDFOutputType OutputType, short outResolution = 0, short totThreads = 0)
         {
             m_documentNameWithPath = docPath;
             m_outputPath = outPath;
             m_totalThreads = totThreads;
             m_resolution = outResolution;
+            m_OutputType = OutputType;
             m_switches = new List<string>();
             InitializeGhostScript();
             AddRequiredSwitches();
@@ -94,12 +101,13 @@ namespace FTI.Trialmax.Database
         }// public bool Process()
 
         ///<summary>Process a single page</summary>
-        public bool ProcessPage(int pageNum)
+        public bool ProcessPage(int pageNum, bool isColor)
         {
             try
             {
                 processor = new GhostscriptProcessor(m_gvi, true);
-                AddPageSwitch(pageNum);
+                AddPageSwitch(pageNum, isColor);
+                SetColorSwitch(isColor);
                 processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
                 processor.StartProcessing(m_switches.ToArray(), null);
                 RemovePageSwitch();
@@ -110,7 +118,7 @@ namespace FTI.Trialmax.Database
                 return false;
             }
             return true;
-        }// public bool ProcessPage(int pageNum)
+        }
 
         ///<summary>TmaxPdfManager signalled to stop the conversion process</summary>
         public void StopProcess()
@@ -166,6 +174,12 @@ namespace FTI.Trialmax.Database
             try
             {
                 m_gvi = new GhostscriptVersionInfo(@"PDFManager\gsdll32.dll");
+                
+                GhostscriptRasterizer _rasterizer = null;
+                _rasterizer = new GhostscriptRasterizer();
+                _rasterizer.Open(m_documentNameWithPath, m_gvi, false);
+                m_PageCount = _rasterizer.PageCount;
+                _rasterizer.Dispose();
             }
             catch (Exception Ex)
             {
@@ -206,15 +220,33 @@ namespace FTI.Trialmax.Database
         ///<summary>Add color switch for output</summary>
         private void AddColorSwitch()
         {
-            m_switches.Add("-sDEVICE=tiffg4");
+            if (m_OutputType == TmaxPDFOutputType.ForceColor)
+                m_switches.Add("-sDEVICE=png16m");
+            else
+                m_switches.Add("-sDEVICE=tiffg4");
         }// private void AddColorSwitch()
+
+        private void SetColorSwitch(bool isColor)
+        {
+            if (isColor)
+            {
+                m_switches[6] = "-sDEVICE=png16m";
+            }
+            else
+            {
+                m_switches[6] = "-sDEVICE=tiffg4";
+            }
+        }// public bool ProcessPage(int pageNum)
 
         ///<summary>Add resolution switch for output</summary>
         private void AddResolutionSwitch()
         {
-            if (m_resolution == 0 || m_resolution > 300)
+            if (m_resolution == 0)
             {
-                m_switches.Add("-r300");
+                if (m_OutputType == TmaxPDFOutputType.ForceBW)
+                    m_switches.Add("-r300");
+                else
+                    m_switches.Add("-r200");
                 return;
             }
             m_switches.Add("-r" + m_resolution);
@@ -223,7 +255,10 @@ namespace FTI.Trialmax.Database
         ///<summary>Add output target switch</summary>
         private void AddOutputSwitch()
         {
-            m_switches.Add(@"-sOutputFile=" + m_outputPath + "\\%04d.tif");
+            if (m_OutputType == TmaxPDFOutputType.ForceBW)
+                m_switches.Add(@"-sOutputFile=" + m_outputPath + "\\%04d.tif");
+            else
+                m_switches.Add(@"-sOutputFile=" + m_outputPath + "\\%04d.png");
         }// private void AddOutputSwitch()
 
         ///<summary>Add PDF open switch</summary>
@@ -248,11 +283,18 @@ namespace FTI.Trialmax.Database
         }// private void processor_Processing(object sender, GhostscriptProcessorProcessingEventArgs e)
 
         ///<summary>Add PDF open switch</summary>
-        private void AddPageSwitch(int pageNum)
+        private void AddPageSwitch(int pageNum, bool isColor)
         {
             m_switches.Insert(8,"-dFirstPage=" + pageNum);
             m_switches.Insert(9,"-dLastPage=" + pageNum);
-            m_switches[10] = @"-sOutputFile=" + m_outputPath + "\\"+pageNum.ToString("D4")+".tif";
+            if (isColor)
+            {
+                m_switches[10] = @"-sOutputFile=" + m_outputPath + "\\" + pageNum.ToString("D4") + ".png";
+            }
+            else
+            {
+                m_switches[10] = @"-sOutputFile=" + m_outputPath + "\\" + pageNum.ToString("D4") + ".tif";
+            }
         }// private void AddPageSwitch(int pageNum)
 
         ///<summary>Remove Page Switch</summary>
@@ -271,5 +313,10 @@ namespace FTI.Trialmax.Database
 
         #endregion Properties
 
+
+        public int GetTotalPages()
+        {
+            return m_PageCount;
+        }
     }// public class CTmaxGsPdfManager
 }// namespace FTI.Trialmax.Database

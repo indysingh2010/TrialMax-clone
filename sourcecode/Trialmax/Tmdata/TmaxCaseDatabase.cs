@@ -19,8 +19,8 @@ using FTI.Trialmax.ActiveX;
 using FTI.Trialmax.MSOffice.MSPowerPoint;
 using FTI.Trialmax.Encode;
 
-using Leadtools;
-using Leadtools.Codecs;
+using Ghostscript.NET;
+using Ghostscript.NET.Rasterizer;
 
 using log4net;
 
@@ -407,10 +407,10 @@ namespace FTI.Trialmax.Database
         private long m_totalPages = 0;
 
         /// <summary>Leadtools codec to count total number of pages</summary>
-        private RasterCodecs m_rasterCodecs = null;
+        private GhostscriptVersionInfo m_gvi = null;
 
         /// <summary>Leadtools CodecsImageInfo to get PDF info</summary>
-        private CodecsImageInfo m_codecsInfo = null;
+        private GhostscriptRasterizer m_rasterizer = null;
 
         /// <summary>Thread that does the entire Registration for PDF Imports</summary>
         private static Thread RegThread = null;
@@ -8952,14 +8952,21 @@ namespace FTI.Trialmax.Database
                     {
                         case RegSourceTypes.Adobe:
                             {
-                                if (m_rasterCodecs == null)
-                                    m_rasterCodecs = new RasterCodecs();
+                                if (m_gvi == null)
+                                    m_gvi = new GhostscriptVersionInfo(@"PDFManager\gsdll32.dll");;
                                 try
                                 {
-                                    m_codecsInfo = m_rasterCodecs.GetInformation(tmaxImportFile.Path, true);
-                                    m_totalPages += m_codecsInfo.TotalPages;
+                                    if (m_rasterizer != null){
+                                        m_rasterizer.Dispose();
+                                        m_rasterizer = null;
+                                    }
+                                    m_rasterizer = new GhostscriptRasterizer();
+                                    m_rasterizer.Open(tmaxImportFile.Path, m_gvi, false);
+                                    m_totalPages += m_rasterizer.PageCount;
+                                    m_rasterizer.Dispose();
+                                    m_rasterizer = null;
                                 }
-                                catch (RasterException Ex)
+                                catch (Exception Ex)
                                 {
                                     m_totalPages += 1;
                                     logDetailed.Error(Ex.ToString()); // Exception thrown when counting number of pages. May be because of corrupt PDF
@@ -10466,11 +10473,21 @@ namespace FTI.Trialmax.Database
                         {
                             try
                             {
-                                if (m_rasterCodecs == null)
-                                    m_rasterCodecs = new RasterCodecs();
-                                m_codecsInfo = m_rasterCodecs.GetInformation(strFileSpec, true);
+                                if (m_gvi == null)
+                                    m_gvi = new GhostscriptVersionInfo(@"PDFManager\gsdll32.dll");;
+                                if (m_rasterizer != null){
+                                    m_rasterizer.Dispose();
+                                    m_rasterizer = null;
+                                }
+                                m_rasterizer = new GhostscriptRasterizer();
+                                m_rasterizer.Open(strFileSpec, m_gvi, false);
+                                m_totalPages += m_rasterizer.PageCount;
+                                
                                 if ((m_cfRegisterProgress != null) && (m_cfRegisterProgress.IsDisposed == false))
-                                    m_cfRegisterProgress.CompletedPages = m_cfRegisterProgress.CompletedPages + m_codecsInfo.TotalPages;
+                                    m_cfRegisterProgress.CompletedPages = m_cfRegisterProgress.CompletedPages + m_rasterizer.PageCount;
+                                
+                                m_rasterizer.Dispose();
+                                m_rasterizer = null;
                             }
                             catch (Exception Ex)
                             {
