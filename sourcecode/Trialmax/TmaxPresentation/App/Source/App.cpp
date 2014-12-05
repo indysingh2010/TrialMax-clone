@@ -711,6 +711,8 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			//	Are we waiting on the rest of the media id?
 			else if(m_sHookState == WAITING_MEDIA_DELIMITER)
 			{
+				if (iscntrl(cKey))
+					return TRUE;
 				//	Add the character to the buffer
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
@@ -725,6 +727,8 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			//	Are we waiting for the rest of the secondary identifier?
 			else if(m_sHookState == WAITING_SECONDARY_DELIMITER)
 			{
+				if (iscntrl(cKey))
+					return TRUE;
 				//	Add the character to the buffer
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
@@ -739,6 +743,8 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			//	Are we waiting on the rest of the tertiary id?
 			else if(m_sHookState == WAITING_RETURN)
 			{
+				if (iscntrl(cKey))
+					return TRUE;
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
 				m_pFrame->UpdateBarcode(m_strKBBuffer);

@@ -626,7 +626,10 @@ void CTMStatCtrl::DrawText(CDC* pdc, LPCSTR lpText)
 	//		2nd portion displays the extra information of the media running i.e. in case of videos, runtime etc (lpText).
 
 	char buffer[2048];
-	sprintf(buffer, "%s %s", m_strBarcode, lpText);
+	if (m_sMode == TMSTAT_PLAYLISTMODE)
+		sprintf(buffer, "%s %s", m_strBarcode, lpText);
+	else
+		sprintf(buffer, "%s", m_strBarcode);
 
 	//	Paint the background and draw the text
 	pdc->FillRect(&m_rcClient, &brBackground);
