@@ -2974,6 +2974,12 @@ BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 	SShowInfo		ShowInfo;
 	CString			strError;
 	
+	if (m_sState == S_CLEAR)
+	{
+		SetDisplay(S_CLEAR);
+		SetDisplay(S_DOCUMENT);
+		SetDisplay(S_CLEAR);
+	}
 	//	Make sure the automatic transition is turned off if this is not a link event
 	if(m_AppLink.GetIsEvent() == FALSE)
 		StopAutoTransition();
@@ -5008,6 +5014,14 @@ void CMainView::OnClear()
 	if(m_sState == S_CLEAR)
 	{
 		RestoreDisplay();
+		if(m_ControlBar.iId == CONTROL_BAR_STATUS)
+		{
+		}
+		else
+		{
+			SetControlBar(CONTROL_BAR_STATUS);
+			m_IsShowingBarcode = true;
+		}
 	}
 	else
 	{
