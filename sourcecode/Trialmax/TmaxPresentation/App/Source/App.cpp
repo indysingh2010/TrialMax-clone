@@ -280,7 +280,6 @@ int CApp::ExitInstance()
 	
 	return CWinApp::ExitInstance();
 }
-
 //==============================================================================
 //
 // 	Function Name:	CApp::GetMonitorInfo()
@@ -293,6 +292,7 @@ int CApp::ExitInstance()
 //	Notes:			None
 //
 //==============================================================================
+bool secondaryOnRight = true; // This is set to false if secondary display is on left to the primary
 BOOL CApp::GetMonitorInfo()
 {
 	DISPLAY_DEVICE			 ddEnum;
@@ -304,7 +304,6 @@ BOOL CApp::GetMonitorInfo()
 
 	ZeroMemory(&ddEnum, sizeof(ddEnum));
     ddEnum.cb = sizeof(ddEnum);
-
 	for(int i = 0; EnumDisplayDevices(NULL, i, &ddEnum, 0); i++)
 	{
 		//	Is this device attached to the desktop?
@@ -322,6 +321,9 @@ BOOL CApp::GetMonitorInfo()
 			
 				if((devMode.dmPelsWidth > 0) && (devMode.dmPelsHeight > 0))
 				{
+					// This tells us that the secondary monitor is set to the left of the Primary.
+					if (devMode.dmPaperSize == -1) 
+						secondaryOnRight = false;
 					m_bDualMonitors = TRUE;
 					m_iSecondaryWidth  = devMode.dmPelsWidth;
 					m_iSecondaryHeight = devMode.dmPelsHeight;
@@ -336,6 +338,23 @@ BOOL CApp::GetMonitorInfo()
 	return TRUE;
 }
 
+//==============================================================================
+//
+// 	Function Name:	isSecondaryOnRight()
+//
+// 	Description:	This function is called to determine if this is the first
+//					instance of the application
+//
+// 	Returns:		True if Secondary display is on right to the primary
+//					False if Secondary display is on left to the primary
+//
+//	Notes:			None
+//
+//==============================================================================
+bool isSecondaryOnRight()
+{
+	return secondaryOnRight;
+}
 //==============================================================================
 //
 // 	Function Name:	CApp::GetPrevInstance()
@@ -480,7 +499,22 @@ BOOL CApp::InitInstance()
 	// Now maximize the window
 	if((m_pFrame->GetUseSecondaryMonitor() == TRUE) && (m_bDualMonitors == TRUE))
 	{
-		m_pFrame->SetWindowPos(&CWnd::wndTopMost, m_iPrimaryWidth, 0, 
+		// If the secondary monitor is on the right of the primary,
+		// then the x-coordinate of the starting position of the
+		// presentation will be (0+m_iPrimaryWidth) as that is the
+		// point where the secondary monitor starts.
+		// --------------------------------------------------------
+		// If the secondary monitor is on the left of the primary,
+		// then the x-coordinate of the starting position of the
+		// presentation will be (0-m_iSecondaryWidth) as that is the
+		// point where the secondary monitor starts.
+
+		if (isSecondaryOnRight())
+			m_pFrame->SetWindowPos(&CWnd::wndTopMost, m_iPrimaryWidth, 0, 
+							   m_iSecondaryWidth, m_iSecondaryHeight,
+							   SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+		else
+			m_pFrame->SetWindowPos(&CWnd::wndTopMost, -m_iSecondaryWidth, 0, 
 							   m_iSecondaryWidth, m_iSecondaryHeight,
 							   SWP_SHOWWINDOW | SWP_FRAMECHANGED);
 	}
