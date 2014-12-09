@@ -7587,6 +7587,10 @@ void CTMLead::RedrawZoomed()
 	{
 		//  Find the current size and position of the destination rectangle.
 		fDstLeft   = GetDstLeft();
+		// When fDstLeft value is positive, there appears a gray strip on the left side of the document.
+		// fDstLeft is only positive when the document is zoomed from the left edges.
+		if (fDstLeft > 0)	
+			fDstLeft = 0;
 		fDstTop	   = GetDstTop();
 		fDstWidth  = GetDstWidth();
 		fDstHeight = GetDstHeight();
