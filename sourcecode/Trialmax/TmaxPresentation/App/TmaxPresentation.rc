@@ -197,8 +197,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,0,42,12104
- PRODUCTVERSION 7,0,42,12104
+ FILEVERSION 7,0,43,12114
+ PRODUCTVERSION 7,0,43,12114
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -215,12 +215,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FTI Consulting"
             VALUE "FileDescription", "TrialMax Courtroom Presentation"
-            VALUE "FileVersion", "7.0.42.12104"
+            VALUE "FileVersion", "7.0.43.12114"
             VALUE "InternalName", "TmaxPresentation"
             VALUE "LegalCopyright", "Copyright (C) FTI Consulting"
             VALUE "OriginalFilename", "TmaxPresentation.exe"
             VALUE "ProductName", "TrialMax Courtroom Presentation"
-            VALUE "ProductVersion", "7.0.42.12104"
+            VALUE "ProductVersion", "7.0.43.12114"
         END
     END
     BLOCK "VarFileInfo"
