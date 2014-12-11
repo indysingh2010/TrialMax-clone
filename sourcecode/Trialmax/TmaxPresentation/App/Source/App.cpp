@@ -324,6 +324,7 @@ BOOL CApp::GetMonitorInfo()
 					// This tells us that the secondary monitor is set to the left of the Primary.
 					if (devMode.dmPaperSize == -1) 
 						secondaryOnRight = false;
+					SecondaryDisplayOffset = devMode.dmPosition;
 					m_bDualMonitors = TRUE;
 					m_iSecondaryWidth  = devMode.dmPelsWidth;
 					m_iSecondaryHeight = devMode.dmPelsHeight;
@@ -990,4 +991,43 @@ void CApp::InitWmGesture(HWND hWnd)
         //{ GID_PRESSANDTAP, GC_PRESSANDTAP, 0 }
     };
     SetGestureConfig(hWnd, 0, 2, gestureConfig, sizeof(GESTURECONFIG));
+}
+
+//==============================================================================
+//
+// 	Function Name:	CApp::GetSecondaryDisplayDimensions()
+//
+// 	Description:	This function returns the dimensions of the secondary
+//					display if connected
+//
+// 	Returns:		POINTL
+//
+//	Notes:			None
+//
+//==============================================================================
+POINTL CApp::GetSecondaryDisplayDimensions()
+{
+	POINTL dimensions = POINTL();
+	dimensions.x = m_iSecondaryWidth;
+	dimensions.y = m_iSecondaryHeight;
+	return dimensions;
+}
+
+//==============================================================================
+//
+// 	Function Name:	CApp::GetPrimaryDisplayDimensions()
+//
+// 	Description:	This function returns the dimensions of the primary
+//
+// 	Returns:		POINTL
+//
+//	Notes:			None
+//
+//==============================================================================
+POINTL CApp::GetPrimaryDisplayDimensions()
+{
+	POINTL dimensions = POINTL();
+	dimensions.x = m_iPrimaryWidth;
+	dimensions.y = m_iPrimaryHeight;
+	return dimensions;
 }
