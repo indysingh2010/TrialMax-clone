@@ -692,7 +692,8 @@ class CMainView : public CFormView
 		BOOL			ProcessCommandKey(char cKey);
 		BOOL			ProcessVirtualKey(WORD wKey);
 		BOOL			ProcessMouseMessage(MSG* pMsg);
-		BOOL			GetUseSecondaryMonitor(){ return m_bUseSecondaryMonitor; }
+		BOOL			GetUseSecondaryMonitor(){ return (m_bUseSecondaryMonitor && DualMonitorExists()); }
+		BOOL			DualMonitorExists();
 		CTMDocument*	GetDocument();
 		void			BlankPresentationToolbar();
 		void            DisableGestureOnCommand(short sCommand);

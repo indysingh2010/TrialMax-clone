@@ -15627,3 +15627,19 @@ POINTL CMainView::GetSecondaryDisplayOffset()
 {
 	return theApp.GetSecondaryDisplayOffset();
 }
+
+//==============================================================================
+//
+// 	Function Name:	CMainView::GetSecondaryDisplayOffset()
+//
+// 	Description:	Check if a secondary device is connected indeed or not
+//
+// 	Returns:		BOOL
+//
+//	Notes:			None
+//
+//==============================================================================
+BOOL CMainView::DualMonitorExists()
+{
+	return theApp.GetDualMonitors();
+}
