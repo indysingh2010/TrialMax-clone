@@ -13,6 +13,8 @@ using Ghostscript.NET;
 using Ghostscript.NET.Rasterizer;
 using Ghostscript.NET.Processor;
 
+using iTextSharp.text.pdf;
+
 namespace FTI.Trialmax.Database
 {
     /// <summary>This class manages the import operations using GhostScript.NET wrapper for Ghostscript</summary>
@@ -174,12 +176,10 @@ namespace FTI.Trialmax.Database
             try
             {
                 m_gvi = new GhostscriptVersionInfo(@"PDFManager\gsdll32.dll");
-                
-                GhostscriptRasterizer _rasterizer = null;
-                _rasterizer = new GhostscriptRasterizer();
-                _rasterizer.Open(m_documentNameWithPath, m_gvi, false);
-                m_PageCount = _rasterizer.PageCount;
-                _rasterizer.Dispose();
+
+                PdfReader pdfFile = new PdfReader(m_documentNameWithPath);
+                m_PageCount = pdfFile.NumberOfPages;
+                pdfFile.Close();
             }
             catch (Exception Ex)
             {

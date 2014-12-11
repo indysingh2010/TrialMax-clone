@@ -24,6 +24,8 @@ using Ghostscript.NET.Rasterizer;
 
 using log4net;
 
+using iTextSharp.text.pdf;
+
 using Interop.TiffPageSplitDLL;
 using System.Collections.Generic;
 using FTI.Shared.Database;
@@ -8952,19 +8954,11 @@ namespace FTI.Trialmax.Database
                     {
                         case RegSourceTypes.Adobe:
                             {
-                                if (m_gvi == null)
-                                    m_gvi = new GhostscriptVersionInfo(@"PDFManager\gsdll32.dll");;
                                 try
                                 {
-                                    if (m_rasterizer != null){
-                                        m_rasterizer.Dispose();
-                                        m_rasterizer = null;
-                                    }
-                                    m_rasterizer = new GhostscriptRasterizer();
-                                    m_rasterizer.Open(tmaxImportFile.Path, m_gvi, false);
-                                    m_totalPages += m_rasterizer.PageCount;
-                                    m_rasterizer.Dispose();
-                                    m_rasterizer = null;
+                                    PdfReader pdfFile = new PdfReader(tmaxImportFile.Path);
+                                    m_totalPages += pdfFile.NumberOfPages;
+                                    pdfFile.Close();
                                 }
                                 catch (Exception Ex)
                                 {
