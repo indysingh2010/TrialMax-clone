@@ -7592,6 +7592,10 @@ void CTMLead::RedrawZoomed()
 		if (fDstLeft > 0)	
 			fDstLeft = 0;
 		fDstTop	   = GetDstTop();
+		// When fDstTop value is positive, there appears a gray strip on the top side of the document.
+		// fDstTop is only positive when the document is zoomed from the top edges.
+		if (fDstTop > 0)	
+			fDstTop = 0;
 		fDstWidth  = GetDstWidth();
 		fDstHeight = GetDstHeight();
 
