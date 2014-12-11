@@ -15221,7 +15221,21 @@ void CMainView::SetBinderPosition()
 	int binderListWidth = 148; // it is adjusted according to buttons width in binderListDialog it may not be the same.	
 
 	int barHeight = m_pToolbar->GetBarHeight();
-	int barXPosition = m_pToolbar->GetBarXPosition();		
+	int barXPosition;	
+
+	if (GetUseSecondaryMonitor())
+	{
+		width = GetSecondaryDisplayDimensions().x;
+		height = GetSecondaryDisplayDimensions().y;
+		barXPosition = m_pToolbar->GetBarXPosition() + GetSecondaryDisplayOffset().x;
+	}
+	else
+	{
+		width = GetSystemMetrics(SM_CXSCREEN);
+		height = GetSystemMetrics(SM_CYSCREEN);
+		barXPosition = m_pToolbar->GetBarXPosition();
+	}
+
 	int buttonWidth =  m_pToolbar->GetButtonActualWidth();
 	int buttonXPosition =  m_pToolbar->GetButtonXPosition(82);	
 	int actualXPosition = buttonXPosition + barXPosition;
@@ -15235,7 +15249,7 @@ void CMainView::SetBinderPosition()
 	if(actualXPosition > (midPoint + halfButtonWidth))
 	{
 		// Right On The Screen
-		m_BinderListPosition.x = m_BinderListPosition.x - binderListWidth + buttonWidth;
+		// leave the left handling because it is done
 		return;
 
 	}

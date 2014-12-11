@@ -170,7 +170,15 @@ BOOL CBinderList::AddButtons()
 	m_nScrollPos = 0;
 	
 	// get the screen height
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	int screenHeight;
+	if (m_parentWindow->GetUseSecondaryMonitor())
+	{
+		screenHeight = m_parentWindow->GetSecondaryDisplayDimensions().y;
+	}
+	else
+	{
+		screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	}
 
 	// Set the Dialog Position
 	// if the number of items in the list exceed that increase the height of the list
@@ -493,7 +501,15 @@ void CBinderList::OnSize(UINT nType, int cx, int cy)
 {	
 	CDialog::OnSize(nType, cx, cy);
 
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	int screenHeight;
+	if (m_parentWindow->GetUseSecondaryMonitor())
+	{
+		screenHeight = m_parentWindow->GetSecondaryDisplayDimensions().y;
+	}
+	else
+	{
+		screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	}
 	
 	if(m_nListHeight < screenHeight)
 	return;
@@ -625,7 +641,15 @@ void CBinderList::HandleMouseClick()
 BOOL CBinderList::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: Add your message handler code here and/or call default
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	int screenHeight;
+	if (m_parentWindow->GetUseSecondaryMonitor())
+	{
+		screenHeight = m_parentWindow->GetSecondaryDisplayDimensions().y;
+	}
+	else
+	{
+		screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	}
 	
 	// if no scroll than don't bother
 	if(m_nListHeight < screenHeight)
@@ -677,7 +701,15 @@ BOOL CBinderList::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 void CBinderList::HandlePan(int diff)
 {
-	int screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	int screenHeight;
+	if (m_parentWindow->GetUseSecondaryMonitor())
+	{
+		screenHeight = m_parentWindow->GetSecondaryDisplayDimensions().y;
+	}
+	else
+	{
+		screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	}
 	if(m_nListHeight < screenHeight)
 		return;
 
