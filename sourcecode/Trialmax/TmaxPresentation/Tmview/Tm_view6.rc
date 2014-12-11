@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,0,21,5204
- PRODUCTVERSION 7,0,21,5204
+ FILEVERSION 7,0,22,12104
+ PRODUCTVERSION 7,0,22,12104
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FTI Consulting"
             VALUE "FileDescription", "TrialMax Image Viewer ActiveX Control"
-            VALUE "FileVersion", "7.0.21.5204"
+            VALUE "FileVersion", "7.0.22.12104"
             VALUE "InternalName", "TMVIEW"
             VALUE "LegalCopyright", "Copyright (C) FTI Consulting"
             VALUE "OriginalFilename", "TM_VIEW6.OCX"
             VALUE "ProductName", "TrialMax Image Viewer ActiveX Control"
-            VALUE "ProductVersion", "7.0.21.5204"
+            VALUE "ProductVersion", "7.0.22.12104"
         END
     END
     BLOCK "VarFileInfo"
