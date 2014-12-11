@@ -696,7 +696,9 @@ class CMainView : public CFormView
 		CTMDocument*	GetDocument();
 		void			BlankPresentationToolbar();
 		void            DisableGestureOnCommand(short sCommand);
-
+		POINTL			GetPrimaryDisplayDimensions();
+		POINTL			GetSecondaryDisplayDimensions();
+		POINTL			GetSecondaryDisplayOffset();
 
 		//	Keyboard hook characters
 		char			GetPrimaryBarcodeChar(){ return m_cPrimaryBarcodeChar; }

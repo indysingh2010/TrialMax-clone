@@ -15404,14 +15404,28 @@ void CMainView::OnColorPickerCloseButtonClickEvent()
 //==============================================================================
 void CMainView::SetColorPickerPosition()
 {	
-	int width = GetSystemMetrics(SM_CXSCREEN);
-	int height = GetSystemMetrics(SM_CYSCREEN);
+	int width;
+	int height;
 	int colorPickerListWidth = 48;	
-
+	
 	int barHeight = m_pToolbar->GetBarHeight();
-	int barXPosition = m_pToolbar->GetBarXPosition();		
+	int barXPosition;
 	int buttonWidth =  m_pToolbar->GetButtonActualWidth();
-	int buttonXPosition =  m_pToolbar->GetButtonXPosition(48);	
+	int buttonXPosition =  m_pToolbar->GetButtonXPosition(48);		
+	
+	if (GetUseSecondaryMonitor())
+	{
+		width = GetSecondaryDisplayDimensions().x;
+		height = GetSecondaryDisplayDimensions().y;
+		barXPosition = m_pToolbar->GetBarXPosition() + GetSecondaryDisplayOffset().x;
+	}
+	else
+	{
+		width = GetSystemMetrics(SM_CXSCREEN);
+		height = GetSystemMetrics(SM_CYSCREEN);
+		barXPosition = m_pToolbar->GetBarXPosition();
+	}
+
 	int actualXPosition = buttonXPosition + barXPosition;
 	
 	m_ColorPickerListPosition.x = actualXPosition;
@@ -15548,4 +15562,54 @@ void CMainView::SetStatusBarcode(CString barcode)
 	BSTR bstr = barcode.AllocSysString();
 	m_ctrlTMStat.SetStatusBarcode(&bstr);
 	::SysFreeString(bstr);
+}
+
+//==============================================================================
+//
+// 	Function Name:	CMainView::GetSecondaryDisplayDimensions()
+//
+// 	Description:	This function returns the dimensions of the secondary
+//					display if connected
+//
+// 	Returns:		POINTL
+//
+//	Notes:			None
+//
+//==============================================================================
+POINTL CMainView::GetSecondaryDisplayDimensions()
+{
+	return theApp.GetSecondaryDisplayDimensions();
+}
+
+//==============================================================================
+//
+// 	Function Name:	CMainView::GetPrimaryDisplayDimensions()
+//
+// 	Description:	This function returns the dimensions of the primary
+//
+// 	Returns:		POINTL
+//
+//	Notes:			None
+//
+//==============================================================================
+POINTL CMainView::GetPrimaryDisplayDimensions()
+{
+	return theApp.GetPrimaryDisplayDimensions();
+}
+
+//==============================================================================
+//
+// 	Function Name:	CMainView::GetSecondaryDisplayOffset()
+//
+// 	Description:	This function returns the offset for the secondary display in
+//					case the secondary display is up/below/left/right the primary
+//
+// 	Returns:		POINTL
+//
+//	Notes:			None
+//
+//==============================================================================
+POINTL CMainView::GetSecondaryDisplayOffset()
+{
+	return theApp.GetSecondaryDisplayOffset();
 }
