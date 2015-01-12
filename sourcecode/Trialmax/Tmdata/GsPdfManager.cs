@@ -97,6 +97,7 @@ namespace FTI.Trialmax.Database
             catch (Exception ex)
             {
                 logDetailed.Error(ex.ToString());
+                StopProcess();
                 return false;
             }
             return true;
@@ -117,6 +118,7 @@ namespace FTI.Trialmax.Database
             catch (Exception Ex)
             {
                 logDetailed.Error(Ex.ToString());
+                StopProcess();
                 return false;
             }
             return true;
