@@ -3740,6 +3740,7 @@ BOOL CMainView::LoadTreatment(SMultipageInfo* pMPTreatment, short sState)
 		m_Barcode.m_strMediaId   = pMPActive->pMultipage->m_strMediaId;
 		m_Barcode.m_lSecondaryId = pMPActive->pSecondary->m_lBarcodeId;
 		m_Barcode.m_lTertiaryId  = pMPActive->pTertiary->m_lBarcodeId;
+		m_CurrentPageBarcode.SetBarcode(m_Barcode.GetBarcode());
 		UpdateStatusBar();
 	}
 
