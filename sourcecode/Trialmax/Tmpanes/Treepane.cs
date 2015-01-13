@@ -22,6 +22,8 @@ using Infragistics.Win.UltraWinTree;
 using Infragistics.Win.UltraWinDock;
 using Infragistics.Win.UltraWinToolbars;
 
+using SHOpenFolderAndSelectItems;
+
 namespace FTI.Trialmax.Panes
 {
 	/// <summary>Summary description for Treepane</summary>
@@ -1330,6 +1332,12 @@ namespace FTI.Trialmax.Panes
 				//	These commands require valid media objects
 				case TreePaneCommands.Viewer:
                 case TreePaneCommands.Explorer:
+                    //	These commands require single media selections
+                    if (tmaxNodes.Count != 1) return false;
+                    if (tmaxNodes[0].IPrimary == null) return false;
+
+                    //	Top level must be a script
+                    return (tmaxNodes[0].MediaType != TmaxMediaTypes.Script);
 				case TreePaneCommands.Presentation:
 				case TreePaneCommands.Properties:
 				case TreePaneCommands.Codes:
@@ -2874,7 +2882,7 @@ namespace FTI.Trialmax.Panes
             buttonTool152.SharedProps.Caption = "Objections ...";
             appearance98.Image = 11;
             buttonTool153.SharedProps.AppearancesSmall.Appearance = appearance98;
-            buttonTool153.SharedProps.Caption = "Open in Explorer";
+            buttonTool153.SharedProps.Caption = "Open in Windows Explorer";
             this.m_ultraToolbarManager.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             popupMenuTool8,
             buttonTool31,
@@ -3973,16 +3981,18 @@ namespace FTI.Trialmax.Panes
         /// <param name="tmaxNode">The node under the current mouse position</param>
         protected virtual void OnCmdExplorer(CTmaxMediaTreeNode tmaxNode)
         {
-            string folderPath = tmaxNode.IPrimary.GetFileSpec();
-            
-            // get the file attributes for file or directory
-            System.IO.FileAttributes attr = System.IO.File.GetAttributes(folderPath);
-            //detect whether its a directory or file
-            if ((attr & System.IO.FileAttributes.Directory) != System.IO.FileAttributes.Directory)
-                folderPath = System.IO.Directory.GetParent(folderPath).ToString();
-            //string folderPath = System.IO.Directory.GetParent(tmaxNode.IPrimary.GetFileSpec()).;
+            string folderPath = tmaxNode.GetMediaRecord().GetFileSpec();
 
-            Process.Start("explorer.exe", folderPath);            
+            if (   tmaxNode.MediaType == TmaxMediaTypes.Document 
+                || tmaxNode.MediaType == TmaxMediaTypes.Powerpoint
+                || tmaxNode.MediaType == TmaxMediaTypes.Deposition
+                || tmaxNode.MediaType == TmaxMediaTypes.Recording
+                || tmaxNode.MediaType == TmaxMediaTypes.Script) // Entire document folder selected and not a single file
+            {
+                System.IO.FileAttributes attr = System.IO.File.GetAttributes(folderPath);
+                folderPath = System.IO.Directory.GetParent(folderPath).ToString();
+            }
+            ShowSelectedInExplorer.FilesOrFolders(folderPath);     
         }// OnCmdViewer(CTmaxMediaTreeNode tmaxNode)
 
 		/// <summary>
