@@ -1324,11 +1324,11 @@ namespace FTI.Trialmax.Database
                         {
                             PdfTasks.Add(new Task(delegate 
                                 {
-                                    PdfSemaphore.WaitOne();
                                     AddSourceProcess(variables);
                                     PdfSemaphore.Release();
                                 }));
-                            PdfTasks[PdfTasks.Count - 1].Start();
+                            PdfSemaphore.WaitOne(); // Wait and see if there are enough resources to start the task
+                            PdfTasks[PdfTasks.Count - 1].Start(); // Start the conversion process
                         }
                         else if (variables.tmaxSubFolder.SourceType == RegSourceTypes.NoSource)
                         {
@@ -1338,11 +1338,11 @@ namespace FTI.Trialmax.Database
                         {
                             PdfTasks.Add(new Task(delegate
                             {
-                                NonPdfSemaphore.WaitOne();
                                 AddSourceProcess(variables);
                                 NonPdfSemaphore.Release();
                             }));
-                            PdfTasks[PdfTasks.Count - 1].Start();
+                            NonPdfSemaphore.WaitOne(); // Wait and see if there are enough resources to start the task
+                            PdfTasks[PdfTasks.Count - 1].Start(); // Start the conversion process
                         }
                     }
 
@@ -10326,6 +10326,7 @@ namespace FTI.Trialmax.Database
                 {
                     Console.WriteLine("File completed un - successfully" + strAdobeFileSpec.ToLower());
                     logUser.Error(Path.GetFileName(strAdobeFileSpec) + "                Status: UnSuccessful");
+                    FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec));
                     return iPages;
                 }
                 else // File was converted successfully
@@ -10375,8 +10376,11 @@ namespace FTI.Trialmax.Database
                 if (iPages > 0)
                     logUser.Info(Path.GetFileName(strAdobeFileSpec) + "             Status: Successful");
                 else
+                {
                     logUser.Error(Path.GetFileName(strAdobeFileSpec) + "                Status: UnSuccessful");
-                // Console.WriteLine("File completed successfully" + strAdobeFileSpec.ToLower());
+                    FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec));
+                    // Console.WriteLine("File completed successfully" + strAdobeFileSpec.ToLower());
+                }
             }
             catch (ThreadAbortException Ex)
             {
