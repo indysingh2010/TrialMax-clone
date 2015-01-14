@@ -333,6 +333,7 @@
     <Compile Include="SetHighlighters.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="ShowSelectedInExplorer.cs" />
     <Compile Include="Tmpanesversion.cs">
       <SubType>Code</SubType>
     </Compile>
