@@ -1083,7 +1083,7 @@ namespace FTI.Trialmax.Panes
 		
 		/// <summary>This method is called internally to view the active record</summary>
 		/// <returns>true if successful</returns>
-		protected bool View()
+		public bool View()
 		{
 			string			strFileSpec = "";
 			string			strZapSource = "";

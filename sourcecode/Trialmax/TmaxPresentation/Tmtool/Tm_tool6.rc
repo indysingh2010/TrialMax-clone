@@ -206,6 +206,9 @@ STRINGTABLE
 BEGIN
     IDS_TMTOOL              "TMTool 6 Control"
     IDS_TMTOOL_PPG          "TMTool 6 Property Page"
+    IDS_TMTB_NUDGELEFT      "Nudge Left"
+    IDS_TMTB_NUDGERIGHT     "Nudge Right"
+    IDS_TMTB_SAVENUDGE      "Save Nudge"
 END
 
 STRINGTABLE

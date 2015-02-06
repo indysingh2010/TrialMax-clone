@@ -109,10 +109,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Install\Tmactivex\axinterop.tm_share6lib.dll</HintPath>
     </Reference>
-    <Reference Include="axinterop.tm_view6lib, Version=6.3.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Install\Tmactivex\axinterop.tm_view6lib.dll</HintPath>
-    </Reference>
     <Reference Include="Infragistics2.Shared.v8.3, Version=8.3.20083.1009, Culture=neutral, PublicKeyToken=7dd5c3163f2cd0cb, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Install\Infragistics\Infragistics2.Shared.v8.3.dll</HintPath>
@@ -139,14 +135,6 @@
       <Name>Interop.TM_SHARE6Lib</Name>
       <HintPath>..\Install\Tmactivex\Interop.TM_SHARE6Lib.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="Interop.TM_VIEW6Lib">
-      <Name>Interop.TM_VIEW6Lib</Name>
-      <HintPath>..\Install\Tmactivex\Interop.TM_VIEW6Lib.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="stdole">
-      <Name>stdole</Name>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -255,6 +243,34 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="AxTM_VIEW6Lib">
+      <Guid>{230C066F-16DF-4A07-8F28-8FD7F2E7D721}</Guid>
+      <VersionMajor>6</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>aximp</WrapperTool>
+      <Isolated>False</Isolated>
+    </COMReference>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="TM_VIEW6Lib">
+      <Guid>{230C066F-16DF-4A07-8F28-8FD7F2E7D721}</Guid>
+      <VersionMajor>6</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

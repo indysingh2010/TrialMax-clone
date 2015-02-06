@@ -451,9 +451,11 @@ CMainView::CMainView() : CFormView(CMainView::IDD), m_ctrlTMView(NULL)
 {
 	//{{AFX_DATA_INIT(CMainView)
 	//}}AFX_DATA_INIT
-	m_IsXPressed = false;
-	m_IsStatusBarShowing = false;
-	m_IsShowingBarcode = false;
+	m_bIsXPressed = false;
+	m_bIsStatusBarShowing = false;
+	m_bIsShowingBarcode = false;
+	m_sTotalRotation = 0;
+	m_sTotalNudge = 0;
 	m_pDatabase = 0;
 	m_pFrame = 0;
 	m_pMedia = 0;
@@ -2479,6 +2481,12 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 		case TMAX_GESTURE_PAN:
 			return m_bTabletMode;
 
+		case TMAX_NUDGELEFT:
+		case TMAX_NUDGERIGHT:
+		case TMAX_SAVENUDGE:
+
+			return !(((m_sState != S_DOCUMENT) && (m_sState != S_GRAPHIC)) || pInfo->pTertiary != NULL);
+
 		default:
 			
 			return TRUE;
@@ -2828,10 +2836,10 @@ BOOL CMainView::LoadFromBarcode(LPCSTR lpBarcode, BOOL bAddBuffer, BOOL bAlterna
 	char		szBarcode[512];
 	
 
-	if (!m_IsStatusBarShowing)
+	if (!m_bIsStatusBarShowing)
 	{
 		SetControlBar(CONTROL_BAR_NONE);
-		m_IsShowingBarcode = false;
+		m_bIsShowingBarcode = false;
 	}
 
 	//	Make sure the automatic transition is turned off if this is not a link event
@@ -2968,13 +2976,16 @@ long g_lTertiary;
 
 BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 {
-	m_IsXPressed = false;
+	m_bIsXPressed = false;
+	m_sTotalRotation = 0;
+	m_sTotalNudge = 0;
+	m_ctrlTMView->SetRotation(m_sTotalRotation);
 	SMultipageInfo	MPInfo;
 	SPlaylistParams	PLParams;
 	SShowInfo		ShowInfo;
 	CString			strError;
 	
-	if (m_sState == S_CLEAR)
+	if (m_sState == S_CLEAR && m_sPrevState == 5) // Modified because when PPT opened, incorrect toolbar is shown first and then correct one
 	{
 		SetDisplay(S_CLEAR);
 		SetDisplay(S_DOCUMENT);
@@ -5021,7 +5032,7 @@ void CMainView::OnClear()
 		else
 		{
 			SetControlBar(CONTROL_BAR_STATUS);
-			m_IsShowingBarcode = true;
+			m_bIsShowingBarcode = true;
 		}
 	}
 	else
@@ -6774,6 +6785,9 @@ void CMainView::OnNextPage()
 {
 	SMultipageInfo	Info;
 	short			sState;
+	m_sTotalRotation = 0;
+	m_sTotalNudge = 0;
+	m_ctrlTMView->SetRotation(m_sTotalRotation);
 
 	if(!IsCommandEnabled(TMAX_NEXTPAGE))
 		return;
@@ -7221,6 +7235,9 @@ void CMainView::OnPreviousPage()
 {
 	SMultipageInfo	Info;
 	short			sState;
+	m_sTotalRotation = 0;
+	m_sTotalNudge = 0;
+	m_ctrlTMView->SetRotation(m_sTotalRotation);
 
 	if(!IsCommandEnabled(TMAX_PREVPAGE))
 		return;
@@ -7549,6 +7566,7 @@ void CMainView::OnRotateCcw()
 	if(!IsCommandEnabled(TMAX_ROTATECCW))
 		return;
 	
+	m_sTotalRotation += -90;
 	m_ctrlTMView->RotateCcw(TRUE, TMV_ACTIVEPANE);
 }
 
@@ -7568,6 +7586,7 @@ void CMainView::OnRotateCw()
 	if(!IsCommandEnabled(TMAX_ROTATECW))
 		return;
 	
+	m_sTotalRotation += 90;
 	m_ctrlTMView->RotateCw(TRUE, TMV_ACTIVEPANE);
 }
 
@@ -7810,7 +7829,7 @@ void CMainView::OnShowToolbar()
 		{
 			SetControlBar(CONTROL_BAR_NONE);
 			m_pToolbar->ShowWindow(SW_HIDE);
-			if (m_IsStatusBarShowing)
+			if (m_bIsStatusBarShowing)
 				SetControlBar(CONTROL_BAR_STATUS);
 		}
 		else
@@ -8176,12 +8195,12 @@ void CMainView::OnStatusBar()
 	//	Toggle the visibility
 	if(m_ControlBar.iId == CONTROL_BAR_STATUS)
 	{
-		m_IsStatusBarShowing = false;
+		m_bIsStatusBarShowing = false;
 		SetControlBar(CONTROL_BAR_NONE);
 	}
 	else
 	{
-		m_IsStatusBarShowing = true;
+		m_bIsStatusBarShowing = true;
 		SetControlBar(CONTROL_BAR_STATUS);
 	}
 }
@@ -9174,6 +9193,12 @@ BOOL CMainView::ProcessCommand(short sCommand)
 										return TRUE;
 		case TMAX_BINDERLIST:			OnOpenBinder();
 										return TRUE;
+		case TMAX_NUDGELEFT:			OnNudge(false);
+										return TRUE;
+		case TMAX_NUDGERIGHT:			OnNudge(true);
+										return TRUE;
+		case TMAX_SAVENUDGE:			SaveNudgePage();
+										return TRUE;
 		default:						return FALSE;
 	}
 }
@@ -10055,6 +10080,16 @@ BOOL CMainView::ProcessVirtualKey(WORD wKey)
 			else if(wKey == VK_F4)
 			{
 				OnFilterProps();
+				return TRUE;
+			}
+			else if (wKey == VK_OEM_4)
+			{
+				ProcessCommand(TMAX_NUDGELEFT);
+				return TRUE;
+			}
+			else if (wKey == VK_OEM_6)
+			{
+				ProcessCommand(TMAX_NUDGERIGHT);
 				return TRUE;
 			}
 			else
@@ -11980,7 +12015,7 @@ void CMainView::SetControlBar(int iId)
 
 		case CONTROL_BAR_STATUS:
 			{
-			//m_IsStatusBarShowing = true;
+			//m_bIsStatusBarShowing = true;
 			m_ControlBar.pWnd = &m_ctrlTMStat;
 			//	Make sure the status bar is properly sized
 			CRect temp = &m_rcStatus;
@@ -13603,7 +13638,7 @@ void CMainView::UpdateStatusBar()
 		}
 		else
 		{
-			if (m_IsShowingBarcode)
+			if (m_bIsShowingBarcode)
 			{
 				// m_ctrlTMStat.SetStatusText(m_Barcode.GetBarcode());
 			}
@@ -13612,7 +13647,7 @@ void CMainView::UpdateStatusBar()
 				m_ctrlTMStat.SetPlaylistInfo((long)&m_PlaylistStatus);
 				if (m_PlaylistStatus.bShowPlaylist && strlen(m_PlaylistStatus.szMediaId) != 0){
 					m_CurrentPageBarcode.SetBarcode(m_PlaylistStatus.szMediaId);
-					if (!m_IsXPressed)
+					if (!m_bIsXPressed)
 						SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
 				}
 				else
@@ -15555,9 +15590,9 @@ void CMainView::UpdateBarcodeText(CString Barcode)
 	else
 	{
 		SetControlBar(CONTROL_BAR_STATUS);
-		m_IsShowingBarcode = true;
+		m_bIsShowingBarcode = true;
 	}
-	m_IsXPressed = true;
+	m_bIsXPressed = true;
 }
 
 //==============================================================================
@@ -15643,4 +15678,60 @@ POINTL CMainView::GetSecondaryDisplayOffset()
 BOOL CMainView::DualMonitorExists()
 {
 	return theApp.GetDualMonitors();
+}
+
+//==============================================================================
+//
+// 	Function Name:	CMainView::OnNudge()
+//
+// 	Description:	Deskew the document by 0.5 degree
+//					Deskew clockwise if direction is true else anti-clockwise
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
+void CMainView::OnNudge(bool direction)
+{
+	if((direction && !IsCommandEnabled(TMAX_NUDGERIGHT)) || (!direction && !IsCommandEnabled(TMAX_NUDGELEFT)))
+		return;
+	m_sTotalRotation += (direction == true ? 1 : -1);
+	m_sTotalNudge += (direction == true ? 1 : -1);
+	if (std::abs(m_sTotalNudge) > 20)
+	{
+		m_sTotalRotation -= (direction == true ? 1 : -1);
+		m_sTotalNudge -= (direction == true ? 1 : -1);
+		return;
+	}
+	m_ctrlTMView->SetRotation(m_sTotalRotation);
+	LoadMultipage(GetMultipageInfo(S_DOCUMENT));
+}
+
+//==============================================================================
+//
+// 	Function Name:	CMainView::SaveNudgePage()
+//
+// 	Description:	Save the image file after the user has deskewed the image
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
+void CMainView::SaveNudgePage()
+{
+	SMultipageInfo*		pMPNew = GetMultipageInfo(S_DOCUMENT);
+	SMultipageInfo*		pMPOld;
+	SPlaylistParams*	pPLNew;
+	CString				strEvent;
+	CString				strFilename;
+	m_pDatabase->GetFilename(pMPNew->pMultipage, pMPNew->pSecondary, strFilename);
+	m_ctrlTMView->Save(strFilename,TMV_ACTIVEPANE);
+	m_sTotalRotation = 0;
+	m_sTotalNudge = 0;
+	m_ctrlTMView->SetRotation(m_sTotalRotation);
+	m_ctrlManagerApp.SetCommand(TMSHARE_COMMAND_UPDATE_NUDGE);
+	m_ctrlManagerApp.SetRequest(0);
+	LoadMultipage(GetMultipageInfo(S_DOCUMENT));
 }

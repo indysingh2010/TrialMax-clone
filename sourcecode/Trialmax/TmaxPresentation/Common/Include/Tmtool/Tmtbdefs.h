@@ -129,7 +129,10 @@
 #define TMTB_SAVESPLITZAP				80
 #define TMTB_GESTUREPAN				    81
 #define TMTB_BINDERLIST					82
-#define TMTB_MAXBUTTONS					83
+#define TMTB_NUDGELEFT					83
+#define TMTB_NUDGERIGHT					84
+#define TMTB_SAVENUDGE					85
+#define TMTB_MAXBUTTONS					86
 
 //	These constants are used to map a button's identifier to its index in the
 //	image strip. They should be enumerated in the same order in which the
@@ -217,7 +220,10 @@
 #define TMTB_IMAGE_SAVESPLITZAP			80
 #define TMTB_IMAGE_GESTUREPAN		    81
 #define	TMTB_IMAGE_BINDERLIST			82
-#define TMTB_MAXIMAGES					83
+#define	TMTB_IMAGE_NUDGELEFT			83
+#define	TMTB_IMAGE_NUDGERIGHT			84
+#define	TMTB_IMAGE_SAVENUDGE			85
+#define TMTB_MAXIMAGES					86
 
 //	Default property values
 #define DEFAULT_TBINIFILENAME			""
