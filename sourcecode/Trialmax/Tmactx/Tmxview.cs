@@ -355,7 +355,7 @@ namespace FTI.Trialmax.ActiveX
 			
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == 1)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 				{
 					if(bClockwise == true)
 						m_ctrlTmview.RotateCw(1, -1);
@@ -379,7 +379,7 @@ namespace FTI.Trialmax.ActiveX
 			
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == 1)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 					bSuccessful = (m_ctrlTmview.Deskew(-1) == 0);
 			}
 			
@@ -395,7 +395,7 @@ namespace FTI.Trialmax.ActiveX
 			
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == 1)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 					bSuccessful = (m_ctrlTmview.Despeckle(-1) == 0);
 			}
 			
@@ -414,7 +414,7 @@ namespace FTI.Trialmax.ActiveX
 			
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == 1)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 				{
 					//	Assume success
 					bSuccessful = true;
@@ -443,7 +443,7 @@ namespace FTI.Trialmax.ActiveX
 							bSuccessful = false;
 					}
 					
-				}// if(m_ctrlTmview.IsLoaded(-1) == true)
+				}// if(m_ctrlTmview.IsLoaded(-1) == -1)
 			
 			}
 			
@@ -461,7 +461,7 @@ namespace FTI.Trialmax.ActiveX
 
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == 1)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 				{
 					//	Are we supposed to use the existing filename?
 					if((strFilename == null) || (strFilename.Length == 0))
@@ -488,7 +488,8 @@ namespace FTI.Trialmax.ActiveX
 					if((m_sAxError = m_ctrlTmview.Save(strSaveAs, -1)) == 0)
 					{
 						bSuccessful = true;
-
+                        m_sTotalNudge = 0;
+                        m_sTotalRotation = 0;
 						//	Delete the backup
 						if((strTemp.Length > 0) && (System.IO.File.Exists(strTemp) == true))
 						{
@@ -509,7 +510,7 @@ namespace FTI.Trialmax.ActiveX
 					}
 					
 					
-				}// if(m_ctrlTmview.IsLoaded(-1) == true)
+				}// if(m_ctrlTmview.IsLoaded(-1) == -1)
 			
 			}
 			
@@ -774,7 +775,7 @@ namespace FTI.Trialmax.ActiveX
 
             if ((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
             {
-                if (m_ctrlTmview.IsLoaded(-1) == 1 || 1 == 1)
+                if (m_ctrlTmview.IsLoaded(-1) == -1)
                 {
                     // Are we supposed to use the existing filename?
                     if ((strFilename == null) || (strFilename.Length == 0))
@@ -818,13 +819,13 @@ namespace FTI.Trialmax.ActiveX
                             catch { }
                         }
                     }
-                }// if(m_ctrlTmview.IsLoaded(-1) == true)
+                }// if(m_ctrlTmview.IsLoaded(-1) == -1)
             }
         }
 
         private void OnNudge(bool direction)
         {
-            if (m_bIsTreatment || Math.Abs(m_sTotalNudge + (direction == true ? 0.5 : -0.5)) > 20)
+            if (m_bIsTreatment || Math.Abs(m_sTotalNudge + (direction == true ? 1 : -1)) > 20)
                 return;
             //	Give the owner a chance to cancel the operation
             if (FireQueryContinue(TmxActions.Nudge, m_strFilename, CalloutCount) == true)
@@ -837,21 +838,6 @@ namespace FTI.Trialmax.ActiveX
                 m_ctrlTmview.Rotation = m_sTotalRotation;
                 m_sAxError = m_ctrlTmview.LoadFile(tempFileName, -1);
 
-                //	Save the file unless this is a treatment
-                if (IsTreatment(m_strFilename) == false)
-                {
-                    //	Save the current image after it's been rotated
-                    if (Save(m_strFilename) == true)
-                    {
-                        FireAction(TmxActions.RotateImage, m_strFilename);
-                    }
-                    else
-                    {
-                        //	Restore the image
-                        //m_ctrlTmview.Rotation = (short)(-1 * sRotation);
-                        //m_ctrlTmview.Rotate(1, -1);
-                    }
-                }
             }
         }// public override bool ProcessCommand(TmaxMediaBarCommands eCommand)
 		
@@ -1741,8 +1727,8 @@ namespace FTI.Trialmax.ActiveX
 					else
 					{
 						//	Restore the image
-                        //m_ctrlTmview.Rotation = (short)(-1 * sRotation);
-                        //m_ctrlTmview.Rotate(1, -1);
+                        m_ctrlTmview.Rotation = (short)(-1 * sRotation);
+                        m_ctrlTmview.Rotate(1, -1);
 					}
 				}
 				
