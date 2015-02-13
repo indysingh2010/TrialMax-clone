@@ -216,8 +216,11 @@ library TM_VIEW6Lib
 			//}}AFX_ODL_METHOD
 
 			[id(DISPID_ABOUTBOX)] void AboutBox();
-			[id(146)] void DoGesturePan(LONG lX, LONG lY);
+			[id(146)] boolean DoGesturePan(LONG lCurrentX, LONG lCurrentY, LONG lLastX, LONG lLastY, BOOL* bSmooth);
 			[id(147)] void DoGestureZoom(FLOAT zoomFactor);
+			[id(148)] void SetZoomedNextPage(BOOL bZoomed);
+			[id(149)] void DoGestureZoomTop(FLOAT zoomFactor);
+			[id(150)] void DoGestureZoomBottom(FLOAT zoomFactor);
 };
 
 	//  Event dispatch interface for CTMViewCtrl

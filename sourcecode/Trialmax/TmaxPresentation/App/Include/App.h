@@ -97,6 +97,7 @@ class CApp : public CWinApp
 		int						m_iPrimaryHeight;
 		int						m_iSecondaryWidth;
 		int						m_iSecondaryHeight;
+		POINTL					SecondaryDisplayOffset; // This stores the location of the secondary monitor
 
 	public:
 	
@@ -116,6 +117,9 @@ class CApp : public CWinApp
 		void					LockInstance(HWND hMainWnd);
 		void					UnlockInstance();
 		BOOL					bSetDisplay;
+		POINTL					GetSecondaryDisplayDimensions();
+		POINTL					GetPrimaryDisplayDimensions();
+		POINTL					GetSecondaryDisplayOffset(){ return SecondaryDisplayOffset; }
 
 	protected:
 

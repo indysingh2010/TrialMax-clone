@@ -151,7 +151,7 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlPictureBox.Location = new System.Drawing.Point(0, 0);
             this.m_ctrlPictureBox.Name = "m_ctrlPictureBox";
             this.m_ctrlPictureBox.Size = new System.Drawing.Size(320, 240);
-            this.m_ctrlPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.m_ctrlPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.m_ctrlPictureBox.TabIndex = 1;
             this.m_ctrlPictureBox.TabStop = false;
             // 

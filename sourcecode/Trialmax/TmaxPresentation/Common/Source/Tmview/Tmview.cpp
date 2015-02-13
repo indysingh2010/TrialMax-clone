@@ -1747,16 +1747,30 @@ void CTm_view::AboutBox()
 	InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
 }
 
-void CTm_view::DoGesturePan(long lX, long lY)
+bool CTm_view::DoGesturePan(long lCurrentX, long lCurrentY, long lLastX, long lLastY, bool* bSmooth)
 {
-	static BYTE parms[] = VTS_I4 VTS_I4 ;
-	InvokeHelper(0x92, DISPATCH_METHOD, VT_EMPTY, NULL, parms, lX, lY);
+	bool result;
+	static BYTE parms[] = VTS_I4 VTS_I4 VTS_I4 VTS_I4 VTS_BOOL;
+	InvokeHelper(0x92, DISPATCH_METHOD, VT_BOOL, (void*)&result, parms, lCurrentX, lCurrentY, lLastX, lLastY, bSmooth);
+	return result;
 }
 
 void CTm_view::DoGestureZoom(float zoomFactor)
 {
 	static BYTE parms[] = VTS_R4 ;
 	InvokeHelper(0x93, DISPATCH_METHOD, VT_EMPTY, NULL, parms, zoomFactor);
+}
+
+void CTm_view::DoGestureZoomTop(float zoomFactor)
+{
+	static BYTE parms[] = VTS_R4 ;
+	InvokeHelper(0x95, DISPATCH_METHOD, VT_EMPTY, NULL, parms, zoomFactor);
+}
+
+void CTm_view::DoGestureZoomBottom(float zoomFactor)
+{
+	static BYTE parms[] = VTS_R4 ;
+	InvokeHelper(0x96, DISPATCH_METHOD, VT_EMPTY, NULL, parms, zoomFactor);
 }
 
 void CTm_view::SetZoomedNextPage(bool bZoomed)

@@ -347,6 +347,8 @@ class CTMLead : public CLead
 		float			m_fMaxZoom;
 		float			m_fPanPercent;
 		BOOL            m_bZoomedSwipe;
+		long            m_lTop;
+		long            m_lBottom;
 
 						CTMLead();
 					   ~CTMLead();
@@ -661,6 +663,8 @@ class CTMLead : public CLead
 public:
 	void GesturePan(long lX, long lY);
 	void GestureZoom(float zoomFactor);
+	void GestureZoomTop(float zoomFactor);
+	void GestureZoomBottom(float zoomFactor);
 	void ZoomToFactor();
 };
 

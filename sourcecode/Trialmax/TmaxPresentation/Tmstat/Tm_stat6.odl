@@ -70,6 +70,8 @@ library TM_STAT6Lib
 			//}}AFX_ODL_METHOD
 
 			[id(DISPID_ABOUTBOX)] void AboutBox();
+			[id(26)] LONG GetStatusBarWidth(void);
+			[id(27)] void SetStatusBarcode(BSTR *barcode);
 	};
 
 	//  Event dispatch interface for CTMStatCtrl

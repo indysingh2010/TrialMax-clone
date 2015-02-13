@@ -57,7 +57,7 @@ class CMainFrame : public CFrameWnd
 		char			GetVKChar();
 		char			GetPrimaryBarcodeChar();
 		char			GetAlternateBarcodeChar();
-
+		void			UpdateBarcode(CString Barcode);
 		LONG			OnWMNewInstance(WPARAM wParam, LPARAM lParam);
 
 	protected:

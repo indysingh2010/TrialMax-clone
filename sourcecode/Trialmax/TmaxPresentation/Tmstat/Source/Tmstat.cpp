@@ -115,6 +115,8 @@ BEGIN_DISPATCH_MAP(CTMStatCtrl, COleControl)
 
 	DISP_FUNCTION_ID(CTMStatCtrl, "AboutBox", DISPID_ABOUTBOX, AboutBox, VT_EMPTY, VTS_NONE)
 
+	DISP_FUNCTION_ID(CTMStatCtrl, "GetStatusBarWidth", dispidGetStatusBarWidth, GetStatusBarWidth, VT_I4, VTS_NONE)
+	DISP_FUNCTION_ID(CTMStatCtrl, "SetStatusBarcode", dispidSetStatusBarcode, SetStatusBarcode, VT_EMPTY, VTS_PBSTR)
 END_DISPATCH_MAP()
 
 // Event map
@@ -616,10 +618,22 @@ void CTMStatCtrl::DrawText(CDC* pdc, LPCSTR lpText)
 		pOldFont = SelectStockFont(pdc);
 	iOldMode = pdc->SetBkMode(TRANSPARENT);
 	crOldColor = pdc->SetTextColor(TranslateColor(GetForeColor()));
+	
+	// m_strBarcode contains either the current page barcode or the barcode that the user is typing
+	
+	// buffer consists of 2 portions. 
+	//		1st portion displays the barcode (m_strBarcode).
+	//		2nd portion displays the extra information of the media running i.e. in case of videos, runtime etc (lpText).
+
+	char buffer[2048];
+	if (m_sMode == TMSTAT_PLAYLISTMODE)
+		sprintf(buffer, "%s %s", m_strBarcode, lpText);
+	else
+		sprintf(buffer, "%s", m_strBarcode);
 
 	//	Paint the background and draw the text
 	pdc->FillRect(&m_rcClient, &brBackground);
-	pdc->DrawText(lpText, &m_rcText, DT_LEFT | DT_BOTTOM | DT_SINGLELINE); 
+	pdc->DrawText(buffer, &m_rcText, DT_LEFT | DT_BOTTOM | DT_SINGLELINE); 
 	
 	//	Restore the dc
 	if(pOldFont) pdc->SelectObject(pOldFont);
@@ -654,8 +668,7 @@ void CTMStatCtrl::FormatText()
 				//	Are we displaying the page/line numbers?
 				if(m_bShowPageLine)
 				{
-					m_strText.Format("%s   Playlist T-%s E-%s R-%s    Desg %d of %d P/L %d-%d R-%s",
-									 m_strPlaylistId,
+					m_strText.Format("Playlist T-%s E-%s R-%s    Desg %d of %d P/L %d-%d R-%s",
 									 m_strPlaylistTime,
 									 m_strElapsedPlaylist,
 									 m_strRemainingPlaylist,
@@ -667,8 +680,7 @@ void CTMStatCtrl::FormatText()
 				}
 				else
 				{
-					m_strText.Format("%s   Playlist T-%s E-%s R-%s    Desg %d of %d R-%s",
-									 m_strPlaylistId,
+					m_strText.Format("Playlist T-%s E-%s R-%s    Desg %d of %d R-%s",
 									 m_strPlaylistTime,
 									 m_strElapsedPlaylist,
 									 m_strRemainingPlaylist,
@@ -1553,4 +1565,68 @@ void CTMStatCtrl::TimeToStr(long lTime, CString& strTime)
 	strTime.Format("%.01d:%.02d:%.02d", lHours, lMinutes, lSeconds);
 }
 
+//==============================================================================
+//
+// 	Function Name:	CTMStatCtrl::GetStatusBarWidth()
+//
+// 	Description:	This function is called to calculate the length of the 
+//					status bar
+//
+// 	Returns:		Length of the status bar
+//
+//	Notes:			None
+//
+//==============================================================================
+LONG CTMStatCtrl::GetStatusBarWidth(void)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
+	// TODO: Add your dispatch handler code here
+	
+	CBrush		brBackground;
+	CFont*		pOldFont;
+	COLORREF	crOldColor;
+	int			iOldMode;
+	CDC*		pdc = CWnd::GetDC();
+	//	Create a brush using the background color
+	brBackground.CreateSolidBrush(TranslateColor(GetBackColor()));
+		
+	//	Set up the dc
+	if(m_pFont)
+		pOldFont = pdc->SelectObject(m_pFont);
+	else
+		pOldFont = SelectStockFont(pdc);
+	iOldMode = pdc->SetBkMode(TRANSPARENT);
+	crOldColor = pdc->SetTextColor(TranslateColor(GetForeColor()));
+
+	long size;
+	if (m_sMode == TMSTAT_PLAYLISTMODE) // Check if current media running is video i.e. Will have more details then just barcode
+		size = m_rcClient.right; // Size of the full status bar displaying the Barcode (Not cropped)
+	else
+		size = ((pdc->GetTextExtent(m_strBarcode)).cx) + ((pdc->GetTextExtent("M")).cx); // Size of the cropped status bar displaying the Barcode
+	
+	//	Restore the dc
+	if(pOldFont) pdc->SelectObject(pOldFont);
+	pdc->SetBkMode(iOldMode);
+	pdc->SetTextColor(crOldColor);
+	
+	return size;
+}
+
+//==============================================================================
+//
+//  Function Name:	CTMStatCtrl::SetStatusBarcode()
+//
+//  Description:	This function is called to set the Barcode value
+//
+//  Returns:		None
+//
+//  Notes:			None
+//
+//==============================================================================
+void CTMStatCtrl::SetStatusBarcode(BSTR *barcode)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+	m_strBarcode = *barcode;
+	Invalidate();
+}

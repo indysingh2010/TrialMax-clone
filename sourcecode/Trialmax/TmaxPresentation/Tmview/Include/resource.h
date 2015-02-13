@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by D:\Projects\TrialMax\sourcecode\Trialmax\TmaxPresentation\Tmview\Tm_view6.rc
+// Used by D:\Trialmax\sourcecode\Trialmax\TmaxPresentation\Tmview\Tm_view6.rc
 //
 #define IDS_TM_VIEW6                    1
 #define IDD_ABOUTBOX_TM_VIEW6           1

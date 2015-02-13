@@ -3894,16 +3894,6 @@ namespace FTI.Trialmax.TmaxManager
 				//	Add a blank line
 				m_aVersions.Add(new CBaseVersion());
 				
-				//	Add PDF converter
-				if((m_tmaxProductManager != null) && (m_tmaxProductManager.Components != null))
-				{
-					if((tmaxComponent = m_tmaxProductManager.Components.Find(TmaxComponents.FTIP2I)) != null)
-					{
-						if((baseVersion = tmaxComponent.GetBaseVersion()) != null)
-							m_aVersions.Add(baseVersion);
-					}
-				}
-
 				//	Add Objections Report Generator
 				if((m_tmaxProductManager != null) && (m_tmaxProductManager.Components != null))
 				{
@@ -4501,7 +4491,7 @@ namespace FTI.Trialmax.TmaxManager
 				//	Process the request
 				Args.Successful = m_tmaxDatabase.Import(Args.Parameters, Args.Items[0], tmaxResults);
 				Args.Items[0].State = TmaxItemStates.Processed;
-
+				OnAppReloadCase();
 				if(Args.Successful == true)
 				{
 					//	Notify each pane
@@ -7849,6 +7839,11 @@ namespace FTI.Trialmax.TmaxManager
 					break;
 					
 				case TmaxHotkeys.AddToBinder:
+                    
+                    try { m_paneBinders.AddToBinderFromHotKey(); } // Just being safe
+                    catch { }
+                    break;
+
 				case TmaxHotkeys.AddToScript:
 				case TmaxHotkeys.GoTo:
 				case TmaxHotkeys.Save:
@@ -9723,7 +9718,11 @@ namespace FTI.Trialmax.TmaxManager
 				}
 				
 			}
-			
+
+            /// <summary>This function called after TmaxManagerForm is created to solve in issue caused by DPI Change</summary>
+            /// <summary>in which Media Viewer Pane does not resize until it gets focus or the window is resized</summary>
+            this.m_paneViewer.Focus();
+
 		}// protected void OnLoad(System.EventArgs e)
 		
 		/// <summary>This method traps events fired when the form is closing</summary>

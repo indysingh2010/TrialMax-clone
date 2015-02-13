@@ -178,6 +178,7 @@
 #define OPTIMIZEVIDEO_LINE					"OptimizeVideo"
 #define DUALMONITORS_LINE					"DualMonitors"
 #define OPTIMIZETABLET_LINE					"OptimizeTablet"
+#define ENABLEBARCODEKEYSTROKES_LINE		"EnableBarcodeKeystrokes"
 
 //	Capture options lines
 #define CAPTURE_HOTKEY_LINE					"Hotkey"
@@ -287,6 +288,7 @@
 #define DEFAULT_SO_OPTIMIZEVIDEO			TRUE
 #define DEFAULT_SO_DUALMONITORS				FALSE
 #define DEFAULT_SO_OPTIMIZETABLET			FALSE
+#define DEFAULT_SO_ENABLEBARCODEKEYSTROKES	FALSE
 
 
 #define DEFAULT_CO_HOTKEY					0
@@ -444,6 +446,7 @@ typedef struct
 	BOOL		bOptimizeVideo;
 	BOOL		bDualMonitors;
 	BOOL		bOptimizeTablet;
+	BOOL		bEnableBarcodeKeystrokes;
 
 }SSystemOptions;
 

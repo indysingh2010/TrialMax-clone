@@ -7587,7 +7587,15 @@ void CTMLead::RedrawZoomed()
 	{
 		//  Find the current size and position of the destination rectangle.
 		fDstLeft   = GetDstLeft();
+		// When fDstLeft value is positive, there appears a gray strip on the left side of the document.
+		// fDstLeft is only positive when the document is zoomed from the left edges.
+		if (fDstLeft > 0)	
+			fDstLeft = 0;
 		fDstTop	   = GetDstTop();
+		// When fDstTop value is positive, there appears a gray strip on the top side of the document.
+		// fDstTop is only positive when the document is zoomed from the top edges.
+		if (fDstTop > 0)	
+			fDstTop = 0;
 		fDstWidth  = GetDstWidth();
 		fDstHeight = GetDstHeight();
 
@@ -7604,10 +7612,10 @@ void CTMLead::RedrawZoomed()
 			fDstHeight += ((float)m_iHeight - (fDstHeight + fDstTop));
 
 		//	This should never happen but just in case it does
-		if(fDstLeft > 0)
+		/*if(fDstLeft > 0)
 			fDstLeft = 0;
 		if(fDstTop > 0)
-			fDstTop = 0;
+			fDstTop = 0;*/
 
 		//	We reset the destination rectangle once again because the call to
 		//	ResizeToDestination() may inadvertently reset the rectangle when
@@ -11387,7 +11395,84 @@ void CTMLead::ZoomUnrestricted(RECT* pRect)
 //==============================================================================
 void CTMLead::GesturePan(long lX, long lY)
 {
-	Pan(lX, lY);
+	//Pan(lX, lY);
+
+	float	fDstTop;
+	float	fDstLeft;
+	float	fDstHeight;
+	float	fDstWidth;
+	float	fDeltaX;
+	float	fDeltaY;
+	float	fNewLeft;
+	float	fNewTop;
+	short	sStates;
+
+	//  Find the current size and position of the destination rectangle.
+	fDstLeft   = GetDstLeft();
+	fDstTop	   = GetDstTop();
+	fDstWidth  = GetDstWidth();
+	fDstHeight = GetDstHeight();
+
+	//	How big a step are we taking?
+	fDeltaX = (float)lX;
+	fDeltaY = (float)lY;
+
+	//	Get the directional states
+	sStates = GetPanStates();
+
+	//	Are we trying to pan right?
+	if(lX < 0 && (sStates & ENABLE_PANRIGHT))
+	{
+		//	What is the new left hand coordinate?
+		fNewLeft = fDstLeft + fDeltaX;
+		if(fNewLeft < ((float)m_iWidth - fDstWidth))
+			fNewLeft = ((float)m_iWidth - fDstWidth);
+	}
+	//	Are we trying to pan left?
+	else if(lX > 0 && (sStates & ENABLE_PANLEFT))
+	{
+		//	What is the new left hand coordinate?
+		fNewLeft = fDstLeft + fDeltaX;
+		if(fNewLeft > 0)
+			fNewLeft = 0.0;
+	}
+	//	We are not panning left or right
+	else
+	{
+		fNewLeft = fDstLeft;
+	}
+
+	//	Are we trying to pan down?
+	if(lY < 0 && (sStates & ENABLE_PANDOWN))
+	{
+		//	What is the new top coordinate?
+		fNewTop = fDstTop + fDeltaY;
+		if(fNewTop < ((float)m_iHeight - fDstHeight))
+			fNewTop = ((float)m_iHeight - fDstHeight);
+	}
+	//	Are we trying to pan up?
+	else if(lY > 0 && (sStates & ENABLE_PANUP))
+	{
+		//	What is the new top coordinate?
+		fNewTop = fDstTop + fDeltaY;
+		if(fNewTop > 0)
+			fNewTop = 0.0;
+	}
+	//	We are not panning up or down
+	else
+	{
+		fNewTop = fDstTop;
+	}
+		
+	//	Move the destination rectangles
+	SetDstRect(fNewLeft, fNewTop, fDstWidth, fDstHeight);
+	SetDstClipRect(fNewLeft, fNewTop, fDstWidth, fDstHeight);
+
+	//	Notify the parent if this is a callout
+	if(m_pOwner != 0)
+		m_pOwner->OnPanComplete();
+	
+	ForceRepaint();
 }
 
 //==============================================================================
@@ -11467,8 +11552,169 @@ void CTMLead::GestureZoom(float zoomFactor)
 
 	//	Redraw the image
 	RedrawZoomed();
+
+	m_sZoomState = ZOOMED_USER;
 }
 
+//==============================================================================
+//
+// 	Function Name:	CTMLead::GestureZoomTop()
+//
+// 	Description:	Will zoomin/zoomout document on according to given
+//                  zoom factor, zoom top area
+//
+// 	Returns:		None
+//
+//	Notes:			zoomfactor > 1 = zoom in 
+//					zoomfactor < 1 = zoom out
+//
+//==============================================================================
+void CTMLead::GestureZoomTop(float zoomFactor)
+{
+	int		iWidth;
+	int		iHeight;
+    float   DstWidth;
+    float   DstHeight;
+    float   DstLeft;
+    float   DstTop;
+	POINT	pCenter;
+
+	iWidth  = m_rcMax.right/zoomFactor;
+	iHeight = m_rcMax.bottom/zoomFactor;
+	pCenter.x = (m_rcMax.right - iWidth )/2;
+	pCenter.y = (m_rcMax.bottom - iHeight)/2;
+	
+	// limit zoomin
+	if (m_fZoomFactor > m_fMaxZoom &&
+		(iWidth <= m_rcMax.right && iHeight <= m_rcMax.bottom)) {
+		return;
+	}
+
+	//	Always hide the Lead control
+	if(IsWindow(m_hWnd))
+		ShowWindow(SW_HIDE);
+
+    //	If the window is not already maximized we have to move it to take up the
+	//	full client area so that the Lead control knows the area it has 
+	//	available to do the zoom.
+	if((m_iWidth != m_rcMax.right) || (m_iHeight != m_rcMax.bottom))
+	{
+		//  Find the current size of the destination rectangle. We need these
+		//	to restore the destination rectangle after we make the move
+		DstLeft   = GetDstLeft();
+		DstTop	  = GetDstTop();
+		DstWidth  = GetDstWidth();
+		DstHeight = GetDstHeight();
+
+		// limit the window for zoomout
+		if (DstWidth < m_rcMax.right/4)
+			DstWidth = m_rcMax.right/4;
+
+		if (DstHeight < m_rcMax.bottom/2)
+			DstHeight = m_rcMax.bottom/2;
+
+		//	Move the window to take up the full client area
+		MoveWindow(0,0,m_rcMax.right,m_rcMax.bottom,TRUE);
+
+		//	Restore the destination rectangle
+		SetDstRect(DstLeft, DstTop, DstWidth, DstHeight);
+		SetDstClipRect(DstLeft, DstTop, DstWidth, DstHeight);
+
+	}
+
+	//	Zoom in on the selection
+	ZoomToRect((float)pCenter.x, (float)0,
+			   (float)iWidth, (float)iHeight);
+
+	// without this, image will go all funcky
+	ResizeWndToRatio((float)iWidth, (float)iHeight);
+
+	//	Redraw the image
+	RedrawZoomed();
+
+	m_sZoomState = ZOOMED_USER;
+}
+
+//==============================================================================
+//
+// 	Function Name:	CTMLead::GestureZoomBottom()
+//
+// 	Description:	Will zoomin/zoomout document on according to given
+//                  zoom factor, bottom area
+//
+// 	Returns:		None
+//
+//	Notes:			zoomfactor > 1 = zoom in 
+//					zoomfactor < 1 = zoom out
+//
+//==============================================================================
+void CTMLead::GestureZoomBottom(float zoomFactor)
+{
+	int		iWidth;
+	int		iHeight;
+    float   DstWidth;
+    float   DstHeight;
+    float   DstLeft;
+    float   DstTop;
+	POINT	pCenter;
+
+	iWidth  = m_rcMax.right/zoomFactor;
+	iHeight = m_rcMax.bottom/zoomFactor;
+	pCenter.x = (m_rcMax.right - iWidth )/2;
+	pCenter.y = (m_rcMax.bottom - iHeight)/2;
+	
+
+	// limit zoomin
+	if (m_fZoomFactor > m_fMaxZoom &&
+		(iWidth <= m_rcMax.right && iHeight <= m_rcMax.bottom)) {
+		return;
+	}
+
+	//	Always hide the Lead control
+	if(IsWindow(m_hWnd))
+		ShowWindow(SW_HIDE);
+
+    //	If the window is not already maximized we have to move it to take up the
+	//	full client area so that the Lead control knows the area it has 
+	//	available to do the zoom.
+	if((m_iWidth != m_rcMax.right) || (m_iHeight != m_rcMax.bottom))
+	{
+		//  Find the current size of the destination rectangle. We need these
+		//	to restore the destination rectangle after we make the move
+		DstLeft   = GetDstLeft();
+		DstTop	  = GetDstTop();
+		DstWidth  = GetDstWidth();
+		DstHeight = GetDstHeight();
+
+		// limit the window for zoomout
+		if (DstWidth < m_rcMax.right/4)
+			DstWidth = m_rcMax.right/4;
+
+		if (DstHeight < m_rcMax.bottom/2)
+			DstHeight = m_rcMax.bottom/2;
+
+		//	Move the window to take up the full client area
+		MoveWindow(0,0,m_rcMax.right,m_rcMax.bottom,TRUE);
+
+		//	Restore the destination rectangle
+		SetDstRect(DstLeft, DstTop, DstWidth, DstHeight);
+		SetDstClipRect(DstLeft, DstTop, DstWidth, DstHeight);
+
+	}
+
+
+	//	Zoom in on the selection
+	ZoomToRect((float)pCenter.x, (float)iHeight,
+			   (float)iWidth, (float)iHeight);
+
+	// without this, image will go all funcky
+	ResizeWndToRatio((float)iWidth, (float)iHeight);
+
+	//	Redraw the image
+	RedrawZoomed();
+
+	m_sZoomState = ZOOMED_USER;
+}
 //==============================================================================
 //
 // 	Function Name:	CTMLead::ZoomToFactor()
@@ -11523,13 +11769,14 @@ void CTMLead::ZoomToFactor()
 		if (DstWidth < m_rcMax.right/4)
 			DstWidth = m_rcMax.right/4;
 
+
 		if (DstHeight < m_rcMax.bottom/2)
 			DstHeight = m_rcMax.bottom/2;
-
 		//	Move the window to take up the full client area
 		MoveWindow(0,0,m_rcMax.right,m_rcMax.bottom,TRUE);
 
-		//	Restore the destination rectangle
+		//	Restore the destination rectangletenpearls
+
 		SetDstRect(DstLeft, DstTop, DstWidth, DstHeight);
 		SetDstClipRect(DstLeft, DstTop, DstWidth, DstHeight);
 

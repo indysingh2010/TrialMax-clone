@@ -125,12 +125,14 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="FFmpegencoder.cs" />
     <Compile Include="EncoderStatus.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Enumcodecs.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FFmpegsource.cs" />
     <Compile Include="TmencodeVersion.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -58,6 +58,7 @@ class CSystemPage : public CSetupPage
 	BOOL	m_bOptimizeVideo;
 	BOOL	m_bDualMonitors;
 	BOOL	m_bOptimizeTablet;
+	BOOL	m_bEnableBarcodeKeystrokes;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides

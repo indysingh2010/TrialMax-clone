@@ -6,7 +6,6 @@ namespace FTI.Shared.Trialmax
 	public enum TmaxComponents
 	{
 		TrialMax,	//	Applications,Assemblies,ActiveX,Configuration
-		FTIP2I,		//	FTI PDF Converter
 		FTIORE,		//	FTI Objections Report Engine
 		WMEncoder,	//	Windows Media Encoder (WMV)
 		VideoViewer,//	TrialMax video viewer / script builder
@@ -846,5 +845,13 @@ namespace FTI.Shared.Trialmax
 		Export,
 		Import,
 	}
+
+    /// <summary>Enumerations for form-specific status message types</summary>
+    public enum TmaxPDFOutputType
+    {
+        Autodetect,
+        ForceColor,
+        ForceBW,
+    }
 	
 }// namespace FTI.Shared.Trialmax

@@ -851,29 +851,10 @@ namespace FTI.Trialmax.Forms
 				m_iLine = value;
 
                 if (m_ctrlLine != null)
-                    SetLine();
+                    m_ctrlLine.Text = (m_iLine > 0) ? m_iLine.ToString() : "";
 			}
 		
 		}
-
-        delegate void SetLineCallback();
-        private void SetLine()
-        {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-
-            if (this.m_ctrlLine.InvokeRequired)
-            {
-                SetLineCallback d = new SetLineCallback(SetLine);
-                this.m_ctrlLine.Invoke(d, new object[] { });
-
-            }
-            else
-            {
-                m_ctrlLine.Text = (m_iLine > 0) ? m_iLine.ToString() : ""; 
-            }
-        }
 		
 		/// <summary>True if the operation has been aborted by the user</summary>
 		public bool Aborted
