@@ -8302,7 +8302,18 @@ void CTMLead::Rotate(BOOL bRedraw)
 	GetSrcVisible(&rcSource);
 
 	//	Rotate the image
-	CLead::Rotate((long)dAngle, 1, m_crBackground);
+	int div = dAngle/9000;
+	int dNudge = (long)dAngle % 9000;
+		
+	if ((abs(dNudge) >= 70.0*100 && abs(dNudge) <= 89.5*100) || (abs(dNudge) >= 90.5*100 && abs(dNudge) <= 110*100)) // This means we first rotate +/-90 and then nudge by dNudge degrees
+	{
+		div += dNudge > 0 ? 1 : -1;
+	}
+	if(abs(div) != 0) 
+	{
+		CLead::Rotate(9000*div, ROTATE_RESIZE, m_crBackground);
+	}
+	CLead::Rotate((long)(dAngle - (9000*div))/2, ROTATE_RESAMPLE, RGB(255,255,255));
 
 	//	Keep track of the cumulative rotation
 	m_sAngle += m_sRotation;

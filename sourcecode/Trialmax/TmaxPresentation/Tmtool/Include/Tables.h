@@ -111,7 +111,10 @@
 #define SORTED_FILLEDELLIPSE				79
 #define SORTED_FILLEDRECTANGLE				80
 #define SORTED_POLYGON						81
-#define SORTED_UNUSED1						82
+#define SORTED_NUDGELEFT					82
+#define SORTED_NUDGERIGHT					83
+#define SORTED_SAVENUDGE					84
+#define SORTED_UNUSED1						85
 
 //------------------------------------------------------------------------------
 //	DECLARATIONS

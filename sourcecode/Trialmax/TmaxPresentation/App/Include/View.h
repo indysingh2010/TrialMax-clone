@@ -575,6 +575,8 @@ class CMainView : public CFormView
 		short			m_sUpdateButton;
 		short			m_sVideoSize;
 		short			m_sVideoPosition;
+		short			m_sTotalRotation;
+		short			m_sTotalNudge;
 		float			m_fMovieStep;
 		float			m_fPlaylistStep;
 		double			m_dFrameRate;
@@ -663,9 +665,9 @@ class CMainView : public CFormView
 		bool			zoomFullWidth;
 		bool			m_bOptimizedForTablet;
 		bool			m_bEnableBarcodeKeystrokes;
-		bool			m_IsShowingBarcode;
-		bool			m_IsStatusBarShowing;
-		bool			m_IsXPressed;
+		bool			m_bIsShowingBarcode;
+		bool			m_bIsStatusBarShowing;
+		bool			m_bIsXPressed;
 	public:
 		
 
@@ -715,6 +717,7 @@ class CMainView : public CFormView
 		void			OnColorPickerButtonClickEvent(int iColorType);				
 		void			OnColorPickerCloseButtonClickEvent();
 		void			UpdateBarcodeText(CString);
+		void			SaveNudgePage();
 	protected:
  		void			SetStatusBarcode(CString barcode);
 		void			SetTaskBarVisible(BOOL bVisible);
@@ -1008,6 +1011,7 @@ class CMainView : public CFormView
 	afx_msg void OnSplitPagesNext();
 	afx_msg void OnOpenBinder();
 	afx_msg void OnOpenColorPicker();
+	afx_msg void OnNudge(bool direction);
 	DECLARE_EVENTSINK_MAP()
 	//}}AFX_MSG
 

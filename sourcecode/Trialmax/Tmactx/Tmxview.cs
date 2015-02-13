@@ -38,10 +38,7 @@ namespace FTI.Trialmax.ActiveX
 		private Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea _CTmxView_Toolbars_Dock_Area_Bottom;
 		
 		/// <summary>Infragistics library toolbar/menu manager</summary>
-		private Infragistics.Win.UltraWinToolbars.UltraToolbarsManager m_ctrlUltraToolbarManager;
-		
-		/// <summary>TrialMax TMView ActiveX control</summary>
-		private AxTM_VIEW6Lib.AxTm_view6 m_ctrlTmview;
+        private Infragistics.Win.UltraWinToolbars.UltraToolbarsManager m_ctrlUltraToolbarManager;
 		
 		/// <summary>Background panel to act as container for child controls</summary>
 		private System.Windows.Forms.Panel m_ctrlFillPanel;
@@ -57,7 +54,15 @@ namespace FTI.Trialmax.ActiveX
 
 		/// <summary>Local flag to keep track of whether or not a treatment is loaded</summary>
 		private bool m_bIsTreatment = false;
-		
+
+        /// <summary>Local member that stores the total angle the current loaded image is rotated by</summary>
+        private short m_sTotalRotation = 0;
+
+        private AxTM_VIEW6Lib.AxTm_view6 m_ctrlTmview;
+
+        /// <summary>Local member that stores the total nudge the current loaded image is rotated by</summary>
+        private short m_sTotalNudge = 0;
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -216,11 +221,12 @@ namespace FTI.Trialmax.ActiveX
 			
 			//	Make sure the rotation property is reset
 			m_ctrlTmview.Rotation = 0;
-			
+            m_sTotalRotation = 0;
+
 			if(IsTreatment(strFilename) == true)
 			{
 				m_bIsTreatment = true;
-				m_sAxError = m_ctrlTmview.LoadZap(strFilename, true, true, false, -1, m_strZapSourceFile);
+				m_sAxError = m_ctrlTmview.LoadZap(strFilename, 1, 1, 0, -1, m_strZapSourceFile);
 			}
 			else
 			{
@@ -231,6 +237,9 @@ namespace FTI.Trialmax.ActiveX
 			if(m_sAxError == 0)
 			{ 
 				SetUltraToolEnabled(TmaxMediaBarCommands.UpdateZap, m_bIsTreatment);
+                SetUltraToolEnabled(TmaxMediaBarCommands.NudgeLeft, !m_bIsTreatment);
+                SetUltraToolEnabled(TmaxMediaBarCommands.NudgeRight, !m_bIsTreatment);
+                SetUltraToolEnabled(TmaxMediaBarCommands.SaveNudge, !m_bIsTreatment);
 				
 				m_strFilename = strFilename;
 				return true;
@@ -239,6 +248,9 @@ namespace FTI.Trialmax.ActiveX
 			{
 				m_bIsTreatment = false;
 				SetUltraToolEnabled(TmaxMediaBarCommands.UpdateZap, false);
+                SetUltraToolEnabled(TmaxMediaBarCommands.NudgeLeft, !m_bIsTreatment);
+                SetUltraToolEnabled(TmaxMediaBarCommands.NudgeRight, !m_bIsTreatment);
+                SetUltraToolEnabled(TmaxMediaBarCommands.SaveNudge, !m_bIsTreatment);
 				
 				return false;
 			}
@@ -343,12 +355,12 @@ namespace FTI.Trialmax.ActiveX
 			
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == true)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 				{
 					if(bClockwise == true)
-						m_ctrlTmview.RotateCw(true, -1);
+						m_ctrlTmview.RotateCw(1, -1);
 					else
-						m_ctrlTmview.RotateCcw(true, -1);
+						m_ctrlTmview.RotateCcw(1, -1);
 					
 					bSuccessful = true;
 				}
@@ -367,7 +379,7 @@ namespace FTI.Trialmax.ActiveX
 			
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == true)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 					bSuccessful = (m_ctrlTmview.Deskew(-1) == 0);
 			}
 			
@@ -383,7 +395,7 @@ namespace FTI.Trialmax.ActiveX
 			
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == true)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 					bSuccessful = (m_ctrlTmview.Despeckle(-1) == 0);
 			}
 			
@@ -402,7 +414,7 @@ namespace FTI.Trialmax.ActiveX
 			
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == true)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 				{
 					//	Assume success
 					bSuccessful = true;
@@ -431,7 +443,7 @@ namespace FTI.Trialmax.ActiveX
 							bSuccessful = false;
 					}
 					
-				}// if(m_ctrlTmview.IsLoaded(-1) == true)
+				}// if(m_ctrlTmview.IsLoaded(-1) == -1)
 			
 			}
 			
@@ -449,7 +461,7 @@ namespace FTI.Trialmax.ActiveX
 
 			if((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
 			{
-				if(m_ctrlTmview.IsLoaded(-1) == true)
+				if(m_ctrlTmview.IsLoaded(-1) == -1)
 				{
 					//	Are we supposed to use the existing filename?
 					if((strFilename == null) || (strFilename.Length == 0))
@@ -476,7 +488,8 @@ namespace FTI.Trialmax.ActiveX
 					if((m_sAxError = m_ctrlTmview.Save(strSaveAs, -1)) == 0)
 					{
 						bSuccessful = true;
-
+                        m_sTotalNudge = 0;
+                        m_sTotalRotation = 0;
 						//	Delete the backup
 						if((strTemp.Length > 0) && (System.IO.File.Exists(strTemp) == true))
 						{
@@ -497,7 +510,7 @@ namespace FTI.Trialmax.ActiveX
 					}
 					
 					
-				}// if(m_ctrlTmview.IsLoaded(-1) == true)
+				}// if(m_ctrlTmview.IsLoaded(-1) == -1)
 			
 			}
 			
@@ -536,12 +549,12 @@ namespace FTI.Trialmax.ActiveX
 			{
 				case TmxActions.ShowCallouts:
 				
-					m_ctrlTmview.ShowCallouts(true, -1);
+					m_ctrlTmview.ShowCallouts(1, -1);
 					break;
 					
 				case TmxActions.HideCallouts:
 				
-					m_ctrlTmview.ShowCallouts(false, -1);
+					m_ctrlTmview.ShowCallouts(0, -1);
 					break;
 					
 			}
@@ -718,13 +731,28 @@ namespace FTI.Trialmax.ActiveX
 				//	Toggle the state of the shaded callouts option
 				case TmaxMediaBarCommands.ShadedCallouts:
 				
-					m_ctrlTmview.ShadeOnCallout = !m_ctrlTmview.ShadeOnCallout;
+					m_ctrlTmview.ShadeOnCallout = (sbyte)(m_ctrlTmview.ShadeOnCallout == 1 ? 0 : 1);
 					SetShadedCallouts();
 					if(AxAutoSave == true)
 						AxSaveProperties();
 					break;
 
                 case TmaxMediaBarCommands.BlankPresentation:
+                    break;
+
+                case TmaxMediaBarCommands.NudgeRight:
+
+                    OnNudge(true);
+                    break;
+
+                case TmaxMediaBarCommands.NudgeLeft:
+
+                    OnNudge(false);
+                    break;
+
+                case TmaxMediaBarCommands.SaveNudge:
+
+                    SaveNudgeImage(m_strFilename);
                     break;
 
 				default:
@@ -735,7 +763,83 @@ namespace FTI.Trialmax.ActiveX
 		
 			return true;
 		
-		}// public override bool ProcessCommand(TmaxMediaBarCommands eCommand)
+		}
+
+        private void SaveNudgeImage(string strFilename)
+        {
+            if (m_bIsTreatment)
+                return;
+            bool bSuccessful = false;
+            string strSaveAs = "";
+            string strTemp = "";
+
+            if ((m_ctrlTmview != null) && (m_ctrlTmview.IsDisposed == false))
+            {
+                if (m_ctrlTmview.IsLoaded(-1) == -1)
+                {
+                    // Are we supposed to use the existing filename?
+                    if ((strFilename == null) || (strFilename.Length == 0))
+                        strSaveAs = this.Filename;
+                    else
+                        strSaveAs = strFilename;
+
+                    // Does this file already exist?
+                    if (System.IO.File.Exists(strSaveAs) == true)
+                    {
+                        try
+                        {
+                            strTemp = System.IO.Path.ChangeExtension(strSaveAs, ".bak");
+                            System.IO.File.Move(strSaveAs, strTemp);
+                        }
+                        catch
+                        {
+                            strTemp = "";
+                        }
+
+                    }
+                    // Save the file
+                    if ((m_sAxError = m_ctrlTmview.Save(strSaveAs, -1)) == 0)
+                    {
+                        bSuccessful = true;
+                        m_sTotalRotation = 0;
+                        m_sTotalNudge = 0;
+                        // Delete the backup
+                        if ((strTemp.Length > 0) && (System.IO.File.Exists(strTemp) == true))
+                        {
+                            try { System.IO.File.Delete(strTemp); }
+                            catch { }
+                        }
+                    }
+                    else
+                    {
+                        // Restore the original
+                        if ((strTemp.Length > 0) && (System.IO.File.Exists(strTemp) == true))
+                        {
+                            try { System.IO.File.Move(strTemp, strSaveAs); }
+                            catch { }
+                        }
+                    }
+                }// if(m_ctrlTmview.IsLoaded(-1) == -1)
+            }
+        }
+
+        private void OnNudge(bool direction)
+        {
+            if (m_bIsTreatment || Math.Abs(m_sTotalNudge + (direction == true ? 1 : -1)) > 20)
+                return;
+            //	Give the owner a chance to cancel the operation
+            if (FireQueryContinue(TmxActions.Nudge, m_strFilename, CalloutCount) == true)
+            {
+                m_sTotalRotation += (short)(direction == true ? 1 : -1);
+                m_sTotalNudge += (short)(direction == true ? 1 : -1);
+                string tempFileName = m_strFilename;
+                m_bIsTreatment = false;
+
+                m_ctrlTmview.Rotation = m_sTotalRotation;
+                m_sAxError = m_ctrlTmview.LoadFile(tempFileName, -1);
+
+            }
+        }// public override bool ProcessCommand(TmaxMediaBarCommands eCommand)
 		
 		/// <summary>This method is called to unload the viewer</summary>
 		public override void Unload()
@@ -782,96 +886,102 @@ namespace FTI.Trialmax.ActiveX
 		/// </summary>
 		protected override void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			Infragistics.Win.UltraWinToolbars.UltraToolbar ultraToolbar1 = new Infragistics.Win.UltraWinToolbars.UltraToolbar("MainToolbar");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool1 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Previous");
-			Infragistics.Win.UltraWinToolbars.TextBoxTool textBoxTool1 = new Infragistics.Win.UltraWinToolbars.TextBoxTool("GoTo");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool2 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Next");
-			Infragistics.Win.UltraWinToolbars.LabelTool labelTool1 = new Infragistics.Win.UltraWinToolbars.LabelTool("Total");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool1 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Zoom", "");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool3 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ZoomWidth");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool4 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Normal");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool5 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SaveZap");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool6 = new Infragistics.Win.UltraWinToolbars.ButtonTool("UpdateZap");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool2 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Callout", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool3 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Highlight", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool4 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Redact", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool5 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Pan", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool6 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Freehand", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool7 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Arrow", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool8 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Line", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool9 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Rectangle", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool10 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Ellipse", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool11 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Polygon", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool12 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("FilledEllipse", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool13 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("FilledPolygon", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool14 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Text", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool15 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Select", "");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool7 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Erase");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool8 = new Infragistics.Win.UltraWinToolbars.ButtonTool("RotateCw");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool9 = new Infragistics.Win.UltraWinToolbars.ButtonTool("RotateCcw");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool16 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("ShadedCallouts", "");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool10 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PureBlack");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool11 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Erase");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool17 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Callout", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool18 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Highlight", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool19 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Redact", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool20 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Freehand", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool21 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Arrow", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool22 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Line", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool23 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Rectangle", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool24 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Ellipse", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool25 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Polygon", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool26 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("FilledEllipse", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool27 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("FilledPolygon", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool28 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Text", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool29 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Select", "");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool12 = new Infragistics.Win.UltraWinToolbars.ButtonTool("RotateCw");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool13 = new Infragistics.Win.UltraWinToolbars.ButtonTool("RotateCcw");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool30 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Zoom", "");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool14 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ZoomWidth");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool15 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Normal");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool16 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SaveZap");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool17 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PureBlack");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool18 = new Infragistics.Win.UltraWinToolbars.ButtonTool("UpdateZap");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool31 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("ShadedCallouts", "");
-			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool32 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Pan", "");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool19 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Next");
-			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool20 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Previous");
-			Infragistics.Win.UltraWinToolbars.TextBoxTool textBoxTool2 = new Infragistics.Win.UltraWinToolbars.TextBoxTool("GoTo");
+            this.components = new System.ComponentModel.Container();
+            Infragistics.Win.UltraWinToolbars.UltraToolbar ultraToolbar1 = new Infragistics.Win.UltraWinToolbars.UltraToolbar("MainToolbar");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool1 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Previous");
+            Infragistics.Win.UltraWinToolbars.TextBoxTool textBoxTool1 = new Infragistics.Win.UltraWinToolbars.TextBoxTool("GoTo");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool2 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Next");
+            Infragistics.Win.UltraWinToolbars.LabelTool labelTool1 = new Infragistics.Win.UltraWinToolbars.LabelTool("Total");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool1 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Zoom", "");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool3 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ZoomWidth");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool4 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Normal");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool5 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SaveZap");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool6 = new Infragistics.Win.UltraWinToolbars.ButtonTool("UpdateZap");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool2 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Callout", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool3 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Highlight", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool4 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Redact", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool5 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Pan", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool6 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Freehand", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool7 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Arrow", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool8 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Line", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool9 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Rectangle", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool10 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Ellipse", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool11 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Polygon", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool12 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("FilledEllipse", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool13 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("FilledPolygon", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool14 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Text", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool15 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Select", "");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool7 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Erase");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool8 = new Infragistics.Win.UltraWinToolbars.ButtonTool("RotateCw");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool9 = new Infragistics.Win.UltraWinToolbars.ButtonTool("RotateCcw");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool16 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("ShadedCallouts", "");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool10 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PureBlack");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonToolShowPresentation1 = new Infragistics.Win.UltraWinToolbars.ButtonTool("BlankPresentation");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool21 = new Infragistics.Win.UltraWinToolbars.ButtonTool("NudgeLeft");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool22 = new Infragistics.Win.UltraWinToolbars.ButtonTool("NudgeRight");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool23 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SaveNudge");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool11 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Erase");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool17 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Callout", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool18 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Highlight", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool19 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Redact", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool20 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Freehand", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool21 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Arrow", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool22 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Line", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool23 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Rectangle", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool24 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Ellipse", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool25 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Polygon", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool26 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("FilledEllipse", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool27 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("FilledPolygon", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool28 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Text", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool29 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Select", "");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool12 = new Infragistics.Win.UltraWinToolbars.ButtonTool("RotateCw");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool13 = new Infragistics.Win.UltraWinToolbars.ButtonTool("RotateCcw");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool30 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Zoom", "");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool14 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ZoomWidth");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool15 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Normal");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool16 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SaveZap");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool17 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PureBlack");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool18 = new Infragistics.Win.UltraWinToolbars.ButtonTool("UpdateZap");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool31 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("ShadedCallouts", "");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool32 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Pan", "");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool19 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Next");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool20 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Previous");
+            Infragistics.Win.UltraWinToolbars.TextBoxTool textBoxTool2 = new Infragistics.Win.UltraWinToolbars.TextBoxTool("GoTo");
+            Infragistics.Win.Appearance appearance1 = new Infragistics.Win.Appearance();
+            Infragistics.Win.UltraWinToolbars.LabelTool labelTool2 = new Infragistics.Win.UltraWinToolbars.LabelTool("Total");
+            Infragistics.Win.Appearance appearance2 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonToolShowPresentation2 = new Infragistics.Win.UltraWinToolbars.ButtonTool("BlankPresentation");
-			Infragistics.Win.Appearance appearance1 = new Infragistics.Win.Appearance();
-			Infragistics.Win.UltraWinToolbars.LabelTool labelTool2 = new Infragistics.Win.UltraWinToolbars.LabelTool("Total");
-			Infragistics.Win.Appearance appearance2 = new Infragistics.Win.Appearance();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CTmxView));
-			this.m_ctrlUltraToolbarManager = new Infragistics.Win.UltraWinToolbars.UltraToolbarsManager(this.components);
-			this.m_ctrlFillPanel = new System.Windows.Forms.Panel();
-			this.m_ctrlTmview = new AxTM_VIEW6Lib.AxTm_view6();
-			this._CTmxView_Toolbars_Dock_Area_Left = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
-			this._CTmxView_Toolbars_Dock_Area_Right = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
-			this._CTmxView_Toolbars_Dock_Area_Top = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
-			this._CTmxView_Toolbars_Dock_Area_Bottom = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
-			((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraToolbarManager)).BeginInit();
-			this.m_ctrlFillPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_ctrlTmview)).BeginInit();
-			this.SuspendLayout();
-			// 
-			// m_ctrlUltraToolbarManager
-			// 
-			this.m_ctrlUltraToolbarManager.DesignerFlags = 1;
-			this.m_ctrlUltraToolbarManager.DockWithinContainer = this;
-			this.m_ctrlUltraToolbarManager.ImageSizeSmall = new System.Drawing.Size(24, 18);
-			this.m_ctrlUltraToolbarManager.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.m_ctrlUltraToolbarManager.LockToolbars = true;
-			this.m_ctrlUltraToolbarManager.ShowFullMenusDelay = 500;
-			this.m_ctrlUltraToolbarManager.ShowQuickCustomizeButton = false;
-			this.m_ctrlUltraToolbarManager.Style = Infragistics.Win.UltraWinToolbars.ToolbarStyle.Office2003;
-			ultraToolbar1.DockedColumn = 0;
-			ultraToolbar1.DockedRow = 0;
-			textBoxTool1.InstanceProps.Width = 56;
-			labelTool1.InstanceProps.Width = 13;
-			ultraToolbar1.NonInheritedTools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool24 = new Infragistics.Win.UltraWinToolbars.ButtonTool("NudgeLeft");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool25 = new Infragistics.Win.UltraWinToolbars.ButtonTool("NudgeRight");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool26 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SaveNudge");
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CTmxView));
+            this.m_ctrlUltraToolbarManager = new Infragistics.Win.UltraWinToolbars.UltraToolbarsManager(this.components);
+            this.m_ctrlFillPanel = new System.Windows.Forms.Panel();
+            this._CTmxView_Toolbars_Dock_Area_Left = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
+            this._CTmxView_Toolbars_Dock_Area_Right = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
+            this._CTmxView_Toolbars_Dock_Area_Top = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
+            this._CTmxView_Toolbars_Dock_Area_Bottom = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
+            this.m_ctrlTmview = new AxTM_VIEW6Lib.AxTm_view6();
+            ((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraToolbarManager)).BeginInit();
+            this.m_ctrlFillPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_ctrlTmview)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // m_ctrlUltraToolbarManager
+            // 
+            this.m_ctrlUltraToolbarManager.DesignerFlags = 1;
+            this.m_ctrlUltraToolbarManager.DockWithinContainer = this;
+            this.m_ctrlUltraToolbarManager.ImageSizeSmall = new System.Drawing.Size(24, 18);
+            this.m_ctrlUltraToolbarManager.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.m_ctrlUltraToolbarManager.LockToolbars = true;
+            this.m_ctrlUltraToolbarManager.ShowFullMenusDelay = 500;
+            this.m_ctrlUltraToolbarManager.ShowQuickCustomizeButton = false;
+            this.m_ctrlUltraToolbarManager.Style = Infragistics.Win.UltraWinToolbars.ToolbarStyle.Office2003;
+            ultraToolbar1.DockedColumn = 0;
+            ultraToolbar1.DockedRow = 0;
+            textBoxTool1.InstanceProps.Width = 56;
+            labelTool1.InstanceProps.Width = 13;
+            ultraToolbar1.NonInheritedTools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             buttonTool1,
             textBoxTool1,
             buttonTool2,
@@ -900,85 +1010,93 @@ namespace FTI.Trialmax.ActiveX
             buttonTool9,
             stateButtonTool16,
             buttonTool10,
-            buttonToolShowPresentation1});
-			ultraToolbar1.Settings.AllowCustomize = Infragistics.Win.DefaultableBoolean.False;
-			ultraToolbar1.Settings.AllowDockBottom = Infragistics.Win.DefaultableBoolean.False;
-			ultraToolbar1.Settings.AllowDockLeft = Infragistics.Win.DefaultableBoolean.False;
-			ultraToolbar1.Settings.AllowDockRight = Infragistics.Win.DefaultableBoolean.False;
-			ultraToolbar1.Settings.AllowFloating = Infragistics.Win.DefaultableBoolean.False;
-			ultraToolbar1.Settings.AllowHiding = Infragistics.Win.DefaultableBoolean.False;
-			ultraToolbar1.Settings.FillEntireRow = Infragistics.Win.DefaultableBoolean.True;
-			ultraToolbar1.Settings.ToolSpacing = -4;
-			ultraToolbar1.ShowInToolbarList = false;
-			ultraToolbar1.Text = "MainToolbar";
-			this.m_ctrlUltraToolbarManager.Toolbars.AddRange(new Infragistics.Win.UltraWinToolbars.UltraToolbar[] {
+            buttonToolShowPresentation1,
+            buttonTool21,
+            buttonTool22,
+            buttonTool23});
+            ultraToolbar1.Settings.AllowCustomize = Infragistics.Win.DefaultableBoolean.False;
+            ultraToolbar1.Settings.AllowDockBottom = Infragistics.Win.DefaultableBoolean.False;
+            ultraToolbar1.Settings.AllowDockLeft = Infragistics.Win.DefaultableBoolean.False;
+            ultraToolbar1.Settings.AllowDockRight = Infragistics.Win.DefaultableBoolean.False;
+            ultraToolbar1.Settings.AllowFloating = Infragistics.Win.DefaultableBoolean.False;
+            ultraToolbar1.Settings.AllowHiding = Infragistics.Win.DefaultableBoolean.False;
+            ultraToolbar1.Settings.FillEntireRow = Infragistics.Win.DefaultableBoolean.True;
+            ultraToolbar1.Settings.ToolSpacing = -4;
+            ultraToolbar1.ShowInToolbarList = false;
+            ultraToolbar1.Text = "MainToolbar";
+            this.m_ctrlUltraToolbarManager.Toolbars.AddRange(new Infragistics.Win.UltraWinToolbars.UltraToolbar[] {
             ultraToolbar1});
-			this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowCustomize = Infragistics.Win.DefaultableBoolean.False;
-			this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowDockBottom = Infragistics.Win.DefaultableBoolean.False;
-			this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowDockLeft = Infragistics.Win.DefaultableBoolean.False;
-			this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowDockRight = Infragistics.Win.DefaultableBoolean.False;
-			this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowDockTop = Infragistics.Win.DefaultableBoolean.False;
-			this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowFloating = Infragistics.Win.DefaultableBoolean.False;
-			this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowHiding = Infragistics.Win.DefaultableBoolean.False;
-			buttonTool11.SharedProps.Caption = "Erase";
-			buttonTool11.SharedProps.ToolTipText = "Erase All - (Shortcut = E)";
-			stateButtonTool17.SharedProps.Caption = "Callout";
-			stateButtonTool17.SharedProps.ToolTipText = "Callout (Shortcut = C)";
-			stateButtonTool18.SharedProps.Caption = "Highlight";
-			stateButtonTool18.SharedProps.ToolTipText = "Highlight (Shortcut = H)";
-			stateButtonTool19.SharedProps.Caption = "Redact";
-			stateButtonTool19.SharedProps.ToolTipText = "Redact (Shortcut = R)";
-			stateButtonTool20.SharedProps.Caption = "Freehand";
-			stateButtonTool20.SharedProps.ToolTipText = "Freehand (Shortcut = Shift+F)";
-			stateButtonTool21.SharedProps.Caption = "Arrow";
-			stateButtonTool21.SharedProps.ToolTipText = "Arrow (Shortcut = Shift+A)";
-			stateButtonTool22.SharedProps.Caption = "Line";
-			stateButtonTool22.SharedProps.ToolTipText = "Line (Shortcut = Shift+L)";
-			stateButtonTool23.SharedProps.Caption = "Rectangle";
-			stateButtonTool23.SharedProps.ToolTipText = "Rectangle (Shortcut = Shift+S)";
-			stateButtonTool24.SharedProps.Caption = "Ellipse";
-			stateButtonTool24.SharedProps.ToolTipText = "Ellipse (Shortcut = Shift+C)";
-			stateButtonTool25.SharedProps.Caption = "Polygon";
-			stateButtonTool25.SharedProps.ToolTipText = "Polygon (Shortcut = Shift+H)";
-			stateButtonTool26.SharedProps.Caption = "FilledEllipse";
-			stateButtonTool26.SharedProps.ToolTipText = "Filled Ellipse (Shortcut = Ctrl+Shift+C)";
-			stateButtonTool27.SharedProps.Caption = "FilledPolygon";
-			stateButtonTool27.SharedProps.ToolTipText = "Filled Polygon (Shortcut = Ctrl+Shift+H)";
-			stateButtonTool28.SharedProps.Caption = "Text";
-			stateButtonTool28.SharedProps.ToolTipText = "Text (Shortcut = Shift+T)";
-			stateButtonTool29.SharedProps.Caption = "Select";
-			stateButtonTool29.SharedProps.ToolTipText = "Select (Shortcut = A)";
-			buttonTool12.SharedProps.Caption = "Rotate Clockwise";
-			buttonTool12.SharedProps.ToolTipText = "Rotate Clockwise (Shortcut = ])";
-			buttonTool13.SharedProps.Caption = "Rotate Counter Clockwise";
-			buttonTool13.SharedProps.ToolTipText = "Rotate CounterClockwise (Shortcut = [)";
-			stateButtonTool30.SharedProps.Caption = "Zoom In";
-			stateButtonTool30.SharedProps.ToolTipText = "Zoom (Shortcut = Z)";
-			buttonTool14.SharedProps.Caption = "Full Width";
-			buttonTool14.SharedProps.ToolTipText = "Full Width (Shortcut = W)";
-			buttonTool15.SharedProps.Caption = "Fit to Window";
-			buttonTool15.SharedProps.ToolTipText = "1:1 (Shortcut = F)";
-			buttonTool16.SharedProps.Caption = "Save Treatment";
-			buttonTool16.SharedProps.ToolTipText = "Save Treatment (Shortcut = M)";
-			buttonTool17.SharedProps.Caption = "Set Color";
-			buttonTool18.SharedProps.Caption = "Update Treatment";
-			buttonTool18.SharedProps.ToolTipText = "Update Treatment (Shortcut = U)";
-			stateButtonTool31.SharedProps.Caption = "Shaded Callouts";
-			stateButtonTool32.SharedProps.Caption = "Pan";
-			stateButtonTool32.SharedProps.ToolTipText = "Pan - (Shortcut = S)";
-			buttonTool19.SharedProps.Caption = "Next";
-			buttonTool19.SharedProps.ToolTipText = "Next Page - (Shortcut = .)";
-			buttonTool20.SharedProps.Caption = "Previous";
-			buttonTool20.SharedProps.ToolTipText = "Prev Page - (Shortcut = ,)";
-			appearance1.TextHAlignAsString = "Right";
-			textBoxTool2.EditAppearance = appearance1;
-			textBoxTool2.SharedProps.ToolTipText = "Go To Page";
-			appearance2.TextHAlignAsString = "Left";
+            this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowCustomize = Infragistics.Win.DefaultableBoolean.False;
+            this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowDockBottom = Infragistics.Win.DefaultableBoolean.False;
+            this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowDockLeft = Infragistics.Win.DefaultableBoolean.False;
+            this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowDockRight = Infragistics.Win.DefaultableBoolean.False;
+            this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowDockTop = Infragistics.Win.DefaultableBoolean.False;
+            this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowFloating = Infragistics.Win.DefaultableBoolean.False;
+            this.m_ctrlUltraToolbarManager.ToolbarSettings.AllowHiding = Infragistics.Win.DefaultableBoolean.False;
+            buttonTool11.SharedProps.Caption = "Erase";
+            buttonTool11.SharedProps.ToolTipText = "Erase All - (Shortcut = E)";
+            stateButtonTool17.SharedProps.Caption = "Callout";
+            stateButtonTool17.SharedProps.ToolTipText = "Callout (Shortcut = C)";
+            stateButtonTool18.SharedProps.Caption = "Highlight";
+            stateButtonTool18.SharedProps.ToolTipText = "Highlight (Shortcut = H)";
+            stateButtonTool19.SharedProps.Caption = "Redact";
+            stateButtonTool19.SharedProps.ToolTipText = "Redact (Shortcut = R)";
+            stateButtonTool20.SharedProps.Caption = "Freehand";
+            stateButtonTool20.SharedProps.ToolTipText = "Freehand (Shortcut = Shift+F)";
+            stateButtonTool21.SharedProps.Caption = "Arrow";
+            stateButtonTool21.SharedProps.ToolTipText = "Arrow (Shortcut = Shift+A)";
+            stateButtonTool22.SharedProps.Caption = "Line";
+            stateButtonTool22.SharedProps.ToolTipText = "Line (Shortcut = Shift+L)";
+            stateButtonTool23.SharedProps.Caption = "Rectangle";
+            stateButtonTool23.SharedProps.ToolTipText = "Rectangle (Shortcut = Shift+S)";
+            stateButtonTool24.SharedProps.Caption = "Ellipse";
+            stateButtonTool24.SharedProps.ToolTipText = "Ellipse (Shortcut = Shift+C)";
+            stateButtonTool25.SharedProps.Caption = "Polygon";
+            stateButtonTool25.SharedProps.ToolTipText = "Polygon (Shortcut = Shift+H)";
+            stateButtonTool26.SharedProps.Caption = "FilledEllipse";
+            stateButtonTool26.SharedProps.ToolTipText = "Filled Ellipse (Shortcut = Ctrl+Shift+C)";
+            stateButtonTool27.SharedProps.Caption = "FilledPolygon";
+            stateButtonTool27.SharedProps.ToolTipText = "Filled Polygon (Shortcut = Ctrl+Shift+H)";
+            stateButtonTool28.SharedProps.Caption = "Text";
+            stateButtonTool28.SharedProps.ToolTipText = "Text (Shortcut = Shift+T)";
+            stateButtonTool29.SharedProps.Caption = "Select";
+            stateButtonTool29.SharedProps.ToolTipText = "Select (Shortcut = A)";
+            buttonTool12.SharedProps.Caption = "Rotate Clockwise";
+            buttonTool12.SharedProps.ToolTipText = "Rotate Clockwise (Shortcut = ])";
+            buttonTool13.SharedProps.Caption = "Rotate Counter Clockwise";
+            buttonTool13.SharedProps.ToolTipText = "Rotate CounterClockwise (Shortcut = [)";
+            stateButtonTool30.SharedProps.Caption = "Zoom In";
+            stateButtonTool30.SharedProps.ToolTipText = "Zoom (Shortcut = Z)";
+            buttonTool14.SharedProps.Caption = "Full Width";
+            buttonTool14.SharedProps.ToolTipText = "Full Width (Shortcut = W)";
+            buttonTool15.SharedProps.Caption = "Fit to Window";
+            buttonTool15.SharedProps.ToolTipText = "1:1 (Shortcut = F)";
+            buttonTool16.SharedProps.Caption = "Save Treatment";
+            buttonTool16.SharedProps.ToolTipText = "Save Treatment (Shortcut = M)";
+            buttonTool17.SharedProps.Caption = "Set Color";
+            buttonTool18.SharedProps.Caption = "Update Treatment";
+            buttonTool18.SharedProps.ToolTipText = "Update Treatment (Shortcut = U)";
+            stateButtonTool31.SharedProps.Caption = "Shaded Callouts";
+            stateButtonTool32.SharedProps.Caption = "Pan";
+            stateButtonTool32.SharedProps.ToolTipText = "Pan - (Shortcut = S)";
+            buttonTool19.SharedProps.Caption = "Next";
+            buttonTool19.SharedProps.ToolTipText = "Next Page - (Shortcut = .)";
+            buttonTool20.SharedProps.Caption = "Previous";
+            buttonTool20.SharedProps.ToolTipText = "Prev Page - (Shortcut = ,)";
+            appearance1.TextHAlignAsString = "Right";
+            textBoxTool2.EditAppearance = appearance1;
+            textBoxTool2.SharedProps.ToolTipText = "Go To Page";
+            appearance2.TextHAlignAsString = "Left";
+            labelTool2.SharedProps.AppearancesSmall.Appearance = appearance2;
+            labelTool2.SharedProps.DisplayStyle = Infragistics.Win.UltraWinToolbars.ToolDisplayStyle.TextOnlyAlways;
             buttonToolShowPresentation2.SharedProps.Caption = "TrailMax Presentation";
             buttonToolShowPresentation2.SharedProps.ToolTipText = "TrailMax Presentation (Shortcut = Ctrl+F5)";
-			labelTool2.SharedProps.AppearancesSmall.Appearance = appearance2;
-			labelTool2.SharedProps.DisplayStyle = Infragistics.Win.UltraWinToolbars.ToolDisplayStyle.TextOnlyAlways;
-			this.m_ctrlUltraToolbarManager.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
+            buttonTool24.SharedProps.Caption = "Nudge Left";
+            buttonTool24.SharedProps.ToolTipText = "Nudge Left - (Shortcut = Shift+[)";
+            buttonTool25.SharedProps.Caption = "Nudge Right";
+            buttonTool25.SharedProps.ToolTipText = "Nudge Right - (Shortcut = Shift+])";
+            buttonTool26.SharedProps.Caption = "Save Nudge";
+            this.m_ctrlUltraToolbarManager.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             buttonTool11,
             stateButtonTool17,
             stateButtonTool18,
@@ -1007,99 +1125,91 @@ namespace FTI.Trialmax.ActiveX
             buttonTool20,
             textBoxTool2,
             labelTool2,
-            buttonToolShowPresentation2});
-			this.m_ctrlUltraToolbarManager.ToolClick += new Infragistics.Win.UltraWinToolbars.ToolClickEventHandler(this.OnUltraToolClick);
-			this.m_ctrlUltraToolbarManager.BeforeToolbarListDropdown += new Infragistics.Win.UltraWinToolbars.BeforeToolbarListDropdownEventHandler(this.OnUltraBeforeToolbarListDropdown);
-			this.m_ctrlUltraToolbarManager.ToolKeyDown += new Infragistics.Win.UltraWinToolbars.ToolKeyEventHandler(this.OnUltraToolKeyDown);
-			// 
-			// m_ctrlFillPanel
-			// 
-			this.m_ctrlFillPanel.Controls.Add(this.m_ctrlTmview);
-			this.m_ctrlFillPanel.Cursor = System.Windows.Forms.Cursors.Default;
-			this.m_ctrlFillPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.m_ctrlFillPanel.Location = new System.Drawing.Point(0, 28);
-			this.m_ctrlFillPanel.Name = "m_ctrlFillPanel";
-			this.m_ctrlFillPanel.Size = new System.Drawing.Size(540, 122);
-			this.m_ctrlFillPanel.TabIndex = 0;
-			this.m_ctrlFillPanel.Resize += new System.EventHandler(this.OnPanelResize);
-			// 
-			// m_ctrlTmview
-			// 
-			this.m_ctrlTmview.Location = new System.Drawing.Point(160, 8);
-			this.m_ctrlTmview.Name = "m_ctrlTmview";
-			this.m_ctrlTmview.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("m_ctrlTmview.OcxState")));
-			this.m_ctrlTmview.Size = new System.Drawing.Size(200, 72);
-			this.m_ctrlTmview.TabIndex = 0;
-			this.m_ctrlTmview.OpenTextBox += new AxTM_VIEW6Lib._DTm_view6Events_OpenTextBoxEventHandler(this.OnAxOpenTextBox);
-			this.m_ctrlTmview.StopTextEdit += new AxTM_VIEW6Lib._DTm_view6Events_StopTextEditEventHandler(this.OnAxStopTextEdit);
-			this.m_ctrlTmview.AxDiagnostic += new AxTM_VIEW6Lib._DTm_view6Events_AxDiagnosticEventHandler(this.OnAxDiagnostic);
-			this.m_ctrlTmview.CreateCallout += new AxTM_VIEW6Lib._DTm_view6Events_CreateCalloutEventHandler(this.OnAxCreateCallout);
-			this.m_ctrlTmview.MouseDownEvent += new AxTM_VIEW6Lib._DTm_view6Events_MouseDownEventHandler(this.OnAxMouseDown);
-			this.m_ctrlTmview.CloseTextBox += new AxTM_VIEW6Lib._DTm_view6Events_CloseTextBoxEventHandler(this.OnAxCloseTextBox);
-			this.m_ctrlTmview.MouseUpEvent += new AxTM_VIEW6Lib._DTm_view6Events_MouseUpEventHandler(this.OnAxMouseUp);
-			this.m_ctrlTmview.MouseMoveEvent += new AxTM_VIEW6Lib._DTm_view6Events_MouseMoveEventHandler(this.OnAxMouseMove);
-			this.m_ctrlTmview.AxError += new AxTM_VIEW6Lib._DTm_view6Events_AxErrorEventHandler(this.OnAxError);
-			this.m_ctrlTmview.SavedPage += new AxTM_VIEW6Lib._DTm_view6Events_SavedPageEventHandler(this.OnAxSavedPage);
-			this.m_ctrlTmview.MouseDblClick += new AxTM_VIEW6Lib._DTm_view6Events_MouseDblClickEventHandler(this.OnAxMouseDblClick);
-			this.m_ctrlTmview.StartTextEdit += new AxTM_VIEW6Lib._DTm_view6Events_StartTextEditEventHandler(this.OnAxStartTextEdit);
-			// 
-			// _CTmxView_Toolbars_Dock_Area_Left
-			// 
-			this._CTmxView_Toolbars_Dock_Area_Left.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
-			this._CTmxView_Toolbars_Dock_Area_Left.BackColor = System.Drawing.SystemColors.Control;
-			this._CTmxView_Toolbars_Dock_Area_Left.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Left;
-			this._CTmxView_Toolbars_Dock_Area_Left.ForeColor = System.Drawing.SystemColors.ControlText;
-			this._CTmxView_Toolbars_Dock_Area_Left.Location = new System.Drawing.Point(0, 28);
-			this._CTmxView_Toolbars_Dock_Area_Left.Name = "_CTmxView_Toolbars_Dock_Area_Left";
-			this._CTmxView_Toolbars_Dock_Area_Left.Size = new System.Drawing.Size(0, 122);
-			this._CTmxView_Toolbars_Dock_Area_Left.ToolbarsManager = this.m_ctrlUltraToolbarManager;
-			// 
-			// _CTmxView_Toolbars_Dock_Area_Right
-			// 
-			this._CTmxView_Toolbars_Dock_Area_Right.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
-			this._CTmxView_Toolbars_Dock_Area_Right.BackColor = System.Drawing.SystemColors.Control;
-			this._CTmxView_Toolbars_Dock_Area_Right.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Right;
-			this._CTmxView_Toolbars_Dock_Area_Right.ForeColor = System.Drawing.SystemColors.ControlText;
-			this._CTmxView_Toolbars_Dock_Area_Right.Location = new System.Drawing.Point(540, 28);
-			this._CTmxView_Toolbars_Dock_Area_Right.Name = "_CTmxView_Toolbars_Dock_Area_Right";
-			this._CTmxView_Toolbars_Dock_Area_Right.Size = new System.Drawing.Size(0, 122);
-			this._CTmxView_Toolbars_Dock_Area_Right.ToolbarsManager = this.m_ctrlUltraToolbarManager;
-			// 
-			// _CTmxView_Toolbars_Dock_Area_Top
-			// 
-			this._CTmxView_Toolbars_Dock_Area_Top.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
-			this._CTmxView_Toolbars_Dock_Area_Top.BackColor = System.Drawing.SystemColors.Control;
-			this._CTmxView_Toolbars_Dock_Area_Top.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Top;
-			this._CTmxView_Toolbars_Dock_Area_Top.ForeColor = System.Drawing.SystemColors.ControlText;
-			this._CTmxView_Toolbars_Dock_Area_Top.Location = new System.Drawing.Point(0, 0);
-			this._CTmxView_Toolbars_Dock_Area_Top.Name = "_CTmxView_Toolbars_Dock_Area_Top";
-			this._CTmxView_Toolbars_Dock_Area_Top.Size = new System.Drawing.Size(540, 28);
-			this._CTmxView_Toolbars_Dock_Area_Top.ToolbarsManager = this.m_ctrlUltraToolbarManager;
-			// 
-			// _CTmxView_Toolbars_Dock_Area_Bottom
-			// 
-			this._CTmxView_Toolbars_Dock_Area_Bottom.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
-			this._CTmxView_Toolbars_Dock_Area_Bottom.BackColor = System.Drawing.SystemColors.Control;
-			this._CTmxView_Toolbars_Dock_Area_Bottom.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Bottom;
-			this._CTmxView_Toolbars_Dock_Area_Bottom.ForeColor = System.Drawing.SystemColors.ControlText;
-			this._CTmxView_Toolbars_Dock_Area_Bottom.Location = new System.Drawing.Point(0, 150);
-			this._CTmxView_Toolbars_Dock_Area_Bottom.Name = "_CTmxView_Toolbars_Dock_Area_Bottom";
-			this._CTmxView_Toolbars_Dock_Area_Bottom.Size = new System.Drawing.Size(540, 0);
-			this._CTmxView_Toolbars_Dock_Area_Bottom.ToolbarsManager = this.m_ctrlUltraToolbarManager;
-			// 
-			// CTmxView
-			// 
-			this.Controls.Add(this.m_ctrlFillPanel);
-			this.Controls.Add(this._CTmxView_Toolbars_Dock_Area_Left);
-			this.Controls.Add(this._CTmxView_Toolbars_Dock_Area_Right);
-			this.Controls.Add(this._CTmxView_Toolbars_Dock_Area_Top);
-			this.Controls.Add(this._CTmxView_Toolbars_Dock_Area_Bottom);
-			this.Name = "CTmxView";
-			this.Size = new System.Drawing.Size(540, 150);
-			((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraToolbarManager)).EndInit();
-			this.m_ctrlFillPanel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.m_ctrlTmview)).EndInit();
-			this.ResumeLayout(false);
+            buttonToolShowPresentation2,
+            buttonTool24,
+            buttonTool25,
+            buttonTool26});
+            this.m_ctrlUltraToolbarManager.BeforeToolbarListDropdown += new Infragistics.Win.UltraWinToolbars.BeforeToolbarListDropdownEventHandler(this.OnUltraBeforeToolbarListDropdown);
+            this.m_ctrlUltraToolbarManager.ToolClick += new Infragistics.Win.UltraWinToolbars.ToolClickEventHandler(this.OnUltraToolClick);
+            this.m_ctrlUltraToolbarManager.ToolKeyDown += new Infragistics.Win.UltraWinToolbars.ToolKeyEventHandler(this.OnUltraToolKeyDown);
+            // 
+            // m_ctrlFillPanel
+            // 
+            this.m_ctrlFillPanel.Controls.Add(this.m_ctrlTmview);
+            this.m_ctrlFillPanel.Cursor = System.Windows.Forms.Cursors.Default;
+            this.m_ctrlFillPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.m_ctrlFillPanel.Location = new System.Drawing.Point(0, 30);
+            this.m_ctrlFillPanel.Name = "m_ctrlFillPanel";
+            this.m_ctrlFillPanel.Size = new System.Drawing.Size(540, 120);
+            this.m_ctrlFillPanel.TabIndex = 0;
+            this.m_ctrlFillPanel.Resize += new System.EventHandler(this.OnPanelResize);
+            // 
+            // _CTmxView_Toolbars_Dock_Area_Left
+            // 
+            this._CTmxView_Toolbars_Dock_Area_Left.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
+            this._CTmxView_Toolbars_Dock_Area_Left.BackColor = System.Drawing.SystemColors.Control;
+            this._CTmxView_Toolbars_Dock_Area_Left.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Left;
+            this._CTmxView_Toolbars_Dock_Area_Left.ForeColor = System.Drawing.SystemColors.ControlText;
+            this._CTmxView_Toolbars_Dock_Area_Left.Location = new System.Drawing.Point(0, 30);
+            this._CTmxView_Toolbars_Dock_Area_Left.Name = "_CTmxView_Toolbars_Dock_Area_Left";
+            this._CTmxView_Toolbars_Dock_Area_Left.Size = new System.Drawing.Size(0, 120);
+            this._CTmxView_Toolbars_Dock_Area_Left.ToolbarsManager = this.m_ctrlUltraToolbarManager;
+            // 
+            // _CTmxView_Toolbars_Dock_Area_Right
+            // 
+            this._CTmxView_Toolbars_Dock_Area_Right.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
+            this._CTmxView_Toolbars_Dock_Area_Right.BackColor = System.Drawing.SystemColors.Control;
+            this._CTmxView_Toolbars_Dock_Area_Right.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Right;
+            this._CTmxView_Toolbars_Dock_Area_Right.ForeColor = System.Drawing.SystemColors.ControlText;
+            this._CTmxView_Toolbars_Dock_Area_Right.Location = new System.Drawing.Point(540, 30);
+            this._CTmxView_Toolbars_Dock_Area_Right.Name = "_CTmxView_Toolbars_Dock_Area_Right";
+            this._CTmxView_Toolbars_Dock_Area_Right.Size = new System.Drawing.Size(0, 120);
+            this._CTmxView_Toolbars_Dock_Area_Right.ToolbarsManager = this.m_ctrlUltraToolbarManager;
+            // 
+            // _CTmxView_Toolbars_Dock_Area_Top
+            // 
+            this._CTmxView_Toolbars_Dock_Area_Top.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
+            this._CTmxView_Toolbars_Dock_Area_Top.BackColor = System.Drawing.SystemColors.Control;
+            this._CTmxView_Toolbars_Dock_Area_Top.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Top;
+            this._CTmxView_Toolbars_Dock_Area_Top.ForeColor = System.Drawing.SystemColors.ControlText;
+            this._CTmxView_Toolbars_Dock_Area_Top.Location = new System.Drawing.Point(0, 0);
+            this._CTmxView_Toolbars_Dock_Area_Top.Name = "_CTmxView_Toolbars_Dock_Area_Top";
+            this._CTmxView_Toolbars_Dock_Area_Top.Size = new System.Drawing.Size(540, 30);
+            this._CTmxView_Toolbars_Dock_Area_Top.ToolbarsManager = this.m_ctrlUltraToolbarManager;
+            // 
+            // _CTmxView_Toolbars_Dock_Area_Bottom
+            // 
+            this._CTmxView_Toolbars_Dock_Area_Bottom.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
+            this._CTmxView_Toolbars_Dock_Area_Bottom.BackColor = System.Drawing.SystemColors.Control;
+            this._CTmxView_Toolbars_Dock_Area_Bottom.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Bottom;
+            this._CTmxView_Toolbars_Dock_Area_Bottom.ForeColor = System.Drawing.SystemColors.ControlText;
+            this._CTmxView_Toolbars_Dock_Area_Bottom.Location = new System.Drawing.Point(0, 150);
+            this._CTmxView_Toolbars_Dock_Area_Bottom.Name = "_CTmxView_Toolbars_Dock_Area_Bottom";
+            this._CTmxView_Toolbars_Dock_Area_Bottom.Size = new System.Drawing.Size(540, 0);
+            this._CTmxView_Toolbars_Dock_Area_Bottom.ToolbarsManager = this.m_ctrlUltraToolbarManager;
+            // 
+            // m_ctrlTmview
+            // 
+            this.m_ctrlTmview.Enabled = true;
+            this.m_ctrlTmview.Location = new System.Drawing.Point(115, 36);
+            this.m_ctrlTmview.Name = "m_ctrlTmview";
+            this.m_ctrlTmview.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("m_ctrlTmview.OcxState")));
+            this.m_ctrlTmview.Size = new System.Drawing.Size(262, 43);
+            this.m_ctrlTmview.TabIndex = 0;
+            // 
+            // CTmxView
+            // 
+            this.Controls.Add(this.m_ctrlFillPanel);
+            this.Controls.Add(this._CTmxView_Toolbars_Dock_Area_Left);
+            this.Controls.Add(this._CTmxView_Toolbars_Dock_Area_Right);
+            this.Controls.Add(this._CTmxView_Toolbars_Dock_Area_Top);
+            this.Controls.Add(this._CTmxView_Toolbars_Dock_Area_Bottom);
+            this.Name = "CTmxView";
+            this.Size = new System.Drawing.Size(540, 150);
+            ((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraToolbarManager)).EndInit();
+            this.m_ctrlFillPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.m_ctrlTmview)).EndInit();
+            this.ResumeLayout(false);
 
 		}// protected override void InitializeComponent()
 
@@ -1548,7 +1658,7 @@ namespace FTI.Trialmax.ActiveX
 				
 				if((shadedCallouts = (StateButtonTool)GetUltraTool("ShadedCallouts")) != null)
 				{
-					shadedCallouts.Checked = m_ctrlTmview.ShadeOnCallout;
+					shadedCallouts.Checked = m_ctrlTmview.ShadeOnCallout == 1 ? true : false;
 				}
 			}
 			catch
@@ -1604,7 +1714,7 @@ namespace FTI.Trialmax.ActiveX
 			if(FireQueryContinue(TmxActions.RotateImage, m_strFilename, CalloutCount) == true)
 			{
 				m_ctrlTmview.Rotation = sRotation;
-				m_ctrlTmview.Rotate(true, -1);
+				m_ctrlTmview.Rotate(1, -1);
 
 				//	Save the file unless this is a treatment
 				if(IsTreatment(m_strFilename) == false)
@@ -1617,8 +1727,8 @@ namespace FTI.Trialmax.ActiveX
 					else
 					{
 						//	Restore the image
-						m_ctrlTmview.Rotation = (short)(-1 * sRotation);
-						m_ctrlTmview.Rotate(true, -1);
+                        m_ctrlTmview.Rotation = (short)(-1 * sRotation);
+                        m_ctrlTmview.Rotate(1, -1);
 					}
 				}
 				

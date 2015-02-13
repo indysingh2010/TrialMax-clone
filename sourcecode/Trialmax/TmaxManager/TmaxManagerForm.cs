@@ -8266,9 +8266,19 @@ namespace FTI.Trialmax.TmaxManager
 					OnPresentationUpdateTreatment();
 					break;
 
+                case TmxShareCommands.UpdateNudge:
+
+                    OnPresentationUpdateNudge();
+                    break;
+
 			}
 		
 		}// private void OnPresentationRequest(object objSender)
+
+        private void OnPresentationUpdateNudge()
+        {
+            m_paneViewer.View();
+        }// private void OnPresentationRequest(object objSender)
 
 		/// <summary>This method is called Presentation fires an AddTreatment command request</summary>
 		private void OnPresentationAddTreatment()

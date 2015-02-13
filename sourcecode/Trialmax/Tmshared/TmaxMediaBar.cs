@@ -143,6 +143,9 @@ namespace FTI.Shared.Trialmax
 				case TmaxMediaBarCommands.Previous:			return 19;
 				case TmaxMediaBarCommands.Next:				return 20;
                 case TmaxMediaBarCommands.BlankPresentation:return 3;
+                case TmaxMediaBarCommands.NudgeLeft:        return 81;
+                case TmaxMediaBarCommands.NudgeRight:       return 82;
+                case TmaxMediaBarCommands.SaveNudge:        return 83;
 				default:									return -1;
 			}
 			
@@ -240,6 +243,12 @@ namespace FTI.Shared.Trialmax
 					case Keys.T:	
 						eCommand = TmaxMediaBarCommands.Text;
 						break;
+                    case Keys.OemOpenBrackets:
+                        eCommand = TmaxMediaBarCommands.NudgeLeft;
+                        break;
+                    case Keys.OemCloseBrackets:
+                        eCommand = TmaxMediaBarCommands.NudgeRight;
+                        break;
 				}
 			
 			}// else if(eModifiers == Keys.Shift)
