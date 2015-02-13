@@ -354,7 +354,7 @@ namespace FTI.Trialmax.Forms
 			if(m_ctrlFilename != null)
 				m_ctrlFilename.Text = m_strFilename;
 			if(m_ctrlLine != null)
-				m_ctrlLine.Text = (m_iLine > 0) ? m_iLine.ToString() : "";
+                SetLine();
 			
 			base.OnLoad(e);
 
@@ -851,11 +851,31 @@ namespace FTI.Trialmax.Forms
 				m_iLine = value;
 
                 if (m_ctrlLine != null)
-                    m_ctrlLine.Text = (m_iLine > 0) ? m_iLine.ToString() : "";
+                    SetLine();
 			}
 		
 		}
 		
+        delegate void SetLineCallback();
+        private void SetLine()
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+
+            if (this.m_ctrlLine.InvokeRequired)
+            {
+                SetLineCallback d = new SetLineCallback(SetLine);
+                this.m_ctrlLine.Invoke(d, new object[] { });
+
+            }
+            else
+            {
+                m_ctrlLine.Text = (m_iLine > 0) ? m_iLine.ToString() : "";
+            }
+        }
+
+
 		/// <summary>True if the operation has been aborted by the user</summary>
 		public bool Aborted
 		{
