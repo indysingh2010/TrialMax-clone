@@ -12303,7 +12303,30 @@ namespace FTI.Trialmax.Database
 			//	Get the parent binder
 			if(tmaxParent.IBinderEntry != null)
 				dxParent = (CDxBinderEntry)(tmaxParent.IBinderEntry);
-				
+			
+            long parentId = 0;
+            if (dxParent != null) // If parent is null, then the new binder added is not a child of anyone
+            {
+                parentId = dxParent.AutoId; // If parent is not null, then the new binder is a child of an already existing binder
+            }
+            // Search in database if there already exists a binder with the same name and same parent
+            GetDataReader("SELECT * FROM BinderEntries WHERE ParentId = " + parentId + " AND Name = \"" + System.IO.Path.GetFileNameWithoutExtension(tmaxParent.SourceItems[0].SourceFolder.Name) + "\"");
+
+            if (m_oleDbReader.HasRows) // A binder already exists if this condition is true
+            {
+                short appendedNumber = 1;
+                while (true) // Append integer to the binder name and check if it exists already. Keep trying until we succeed
+                {
+                    GetDataReader("SELECT * FROM BinderEntries WHERE ParentId = " + parentId + " AND Name = \"" + tmaxParent.SourceItems[0].SourceFolder.Name + "-" + appendedNumber.ToString("00") + "\"");
+                    if (!m_oleDbReader.HasRows)
+                    {
+                        tmaxParent.SourceItems[0].SourceFolder.Name += "-" + appendedNumber.ToString("00"); 
+                        break;
+                    }
+                    appendedNumber++;
+                }
+            }
+	
 			//	Check for duplicate entries
 			if(ConfirmBinderDuplicates(dxParent, tmaxParent.SourceItems, bNoDuplicates) == false)
 				return false;
