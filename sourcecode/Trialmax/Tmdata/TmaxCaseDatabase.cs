@@ -7069,8 +7069,30 @@ namespace FTI.Trialmax.Database
 						dxEntry.Name = System.IO.Path.GetFileNameWithoutExtension(tmaxItem.SourceFile.Name);
 					else
 						dxEntry.Name = tmaxItem.SourceFile.Path;
-					
-					dxEntry.Description = ("Imported from " + tmaxItem.SourceFile.Path);
+
+                    long parentId = 0;
+                    if (dxParent != null) // If parent is null, then the new binder added is not a child of anyone
+                    {
+                        parentId = dxParent.AutoId; // If parent is not null, then the new binder is a child of an already existing binder
+                    }
+                    // Search in database if there already exists a binder with the same name and same parent
+                    GetDataReader("SELECT * FROM BinderEntries WHERE ParentId = "+ parentId + " AND Name = \"" + System.IO.Path.GetFileNameWithoutExtension(dxEntry.Name) + "\"");
+
+                    if (m_oleDbReader.HasRows) // A binder already exists if this condition is true
+                    {
+                        short appendedNumber = 1;
+                        while (true) // Append integer to the binder name and check if it exists already. Keep trying until we succeed
+                        {
+                            GetDataReader("SELECT * FROM BinderEntries WHERE ParentId = " + parentId + " AND Name = \"" + dxEntry.Name + "-" + appendedNumber.ToString("00") + "\"");
+                            if (!m_oleDbReader.HasRows)
+                            {
+                                dxEntry.Name += "-" + appendedNumber.ToString("00"); 
+                                break;
+                            }
+                            appendedNumber++;
+                        }
+                    }
+                    dxEntry.Description = ("Imported from " + tmaxItem.SourceFile.Path);
 				}
 				else
 				{
