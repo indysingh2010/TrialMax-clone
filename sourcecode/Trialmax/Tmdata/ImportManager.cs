@@ -3813,6 +3813,7 @@ namespace FTI.Trialmax.Database
 				tmaxParent.SourceFile = new CTmaxSourceFile(strFileSpec);
 					
 				//	Add a new binder to the database
+                dxParent = m_tmaxDatabase.AddBinderEntry((CDxBinderEntry)this.Target, tmaxParent, (CDxBinderEntry)(this.InsertAt), this.InsertBefore);
             }
 			
 			//	Should we create a parent script?
