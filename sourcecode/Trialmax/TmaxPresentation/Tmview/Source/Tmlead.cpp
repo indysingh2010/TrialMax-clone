@@ -24,6 +24,8 @@
 //	02-28-2014	7.0.29		Reset document zoom on double click
 //	03-25-2014	7.0.31		Added public method ZoomToFactor() to enable zoomed
 //                          page swipe
+//	02-20-2014	7.0.53		ResetZoom removed from here as it was handled in
+//							TmaxPresentation View.cpp
 //==============================================================================
 
 //------------------------------------------------------------------------------
@@ -5940,9 +5942,6 @@ void CTMLead::OnMouseDblClick()
 			}
 		}
 	}
-
-	// reseting document zoom
-	ResetZoom();
 }
 
 //==============================================================================
