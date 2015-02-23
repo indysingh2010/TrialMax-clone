@@ -1322,7 +1322,7 @@ namespace FTI.Trialmax.Database
                         variables.tmaxSubFolder = tmaxSubFolder;
                         if (variables.tmaxSubFolder.SourceType == RegSourceTypes.Adobe)
                         {
-                            PdfTasks.Add(new Task(delegate 
+                            PdfTasks.Add(new Task(delegate
                                 {
                                     AddSourceProcess(variables);
                                     PdfSemaphore.Release();
@@ -1344,6 +1344,10 @@ namespace FTI.Trialmax.Database
                             NonPdfSemaphore.WaitOne(); // Wait and see if there are enough resources to start the task
                             PdfTasks[PdfTasks.Count - 1].Start(); // Start the conversion process
                         }
+                    }
+                    else
+                    {
+
                     }
 
                 }
@@ -10334,7 +10338,8 @@ namespace FTI.Trialmax.Database
             //	Make sure the target folder exists
 			if(CreateFolder(TmaxMediaTypes.Page, strTarget, true) == false)
 			{
-                FireError(this,"ExportAdobe",this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_CREATE_TARGET_FAILED,strTarget));
+                if (!m_bRegisterCancelled)
+                    FireError(this,"ExportAdobe",this.ExBuilder.Message(ERROR_CASE_DATABASE_PDF_CREATE_TARGET_FAILED,strTarget));
 				return 0; 
 			}
 
@@ -10359,7 +10364,8 @@ namespace FTI.Trialmax.Database
                 {
                     Console.WriteLine("File completed un - successfully" + strAdobeFileSpec.ToLower());
                     logUser.Error(Path.GetFileName(strAdobeFileSpec) + "                Status: UnSuccessful");
-                    FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec));
+                    if (!m_bRegisterCancelled)
+                        FireError(this, "ExportAdobe", this.ExBuilder.Message(ERROR_CASE_DATABASE_EXPORT_ADOBE_EX, strAdobeFileSpec));
                     return iPages;
                 }
                 else // File was converted successfully
@@ -10496,27 +10502,36 @@ namespace FTI.Trialmax.Database
                         wndResolve.TopMost = true;
                         FTI.Shared.Win32.User.MessageBeep(0);
                         m_cfRegisterProgress.DisableForm(); // Disable the Progress Form when autoresolve screen appears
-                        if (wndResolve.ShowDialog() == DialogResult.OK)
+                        DialogResult conflictResolveResult = wndResolve.ShowDialog();
+                        if (conflictResolveResult == DialogResult.OK)
                         {
                             DisableTmaxKeyboard(false);
+                        }
+                        else if (conflictResolveResult == DialogResult.Cancel)
+                        {
+                            dxPrimary.RelativePath = @wndResolve.Resolution;
+                            bSuccessful = false;
+                            m_cfRegisterProgress.EnableForm(); // Enable the Progress Form when autoresolve screen is closed
+                            return bSuccessful;
                         }
                         else
                         {
                             try
                             {
                                 if (m_gvi == null)
-                                    m_gvi = new GhostscriptVersionInfo(@"PDFManager\gsdll32.dll");;
-                                if (m_rasterizer != null){
+                                    m_gvi = new GhostscriptVersionInfo(@"PDFManager\gsdll32.dll"); ;
+                                if (m_rasterizer != null)
+                                {
                                     m_rasterizer.Dispose();
                                     m_rasterizer = null;
                                 }
                                 m_rasterizer = new GhostscriptRasterizer();
                                 m_rasterizer.Open(strFileSpec, m_gvi, false);
                                 m_totalPages += m_rasterizer.PageCount;
-                                
+
                                 if ((m_cfRegisterProgress != null) && (m_cfRegisterProgress.IsDisposed == false))
                                     m_cfRegisterProgress.CompletedPages = m_cfRegisterProgress.CompletedPages + m_rasterizer.PageCount;
-                                
+
                                 m_rasterizer.Dispose();
                                 m_rasterizer = null;
                             }
@@ -10525,10 +10540,11 @@ namespace FTI.Trialmax.Database
                                 logDetailed.Error(Ex.ToString());
                             }
                             bSuccessful = false;
-                            m_cfRegisterProgress.EnableForm(); // Enable the Progress Form when autoresolve screen appears
+                            m_cfRegisterProgress.EnableForm(); // Enable the Progress Form when autoresolve screen is closed
                             return bSuccessful;
                         }
-                        m_cfRegisterProgress.EnableForm(); // Enable the Progress Form when autoresolve screen appears
+                        m_cfRegisterProgress.EnableForm(); // Enable the Progress Form when autoresolve screen is closed
+                        m_cfRegisterProgress.Activate();
                         if (wndResolve.AutoResolveAll == true)
                             m_bAutoResolve = true;
                         path += @wndResolve.Resolution;
