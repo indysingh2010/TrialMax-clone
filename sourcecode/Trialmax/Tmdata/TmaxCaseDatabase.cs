@@ -7860,7 +7860,7 @@ namespace FTI.Trialmax.Database
 			
 			//	Has automatic resolution be requested for this session?
             lock (lockForConflictForm)
-            if (m_bAutoResolve == true || tmaxSource.SourceType == RegSourceTypes.Adobe)
+            if (m_bAutoResolve == true)
 			{
 				strModified = m_tmaxRegisterOptions.Resolve(dxPrimary, strResolve, RegConflictResolutions.Automatic);
 			}
