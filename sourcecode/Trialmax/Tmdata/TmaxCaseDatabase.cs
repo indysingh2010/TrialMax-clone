@@ -1292,7 +1292,21 @@ namespace FTI.Trialmax.Database
 					//	Is this a PowerPoint presentation?
 					if(tmaxSource.SourceType == RegSourceTypes.Powerpoint)
 					{
-                        ExportSlides(dxPrimary, tmaxSource);
+                        if (ExportSlides(dxPrimary, tmaxSource) == false || m_bRegisterCancelled == true)
+                        {
+                            if ((dxPrimary != null))
+                            {
+                                try
+                                {
+                                    File.Delete(GetFileSpec(dxPrimary));
+                                    DeleteDirectory(GetSlidesFolderSpec(dxPrimary));
+                                    m_dxPrimaries.Delete(dxPrimary);
+                                    FireCommand(TmaxCommands.RefreshCodes);
+                                }
+                                catch { m_dxPrimaries.Delete(dxPrimary); FireCommand(TmaxCommands.RefreshCodes); };
+                                dxPrimary = null;
+                            }
+                        }
 					}
 					else
 					{
@@ -5636,13 +5650,17 @@ namespace FTI.Trialmax.Database
 				//	Clean up
 				m_cfRegisterProgress.Dispose();
 				m_cfRegisterProgress = null;
-				
+
+                if (m_bRegisterCancelled)
+                {
+                    FireCommand(TmaxCommands.RefreshCodes);
+                }
 			}// if(m_cfRegisterProgress != null)
 		
 			//	Clear this flag before returning
 			m_tmaxSourceTypes.UseMultiPageTIFF = false;
-			
-			return true;
+
+            return !m_bRegisterCancelled;
 		}
 		
 		/// <summary>This method will reorder the child records of the specified parent</summary>
@@ -10292,6 +10310,7 @@ namespace FTI.Trialmax.Database
 				//	Now we add new source file objects to make it look like there is one file for each slide
 				for(int i = 1; i < lSlides; i++)
 				{
+                    if (m_bRegisterCancelled == true) return false;
 					tmaxFile = new CTmaxSourceFile(GetFileSpec(dxPrimary.Secondaries[i]));
 					tmaxFile.IPrimary   = dxPrimary;
 					tmaxFile.ISecondary = dxPrimary.Secondaries[i];
