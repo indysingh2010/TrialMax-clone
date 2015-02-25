@@ -14055,8 +14055,11 @@ namespace FTI.Trialmax.Database
 					//	Is overwrite permitted?
 					if(bOverwrite == true)
 					{
-						try { System.IO.File.Delete(strTarget); }
-						catch {};
+                        if (dxPrimary.MediaType != TmaxMediaTypes.Powerpoint) // In case ppt is imported, we will no delete the old file if it exists
+                        {
+                            try { System.IO.File.Delete(strTarget); }
+                            catch { };
+                        }
 					}
 					else
 					{
@@ -14065,6 +14068,17 @@ namespace FTI.Trialmax.Database
 					}
 					
 				}
+
+                // This means that PPT is being imported and there already exists a file with the same name
+                if (dxPrimary.MediaType == TmaxMediaTypes.Powerpoint && System.IO.File.Exists(strTarget))
+                {
+                    // Identifying if we have resolved media id conflict because then media id will be different from the file name
+                    if (dxPrimary.MediaId != Path.GetFileNameWithoutExtension(dxPrimary.Filename))
+                    {
+                        dxPrimary.Filename = dxPrimary.MediaId + Path.GetExtension(strTarget); // Updating the file name.
+                        strTarget = GetFileSpec(dxPrimary, dxPrimary.Filename); // Updating the location were the ppt will be copied
+                    }
+                }
 				
 				//	Make sure the source file exists
 				if(System.IO.File.Exists(tmaxFile.Path) == false)
