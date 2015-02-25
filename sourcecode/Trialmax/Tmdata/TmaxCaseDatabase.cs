@@ -10515,7 +10515,7 @@ namespace FTI.Trialmax.Database
                         wndResolve.Conflict = dxPrimary.RelativePath;// the locally adjusted conflict 
                         wndResolve.Resolution = strNewName; // Initialize with last value
                         if (wndResolve.Source.Length == 0)
-                            wndResolve.Source = tmaxSource.Path + "\\" + dxPrimary.RelativePath;
+                            wndResolve.Source = tmaxSource.Path + "\\" + dxPrimary.RelativePath + (dxPrimary.MediaType == TmaxMediaTypes.Document ? ".pdf" : "");
                         //	Open the form
                         DisableTmaxKeyboard(true);
                         wndResolve.TopMost = true;
