@@ -91,7 +91,18 @@ namespace FTI.Trialmax.Forms
 		{
 			if((m_tmaxRegistry != null) && (m_tmaxProductManager != null))
 			{
-				m_ctrlApplication.Text = String.Format("{0} ver. {1}", m_tmaxProductManager.Name, m_tmaxProductManager.ShortVersion);
+                try
+                {
+                    string[] TmManagerVer = m_tmaxProductManager.TmaxManagerVersion.Split('.');
+                    m_ctrlApplication.Text = String.Format("{0} ver. {1}", m_tmaxProductManager.Name,
+                                            string.IsNullOrEmpty(m_tmaxProductManager.TmaxManagerVersion) ?
+                                            m_tmaxProductManager.ShortVersion : (TmManagerVer.GetValue(0) + "." + TmManagerVer.GetValue(1) + "." + TmManagerVer.GetValue(2)));
+                }
+                catch
+                {
+                    m_ctrlApplication.Text = String.Format("{0} ver. {1}", m_tmaxProductManager.Name, m_tmaxProductManager.ShortVersion);
+                }
+                
 				m_ctrlSeed.Text = m_tmaxProductManager.GetActivationSeed();
 				m_ctrlSite.Text = m_tmaxProductManager.ActivateSite;
 				m_ctrlSiteLabel.Text = "Click here to request a product activation key";
