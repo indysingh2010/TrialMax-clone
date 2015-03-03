@@ -143,6 +143,9 @@ namespace FTI.Shared.Trialmax
 		/// <summary>Local member bound to MasterActivationCode property</summary>
 		private string m_strMasterActivationCode = DEFAULT_MASTER_ACTIVATION_CODE;
 
+        /// <summary>Stores the TmaxManaer version</summary>
+        private string m_sTmaxManagerVersion = string.Empty;
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -1238,7 +1241,14 @@ namespace FTI.Shared.Trialmax
 	    /// <summary>Fully qualified path of the file containing the product version information</summary>
 	    public int MasterKeyDefaultDuration
 	    {get; set;}
-        
+
+        /// <summary>Stores the TmaxManaer version</summary>
+        public string TmaxManagerVersion
+        {
+            get { return m_sTmaxManagerVersion; }
+            set { m_sTmaxManagerVersion = value; }
+        }
+
 		#endregion Properties
 
 	}// public class CTmaxProductManager

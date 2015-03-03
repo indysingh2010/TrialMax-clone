@@ -3470,6 +3470,7 @@ namespace FTI.Trialmax.TmaxManager
 			tmaxDatabase.TmxView = m_tmxView;
 			tmaxDatabase.WMEncoder = m_mediaEncoder;
 			tmaxDatabase.PaneId = (int)(TmaxAppPanes.MaxPanes);
+            m_tmaxProductManager.TmaxManagerVersion = this.ProductVersion;
 
 		}// private void InitializeDatabase(CTmaxCaseDatabase tmaxDatabase)
 		

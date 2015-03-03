@@ -7415,7 +7415,13 @@ namespace FTI.Trialmax.Database
 				{
 					m_dxDetail.UniqueId  = System.Guid.NewGuid().ToString();
 					m_dxDetail.Name		 = System.IO.Path.GetFileName(this.Folder);
-					m_dxDetail.Version   = dbVer.Version;
+                    m_dxDetail.Version = dbVer.Version;
+                    try
+                    {
+                        m_dxDetail.Version = string.IsNullOrEmpty(m_tmaxProductManager.TmaxManagerVersion) ? dbVer.Version : m_tmaxProductManager.TmaxManagerVersion;
+                    }
+                    catch { }
+                  
 					m_dxDetail.CreatedOn = System.DateTime.Now;
 								
 					return (m_dxDetails.Add(m_dxDetail) != null);
@@ -7433,6 +7439,7 @@ namespace FTI.Trialmax.Database
 		{
 			long	lDatabaseVer = 0;
 			long	lTmdataVer = 0;
+            long    lTmManagerVer = 0;
 			bool	bSyncVersion = false;
 
 			Debug.Assert(m_dxDetails != null);
@@ -7455,9 +7462,18 @@ namespace FTI.Trialmax.Database
 			//	Get the packed version identifiers
 			lTmdataVer   = GetPackedVer(true);
 			lDatabaseVer = GetPackedVer(false);
+            string[] TmManagerVer = m_tmaxProductManager.TmaxManagerVersion.Split('.');
+            try
+            {
+                lTmManagerVer = GetPackedVer(Convert.ToInt32(TmManagerVer.GetValue(0)), Convert.ToInt32(TmManagerVer.GetValue(1)), Convert.ToInt32(TmManagerVer.GetValue(2)));
+            }
+            catch
+            {
+                lTmManagerVer = lTmdataVer;
+            }
 
 			//	Was the database created with a newer version of the application?
-			if(lDatabaseVer > lTmdataVer)
+            if (lDatabaseVer > lTmManagerVer)
 			{
 				//	Show the warning messages and let the user decide if we should continue
 				if(ShowVersionWarnings() == false)
@@ -7465,7 +7481,7 @@ namespace FTI.Trialmax.Database
 			}
 			
 			//	Was the database created with an older version of the application
-			else if(lTmdataVer > lDatabaseVer)
+            else if (lTmManagerVer > lDatabaseVer)
 			{
 				//	Was this database created with a version earlier than 6.0.1?
 				if(lDatabaseVer < GetPackedVer(6,0,1))
@@ -17064,7 +17080,7 @@ namespace FTI.Trialmax.Database
 			get { return m_bFillOnOpen; }
 			set { m_bFillOnOpen = value; }
 		}
-		
+
 		#endregion Properties
 				
 	}// public class CTmaxCaseDatabase
