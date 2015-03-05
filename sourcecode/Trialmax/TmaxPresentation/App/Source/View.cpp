@@ -12134,7 +12134,7 @@ void CMainView::SetControlBar(int iId)
 			WINDOWPLACEMENT wpOldToolbarPlacement, wpTempToolbarPlacement;
 			m_ControlBar.pWnd->GetWindowPlacement(&wpOldToolbarPlacement); // Get the placement of the toolbar and store it for later use.
 			wpTempToolbarPlacement = wpOldToolbarPlacement;
-			wpTempToolbarPlacement.showCmd = SW_SHOWMINIMIZED; // Before showing the Toolbar, we will minimize it and then show so that it is resized first.
+			wpTempToolbarPlacement.showCmd = SW_MINIMIZE; // Before showing the Toolbar, we will minimize it and then show so that it is resized first.
 			m_ControlBar.pWnd->SetWindowPlacement(&wpTempToolbarPlacement);
 			m_ControlBar.pWnd->ShowWindow(SW_SHOW); // Toolbar Shown in minimized.
 			m_ControlBar.pWnd->SetWindowPlacement(&wpOldToolbarPlacement); // Placement of the toolbar restored.
