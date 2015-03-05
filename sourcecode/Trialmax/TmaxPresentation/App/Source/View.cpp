@@ -12126,7 +12126,18 @@ void CMainView::SetControlBar(int iId)
 		}
 		else 
 		{
-			m_ControlBar.pWnd->ShowWindow(SW_SHOW);
+			// When the Toolbar is shown using "Ctrl-T", there appears a black flash.
+			// To eliminate this, we will load the Toolbar in minimized mode and after
+			// it is loaded completely, i.e. Sized properly, then we will restore its
+			// placement as it should be.
+
+			WINDOWPLACEMENT wpOldToolbarPlacement, wpTempToolbarPlacement;
+			m_ControlBar.pWnd->GetWindowPlacement(&wpOldToolbarPlacement); // Get the placement of the toolbar and store it for later use.
+			wpTempToolbarPlacement = wpOldToolbarPlacement;
+			wpTempToolbarPlacement.showCmd = SW_SHOWMINIMIZED; // Before showing the Toolbar, we will minimize it and then show so that it is resized first.
+			m_ControlBar.pWnd->SetWindowPlacement(&wpTempToolbarPlacement);
+			m_ControlBar.pWnd->ShowWindow(SW_SHOW); // Toolbar Shown in minimized.
+			m_ControlBar.pWnd->SetWindowPlacement(&wpOldToolbarPlacement); // Placement of the toolbar restored.
 			m_ControlBar.pWnd->BringWindowToTop();
 		}
 
