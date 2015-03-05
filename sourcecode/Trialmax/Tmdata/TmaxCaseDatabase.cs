@@ -7432,7 +7432,21 @@ namespace FTI.Trialmax.Database
 			return false;
 			
 		}// private bool SetDetails()
-		
+
+        /// <summary>This method is called to get the TmaxManager Version</summary>
+        /// <returns>TmaxManager Version x.y.z format</returns>
+        private long GetTmaxManagerVersion()
+        {
+            string[] TmManagerVer = m_tmaxProductManager.TmaxManagerVersion.Split('.');
+            try
+            {
+                return GetPackedVer(Convert.ToInt32(TmManagerVer.GetValue(0)), Convert.ToInt32(TmManagerVer.GetValue(1)), Convert.ToInt32(TmManagerVer.GetValue(2)));
+            }
+            catch { }
+            return 0;
+
+        }// private long GetTmaxManagerVersion()
+
 		/// <summary>This method is called to check the version information stored in the database</summary>
 		/// <returns>True if OK to continue</returns>
 		private bool CheckVersions()
@@ -7462,15 +7476,7 @@ namespace FTI.Trialmax.Database
 			//	Get the packed version identifiers
 			lTmdataVer   = GetPackedVer(true);
 			lDatabaseVer = GetPackedVer(false);
-            string[] TmManagerVer = m_tmaxProductManager.TmaxManagerVersion.Split('.');
-            try
-            {
-                lTmManagerVer = GetPackedVer(Convert.ToInt32(TmManagerVer.GetValue(0)), Convert.ToInt32(TmManagerVer.GetValue(1)), Convert.ToInt32(TmManagerVer.GetValue(2)));
-            }
-            catch
-            {
-                lTmManagerVer = lTmdataVer;
-            }
+            lTmManagerVer = GetTmaxManagerVersion();
 
 			//	Was the database created with a newer version of the application?
             if (lDatabaseVer > lTmManagerVer)
@@ -7645,7 +7651,7 @@ namespace FTI.Trialmax.Database
 		{
 			CFVersionWarnings verWarnings = null;
 			ArrayList		  aWarnings = null;
-			
+            long              TmaxManagerVersion = GetTmaxManagerVersion();
 			try
 			{
 				//	Get any warning messages stored in the database
@@ -7654,7 +7660,7 @@ namespace FTI.Trialmax.Database
 			
 				verWarnings = new CFVersionWarnings();
 				verWarnings.DatabaseVersion = GetVersionString(false);
-				verWarnings.AssemblyVersion = GetVersionString(true);
+                verWarnings.AssemblyVersion = TmaxManagerVersion == 0 ? GetVersionString(true) : TmaxManagerVersion.ToString();
 				verWarnings.Warnings = aWarnings;
 				
 				verWarnings.ShowDialog();
