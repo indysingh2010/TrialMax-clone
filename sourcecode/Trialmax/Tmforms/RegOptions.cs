@@ -66,6 +66,7 @@ namespace FTI.Trialmax.Forms
         private RadioButton m_ctrlColorRadio;
         private RadioButton m_ctrlBWRadio;
         private RadioButton m_ctrlAutoDetectRadio;
+        private CheckBox m_ctrlDisableCustomDither;
 
 		/// <summary>Registration options assocaited with the control</summary>
 		private CTmaxRegOptions m_tmaxRegOptions = null;
@@ -134,6 +135,7 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlColorRadio = new System.Windows.Forms.RadioButton();
             this.m_ctrlBWRadio = new System.Windows.Forms.RadioButton();
             this.m_ctrlAutoDetectRadio = new System.Windows.Forms.RadioButton();
+            this.m_ctrlDisableCustomDither = new System.Windows.Forms.CheckBox();
             this.m_ctrlMorphMethodsGroup.SuspendLayout();
             this.m_ctrlConflictResolutionsGroup.SuspendLayout();
             this.m_ctrlMediaCreationGroup.SuspendLayout();
@@ -143,7 +145,7 @@ namespace FTI.Trialmax.Forms
             // m_ctrlOk
             // 
             this.m_ctrlOk.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.m_ctrlOk.Location = new System.Drawing.Point(472, 336);
+            this.m_ctrlOk.Location = new System.Drawing.Point(495, 358);
             this.m_ctrlOk.Name = "m_ctrlOk";
             this.m_ctrlOk.Size = new System.Drawing.Size(75, 23);
             this.m_ctrlOk.TabIndex = 8;
@@ -154,7 +156,7 @@ namespace FTI.Trialmax.Forms
             // 
             this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.m_ctrlCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.m_ctrlCancel.Location = new System.Drawing.Point(572, 336);
+            this.m_ctrlCancel.Location = new System.Drawing.Point(576, 358);
             this.m_ctrlCancel.Name = "m_ctrlCancel";
             this.m_ctrlCancel.Size = new System.Drawing.Size(75, 23);
             this.m_ctrlCancel.TabIndex = 9;
@@ -317,14 +319,14 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlMediaIdAdjustments.IntegralHeight = false;
             this.m_ctrlMediaIdAdjustments.Location = new System.Drawing.Point(16, 260);
             this.m_ctrlMediaIdAdjustments.Name = "m_ctrlMediaIdAdjustments";
-            this.m_ctrlMediaIdAdjustments.Size = new System.Drawing.Size(196, 92);
+            this.m_ctrlMediaIdAdjustments.Size = new System.Drawing.Size(196, 82);
             this.m_ctrlMediaIdAdjustments.TabIndex = 33;
             // 
             // m_ctrlMediaIdAdjustmentsGroup
             // 
             this.m_ctrlMediaIdAdjustmentsGroup.Location = new System.Drawing.Point(8, 244);
             this.m_ctrlMediaIdAdjustmentsGroup.Name = "m_ctrlMediaIdAdjustmentsGroup";
-            this.m_ctrlMediaIdAdjustmentsGroup.Size = new System.Drawing.Size(212, 116);
+            this.m_ctrlMediaIdAdjustmentsGroup.Size = new System.Drawing.Size(212, 108);
             this.m_ctrlMediaIdAdjustmentsGroup.TabIndex = 6;
             this.m_ctrlMediaIdAdjustmentsGroup.TabStop = false;
             this.m_ctrlMediaIdAdjustmentsGroup.Text = "Media ID Adjustments";
@@ -335,20 +337,21 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlForeignBarcodeAdjustments.IntegralHeight = false;
             this.m_ctrlForeignBarcodeAdjustments.Location = new System.Drawing.Point(231, 260);
             this.m_ctrlForeignBarcodeAdjustments.Name = "m_ctrlForeignBarcodeAdjustments";
-            this.m_ctrlForeignBarcodeAdjustments.Size = new System.Drawing.Size(196, 92);
+            this.m_ctrlForeignBarcodeAdjustments.Size = new System.Drawing.Size(196, 82);
             this.m_ctrlForeignBarcodeAdjustments.TabIndex = 35;
             // 
             // m_ctrlForeignBarcodeAdjustmentsGroup
             // 
             this.m_ctrlForeignBarcodeAdjustmentsGroup.Location = new System.Drawing.Point(223, 244);
             this.m_ctrlForeignBarcodeAdjustmentsGroup.Name = "m_ctrlForeignBarcodeAdjustmentsGroup";
-            this.m_ctrlForeignBarcodeAdjustmentsGroup.Size = new System.Drawing.Size(212, 116);
+            this.m_ctrlForeignBarcodeAdjustmentsGroup.Size = new System.Drawing.Size(212, 108);
             this.m_ctrlForeignBarcodeAdjustmentsGroup.TabIndex = 7;
             this.m_ctrlForeignBarcodeAdjustmentsGroup.TabStop = false;
             this.m_ctrlForeignBarcodeAdjustmentsGroup.Text = "Foreign Barcodes";
             // 
             // m_ctrlPDFOptionsGroup
             // 
+            this.m_ctrlPDFOptionsGroup.Controls.Add(this.m_ctrlDisableCustomDither);
             this.m_ctrlPDFOptionsGroup.Controls.Add(this.m_ctrlCustomDPIMask);
             this.m_ctrlPDFOptionsGroup.Controls.Add(this.m_ctrlCustomDPICheck);
             this.m_ctrlPDFOptionsGroup.Controls.Add(this.m_ctrlColorRadio);
@@ -356,7 +359,7 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlPDFOptionsGroup.Controls.Add(this.m_ctrlAutoDetectRadio);
             this.m_ctrlPDFOptionsGroup.Location = new System.Drawing.Point(439, 244);
             this.m_ctrlPDFOptionsGroup.Name = "m_ctrlPDFOptionsGroup";
-            this.m_ctrlPDFOptionsGroup.Size = new System.Drawing.Size(212, 86);
+            this.m_ctrlPDFOptionsGroup.Size = new System.Drawing.Size(212, 108);
             this.m_ctrlPDFOptionsGroup.TabIndex = 36;
             this.m_ctrlPDFOptionsGroup.TabStop = false;
             this.m_ctrlPDFOptionsGroup.Text = "PDF Options";
@@ -419,10 +422,21 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlAutoDetectRadio.UseVisualStyleBackColor = true;
             this.m_ctrlAutoDetectRadio.CheckedChanged += new System.EventHandler(this.m_ctrlAutoDetectRadio_CheckedChanged);
             // 
+            // m_ctrlDisableCustomDither
+            // 
+            this.m_ctrlDisableCustomDither.AutoSize = true;
+            this.m_ctrlDisableCustomDither.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_ctrlDisableCustomDither.Location = new System.Drawing.Point(7, 81);
+            this.m_ctrlDisableCustomDither.Name = "m_ctrlDisableCustomDither";
+            this.m_ctrlDisableCustomDither.Size = new System.Drawing.Size(130, 17);
+            this.m_ctrlDisableCustomDither.TabIndex = 5;
+            this.m_ctrlDisableCustomDither.Text = "Disable Custom Dither";
+            this.m_ctrlDisableCustomDither.UseVisualStyleBackColor = true;
+            // 
             // CFRegOptions
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(658, 367);
+            this.ClientSize = new System.Drawing.Size(658, 386);
             this.Controls.Add(this.m_ctrlPDFOptionsGroup);
             this.Controls.Add(this.m_ctrlForeignBarcodeAdjustments);
             this.Controls.Add(this.m_ctrlForeignBarcodeAdjustmentsGroup);
@@ -551,8 +565,8 @@ namespace FTI.Trialmax.Forms
             m_tmaxRegOptions.UseCustomDPI = m_ctrlCustomDPICheck.Checked;
             if (m_tmaxRegOptions.UseCustomDPI)
                 m_tmaxRegOptions.CustomDPI = GetCustomDPIValue();
-                
 
+            m_tmaxRegOptions.DisableCustomDither = m_ctrlDisableCustomDither.Checked;
 		}
 
         /// <summary>This method will return Output Type (Auto,Color,BW) </summary>

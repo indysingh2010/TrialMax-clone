@@ -56,6 +56,9 @@ namespace FTI.Shared.Database
         /// <summary>Local member that will use GsManager</summary>
         private CTmaxGsPdfManager GsManager = null;
 
+        /// <summary>Local member that will store if Custom Dither should be disabled</summary>
+        private bool m_DisableCustomDither = false;
+
         /// <summary>Local variable to log detail errors with stacktrace</summary>
         private static readonly log4net.ILog logDetailed = log4net.LogManager.GetLogger("DetailedLog");
 
@@ -67,12 +70,13 @@ namespace FTI.Shared.Database
         #region Public Methods
 
         /// <summary>Constructor</summary>
-        public CTmaxPDFManager(string _inputFile, string _ouputPath, TmaxPDFOutputType _outputType, short _customDPI)
+        public CTmaxPDFManager(string _inputFile, string _ouputPath, TmaxPDFOutputType _outputType, short _customDPI, bool _disableCustomDither)
         {
             m_InputFile = _inputFile;
             m_OutputPath = _ouputPath;
             m_OutputType = _outputType;
             m_CustomDPI = _customDPI;
+            m_DisableCustomDither = _disableCustomDither;
         }// public TmaxPDFConversion()
 
         /// <summary>Main process which will start the conversion</summary>
@@ -227,43 +231,21 @@ namespace FTI.Shared.Database
         /// <summary>This is called if AutoDetect is selected for conversion</summary>
         private bool ConvertAutoDetect()
         {
-            MuManager = new CTmaxMuPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
+            MuManager = new CTmaxMuPdfManager(m_InputFile, m_OutputPath, m_CustomDPI, m_DisableCustomDither);
             if (MuManager == null)
                 return false;
             MuManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return MuManager.Process();
         }// private bool ConvertAutoDetect()
 
-        /// <summary>This is called if Color is selected for conversion</summary>
-        private bool ConvertColor()
-        {
-            //LtManager = new CTmaxLtPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
-            //if (LtManager == null)
-            //    return false;
-            //LtManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
-            //return LtManager.Process();
-            return false;
-        }// private bool ConvertColor()
-
         private bool ConvertGS()
         {
-            GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_OutputType, m_CustomDPI);
+            GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_OutputType, m_CustomDPI, m_DisableCustomDither);
             if (GsManager == null)
                 return false;
             GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
             return GsManager.Process();
         }
-
-        /// <summary>This is called if BW is selected for conversion</summary>
-        private bool ConvertBW()
-        {
-            //GsManager = new CTmaxGsPdfManager(m_InputFile, m_OutputPath, m_CustomDPI);
-            //if (GsManager == null)
-            //    return false;
-            //GsManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
-            //return GsManager.Process();
-            return false;
-        }// private bool ConvertBW()
 
         #endregion Private Methods
 

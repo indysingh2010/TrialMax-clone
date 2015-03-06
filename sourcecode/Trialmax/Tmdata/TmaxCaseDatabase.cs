@@ -10365,7 +10365,7 @@ namespace FTI.Trialmax.Database
             try
             {
                 // Start the PDF Manager and provide the data needed for conversion
-                CTmaxPDFManager PDFManager = new CTmaxPDFManager(strAdobeFileSpec.ToLower(), strTarget.ToLower(), m_tmaxRegisterOptions.OutputType, m_tmaxRegisterOptions.CustomDPI);
+                CTmaxPDFManager PDFManager = new CTmaxPDFManager(strAdobeFileSpec.ToLower(), strTarget.ToLower(), m_tmaxRegisterOptions.OutputType, m_tmaxRegisterOptions.CustomDPI, m_tmaxRegisterOptions.DisableCustomDither);
                 PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
                 if (m_bRegisterCancelled == true)
                     return iPages;
