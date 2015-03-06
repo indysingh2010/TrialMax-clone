@@ -7434,7 +7434,7 @@ namespace FTI.Trialmax.Database
 		}// private bool SetDetails()
 
         /// <summary>This method is called to get the TmaxManager Version</summary>
-        /// <returns>TmaxManager Version x.y.z format</returns>
+        /// <returns>TmaxManager Version xyz format</returns>
         private long GetTmaxManagerVersion()
         {
             string[] TmManagerVer = m_tmaxProductManager.TmaxManagerVersion.Split('.');
@@ -7446,6 +7446,19 @@ namespace FTI.Trialmax.Database
             return 0;
 
         }// private long GetTmaxManagerVersion()
+
+        /// <summary>This method is called to get the TmaxManager Version</summary>
+        /// <returns>TmaxManager Version x.y.z format</returns>
+        private string GetTmaxManagerVersionString()
+        {
+            try
+            {
+                return m_tmaxProductManager.TmaxManagerVersion.Substring(0,m_tmaxProductManager.TmaxManagerVersion.LastIndexOf('.'));
+            }
+            catch { }
+            return "0";
+
+        }// private long GetTmaxManagerVersionString()
 
 		/// <summary>This method is called to check the version information stored in the database</summary>
 		/// <returns>True if OK to continue</returns>
@@ -7651,7 +7664,7 @@ namespace FTI.Trialmax.Database
 		{
 			CFVersionWarnings verWarnings = null;
 			ArrayList		  aWarnings = null;
-            long              TmaxManagerVersion = GetTmaxManagerVersion();
+            string            TmaxManagerVersion = GetTmaxManagerVersionString();
 			try
 			{
 				//	Get any warning messages stored in the database
@@ -7660,7 +7673,7 @@ namespace FTI.Trialmax.Database
 			
 				verWarnings = new CFVersionWarnings();
 				verWarnings.DatabaseVersion = GetVersionString(false);
-                verWarnings.AssemblyVersion = TmaxManagerVersion == 0 ? GetVersionString(true) : TmaxManagerVersion.ToString();
+                verWarnings.AssemblyVersion = TmaxManagerVersion == "0" ? GetVersionString(true) : TmaxManagerVersion;
 				verWarnings.Warnings = aWarnings;
 				
 				verWarnings.ShowDialog();
