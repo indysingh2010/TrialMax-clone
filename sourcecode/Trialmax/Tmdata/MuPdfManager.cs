@@ -49,6 +49,9 @@ namespace FTI.Trialmax.Database
         /// <summary>Local variable to log user level details</summary>
         private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
+        /// <summary>Local member that will store if Custom Dither should be disabled</summary>
+        private bool m_DisableCustomDither = false;
+
         #endregion Private Members
 
         #region Public Members
@@ -61,12 +64,13 @@ namespace FTI.Trialmax.Database
         #region Public Methods
 
         /// <summary>Constructor</summary>
-        public CTmaxMuPdfManager(string docPath, string outPath, short outResolution = 0, short totThreads = 0)
+        public CTmaxMuPdfManager(string docPath, string outPath, short outResolution = 0, bool disableCustomDither = false, short totThreads = 0)
         {
             m_documentNameWithPath  = docPath;
             m_outputPath            = outPath;
             m_resolution            = outResolution;
             m_totalThreads          = totThreads;
+            m_DisableCustomDither   = disableCustomDither;
             try
             {
                 if (InitializeGhostscript())

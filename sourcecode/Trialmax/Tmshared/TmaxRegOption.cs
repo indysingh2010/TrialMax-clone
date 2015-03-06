@@ -78,6 +78,9 @@ namespace FTI.Shared.Trialmax
         /// <summary>Local member bound to Use Custom DPI property</summary>
         private bool m_bUseCustomDPI = false;
 
+        /// <summary>Local member bound to Disable Custom Dither property</summary>
+        private bool m_bDisableCustomDither = false;
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -571,6 +574,20 @@ namespace FTI.Shared.Trialmax
             set
             {
                 m_bUseCustomDPI = value;
+            }
+
+        }// m_bUseCustomDPI property
+
+        /// <summary>This property provides access to the Use Custom DPI for PDF</summary>
+        public bool DisableCustomDither
+        {
+            get
+            {
+                return m_bDisableCustomDither;
+            }
+            set
+            {
+                m_bDisableCustomDither = value;
             }
 
         }// m_bUseCustomDPI property

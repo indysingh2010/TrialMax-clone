@@ -61,6 +61,8 @@ namespace FTI.Trialmax.Database
         /// <summary>Local variable to log user level details</summary>
         private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
+        private bool m_DisableCustomDither = true;
+
         #endregion Private Members
 
         #region Public Members
@@ -73,13 +75,14 @@ namespace FTI.Trialmax.Database
         #region Public Methods
 
         ///<summary>Constructor</summary>
-        public CTmaxGsPdfManager(string docPath, string outPath, TmaxPDFOutputType OutputType, short outResolution = 0, short totThreads = 0)
+        public CTmaxGsPdfManager(string docPath, string outPath, TmaxPDFOutputType OutputType, short outResolution = 0, bool disableCustomDither = false, short totThreads = 0)
         {
             m_documentNameWithPath = docPath;
             m_outputPath = outPath;
             m_totalThreads = totThreads;
             m_resolution = outResolution;
             m_OutputType = OutputType;
+            m_DisableCustomDither = disableCustomDither;
             m_switches = new List<string>();
             InitializeGhostScript();
             AddRequiredSwitches();
@@ -113,7 +116,7 @@ namespace FTI.Trialmax.Database
                 SetColorSwitch(isColor);
                 processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
                 processor.StartProcessing(m_switches.ToArray(), null);
-                RemovePageSwitch();
+                RemovePageSwitch(isColor);
             }
             catch (Exception Ex)
             {
@@ -199,6 +202,8 @@ namespace FTI.Trialmax.Database
                 AddColorSwitch();
                 AddResolutionSwitch();
                 AddOutputSwitch();
+                if (m_DisableCustomDither == false && m_OutputType == TmaxPDFOutputType.ForceBW)
+                    AddCustomDitherSwitch();
                 AddPdfOpenSwitch();
                 //AddErrorLogSwitch();
             }
@@ -263,6 +268,15 @@ namespace FTI.Trialmax.Database
                 m_switches.Add(@"-sOutputFile=" + m_outputPath + "\\%04d.png");
         }// private void AddOutputSwitch()
 
+        ///<summary>Add Tiff Custom Dither Switch</summary>
+        private void AddCustomDitherSwitch()
+        {
+            m_switches.Add(@"-c");
+            m_switches.Add("{ 0.2 sub 0.6 div }");
+            m_switches.Add("settransfer");
+            m_switches.Add("-f");
+        }// private void AddOutputSwitch()
+
         ///<summary>Add PDF open switch</summary>
         private void AddPdfOpenSwitch()
         {
@@ -296,16 +310,30 @@ namespace FTI.Trialmax.Database
             else
             {
                 m_switches[10] = @"-sOutputFile=" + m_outputPath + "\\" + pageNum.ToString("D4") + ".tif";
+                if (m_DisableCustomDither == false)
+                {   // Add Custom Dither Switches
+                    m_switches.Insert(m_switches.Count - 1, @"-c");
+                    m_switches.Insert(m_switches.Count - 1, "{ 0.2 sub 0.6 div }");
+                    m_switches.Insert(m_switches.Count - 1, "settransfer");
+                    m_switches.Insert(m_switches.Count - 1, "-f");
+                }
             }
         }// private void AddPageSwitch(int pageNum)
 
         ///<summary>Remove Page Switch</summary>
-        private void RemovePageSwitch()
+        private void RemovePageSwitch(bool isColor)
         {
             if (m_switches[8].Contains("-dFirstPage="))
             {
                 m_switches.RemoveAt(8);
                 m_switches.RemoveAt(8);
+            }
+            if (!isColor && !m_DisableCustomDither)
+            {   // Remove Custom Dither Switches
+                m_switches.RemoveAt(m_switches.Count - 2);
+                m_switches.RemoveAt(m_switches.Count - 2);
+                m_switches.RemoveAt(m_switches.Count - 2);
+                m_switches.RemoveAt(m_switches.Count - 2);
             }
         }// private void RemovePageSwitch()
 
