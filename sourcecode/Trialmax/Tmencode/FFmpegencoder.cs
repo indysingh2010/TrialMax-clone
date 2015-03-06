@@ -768,7 +768,7 @@ namespace FTI.Trialmax.Encode
             try
             {
                 // get the filename without extension
-                mergeFilename = m_strFileSpec.Substring(0, m_strFileSpec.LastIndexOf(".") - 1);
+                mergeFilename = m_strFileSpec.Substring(0, m_strFileSpec.LastIndexOf("."));
 
                 // append the "1" in the end of the filename
                 mergeFilename += "1";
