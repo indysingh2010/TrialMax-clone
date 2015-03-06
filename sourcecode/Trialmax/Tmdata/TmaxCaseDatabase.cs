@@ -15054,6 +15054,7 @@ namespace FTI.Trialmax.Database
 				//	Should we create a subfolder based on the filename?
 				if((tmaxSource.SplitOnRegistration == true) ||
 				   (tmaxSource.SourceType == RegSourceTypes.Adobe) ||
+                   (tmaxSource.SourceType == RegSourceTypes.Recording) ||
 				   (tmaxSource.SourceType == RegSourceTypes.MultiPageTIFF))
 				{
 					//	There should be one file in this folder
