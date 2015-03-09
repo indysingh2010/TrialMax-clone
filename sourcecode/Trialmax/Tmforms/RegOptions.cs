@@ -130,12 +130,12 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlForeignBarcodeAdjustments = new System.Windows.Forms.CheckedListBox();
             this.m_ctrlForeignBarcodeAdjustmentsGroup = new System.Windows.Forms.GroupBox();
             this.m_ctrlPDFOptionsGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlDisableCustomDither = new System.Windows.Forms.CheckBox();
             this.m_ctrlCustomDPIMask = new System.Windows.Forms.MaskedTextBox();
             this.m_ctrlCustomDPICheck = new System.Windows.Forms.CheckBox();
             this.m_ctrlColorRadio = new System.Windows.Forms.RadioButton();
             this.m_ctrlBWRadio = new System.Windows.Forms.RadioButton();
             this.m_ctrlAutoDetectRadio = new System.Windows.Forms.RadioButton();
-            this.m_ctrlDisableCustomDither = new System.Windows.Forms.CheckBox();
             this.m_ctrlMorphMethodsGroup.SuspendLayout();
             this.m_ctrlConflictResolutionsGroup.SuspendLayout();
             this.m_ctrlMediaCreationGroup.SuspendLayout();
@@ -364,6 +364,17 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlPDFOptionsGroup.TabStop = false;
             this.m_ctrlPDFOptionsGroup.Text = "PDF Options";
             // 
+            // m_ctrlDisableCustomDither
+            // 
+            this.m_ctrlDisableCustomDither.AutoSize = true;
+            this.m_ctrlDisableCustomDither.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.m_ctrlDisableCustomDither.Location = new System.Drawing.Point(7, 81);
+            this.m_ctrlDisableCustomDither.Name = "m_ctrlDisableCustomDither";
+            this.m_ctrlDisableCustomDither.Size = new System.Drawing.Size(159, 17);
+            this.m_ctrlDisableCustomDither.TabIndex = 5;
+            this.m_ctrlDisableCustomDither.Text = "Enable B/W Halftone Dither";
+            this.m_ctrlDisableCustomDither.UseVisualStyleBackColor = true;
+            // 
             // m_ctrlCustomDPIMask
             // 
             this.m_ctrlCustomDPIMask.Enabled = false;
@@ -421,17 +432,6 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlAutoDetectRadio.Text = "Autodetect Color";
             this.m_ctrlAutoDetectRadio.UseVisualStyleBackColor = true;
             this.m_ctrlAutoDetectRadio.CheckedChanged += new System.EventHandler(this.m_ctrlAutoDetectRadio_CheckedChanged);
-            // 
-            // m_ctrlDisableCustomDither
-            // 
-            this.m_ctrlDisableCustomDither.AutoSize = true;
-            this.m_ctrlDisableCustomDither.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.m_ctrlDisableCustomDither.Location = new System.Drawing.Point(7, 81);
-            this.m_ctrlDisableCustomDither.Name = "m_ctrlDisableCustomDither";
-            this.m_ctrlDisableCustomDither.Size = new System.Drawing.Size(130, 17);
-            this.m_ctrlDisableCustomDither.TabIndex = 5;
-            this.m_ctrlDisableCustomDither.Text = "Disable Custom Dither";
-            this.m_ctrlDisableCustomDither.UseVisualStyleBackColor = true;
             // 
             // CFRegOptions
             // 
@@ -914,16 +914,20 @@ namespace FTI.Trialmax.Forms
         private void m_ctrlBWRadio_Click(object sender, EventArgs e)
         {
             m_ctrlCustomDPIMask.Text = "300";
+            m_ctrlDisableCustomDither.Enabled = true;
         }
 
         private void m_ctrlColorRadio_Click(object sender, EventArgs e)
         {
             m_ctrlCustomDPIMask.Text = "200";
+            m_ctrlDisableCustomDither.Checked = false;
+            m_ctrlDisableCustomDither.Enabled = false;
         }
 
         private void m_ctrlAutoDetectRadio_CheckedChanged(object sender, EventArgs e)
         {
             m_ctrlCustomDPIMask.Text = "300";
+            m_ctrlDisableCustomDither.Enabled = true;
         }
 
         private void m_ctrlCustomDPIMask_TextChanged(object sender, EventArgs e)
