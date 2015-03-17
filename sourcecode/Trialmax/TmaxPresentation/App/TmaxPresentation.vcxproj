@@ -94,6 +94,9 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>.\..\..\Bin\Debug/TmaxPresentation.bsc</OutputFile>
     </Bscmake>
+    <Manifest>
+      <EnableDPIAwareness>true</EnableDPIAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>

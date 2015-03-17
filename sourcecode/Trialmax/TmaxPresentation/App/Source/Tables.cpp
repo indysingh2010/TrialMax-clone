@@ -244,6 +244,9 @@ FALSE,		FALSE,      TRUE,       TRUE,       FALSE,  FALSE,  FALSE,  FALSE,		FALS
 FALSE,      FALSE,      TRUE,       TRUE,       FALSE,  TRUE,	FALSE,  FALSE,		FALSE,		//  TMAX_SAVE_SPLIT_ZAP
 TRUE,       TRUE,       TRUE,       TRUE,       TRUE,   TRUE,	TRUE,   TRUE,		TRUE,		//  TMAX_GESTURE_PAN
 TRUE,       TRUE,       TRUE,       TRUE,       TRUE,   TRUE,	TRUE,   TRUE,		TRUE,		//  TMAX_BINDERLIST
+FALSE,      FALSE,      TRUE,       TRUE,       FALSE,  TRUE,	FALSE,  FALSE,		FALSE,		//  TMAX_NUDGELEFT
+FALSE,      FALSE,      TRUE,       TRUE,       FALSE,  TRUE,	FALSE,  FALSE,		FALSE,		//  TMAX_NUDGERIGHT
+FALSE,      FALSE,      TRUE,       TRUE,       FALSE,  TRUE,	FALSE,  FALSE,		FALSE,		//  TMAX_SAVENUDGE
 //CLEAR		PLAYLIST    DOCUMENT    GRAPHIC     MOVIE   LINKDOC	TEXT	POWERPOINT	LINKPP
 };
 
@@ -1166,7 +1169,43 @@ TMAX_BINDERLIST,				//  S_LINKEDIMAGE
 TMAX_BINDERLIST,				//  S_TEXT
 TMAX_BINDERLIST,				//  S_POWERPOINT
 TMAX_BINDERLIST,				//  S_LINKEDPOWER
-            
+
+
+//  TMAX_NUDGELEFT
+TMAX_NUDGELEFT,                 //  S_CLEAR
+TMAX_NUDGELEFT,                 //  S_PLAYLIST
+TMAX_NUDGELEFT,                 //  S_DOCUMENT
+TMAX_NUDGELEFT,                 //  S_GRAPHIC
+TMAX_NUDGELEFT,                 //  S_MOVIE
+TMAX_NUDGELEFT,                 //  S_LINKEDIMAGE
+TMAX_NUDGELEFT,                 //  S_TEXT
+TMAX_NUDGELEFT,                 //  S_POWERPOINT
+TMAX_NUDGELEFT,                 //  S_LINKEDPOWER
+
+
+//  TMAX_NUDGELEFT
+TMAX_NUDGERIGHT,                 //  S_CLEAR
+TMAX_NUDGERIGHT,                 //  S_PLAYLIST
+TMAX_NUDGERIGHT,                 //  S_DOCUMENT
+TMAX_NUDGERIGHT,                 //  S_GRAPHIC
+TMAX_NUDGERIGHT,                 //  S_MOVIE
+TMAX_NUDGERIGHT,                 //  S_LINKEDIMAGE
+TMAX_NUDGERIGHT,                 //  S_TEXT
+TMAX_NUDGERIGHT,                 //  S_POWERPOINT
+TMAX_NUDGERIGHT,                 //  S_LINKEDPOWER
+
+
+//  TMAX_SAVENUDGE
+TMAX_SAVENUDGE,                 //  S_CLEAR
+TMAX_SAVENUDGE,                 //  S_PLAYLIST
+TMAX_SAVENUDGE,                 //  S_DOCUMENT
+TMAX_SAVENUDGE,                 //  S_GRAPHIC
+TMAX_SAVENUDGE,                 //  S_MOVIE
+TMAX_SAVENUDGE,                 //  S_LINKEDIMAGE
+TMAX_SAVENUDGE,                 //  S_TEXT
+TMAX_SAVENUDGE,                 //  S_POWERPOINT
+TMAX_SAVENUDGE,                 //  S_LINKEDPOWER
+           
 };
             
 

@@ -1733,9 +1733,8 @@ namespace FTI.Trialmax.Panes
 			long	lFiles = 0;
 
 			//	Transfer operation is no longer active
-			m_bTransferring = false;
-            EnableBackCtrl();
-            //m_ctrlBack.Enabled = true;
+			m_bTransferring = false;            
+            m_ctrlBack.Enabled = true;
 			
 			//	Was the operation cancelled?
 			if(m_bTransferCancelled == true)
@@ -1793,8 +1792,7 @@ namespace FTI.Trialmax.Panes
 				{
 					MessageBox.Show("The transfer process reported " + m_ctrlTransferErrors.Count.ToString() + " errors", "Warning",
 									MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    SetTransferError();
-                    //m_ctrlSaveTransferErrors.Enabled = true;
+                    m_ctrlSaveTransferErrors.Enabled = true;
 				}
 				else
 				{
@@ -1802,72 +1800,12 @@ namespace FTI.Trialmax.Panes
 				}
 			
 				//	Make sure the progress bar is 100%
-				//m_ctrlTransferProgressBar.Value = m_ctrlTransferProgressBar.Maximum;
-                SetProgressBarValue();
+				m_ctrlTransferProgressBar.Value = m_ctrlTransferProgressBar.Maximum;                
 				
 			}// if(m_bTransferCancelled == true)
 			
 		}// private void OnTransferComplete()
-
-
-        delegate void ProgressBarValueCallback();
-        private void SetProgressBarValue()
-        {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (this.m_ctrlTransferProgressBar.InvokeRequired)
-            {
-                ProgressBarValueCallback d = new ProgressBarValueCallback(SetProgressBarValue);
-                m_ctrlTransferProgressBar.Invoke(d, new object[] { });
-                
-            }
-            else
-            {
-                m_ctrlTransferProgressBar.Value = m_ctrlTransferProgressBar.Maximum;
-            }
-        }
-
-        delegate void SetTransferErrorCallback();
-        private void SetTransferError()
-        {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (this.m_ctrlSaveTransferErrors.InvokeRequired)
-            {
-                SetTransferErrorCallback d = new SetTransferErrorCallback(SetTransferError);
-                m_ctrlSaveTransferErrors.Invoke(d, new object[] { });
-
-            }
-            else
-            {
-                m_ctrlSaveTransferErrors.Enabled = true;
-            }
-        }
-			
-
-
-        delegate void EnableBackCtrlCallback();
-        private void EnableBackCtrl()
-        {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-
-            if (this.m_ctrlBack.InvokeRequired)
-            {
-                EnableBackCtrlCallback d = new EnableBackCtrlCallback(EnableBackCtrl);
-                m_ctrlBack.Invoke(d, new object[] { });
-
-            }
-            else
-            {
-                m_ctrlBack.Enabled = true;
-            }
-        }
-
-		
+        		
 		/// <summary>Handles the event fired when the user clicks on one of the Browse buttons</summary>
 		/// <param name="sender">The button firing the event</param>
 		/// <param name="e">System event arguements</param>

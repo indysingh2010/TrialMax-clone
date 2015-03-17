@@ -280,7 +280,6 @@ int CApp::ExitInstance()
 	
 	return CWinApp::ExitInstance();
 }
-
 //==============================================================================
 //
 // 	Function Name:	CApp::GetMonitorInfo()
@@ -293,6 +292,7 @@ int CApp::ExitInstance()
 //	Notes:			None
 //
 //==============================================================================
+bool secondaryOnRight = true; // This is set to false if secondary display is on left to the primary
 BOOL CApp::GetMonitorInfo()
 {
 	DISPLAY_DEVICE			 ddEnum;
@@ -304,7 +304,6 @@ BOOL CApp::GetMonitorInfo()
 
 	ZeroMemory(&ddEnum, sizeof(ddEnum));
     ddEnum.cb = sizeof(ddEnum);
-
 	for(int i = 0; EnumDisplayDevices(NULL, i, &ddEnum, 0); i++)
 	{
 		//	Is this device attached to the desktop?
@@ -322,6 +321,10 @@ BOOL CApp::GetMonitorInfo()
 			
 				if((devMode.dmPelsWidth > 0) && (devMode.dmPelsHeight > 0))
 				{
+					// This tells us that the secondary monitor is set to the left of the Primary.
+					if (devMode.dmPaperSize == -1) 
+						secondaryOnRight = false;
+					SecondaryDisplayOffset = devMode.dmPosition;
 					m_bDualMonitors = TRUE;
 					m_iSecondaryWidth  = devMode.dmPelsWidth;
 					m_iSecondaryHeight = devMode.dmPelsHeight;
@@ -336,6 +339,23 @@ BOOL CApp::GetMonitorInfo()
 	return TRUE;
 }
 
+//==============================================================================
+//
+// 	Function Name:	isSecondaryOnRight()
+//
+// 	Description:	This function is called to determine if this is the first
+//					instance of the application
+//
+// 	Returns:		True if Secondary display is on right to the primary
+//					False if Secondary display is on left to the primary
+//
+//	Notes:			None
+//
+//==============================================================================
+bool isSecondaryOnRight()
+{
+	return secondaryOnRight;
+}
 //==============================================================================
 //
 // 	Function Name:	CApp::GetPrevInstance()
@@ -370,6 +390,7 @@ HWND CApp::GetPrevInstance()
 //==============================================================================
 BOOL CApp::InitInstance()
 {
+	//AfxMessageBox("CApp::InitInstance()");
 	HWND	hwndPrevious = NULL;
 	char	szFolder[512];
 	char*	pToken;
@@ -479,7 +500,22 @@ BOOL CApp::InitInstance()
 	// Now maximize the window
 	if((m_pFrame->GetUseSecondaryMonitor() == TRUE) && (m_bDualMonitors == TRUE))
 	{
-		m_pFrame->SetWindowPos(&CWnd::wndTopMost, m_iPrimaryWidth, 0, 
+		// If the secondary monitor is on the right of the primary,
+		// then the x-coordinate of the starting position of the
+		// presentation will be (0+m_iPrimaryWidth) as that is the
+		// point where the secondary monitor starts.
+		// --------------------------------------------------------
+		// If the secondary monitor is on the left of the primary,
+		// then the x-coordinate of the starting position of the
+		// presentation will be (0-m_iSecondaryWidth) as that is the
+		// point where the secondary monitor starts.
+
+		if (isSecondaryOnRight())
+			m_pFrame->SetWindowPos(&CWnd::wndTopMost, m_iPrimaryWidth, 0, 
+							   m_iSecondaryWidth, m_iSecondaryHeight,
+							   SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+		else
+			m_pFrame->SetWindowPos(&CWnd::wndTopMost, -m_iSecondaryWidth, 0, 
 							   m_iSecondaryWidth, m_iSecondaryHeight,
 							   SWP_SHOWWINDOW | SWP_FRAMECHANGED);
 	}
@@ -638,19 +674,27 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 		case WM_CHAR:
 		
 			cKey = (TCHAR)(pMsg->wParam);
-
 			// check if specail characters, not supported, entered.
 			// for windows8 onscreen keyboard
 			if (cKey < 0 )
 			{
 				return false;
 			}
-
+			if (pMsg->wParam == 8) // Backspace pressed
+			{
+				if (!m_strKBBuffer.IsEmpty())
+				{
+					m_strKBBuffer.Delete(m_strKBBuffer.GetLength()-1,1);
+					m_pFrame->UpdateBarcode(m_strKBBuffer);
+				}
+				return true;
+			}
 			//	Is the buffer full?
 			if(m_strKBBuffer.GetLength() >= MAXLEN_KBBUFFER)
 			{
 				m_sHookState = WAITING_START;
 				m_strKBBuffer.Empty();
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 			}
 
 			//	Are we waiting for a start character?
@@ -660,6 +704,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				if(cKey == m_cVK)
 				{
 					m_strKBBuffer.Empty();
+					m_pFrame->UpdateBarcode(m_strKBBuffer);
 					m_sHookState = WAITING_VIRTUAL_CODE;
 					return TRUE;
 				}
@@ -668,6 +713,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				else if(toupper(cKey) == m_cPrimary)
 				{
 					m_strKBBuffer.Empty();
+					m_pFrame->UpdateBarcode(m_strKBBuffer);
 					m_sHookState = WAITING_MEDIA_DELIMITER;
 					m_bAlternate = FALSE;
 					return TRUE;
@@ -678,6 +724,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				else if(toupper(cKey) == m_cAlternate)
 				{
 					m_strKBBuffer.Empty();
+					m_pFrame->UpdateBarcode(m_strKBBuffer);
 					m_sHookState = WAITING_MEDIA_DELIMITER;
 					m_bAlternate = TRUE;
 					return TRUE;
@@ -690,6 +737,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 					m_szKey[0] = cKey;
 					m_strKBBuffer += m_szKey;
 					m_sHookState = WAITING_PAGE_NUMBER;
+					//m_pFrame->UpdateBarcode(m_strKBBuffer);
 					return TRUE;
 				}
 			
@@ -698,10 +746,12 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			//	Are we waiting on the rest of the media id?
 			else if(m_sHookState == WAITING_MEDIA_DELIMITER)
 			{
+				if (iscntrl(cKey))
+					return TRUE;
 				//	Add the character to the buffer
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
-
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 				//	Is this the delimiter?
 				if(cKey == TMAX_BARCODE_DELIMITER)
 					m_sHookState = WAITING_SECONDARY_DELIMITER;
@@ -712,10 +762,12 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			//	Are we waiting for the rest of the secondary identifier?
 			else if(m_sHookState == WAITING_SECONDARY_DELIMITER)
 			{
+				if (iscntrl(cKey))
+					return TRUE;
 				//	Add the character to the buffer
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
-
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 				//	Is this the delimiter?
 				if(cKey == TMAX_BARCODE_DELIMITER)
 					m_sHookState = WAITING_RETURN;
@@ -726,8 +778,11 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			//	Are we waiting on the rest of the tertiary id?
 			else if(m_sHookState == WAITING_RETURN)
 			{
+				if (iscntrl(cKey))
+					return TRUE;
 				m_szKey[0] = cKey;
 				m_strKBBuffer += m_szKey;
+				m_pFrame->UpdateBarcode(m_strKBBuffer);
 				return TRUE;
 			}
 
@@ -738,6 +793,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				{ 
 					m_szKey[0] = cKey;
 					m_strKBBuffer += m_szKey;
+					//m_pFrame->UpdateBarcode(m_strKBBuffer);
 					return TRUE;
 				}
 			}
@@ -749,6 +805,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 				{ 
 					m_szKey[0] = cKey;
 					m_strKBBuffer += m_szKey;
+					//m_pFrame->UpdateBarcode(m_strKBBuffer);
 					return TRUE;
 				}
 			}
@@ -757,6 +814,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			if(m_pFrame->ProcessCommandKey(cKey))
 			{
 				m_strKBBuffer.Empty();
+				//m_pFrame->UpdateBarcode(m_strKBBuffer);
 				m_sHookState = WAITING_START;
 				return TRUE;
 			}
@@ -764,6 +822,7 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 			{
 				//	If we get this far the barcode must be invalid
 				m_strKBBuffer.Empty();
+				//m_pFrame->UpdateBarcode(m_strKBBuffer);
 				m_sHookState = WAITING_START;
 			}
 
@@ -783,11 +842,13 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 					   m_sHookState == WAITING_SECONDARY_DELIMITER ||
 					   m_sHookState == WAITING_RETURN)
 					{
+						//m_pFrame->UpdateBarcode("");
 						m_pFrame->LoadFromBarcode(m_strKBBuffer, TRUE, m_bAlternate);
 					}
 					//	Load a new page if this is a page number
 					else if(m_sHookState == WAITING_PAGE_NUMBER)
 					{
+						//m_pFrame->UpdateBarcode("");
 						long lPage = atol(m_strKBBuffer);
 						m_pFrame->LoadPageFromKeyboard(lPage);
 					}
@@ -795,11 +856,16 @@ BOOL CApp::PreTranslateMessage(MSG* pMsg)
 					//	Process the virtual key if that's what we're waiting for
 					else if(m_sHookState == WAITING_VIRTUAL_CODE)
 					{
+						m_pFrame->UpdateBarcode("");
 						m_pFrame->ProcessVirtualKey(atoi(m_strKBBuffer));
 					}
-					
+					else
+					{
+						//m_pFrame->UpdateBarcode("");
+					}
 					//	Clear the buffer
 					m_strKBBuffer.Empty();
+					
 					m_sHookState = WAITING_START;
 
 					return TRUE;
@@ -925,4 +991,43 @@ void CApp::InitWmGesture(HWND hWnd)
         //{ GID_PRESSANDTAP, GC_PRESSANDTAP, 0 }
     };
     SetGestureConfig(hWnd, 0, 2, gestureConfig, sizeof(GESTURECONFIG));
+}
+
+//==============================================================================
+//
+// 	Function Name:	CApp::GetSecondaryDisplayDimensions()
+//
+// 	Description:	This function returns the dimensions of the secondary
+//					display if connected
+//
+// 	Returns:		POINTL
+//
+//	Notes:			None
+//
+//==============================================================================
+POINTL CApp::GetSecondaryDisplayDimensions()
+{
+	POINTL dimensions = POINTL();
+	dimensions.x = m_iSecondaryWidth;
+	dimensions.y = m_iSecondaryHeight;
+	return dimensions;
+}
+
+//==============================================================================
+//
+// 	Function Name:	CApp::GetPrimaryDisplayDimensions()
+//
+// 	Description:	This function returns the dimensions of the primary
+//
+// 	Returns:		POINTL
+//
+//	Notes:			None
+//
+//==============================================================================
+POINTL CApp::GetPrimaryDisplayDimensions()
+{
+	POINTL dimensions = POINTL();
+	dimensions.x = m_iPrimaryWidth;
+	dimensions.y = m_iPrimaryHeight;
+	return dimensions;
 }

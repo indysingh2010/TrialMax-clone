@@ -48,8 +48,10 @@ namespace FTI.Shared.Xml
 		protected string m_strRoot = "root";			
 		
 		/// <summary>Local member accessed by the Comments property</summary>
-		protected ArrayList m_aComments = new ArrayList();	
-		
+		protected ArrayList m_aComments = new ArrayList();
+
+        protected static object m_xmlDocumentLock = true;
+
 		#endregion Protected Members
 		
 		#region Public Methods
@@ -234,29 +236,36 @@ namespace FTI.Shared.Xml
 			XmlTextWriter xmlWriter = null;
 			
 			//	Do we have a valid document?
-			if(m_xmlDocument == null) return false;
-			
-			//	Construct the full path specification
-			GetFileSpec();
-			if(m_strFileSpec.Length == 0) return false;
-			
-			try
-			{
-				if((xmlWriter = new XmlTextWriter(m_strFileSpec, null)) != null)
-				{
-					xmlWriter.Formatting = Formatting.Indented;
+            if (m_xmlDocument == null)
+                return false;
+            else
+            {
+                lock (m_xmlDocumentLock)
+                {
+                    if (m_xmlDocument == null)
+                        return false;
+                    //	Construct the full path specification
+                    GetFileSpec();
+                    if (m_strFileSpec.Length == 0) return false;
 
-					m_xmlDocument.Save(xmlWriter);
-					xmlWriter.Close();
-					return true;
-				}
-				
-			}
-			catch(System.Exception Ex)
-			{
-				m_tmaxEventSource.FireError(this, "Save", m_tmaxErrorBuilder.Message(ERROR_SAVE_FILE_EX, m_strFileSpec), Ex);
-			}
-			
+                    try
+                    {
+                        if ((xmlWriter = new XmlTextWriter(m_strFileSpec, null)) != null)
+                        {
+                            xmlWriter.Formatting = Formatting.Indented;
+
+                            m_xmlDocument.Save(xmlWriter);
+                            xmlWriter.Close();
+                            return true;
+                        }
+
+                    }
+                    catch (System.Exception Ex)
+                    {
+                        m_tmaxEventSource.FireError(this, "Save", m_tmaxErrorBuilder.Message(ERROR_SAVE_FILE_EX, m_strFileSpec), Ex);
+                    }
+                }
+            }			
 			return false;
 		
 		}//	public virtual bool Save()
@@ -364,33 +373,35 @@ namespace FTI.Shared.Xml
 			
 			try
 			{
-				//	Create an Xml text writer using the current file specification
-				if((xmlWriter = new XmlTextWriter(strFileSpec, null)) != null)
-				{
-				
-					xmlWriter.WriteStartDocument();
-					
-					//	Make sure the comments have been populated
-					SetComments();
-					
-					//	Write all comments to file
-					if((m_aComments != null) && (m_aComments.Count > 0))
-					{
-						foreach(object objComment in m_aComments)
-						{
-							xmlWriter.WriteComment(objComment.ToString());
-						}
-					}
-					
-					xmlWriter.WriteStartElement(m_strRoot);
-					xmlWriter.WriteEndElement();
-					xmlWriter.WriteEndDocument();
-					xmlWriter.Close();
-					
-					return true;
+                lock (m_xmlDocumentLock)
+                {
+                    //	Create an Xml text writer using the current file specification
+                    if ((xmlWriter = new XmlTextWriter(strFileSpec, null)) != null)
+                    {
 
-				}
-				
+                        xmlWriter.WriteStartDocument();
+
+                        //	Make sure the comments have been populated
+                        SetComments();
+
+                        //	Write all comments to file
+                        if ((m_aComments != null) && (m_aComments.Count > 0))
+                        {
+                            foreach (object objComment in m_aComments)
+                            {
+                                xmlWriter.WriteComment(objComment.ToString());
+                            }
+                        }
+
+                        xmlWriter.WriteStartElement(m_strRoot);
+                        xmlWriter.WriteEndElement();
+                        xmlWriter.WriteEndDocument();
+                        xmlWriter.Close();
+
+                        return true;
+
+                    }
+                }
 			}
 			catch(System.Exception Ex)
 			{

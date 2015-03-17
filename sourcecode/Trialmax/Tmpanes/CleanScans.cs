@@ -998,7 +998,10 @@ namespace FTI.Trialmax.Panes
 			
 			if(String.Compare(strExtension, ".tiff", true) == 0)
 				return true;
-				
+
+            if (String.Compare(strExtension, ".png", true) == 0)
+                return true;
+
 			return false;
 			
 		}// private bool IsScanned(string strFilename)

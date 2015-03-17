@@ -58,6 +58,12 @@ namespace FTI.Trialmax.Forms
 		/// <summary>Local member bound to Maximum property</summary>
 		private long m_lMaximum = 100;
 
+        /// <summary>Local member bound to Total number of pages to be completed</summary>
+        public long m_lTotalPages;
+
+        /// <summary>Local member bound to Number of pages completed</summary>
+        public long m_lCompletedPages;
+
 		/// <summary>Column used to display database id in conflicts message control</summary>
 		private FTI.Trialmax.Controls.CTmaxMessageCtrlColumn m_tmaxAutoIdColumn = new CTmaxMessageCtrlColumn("Id");
 		
@@ -583,7 +589,7 @@ namespace FTI.Trialmax.Forms
 				
 				//	Update the progress bar
 				m_lCompleted = m_lMaximum;
-				OnProgressChanged();
+				//OnProgressChanged();
 				
 				FTI.Shared.Win32.User.MessageBeep(FTI.Shared.Win32.User.MB_OK);
 				
@@ -615,7 +621,41 @@ namespace FTI.Trialmax.Forms
                 }
             }
         }
-		
+
+        delegate void DisableFormCallback();
+        public void DisableForm()
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.InvokeRequired)
+            {
+                DisableFormCallback d = new DisableFormCallback(DisableForm);
+                this.Invoke(d, new object[] { });
+            }
+            else
+            {
+                this.Enabled = false;
+            }
+        }
+
+        delegate void EnableFormCallback();
+        public void EnableForm()
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (this.InvokeRequired)
+            {
+                EnableFormCallback d = new EnableFormCallback(EnableForm);
+                this.Invoke(d, new object[] { });
+            }
+            else
+            {
+                this.Enabled = true;
+            }
+        }
+
 		/// <summary>Flag to indicate that the operation should be blocked when an error occurs</summary>
 		public bool PauseOnError
 		{
@@ -781,7 +821,7 @@ namespace FTI.Trialmax.Forms
 				m_lMaximum = value;
 				
 				//	Update the progress bar
-				OnProgressChanged();
+				//OnProgressChanged();
 			
 			}
 		}
@@ -798,11 +838,55 @@ namespace FTI.Trialmax.Forms
 				m_lCompleted = value;
 				
 				//	Update the progress bar
-				OnProgressChanged();
+				//OnProgressChanged();
 			
 			}
 		}
-		
+
+        /// <summary>Total number of pages to be completed</summary>
+        public long TotalPages
+        {
+            get
+            {
+                return m_lTotalPages;
+            }
+            set
+            {
+                m_lTotalPages = value;
+            }
+        }
+
+        /// <summary>Number of pages completed</summary>
+        public long CompletedPages
+        {
+            get
+            {
+                return m_lCompletedPages;
+            }
+            set
+            {
+                m_lCompletedPages = value;
+
+                //	Update the progress bar
+                try
+                {
+                    //	Do we have a valid progress bar?
+                    if ((m_ctrlProgressBar == null) || (m_ctrlProgressBar.IsDisposed == true)) return;
+
+                    //	Calculate the current progress
+                    if (m_lTotalPages > 0)
+                        UpdateProgress((Int32)((m_lCompletedPages * 100) / m_lTotalPages));
+                    else
+                        UpdateProgress(0);
+
+                }
+                catch (Exception exc)
+                {
+                    Console.WriteLine(exc.ToString());
+                }
+            }
+        }
+
 		#endregion Properties
 		
 	}// class CFProgress

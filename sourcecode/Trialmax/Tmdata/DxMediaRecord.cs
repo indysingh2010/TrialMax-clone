@@ -1753,6 +1753,9 @@ namespace FTI.Trialmax.Database
 			if(this.Database == null) return null;
             if(this.Database.IsConnected == false) return null;
 			
+            //  Locking the database so that only 1 file is registered at any given time to avoid race conditions
+            //  when multiple files trying to register at the same time causing duplicate ID.
+            lock (this.Database)
 			try
 			{
 				try

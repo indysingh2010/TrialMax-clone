@@ -42,8 +42,8 @@ public:
 	typedef void (CColorPickerList::*fn)(int iButtonId);
 	typedef std::map< UINT, fn > EventMessageMap;
 	
-	int					m_xPosition;
-	int					m_yPosition;	
+	int					m_nXPosition;
+	int					m_nYPosition;	
 
 // Dialog Data
 	enum { IDD = IDD_COLOR_PICKER_DLG };
@@ -67,6 +67,7 @@ public:
 public:
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);	
 	void OnCancel();
+	void HandleMouseClick();
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -85,4 +86,6 @@ private:
 	BOOL			AddButtons();
 	void			CreateButton(CString sButtonName, DWORD pButtonStyle, int iButtonId, int iButtonWidth, int iButtonHeight, 
 					int iXPosition, int iYPosition,int iButtonNumber, int ICON = 0, COLORREF faceColor = NULL);
+public:
+	
 };

@@ -157,6 +157,7 @@ UINT CAppLink::MsgBox(HWND hWnd)
 //==============================================================================
 void CAppLink::SetFlag(long lMask, BOOL bState)
 {
+	//AfxMessageBox("CAppLink::SetFlag");
 	if(bState == TRUE)
 		m_lAttributes |= lMask;  // Set the associated bit
 	else

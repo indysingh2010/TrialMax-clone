@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,0,21,4034
- PRODUCTVERSION 7,0,21,4034
+ FILEVERSION 7,0,22,7254
+ PRODUCTVERSION 7,0,22,7254
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FTI Consulting"
             VALUE "FileDescription", "TrialMax Media Toolbar ActiveX Control"
-            VALUE "FileVersion", "7.0.21.4034"
+            VALUE "FileVersion", "7.0.22.7254"
             VALUE "InternalName", "TMTOOL"
             VALUE "LegalCopyright", "Copyright (C) FTI Consulting 2004"
             VALUE "OriginalFilename", "TM_TOOL6.OCX"
             VALUE "ProductName", "TrialMax Media Toolbar ActiveX Control"
-            VALUE "ProductVersion", "7.0.21.4034"
+            VALUE "ProductVersion", "7.0.22.7254"
         END
     END
     BLOCK "VarFileInfo"
@@ -206,6 +206,9 @@ STRINGTABLE
 BEGIN
     IDS_TMTOOL              "TMTool 6 Control"
     IDS_TMTOOL_PPG          "TMTool 6 Property Page"
+    IDS_TMTB_NUDGELEFT      "Nudge Left"
+    IDS_TMTB_NUDGERIGHT     "Nudge Right"
+    IDS_TMTB_SAVENUDGE      "Save Nudge"
 END
 
 STRINGTABLE

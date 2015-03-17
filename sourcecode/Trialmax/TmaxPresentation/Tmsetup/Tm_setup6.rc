@@ -13,13 +13,11 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -53,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,0,18,9253
- PRODUCTVERSION 7,0,18,9253
+ FILEVERSION 7,0,19,884
+ PRODUCTVERSION 7,0,19,884
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -71,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FTI Consulting"
             VALUE "FileDescription", "TrialMax Presentation Configuration ActiveX Control"
-            VALUE "FileVersion", "7, 0, 18, 9253"
+            VALUE "FileVersion", "7.0.19.884"
             VALUE "InternalName", "TMSETUP"
             VALUE "LegalCopyright", "Copyright (C) FTI Consulting 2004"
             VALUE "OriginalFilename", "TM_SETUP6.OCX"
             VALUE "ProductName", "TrialMax Presentation Configuration ActiveX Control"
-            VALUE "ProductVersion", "7, 0, 18, 9253"
+            VALUE "ProductVersion", "7.0.19.884"
         END
     END
     BLOCK "VarFileInfo"
@@ -157,7 +155,7 @@ YELLOWU                 BITMAP                  "..\\common\\resource\\colors\\y
 // Dialog
 //
 
-IDD_ABOUTBOX_TMSETUP DIALOG  34, 22, 260, 55
+IDD_ABOUTBOX_TMSETUP DIALOG 34, 22, 260, 55
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About TMSetup Control"
 FONT 8, "MS Sans Serif"
@@ -168,20 +166,20 @@ BEGIN
     DEFPUSHBUTTON   "OK",IDOK,221,7,32,14,WS_GROUP
 END
 
-IDD_PROPPAGE_TMSETUP DIALOG  0, 0, 250, 62
+IDD_PROPPAGE_TMSETUP DIALOG 0, 0, 250, 62
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
     CTEXT           "No custom properties available",IDC_STATIC,7,25,236,16
 END
 
-IDD_SIZE_DIALOG DIALOG  0, 0, 15, 13
+IDD_SIZE_DIALOG DIALOG 0, 0, 15, 13
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
 END
 
-IDD_GRAPHICS_PAGE DIALOG  0, 0, 311, 215
+IDD_GRAPHICS_PAGE DIALOG 0, 0, 311, 215
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -241,7 +239,7 @@ BEGIN
     LTEXT           "Callout Shade Grayscale (0 - 255)",IDC_STATIC,9,162,107,8
 END
 
-IDD_VIDEO_PAGE DIALOG  0, 0, 311, 215
+IDD_VIDEO_PAGE DIALOG 0, 0, 311, 215
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -278,7 +276,7 @@ BEGIN
     LTEXT           "Linked Video Position",IDC_STATIC,10,70,73,8
 END
 
-IDD_TEXT_PAGE DIALOG  0, 0, 311, 215
+IDD_TEXT_PAGE DIALOG 0, 0, 311, 215
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -328,7 +326,7 @@ BEGIN
     LTEXT           "Bullets",IDC_BULLETS_LABEL,11,134,36,8
 END
 
-IDD_ABOUT_PAGE DIALOG  0, 0, 311, 215
+IDD_ABOUT_PAGE DIALOG 0, 0, 311, 215
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -338,7 +336,7 @@ BEGIN
     CTEXT           "Email",IDC_EMAIL,7,89,301,8
 END
 
-IDD_DATABASE_PAGE DIALOG  0, 0, 311, 215
+IDD_DATABASE_PAGE DIALOG 0, 0, 311, 215
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -401,10 +399,12 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,170,209,10
     CONTROL         "Run Presentation on Secondary Monitor",IDC_DUAL_MONITORS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,179,209,10
-    CONTROL         "Optimize For Tablet",IDC_OPTIMIZE_TABLET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,190,209,10
+    CONTROL         "Optimize For Tablet",IDC_OPTIMIZE_TABLET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,188,209,10
+    CONTROL         "Enable Visible Barcode Keystrokes",IDC_ENABLE_BARCODE_KEYSTROKES,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,12,198,125,10
 END
 
-IDD_CAPTURE_PAGE DIALOG  0, 0, 311, 215
+IDD_CAPTURE_PAGE DIALOG 0, 0, 311, 215
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -440,7 +440,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX_TMSETUP, DIALOG
     BEGIN
@@ -673,13 +673,13 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TMSETUP             "TMSetup 6 Control"
     IDS_TMSETUP_PPG         "TMSetup 6 Property Page"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDS_TMSETUP_PPG_CAPTION "General"
     IDS_TMSETUP_NOTINITIALIZED "The control has not been initialized."
@@ -697,7 +697,7 @@ BEGIN
                             "You must supply a frame rate  value  between %1. The video options have not been saved."
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

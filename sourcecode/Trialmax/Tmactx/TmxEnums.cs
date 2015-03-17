@@ -32,6 +32,8 @@ namespace FTI.Trialmax.ActiveX
 		Previous,
 		Next,
 		GoTo,
+        Nudge,
+        SaveNudge,
 	}
 	
 	/// <summary>Cue operations</summary>
@@ -133,6 +135,7 @@ namespace FTI.Trialmax.ActiveX
 		AddTreatment,
 		AddToBinder,
 		UpdateTreatment,
+        UpdateNudge,
 	}
 	
 

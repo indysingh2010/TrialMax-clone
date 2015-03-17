@@ -88,6 +88,44 @@ namespace TmaxSetupInsatller
 
         }
 
+        private void InstallKLiteCodec()
+        {
+            try
+            {
+                string fileName = Application.StartupPath + "\\" + Config.KLiteCodec;
+
+                if (!File.Exists(fileName)) return;
+                _CRProcess = new Process();
+                _CRProcess.StartInfo.FileName = fileName;
+                _CRProcess.StartInfo.Arguments = "/verysilent";
+                _CRProcess.Start();
+                _CRProcess.Exited += new EventHandler(_KLiteCodecProcess_Exited);
+                _CRProcess.EnableRaisingEvents = true;
+            }
+            catch (Exception ex)
+            { 
+                // do nothing
+            }
+        }
+
+        void _KLiteCodecProcess_Exited(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_CRProcess != null)
+                {
+                    _CRProcess.Close();
+                }
+                SetControlPropertyValue(pbKLiteCodec, "Visible", true);                
+                InstallationCompleted();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+                // Do nothing
+            }
+        }
+
         void CRprocess_Exited(object sender, EventArgs e)
         {
             try
@@ -97,7 +135,8 @@ namespace TmaxSetupInsatller
                     _CRProcess.Close();
                 }
                 SetControlPropertyValue(pbCRE, "Visible", true);
-                InstallWMEncoder();
+                //InstallWMEncoder();
+                InstallKLiteCodec();
                 
             }
             catch (Exception ex)
@@ -116,8 +155,7 @@ namespace TmaxSetupInsatller
                     _CRProcess.Close();
                 }
                 SetControlPropertyValue(pbWMEncoder, "Visible", true);
-                //InstallWMEncoder();
-                InstallationCompleted();
+                InstallKLiteCodec();                
             }
             catch (Exception ex)
             {
@@ -132,7 +170,7 @@ namespace TmaxSetupInsatller
         private void InstallationCompleted()
         {
             
-            SetControlPropertyValue(pbWMEncoder, "Visible", true);
+            //SetControlPropertyValue(pbWMEncoder, "Visible", true);
             SetControlPropertyValue(btnClose, "Enabled", true);
             SetControlPropertyValue(btnClose, "Text", "Close");
             SetControlPropertyValue(lblMessage, "Text", "Following components have been installed successfully");

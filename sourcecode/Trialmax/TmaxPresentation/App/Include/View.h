@@ -520,9 +520,10 @@ class CMainView : public CFormView
 	
 		CBarcodeBuffer	m_aBarcodes;
 		CBarcode		m_Barcode;
+		CBarcode		m_CurrentPageBarcode;
 
-		SMultipageInfo	m_TMView1;
-		SMultipageInfo	m_TMView2;
+		vector<SMultipageInfo *> m_arrMultiPageInfo;
+
 		SMultipageInfo	m_TMPower1;
 		SMultipageInfo	m_TMPower2;
 		SMultipageInfo	m_TMMovie;
@@ -574,6 +575,8 @@ class CMainView : public CFormView
 		short			m_sUpdateButton;
 		short			m_sVideoSize;
 		short			m_sVideoPosition;
+		short			m_sTotalRotation;
+		short			m_sTotalNudge;
 		float			m_fMovieStep;
 		float			m_fPlaylistStep;
 		double			m_dFrameRate;
@@ -632,7 +635,6 @@ class CMainView : public CFormView
 		int				m_iCaptureFileIndex;
 		int				m_iCapturedBarcodes;
 
-		CVKBDlg			*m_pVKBDlg;
 		DWORD			g_tcLastLeftButtonClickTime;
 
 		// WM_GESTURE variables
@@ -646,13 +648,26 @@ class CMainView : public CFormView
 		CBinderEntry	m_currentBinderItem;
 		CBinderEntry	m_parentBinderItem;	
 		POINT			m_BinderListPosition;
-		CBinderList*	m_BinderList;
+		//CBinderList*	m_BinderList;
 		BOOL			m_bIsBinderOpen;
 		
 		POINT			m_ColorPickerListPosition;
 		BOOL			m_bIsColorPickerOpen;
-		CColorPickerList* m_ColorPickerList;
-		
+		//CColorPickerList* m_ColorPickerList;
+		bool			toolbarForcedHidden;
+		bool			loadNextInOtherPanes;
+		int				curPageNavCount;
+		vector<float>			scaleHist;
+#define COUNT_FROM_CUR		0
+#define COUNT_FROM_FIRST	1
+#define COUNT_FROM_LAST	   -1
+		int				countFrom; // 0-currentPage, 1-firstpage, -1-lastPage
+		bool			zoomFullWidth;
+		bool			m_bOptimizedForTablet;
+		bool			m_bEnableBarcodeKeystrokes;
+		bool			m_bIsShowingBarcode;
+		bool			m_bIsStatusBarShowing;
+		bool			m_bIsXPressed;
 	public:
 		
 
@@ -679,11 +694,14 @@ class CMainView : public CFormView
 		BOOL			ProcessCommandKey(char cKey);
 		BOOL			ProcessVirtualKey(WORD wKey);
 		BOOL			ProcessMouseMessage(MSG* pMsg);
-		BOOL			GetUseSecondaryMonitor(){ return m_bUseSecondaryMonitor; }
+		BOOL			GetUseSecondaryMonitor(){ return (m_bUseSecondaryMonitor && DualMonitorExists()); }
+		BOOL			DualMonitorExists();
 		CTMDocument*	GetDocument();
 		void			BlankPresentationToolbar();
 		void            DisableGestureOnCommand(short sCommand);
-
+		POINTL			GetPrimaryDisplayDimensions();
+		POINTL			GetSecondaryDisplayDimensions();
+		POINTL			GetSecondaryDisplayOffset();
 
 		//	Keyboard hook characters
 		char			GetPrimaryBarcodeChar(){ return m_cPrimaryBarcodeChar; }
@@ -698,8 +716,10 @@ class CMainView : public CFormView
 		void            OnGesturePan();
 		void			OnColorPickerButtonClickEvent(int iColorType);				
 		void			OnColorPickerCloseButtonClickEvent();
-
-	protected: 		
+		void			UpdateBarcodeText(CString);
+		void			SaveNudgePage();
+	protected:
+ 		void			SetStatusBarcode(CString barcode);
 		void			SetTaskBarVisible(BOOL bVisible);
 		void			UpdateToolColor();
 		void			UpdateStatusBar();
@@ -812,11 +832,22 @@ class CMainView : public CFormView
 		void			OpenColorPicker();
 		void			SetColorPickerPosition();
 		void			ChangeColorOfColorButton(short sColorToChange);
+
+		bool			IsNextPageAvailable();
+		bool			IsPrevPageAvailable();
+		void			SetViewingCtrl();
+
 	//	Class Wizard Maintained
 	public:
 	//{{AFX_DATA(CMainView)
 	enum { IDD = IDD_TMAXPRESENTATION_FORM };
-	CTm_view	m_ctrlTMView;
+
+	CTm_view	*m_ctrlTMView;
+#define SZ_ARR_TM_VW 3
+	CTm_view *m_arrTmView[3];
+	bool hasPage[3];
+	int curIndexView;
+
 	CTMTool	m_ctrlTBDocuments;
 	CTMTool	m_ctrlTBDocumentsLarge;
 	CTMTool	m_ctrlTBGraphics;
@@ -846,6 +877,8 @@ class CMainView : public CFormView
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual void OnDraw(CDC* pDC);
 	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual void OnLButtonDblClk(UINT flags, CPoint clkPoint);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	//}}AFX_VIRTUAL
 
 	protected:
@@ -978,10 +1011,13 @@ class CMainView : public CFormView
 	afx_msg void OnSplitPagesNext();
 	afx_msg void OnOpenBinder();
 	afx_msg void OnOpenColorPicker();
+	afx_msg void OnNudge(bool direction);
 	DECLARE_EVENTSINK_MAP()
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
+public:
+	void EmptyMessageQueue();
 };
 
 #ifndef _DEBUG  

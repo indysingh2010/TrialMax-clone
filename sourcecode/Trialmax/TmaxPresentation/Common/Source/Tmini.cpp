@@ -828,6 +828,7 @@ BOOL CTMIni::ReadSystemOptions(SSystemOptions* pOptions)
 		pOptions->bOptimizeVideo = ReadBool(OPTIMIZEVIDEO_LINE, DEFAULT_SO_OPTIMIZEVIDEO);
 		pOptions->bDualMonitors = ReadBool(DUALMONITORS_LINE, DEFAULT_SO_DUALMONITORS);
 		pOptions->bOptimizeTablet = ReadBool(OPTIMIZETABLET_LINE, DEFAULT_SO_OPTIMIZETABLET);
+		pOptions->bEnableBarcodeKeystrokes = ReadBool(ENABLEBARCODEKEYSTROKES_LINE, DEFAULT_SO_ENABLEBARCODEKEYSTROKES);
 	}
 	else
 	{
@@ -840,6 +841,7 @@ BOOL CTMIni::ReadSystemOptions(SSystemOptions* pOptions)
 		pOptions->bOptimizeVideo = DEFAULT_SO_OPTIMIZEVIDEO;
 		pOptions->bDualMonitors = DEFAULT_SO_DUALMONITORS;
 		pOptions->bOptimizeTablet = DEFAULT_SO_OPTIMIZETABLET;
+		pOptions->bEnableBarcodeKeystrokes = ReadBool(ENABLEBARCODEKEYSTROKES_LINE, DEFAULT_SO_ENABLEBARCODEKEYSTROKES);
 	}
 	return TRUE;
 }
@@ -1466,6 +1468,7 @@ void CTMIni::WriteSystemOptions(SSystemOptions* pOptions)
 	WriteBool(OPTIMIZEVIDEO_LINE, pOptions->bOptimizeVideo);
 	WriteBool(DUALMONITORS_LINE, pOptions->bDualMonitors);
 	WriteBool(OPTIMIZETABLET_LINE, pOptions->bOptimizeTablet);
+	WriteBool(ENABLEBARCODEKEYSTROKES_LINE, pOptions->bEnableBarcodeKeystrokes);
 	
 	// setting small button size if optimize tablet is unchecked
 	if(!pOptions->bOptimizeTablet)

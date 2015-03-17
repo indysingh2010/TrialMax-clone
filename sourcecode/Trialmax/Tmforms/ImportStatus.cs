@@ -354,7 +354,7 @@ namespace FTI.Trialmax.Forms
 			if(m_ctrlFilename != null)
 				m_ctrlFilename.Text = m_strFilename;
 			if(m_ctrlLine != null)
-				m_ctrlLine.Text = (m_iLine > 0) ? m_iLine.ToString() : "";
+                SetLine();
 			
 			base.OnLoad(e);
 
@@ -855,7 +855,7 @@ namespace FTI.Trialmax.Forms
 			}
 		
 		}
-
+		
         delegate void SetLineCallback();
         private void SetLine()
         {
@@ -871,10 +871,11 @@ namespace FTI.Trialmax.Forms
             }
             else
             {
-                m_ctrlLine.Text = (m_iLine > 0) ? m_iLine.ToString() : ""; 
+                m_ctrlLine.Text = (m_iLine > 0) ? m_iLine.ToString() : "";
             }
         }
-		
+
+
 		/// <summary>True if the operation has been aborted by the user</summary>
 		public bool Aborted
 		{

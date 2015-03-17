@@ -64,6 +64,7 @@ CSystemPage::CSystemPage(CWnd* pParent) : CSetupPage(CSystemPage::IDD, pParent)
 	m_bOptimizeVideo = FALSE;
 	m_bDualMonitors = FALSE;
 	m_bOptimizeTablet = FALSE;
+	m_bEnableBarcodeKeystrokes = FALSE;
 	//}}AFX_DATA_INIT
 }
 
@@ -92,6 +93,7 @@ void CSystemPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_OPTIMIZE_VIDEO, m_bOptimizeVideo);
 	DDX_Check(pDX, IDC_DUAL_MONITORS, m_bDualMonitors);
 	DDX_Check(pDX, IDC_OPTIMIZE_TABLET, m_bOptimizeTablet);
+	DDX_Check(pDX, IDC_ENABLE_BARCODE_KEYSTROKES, m_bEnableBarcodeKeystrokes);
 	//}}AFX_DATA_MAP
 }
 
@@ -124,7 +126,7 @@ void CSystemPage::ReadOptions(CTMIni& rIni)
 	m_bOptimizeVideo = Options.bOptimizeVideo;
 	m_bDualMonitors = Options.bDualMonitors;
 	m_bOptimizeTablet = Options.bOptimizeTablet;
-
+	m_bEnableBarcodeKeystrokes = Options.bEnableBarcodeKeystrokes;
 
 	//	Update the controls
 	if(IsWindow(m_hWnd))
@@ -161,6 +163,7 @@ BOOL CSystemPage::WriteOptions(CTMIni& rIni)
 	Options.bOptimizeVideo = m_bOptimizeVideo;
 	Options.bDualMonitors = m_bDualMonitors;
 	Options.bOptimizeTablet = m_bOptimizeTablet;
+	Options.bEnableBarcodeKeystrokes = m_bEnableBarcodeKeystrokes;
 	//	Write the options to the ini file
 	rIni.WriteSystemOptions(&Options);
 
