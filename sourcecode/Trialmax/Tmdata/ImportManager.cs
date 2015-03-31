@@ -578,16 +578,6 @@ namespace FTI.Trialmax.Database
 			}
 			
 			//	Did we import/update any records?
-
-            if (m_tmaxResults != null)
-            {
-                bSuccessful = ((m_tmaxResults.Added.Count > 0) || (m_tmaxResults.Updated.Count > 0));
-            }
-            else
-            {
-                bSuccessful = true;
-            }
-			
 			return bSuccessful;
 				
 		}// public bool Import()
@@ -3699,37 +3689,7 @@ namespace FTI.Trialmax.Database
         /// <summary>This method uses the media record and traverses it</summary>
 		/// <param name="mediaRecord">The node on which traversal is to be performed</param>
 		/// <param name="aFields">The fields parsed from the line in the import file</param>
-
-        private void TraverseBinderNodes(CDxMediaRecord mediaRecord)
-        {
-
-            if (mediaRecord.GetChildCount() > 0)
-            {
-                foreach (CDxMediaRecord record in mediaRecord.GetChildCollection())
-                {
-                    TraverseBinderNodes(record);
-                }
-            }
-            else
-            {
-
-                for (int i = 0; i < m_tmaxPending.Count; i++)
-                {
-                    bool isMatch = false;
-                    if (mediaRecord.GetBarcode(true) == m_tmaxPending[i].GetMediaRecord().GetBarcode(true))
-                    {
-                        m_tmaxPending.RemoveAt(i);
-                    }
-                    
-                }
-
-                return;
-            }
-            
-        }//private void TraverseBinderNodes(CDxMediaRecord mediaRecord)
-
-        
-        
+                
         /// <summary>This method assigns the pending records to the appropriate parent record</summary>
 		/// <returns>True if successful</returns>
 		private bool SetPendingParent()
@@ -3739,73 +3699,40 @@ namespace FTI.Trialmax.Database
 			CTmaxParameters			tmaxParameters = null;
 			CDxMediaRecord			dxParent = null;
 			CDxMediaRecord			dxInsert = null;
-			bool					bAddedParent = true;
-            bool                    bAddNewParent = true;
-            String                  strFileName = "";
+			bool					bAddedParent = true;          
 
 
 			Debug.Assert(m_tmaxPending != null);
 			if(m_tmaxPending == null) return false;
 			Debug.Assert(m_tmaxPending.Count > 0);
-            if(m_tmaxPending.Count == 0) return false;
+
             if (this.Cancelled == true) return false;
-            if (this.m_strFileSpec == null || this.m_strFileSpec == "") return false;
 
-            strFileName = System.IO.Path.GetFileNameWithoutExtension(this.m_strFileSpec);
-            
-            foreach (CDxBinderEntry tempBinder in m_tmaxDatabase.Binders)
+            //	Are we merging all files into one?
+            if (m_bMergeSource == true)
             {
-
-                if (strFileName == tempBinder.m_strName)
+                //	Did the caller specify a target?
+                if (this.Target != null)
                 {
-                    dxParent = tempBinder;
-                    bAddNewParent = false;
-                    if (tempBinder.ChildCount > 0)
-                    {
-                        foreach (CDxMediaRecord rec in tempBinder.GetChildCollection())
-                        {
-                            TraverseBinderNodes(rec);
-                        }
-                    }
-
-                }
-            }
-
-            if (m_tmaxPending.Count == 0) return false;
-			
-			//	Are we merging all files into one?
-
-            if (bAddNewParent)
-            {
-
-                if (m_bMergeSource == true)
-                {
-                    //	Did the caller specify a target?
-                    if (this.Target != null)
-                    {
-                        //	The target is the parent
-                        dxParent = ((CDxMediaRecord)(this.Target));
-                        dxInsert = ((CDxMediaRecord)(this.InsertAt));
-                        bAddedParent = false;
-                    }
-                    else
-                    {
-                        //	Create a new parent using the name of the first source file
-                        dxParent = AddParent(m_aSourceFiles[0]);
-                        dxInsert = null; // No insertion point if no target
-                    }
-
+                    //	The target is the parent
+                    dxParent = ((CDxMediaRecord)(this.Target));
+                    dxInsert = ((CDxMediaRecord)(this.InsertAt));
+                    bAddedParent = false;
                 }
                 else
                 {
-                    //	Create a new parent using the name of the active source file
-                    dxParent = AddParent(this.FileSpec);
-                    dxInsert = null;
+                    //	Create a new parent using the name of the first source file
+                    dxParent = AddParent(m_aSourceFiles[0]);
+                    dxInsert = null; // No insertion point if no target
                 }
 
             }
             else
-                bAddedParent = false;
+            {
+                //	Create a new parent using the name of the active source file
+                dxParent = AddParent(this.FileSpec);
+                dxInsert = null;
+            }
 
 			//	Must have been a problem if we don't have a parent record
 			if(dxParent == null) return false;
@@ -3860,9 +3787,6 @@ namespace FTI.Trialmax.Database
 
             }// if(m_tmaxDatabase.Add(tmaxAdd, tmaxAdded, tmaxParameters) == true)
 
-            else
-                m_tmaxResults.Added.Clear();
-
 			return true;
 		
 		}// bool SetPendingParent()
@@ -3889,7 +3813,6 @@ namespace FTI.Trialmax.Database
 				tmaxParent.SourceFile = new CTmaxSourceFile(strFileSpec);
 					
 				//	Add a new binder to the database
-                
                 dxParent = m_tmaxDatabase.AddBinderEntry((CDxBinderEntry)this.Target, tmaxParent, (CDxBinderEntry)(this.InsertAt), this.InsertBefore);
             }
 			

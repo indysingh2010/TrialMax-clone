@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by f:\TrialMax\trunk\Source Code\Trialmax_640_64bit_betaanees\TmaxPresentation\Tmsetup\Tm_setup6.rc
+// Used by D:\TrialMax\sourcecode\Trialmax\TmaxPresentation\Tmsetup\Tm_setup6.rc
 //
 #define IDS_TMSETUP                     1
 #define IDD_ABOUTBOX_TMSETUP            1
@@ -67,6 +67,7 @@
 #define IDC_TMSHARE                     250
 #define IDC_BULLETS_LABEL               250
 #define IDC_TMGRAB                      251
+#define IDC_ENABLE_BARCODE_KEYSTROKES   254
 #define IDD_GRAPHICS_PAGE               301
 #define IDD_SIZE_DIALOG                 510
 #define IDD_VIDEO_PAGE                  511
@@ -203,7 +204,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        208
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         253
+#define _APS_NEXT_CONTROL_VALUE         255
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

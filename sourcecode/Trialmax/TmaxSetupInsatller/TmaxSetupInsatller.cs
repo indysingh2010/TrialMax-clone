@@ -46,5 +46,17 @@ namespace TmaxSetupInsatller
             _CRProcess.EnableRaisingEvents = true;
             _CRProcess.Close();
         }
+
+        private static void InstallKLiteCodec()
+        {
+            string fileName = Config.KLiteCodec;
+            Console.Write(fileName);
+            if (!File.Exists(fileName)) return;
+            Process _CRProcess = new Process();
+            _CRProcess.StartInfo.FileName = fileName;
+            _CRProcess.Start();
+            _CRProcess.EnableRaisingEvents = true;
+            _CRProcess.Close();
+        }
     }
 }

@@ -413,7 +413,7 @@ namespace FTI.Trialmax.Forms
 				//	Do we have any encoder profiles?
 				if((m_wmEncoder != null) && (m_wmEncoder.Profiles != null))
 				{
-					m_ctrlVideoWMV.Enabled = (m_ctrlProfiles.Items.Count > 0);
+                    m_ctrlVideoWMV.Enabled = true;// (m_ctrlProfiles.Items.Count > 0);
 					m_ctrlViewCodecs.Enabled = true;
 					m_ctrlWMVGroup.Enabled = (m_wmEncoder.Profiles.Count > 0);
 					m_ctrlShowPreferred.Enabled = (m_wmEncoder.Profiles.Count > 0);
@@ -422,11 +422,11 @@ namespace FTI.Trialmax.Forms
 				}
 				else
 				{
-					m_ctrlVideoWMV.Enabled = false;
+                    m_ctrlVideoWMV.Enabled = true;//false;
 					m_ctrlWMVGroup.Enabled = false;
 					m_ctrlProfilesLabel.Enabled = false;
 					m_ctrlProfiles.Enabled = false;
-					m_ctrlVideoWMV.Checked = false;
+					//m_ctrlVideoWMV.Checked = false;
 					m_ctrlViewCodecs.Enabled = false;
 					m_ctrlShowPreferred.Checked = false;
 					m_ctrlShowPreferred.Enabled = false;
@@ -444,322 +444,324 @@ namespace FTI.Trialmax.Forms
 		/// <summary>Required method for Designer support</summary>
 		private void InitializeComponent()
 		{
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(CFExportVideo));
-			this.m_ctrlCancel = new System.Windows.Forms.Button();
-			this.m_ctrlOk = new System.Windows.Forms.Button();
-			this.m_ctrlVideoEDL = new System.Windows.Forms.CheckBox();
-			this.m_ctrlVideoSAMI = new System.Windows.Forms.CheckBox();
-			this.m_ctrlVideoWMV = new System.Windows.Forms.CheckBox();
-			this.m_ctrlProfiles = new System.Windows.Forms.ListBox();
-			this.m_ctrlProfilesLabel = new System.Windows.Forms.Label();
-			this.m_ctrlFormatsGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlSAMIGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlSAMIPageNumbers = new System.Windows.Forms.CheckBox();
-			this.m_ctrlSAMIHighlighter = new System.Windows.Forms.CheckBox();
-			this.m_ctrlSAMISize = new System.Windows.Forms.TextBox();
-			this.m_ctrlSAMISizeLabel = new System.Windows.Forms.Label();
-			this.m_ctrlSAMIColorLabel = new System.Windows.Forms.Label();
-			this.m_ctrlSAMIFontLabel = new System.Windows.Forms.Label();
-			this.m_ctrlSAMIColor = new System.Windows.Forms.Button();
-			this.m_ctrlSAMIFonts = new System.Windows.Forms.ComboBox();
-			this.m_ctrlSAMILines = new System.Windows.Forms.TextBox();
-			this.m_ctrlSAMILinesLabel = new System.Windows.Forms.Label();
-			this.m_ctrlWMVGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlShowPreferred = new System.Windows.Forms.CheckBox();
-			this.m_ctrlColorPicker = new System.Windows.Forms.ColorDialog();
-			this.m_ctrlGeneralGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlAutoFilenames = new System.Windows.Forms.CheckBox();
-			this.m_ctrlConfirmOverwrite = new System.Windows.Forms.CheckBox();
-			this.m_ctrlViewCodecs = new System.Windows.Forms.Button();
-			this.m_ctrlFormatsGroup.SuspendLayout();
-			this.m_ctrlSAMIGroup.SuspendLayout();
-			this.m_ctrlWMVGroup.SuspendLayout();
-			this.m_ctrlGeneralGroup.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// m_ctrlCancel
-			// 
-			this.m_ctrlCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_ctrlCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.m_ctrlCancel.Location = new System.Drawing.Point(500, 320);
-			this.m_ctrlCancel.Name = "m_ctrlCancel";
-			this.m_ctrlCancel.TabIndex = 1;
-			this.m_ctrlCancel.Text = "  &Cancel";
-			this.m_ctrlCancel.Click += new System.EventHandler(this.OnClickCancel);
-			// 
-			// m_ctrlOk
-			// 
-			this.m_ctrlOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlOk.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.m_ctrlOk.Location = new System.Drawing.Point(412, 320);
-			this.m_ctrlOk.Name = "m_ctrlOk";
-			this.m_ctrlOk.TabIndex = 0;
-			this.m_ctrlOk.Text = "&OK";
-			this.m_ctrlOk.Click += new System.EventHandler(this.OnClickOk);
-			// 
-			// m_ctrlVideoEDL
-			// 
-			this.m_ctrlVideoEDL.Location = new System.Drawing.Point(12, 80);
-			this.m_ctrlVideoEDL.Name = "m_ctrlVideoEDL";
-			this.m_ctrlVideoEDL.Size = new System.Drawing.Size(204, 24);
-			this.m_ctrlVideoEDL.TabIndex = 2;
-			this.m_ctrlVideoEDL.Text = "Create EDL File";
-			// 
-			// m_ctrlVideoSAMI
-			// 
-			this.m_ctrlVideoSAMI.Location = new System.Drawing.Point(12, 52);
-			this.m_ctrlVideoSAMI.Name = "m_ctrlVideoSAMI";
-			this.m_ctrlVideoSAMI.Size = new System.Drawing.Size(204, 24);
-			this.m_ctrlVideoSAMI.TabIndex = 1;
-			this.m_ctrlVideoSAMI.Text = "Create SAMI File";
-			this.m_ctrlVideoSAMI.Click += new System.EventHandler(this.OnClickSAMI);
-			// 
-			// m_ctrlVideoWMV
-			// 
-			this.m_ctrlVideoWMV.Location = new System.Drawing.Point(12, 24);
-			this.m_ctrlVideoWMV.Name = "m_ctrlVideoWMV";
-			this.m_ctrlVideoWMV.Size = new System.Drawing.Size(204, 24);
-			this.m_ctrlVideoWMV.TabIndex = 0;
-			this.m_ctrlVideoWMV.Text = "Create WMV File";
-			this.m_ctrlVideoWMV.Click += new System.EventHandler(this.OnClickWMV);
-			// 
-			// m_ctrlProfiles
-			// 
-			this.m_ctrlProfiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlProfiles.HorizontalScrollbar = true;
-			this.m_ctrlProfiles.IntegralHeight = false;
-			this.m_ctrlProfiles.Location = new System.Drawing.Point(8, 44);
-			this.m_ctrlProfiles.Name = "m_ctrlProfiles";
-			this.m_ctrlProfiles.Size = new System.Drawing.Size(296, 108);
-			this.m_ctrlProfiles.TabIndex = 0;
-			// 
-			// m_ctrlProfilesLabel
-			// 
-			this.m_ctrlProfilesLabel.Location = new System.Drawing.Point(8, 24);
-			this.m_ctrlProfilesLabel.Name = "m_ctrlProfilesLabel";
-			this.m_ctrlProfilesLabel.Size = new System.Drawing.Size(168, 16);
-			this.m_ctrlProfilesLabel.TabIndex = 15;
-			this.m_ctrlProfilesLabel.Text = "Encoder Profiles:";
-			// 
-			// m_ctrlFormatsGroup
-			// 
-			this.m_ctrlFormatsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoWMV);
-			this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoSAMI);
-			this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoEDL);
-			this.m_ctrlFormatsGroup.Location = new System.Drawing.Point(8, 8);
-			this.m_ctrlFormatsGroup.Name = "m_ctrlFormatsGroup";
-			this.m_ctrlFormatsGroup.Size = new System.Drawing.Size(312, 132);
-			this.m_ctrlFormatsGroup.TabIndex = 0;
-			this.m_ctrlFormatsGroup.TabStop = false;
-			this.m_ctrlFormatsGroup.Text = "Output File Formats";
-			// 
-			// m_ctrlSAMIGroup
-			// 
-			this.m_ctrlSAMIGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIPageNumbers);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIHighlighter);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMISize);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMISizeLabel);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIColorLabel);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIFontLabel);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIColor);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIFonts);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMILines);
-			this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMILinesLabel);
-			this.m_ctrlSAMIGroup.Location = new System.Drawing.Point(328, 128);
-			this.m_ctrlSAMIGroup.Name = "m_ctrlSAMIGroup";
-			this.m_ctrlSAMIGroup.Size = new System.Drawing.Size(256, 180);
-			this.m_ctrlSAMIGroup.TabIndex = 3;
-			this.m_ctrlSAMIGroup.TabStop = false;
-			this.m_ctrlSAMIGroup.Text = "SAMI Files";
-			// 
-			// m_ctrlSAMIPageNumbers
-			// 
-			this.m_ctrlSAMIPageNumbers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMIPageNumbers.Location = new System.Drawing.Point(12, 152);
-			this.m_ctrlSAMIPageNumbers.Name = "m_ctrlSAMIPageNumbers";
-			this.m_ctrlSAMIPageNumbers.Size = new System.Drawing.Size(196, 16);
-			this.m_ctrlSAMIPageNumbers.TabIndex = 5;
-			this.m_ctrlSAMIPageNumbers.Text = "Include page and line numbers";
-			// 
-			// m_ctrlSAMIHighlighter
-			// 
-			this.m_ctrlSAMIHighlighter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMIHighlighter.Location = new System.Drawing.Point(12, 128);
-			this.m_ctrlSAMIHighlighter.Name = "m_ctrlSAMIHighlighter";
-			this.m_ctrlSAMIHighlighter.Size = new System.Drawing.Size(172, 16);
-			this.m_ctrlSAMIHighlighter.TabIndex = 4;
-			this.m_ctrlSAMIHighlighter.Text = "Use Highlighter Colors";
-			// 
-			// m_ctrlSAMISize
-			// 
-			this.m_ctrlSAMISize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMISize.Location = new System.Drawing.Point(92, 72);
-			this.m_ctrlSAMISize.Name = "m_ctrlSAMISize";
-			this.m_ctrlSAMISize.Size = new System.Drawing.Size(68, 20);
-			this.m_ctrlSAMISize.TabIndex = 2;
-			this.m_ctrlSAMISize.Text = "";
-			// 
-			// m_ctrlSAMISizeLabel
-			// 
-			this.m_ctrlSAMISizeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMISizeLabel.Location = new System.Drawing.Point(12, 76);
-			this.m_ctrlSAMISizeLabel.Name = "m_ctrlSAMISizeLabel";
-			this.m_ctrlSAMISizeLabel.Size = new System.Drawing.Size(76, 16);
-			this.m_ctrlSAMISizeLabel.TabIndex = 5;
-			this.m_ctrlSAMISizeLabel.Text = "Size :";
-			// 
-			// m_ctrlSAMIColorLabel
-			// 
-			this.m_ctrlSAMIColorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMIColorLabel.Location = new System.Drawing.Point(12, 100);
-			this.m_ctrlSAMIColorLabel.Name = "m_ctrlSAMIColorLabel";
-			this.m_ctrlSAMIColorLabel.Size = new System.Drawing.Size(76, 16);
-			this.m_ctrlSAMIColorLabel.TabIndex = 4;
-			this.m_ctrlSAMIColorLabel.Text = "Color :";
-			// 
-			// m_ctrlSAMIFontLabel
-			// 
-			this.m_ctrlSAMIFontLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMIFontLabel.Location = new System.Drawing.Point(12, 48);
-			this.m_ctrlSAMIFontLabel.Name = "m_ctrlSAMIFontLabel";
-			this.m_ctrlSAMIFontLabel.Size = new System.Drawing.Size(76, 16);
-			this.m_ctrlSAMIFontLabel.TabIndex = 3;
-			this.m_ctrlSAMIFontLabel.Text = "Font :";
-			// 
-			// m_ctrlSAMIColor
-			// 
-			this.m_ctrlSAMIColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMIColor.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-			this.m_ctrlSAMIColor.Location = new System.Drawing.Point(92, 100);
-			this.m_ctrlSAMIColor.Name = "m_ctrlSAMIColor";
-			this.m_ctrlSAMIColor.Size = new System.Drawing.Size(68, 16);
-			this.m_ctrlSAMIColor.TabIndex = 3;
-			this.m_ctrlSAMIColor.Click += new System.EventHandler(this.OnClickSAMIColor);
-			// 
-			// m_ctrlSAMIFonts
-			// 
-			this.m_ctrlSAMIFonts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMIFonts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_ctrlSAMIFonts.IntegralHeight = false;
-			this.m_ctrlSAMIFonts.Location = new System.Drawing.Point(92, 44);
-			this.m_ctrlSAMIFonts.Name = "m_ctrlSAMIFonts";
-			this.m_ctrlSAMIFonts.Size = new System.Drawing.Size(156, 21);
-			this.m_ctrlSAMIFonts.TabIndex = 1;
-			// 
-			// m_ctrlSAMILines
-			// 
-			this.m_ctrlSAMILines.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMILines.Location = new System.Drawing.Point(92, 20);
-			this.m_ctrlSAMILines.Name = "m_ctrlSAMILines";
-			this.m_ctrlSAMILines.Size = new System.Drawing.Size(68, 20);
-			this.m_ctrlSAMILines.TabIndex = 0;
-			this.m_ctrlSAMILines.Text = "";
-			// 
-			// m_ctrlSAMILinesLabel
-			// 
-			this.m_ctrlSAMILinesLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlSAMILinesLabel.Location = new System.Drawing.Point(12, 24);
-			this.m_ctrlSAMILinesLabel.Name = "m_ctrlSAMILinesLabel";
-			this.m_ctrlSAMILinesLabel.Size = new System.Drawing.Size(76, 16);
-			this.m_ctrlSAMILinesLabel.TabIndex = 7;
-			this.m_ctrlSAMILinesLabel.Text = "Lines (1-4) :";
-			// 
-			// m_ctrlWMVGroup
-			// 
-			this.m_ctrlWMVGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-				| System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlWMVGroup.Controls.Add(this.m_ctrlShowPreferred);
-			this.m_ctrlWMVGroup.Controls.Add(this.m_ctrlProfilesLabel);
-			this.m_ctrlWMVGroup.Controls.Add(this.m_ctrlProfiles);
-			this.m_ctrlWMVGroup.Location = new System.Drawing.Point(8, 128);
-			this.m_ctrlWMVGroup.Name = "m_ctrlWMVGroup";
-			this.m_ctrlWMVGroup.Size = new System.Drawing.Size(312, 180);
-			this.m_ctrlWMVGroup.TabIndex = 2;
-			this.m_ctrlWMVGroup.TabStop = false;
-			this.m_ctrlWMVGroup.Text = "WMV Files";
-			// 
-			// m_ctrlShowPreferred
-			// 
-			this.m_ctrlShowPreferred.Location = new System.Drawing.Point(12, 156);
-			this.m_ctrlShowPreferred.Name = "m_ctrlShowPreferred";
-			this.m_ctrlShowPreferred.Size = new System.Drawing.Size(216, 20);
-			this.m_ctrlShowPreferred.TabIndex = 16;
-			this.m_ctrlShowPreferred.Text = "Show Preferred Only";
-			this.m_ctrlShowPreferred.Click += new System.EventHandler(this.OnClickShowPreferred);
-			// 
-			// m_ctrlGeneralGroup
-			// 
-			this.m_ctrlGeneralGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlGeneralGroup.Controls.Add(this.m_ctrlAutoFilenames);
-			this.m_ctrlGeneralGroup.Controls.Add(this.m_ctrlConfirmOverwrite);
-			this.m_ctrlGeneralGroup.Location = new System.Drawing.Point(328, 8);
-			this.m_ctrlGeneralGroup.Name = "m_ctrlGeneralGroup";
-			this.m_ctrlGeneralGroup.Size = new System.Drawing.Size(256, 112);
-			this.m_ctrlGeneralGroup.TabIndex = 1;
-			this.m_ctrlGeneralGroup.TabStop = false;
-			this.m_ctrlGeneralGroup.Text = "Preferences";
-			// 
-			// m_ctrlAutoFilenames
-			// 
-			this.m_ctrlAutoFilenames.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlAutoFilenames.Location = new System.Drawing.Point(12, 52);
-			this.m_ctrlAutoFilenames.Name = "m_ctrlAutoFilenames";
-			this.m_ctrlAutoFilenames.Size = new System.Drawing.Size(232, 24);
-			this.m_ctrlAutoFilenames.TabIndex = 1;
-			this.m_ctrlAutoFilenames.Text = "Use default filenames if multiple outputs";
-			// 
-			// m_ctrlConfirmOverwrite
-			// 
-			this.m_ctrlConfirmOverwrite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlConfirmOverwrite.Location = new System.Drawing.Point(12, 24);
-			this.m_ctrlConfirmOverwrite.Name = "m_ctrlConfirmOverwrite";
-			this.m_ctrlConfirmOverwrite.Size = new System.Drawing.Size(228, 24);
-			this.m_ctrlConfirmOverwrite.TabIndex = 0;
-			this.m_ctrlConfirmOverwrite.Text = "Confirm before overwrite existing ouput";
-			// 
-			// m_ctrlViewCodecs
-			// 
-			this.m_ctrlViewCodecs.Location = new System.Drawing.Point(16, 324);
-			this.m_ctrlViewCodecs.Name = "m_ctrlViewCodecs";
-			this.m_ctrlViewCodecs.Size = new System.Drawing.Size(84, 23);
-			this.m_ctrlViewCodecs.TabIndex = 2;
-			this.m_ctrlViewCodecs.Text = "View Codecs";
-			this.m_ctrlViewCodecs.Visible = false;
-			this.m_ctrlViewCodecs.Click += new System.EventHandler(this.OnClickViewCodecs);
-			// 
-			// CFExportVideo
-			// 
-			this.AcceptButton = this.m_ctrlOk;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.m_ctrlCancel;
-			this.ClientSize = new System.Drawing.Size(592, 353);
-			this.Controls.Add(this.m_ctrlViewCodecs);
-			this.Controls.Add(this.m_ctrlGeneralGroup);
-			this.Controls.Add(this.m_ctrlWMVGroup);
-			this.Controls.Add(this.m_ctrlSAMIGroup);
-			this.Controls.Add(this.m_ctrlFormatsGroup);
-			this.Controls.Add(this.m_ctrlCancel);
-			this.Controls.Add(this.m_ctrlOk);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "CFExportVideo";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Export Video Options";
-			this.m_ctrlFormatsGroup.ResumeLayout(false);
-			this.m_ctrlSAMIGroup.ResumeLayout(false);
-			this.m_ctrlWMVGroup.ResumeLayout(false);
-			this.m_ctrlGeneralGroup.ResumeLayout(false);
-			this.ResumeLayout(false);
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CFExportVideo));
+            this.m_ctrlCancel = new System.Windows.Forms.Button();
+            this.m_ctrlOk = new System.Windows.Forms.Button();
+            this.m_ctrlVideoEDL = new System.Windows.Forms.CheckBox();
+            this.m_ctrlVideoSAMI = new System.Windows.Forms.CheckBox();
+            this.m_ctrlVideoWMV = new System.Windows.Forms.CheckBox();
+            this.m_ctrlProfiles = new System.Windows.Forms.ListBox();
+            this.m_ctrlProfilesLabel = new System.Windows.Forms.Label();
+            this.m_ctrlFormatsGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlSAMIGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlSAMIPageNumbers = new System.Windows.Forms.CheckBox();
+            this.m_ctrlSAMIHighlighter = new System.Windows.Forms.CheckBox();
+            this.m_ctrlSAMISize = new System.Windows.Forms.TextBox();
+            this.m_ctrlSAMISizeLabel = new System.Windows.Forms.Label();
+            this.m_ctrlSAMIColorLabel = new System.Windows.Forms.Label();
+            this.m_ctrlSAMIFontLabel = new System.Windows.Forms.Label();
+            this.m_ctrlSAMIColor = new System.Windows.Forms.Button();
+            this.m_ctrlSAMIFonts = new System.Windows.Forms.ComboBox();
+            this.m_ctrlSAMILines = new System.Windows.Forms.TextBox();
+            this.m_ctrlSAMILinesLabel = new System.Windows.Forms.Label();
+            this.m_ctrlWMVGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlShowPreferred = new System.Windows.Forms.CheckBox();
+            this.m_ctrlColorPicker = new System.Windows.Forms.ColorDialog();
+            this.m_ctrlGeneralGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlAutoFilenames = new System.Windows.Forms.CheckBox();
+            this.m_ctrlConfirmOverwrite = new System.Windows.Forms.CheckBox();
+            this.m_ctrlViewCodecs = new System.Windows.Forms.Button();
+            this.m_ctrlFormatsGroup.SuspendLayout();
+            this.m_ctrlSAMIGroup.SuspendLayout();
+            this.m_ctrlWMVGroup.SuspendLayout();
+            this.m_ctrlGeneralGroup.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // m_ctrlCancel
+            // 
+            this.m_ctrlCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.m_ctrlCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.m_ctrlCancel.Location = new System.Drawing.Point(500, 320);
+            this.m_ctrlCancel.Name = "m_ctrlCancel";
+            this.m_ctrlCancel.Size = new System.Drawing.Size(75, 23);
+            this.m_ctrlCancel.TabIndex = 1;
+            this.m_ctrlCancel.Text = "  &Cancel";
+            this.m_ctrlCancel.Click += new System.EventHandler(this.OnClickCancel);
+            // 
+            // m_ctrlOk
+            // 
+            this.m_ctrlOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlOk.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.m_ctrlOk.Location = new System.Drawing.Point(412, 320);
+            this.m_ctrlOk.Name = "m_ctrlOk";
+            this.m_ctrlOk.Size = new System.Drawing.Size(75, 23);
+            this.m_ctrlOk.TabIndex = 0;
+            this.m_ctrlOk.Text = "&OK";
+            this.m_ctrlOk.Click += new System.EventHandler(this.OnClickOk);
+            // 
+            // m_ctrlVideoEDL
+            // 
+            this.m_ctrlVideoEDL.Location = new System.Drawing.Point(12, 80);
+            this.m_ctrlVideoEDL.Name = "m_ctrlVideoEDL";
+            this.m_ctrlVideoEDL.Size = new System.Drawing.Size(204, 24);
+            this.m_ctrlVideoEDL.TabIndex = 2;
+            this.m_ctrlVideoEDL.Text = "Create EDL File";
+            // 
+            // m_ctrlVideoSAMI
+            // 
+            this.m_ctrlVideoSAMI.Location = new System.Drawing.Point(12, 52);
+            this.m_ctrlVideoSAMI.Name = "m_ctrlVideoSAMI";
+            this.m_ctrlVideoSAMI.Size = new System.Drawing.Size(204, 24);
+            this.m_ctrlVideoSAMI.TabIndex = 1;
+            this.m_ctrlVideoSAMI.Text = "Create SAMI File";
+            this.m_ctrlVideoSAMI.Click += new System.EventHandler(this.OnClickSAMI);
+            // 
+            // m_ctrlVideoWMV
+            // 
+            this.m_ctrlVideoWMV.Location = new System.Drawing.Point(12, 24);
+            this.m_ctrlVideoWMV.Name = "m_ctrlVideoWMV";
+            this.m_ctrlVideoWMV.Size = new System.Drawing.Size(204, 24);
+            this.m_ctrlVideoWMV.TabIndex = 0;
+            this.m_ctrlVideoWMV.Text = "Create Video File";
+            this.m_ctrlVideoWMV.Click += new System.EventHandler(this.OnClickWMV);
+            // 
+            // m_ctrlProfiles
+            // 
+            this.m_ctrlProfiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlProfiles.HorizontalScrollbar = true;
+            this.m_ctrlProfiles.IntegralHeight = false;
+            this.m_ctrlProfiles.Location = new System.Drawing.Point(8, 44);
+            this.m_ctrlProfiles.Name = "m_ctrlProfiles";
+            this.m_ctrlProfiles.Size = new System.Drawing.Size(296, 108);
+            this.m_ctrlProfiles.TabIndex = 0;
+            // 
+            // m_ctrlProfilesLabel
+            // 
+            this.m_ctrlProfilesLabel.Location = new System.Drawing.Point(8, 24);
+            this.m_ctrlProfilesLabel.Name = "m_ctrlProfilesLabel";
+            this.m_ctrlProfilesLabel.Size = new System.Drawing.Size(168, 16);
+            this.m_ctrlProfilesLabel.TabIndex = 15;
+            this.m_ctrlProfilesLabel.Text = "Encoder Profiles:";
+            // 
+            // m_ctrlFormatsGroup
+            // 
+            this.m_ctrlFormatsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoWMV);
+            this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoSAMI);
+            this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoEDL);
+            this.m_ctrlFormatsGroup.Location = new System.Drawing.Point(8, 8);
+            this.m_ctrlFormatsGroup.Name = "m_ctrlFormatsGroup";
+            this.m_ctrlFormatsGroup.Size = new System.Drawing.Size(312, 132);
+            this.m_ctrlFormatsGroup.TabIndex = 0;
+            this.m_ctrlFormatsGroup.TabStop = false;
+            this.m_ctrlFormatsGroup.Text = "Output File Formats";
+            // 
+            // m_ctrlSAMIGroup
+            // 
+            this.m_ctrlSAMIGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIPageNumbers);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIHighlighter);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMISize);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMISizeLabel);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIColorLabel);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIFontLabel);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIColor);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIFonts);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMILines);
+            this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMILinesLabel);
+            this.m_ctrlSAMIGroup.Location = new System.Drawing.Point(328, 128);
+            this.m_ctrlSAMIGroup.Name = "m_ctrlSAMIGroup";
+            this.m_ctrlSAMIGroup.Size = new System.Drawing.Size(256, 180);
+            this.m_ctrlSAMIGroup.TabIndex = 3;
+            this.m_ctrlSAMIGroup.TabStop = false;
+            this.m_ctrlSAMIGroup.Text = "SAMI Files";
+            // 
+            // m_ctrlSAMIPageNumbers
+            // 
+            this.m_ctrlSAMIPageNumbers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMIPageNumbers.Location = new System.Drawing.Point(12, 152);
+            this.m_ctrlSAMIPageNumbers.Name = "m_ctrlSAMIPageNumbers";
+            this.m_ctrlSAMIPageNumbers.Size = new System.Drawing.Size(196, 16);
+            this.m_ctrlSAMIPageNumbers.TabIndex = 5;
+            this.m_ctrlSAMIPageNumbers.Text = "Include page and line numbers";
+            // 
+            // m_ctrlSAMIHighlighter
+            // 
+            this.m_ctrlSAMIHighlighter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMIHighlighter.Location = new System.Drawing.Point(12, 128);
+            this.m_ctrlSAMIHighlighter.Name = "m_ctrlSAMIHighlighter";
+            this.m_ctrlSAMIHighlighter.Size = new System.Drawing.Size(172, 16);
+            this.m_ctrlSAMIHighlighter.TabIndex = 4;
+            this.m_ctrlSAMIHighlighter.Text = "Use Highlighter Colors";
+            // 
+            // m_ctrlSAMISize
+            // 
+            this.m_ctrlSAMISize.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMISize.Location = new System.Drawing.Point(92, 72);
+            this.m_ctrlSAMISize.Name = "m_ctrlSAMISize";
+            this.m_ctrlSAMISize.Size = new System.Drawing.Size(68, 20);
+            this.m_ctrlSAMISize.TabIndex = 2;
+            // 
+            // m_ctrlSAMISizeLabel
+            // 
+            this.m_ctrlSAMISizeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMISizeLabel.Location = new System.Drawing.Point(12, 76);
+            this.m_ctrlSAMISizeLabel.Name = "m_ctrlSAMISizeLabel";
+            this.m_ctrlSAMISizeLabel.Size = new System.Drawing.Size(76, 16);
+            this.m_ctrlSAMISizeLabel.TabIndex = 5;
+            this.m_ctrlSAMISizeLabel.Text = "Size :";
+            // 
+            // m_ctrlSAMIColorLabel
+            // 
+            this.m_ctrlSAMIColorLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMIColorLabel.Location = new System.Drawing.Point(12, 100);
+            this.m_ctrlSAMIColorLabel.Name = "m_ctrlSAMIColorLabel";
+            this.m_ctrlSAMIColorLabel.Size = new System.Drawing.Size(76, 16);
+            this.m_ctrlSAMIColorLabel.TabIndex = 4;
+            this.m_ctrlSAMIColorLabel.Text = "Color :";
+            // 
+            // m_ctrlSAMIFontLabel
+            // 
+            this.m_ctrlSAMIFontLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMIFontLabel.Location = new System.Drawing.Point(12, 48);
+            this.m_ctrlSAMIFontLabel.Name = "m_ctrlSAMIFontLabel";
+            this.m_ctrlSAMIFontLabel.Size = new System.Drawing.Size(76, 16);
+            this.m_ctrlSAMIFontLabel.TabIndex = 3;
+            this.m_ctrlSAMIFontLabel.Text = "Font :";
+            // 
+            // m_ctrlSAMIColor
+            // 
+            this.m_ctrlSAMIColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMIColor.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.m_ctrlSAMIColor.Location = new System.Drawing.Point(92, 100);
+            this.m_ctrlSAMIColor.Name = "m_ctrlSAMIColor";
+            this.m_ctrlSAMIColor.Size = new System.Drawing.Size(68, 16);
+            this.m_ctrlSAMIColor.TabIndex = 3;
+            this.m_ctrlSAMIColor.Click += new System.EventHandler(this.OnClickSAMIColor);
+            // 
+            // m_ctrlSAMIFonts
+            // 
+            this.m_ctrlSAMIFonts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMIFonts.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.m_ctrlSAMIFonts.IntegralHeight = false;
+            this.m_ctrlSAMIFonts.Location = new System.Drawing.Point(92, 44);
+            this.m_ctrlSAMIFonts.Name = "m_ctrlSAMIFonts";
+            this.m_ctrlSAMIFonts.Size = new System.Drawing.Size(156, 21);
+            this.m_ctrlSAMIFonts.TabIndex = 1;
+            // 
+            // m_ctrlSAMILines
+            // 
+            this.m_ctrlSAMILines.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMILines.Location = new System.Drawing.Point(92, 20);
+            this.m_ctrlSAMILines.Name = "m_ctrlSAMILines";
+            this.m_ctrlSAMILines.Size = new System.Drawing.Size(68, 20);
+            this.m_ctrlSAMILines.TabIndex = 0;
+            // 
+            // m_ctrlSAMILinesLabel
+            // 
+            this.m_ctrlSAMILinesLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlSAMILinesLabel.Location = new System.Drawing.Point(12, 24);
+            this.m_ctrlSAMILinesLabel.Name = "m_ctrlSAMILinesLabel";
+            this.m_ctrlSAMILinesLabel.Size = new System.Drawing.Size(76, 16);
+            this.m_ctrlSAMILinesLabel.TabIndex = 7;
+            this.m_ctrlSAMILinesLabel.Text = "Lines (1-4) :";
+            // 
+            // m_ctrlWMVGroup
+            // 
+            this.m_ctrlWMVGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlWMVGroup.Controls.Add(this.m_ctrlShowPreferred);
+            this.m_ctrlWMVGroup.Controls.Add(this.m_ctrlProfilesLabel);
+            this.m_ctrlWMVGroup.Controls.Add(this.m_ctrlProfiles);
+            this.m_ctrlWMVGroup.Location = new System.Drawing.Point(8, 128);
+            this.m_ctrlWMVGroup.Name = "m_ctrlWMVGroup";
+            this.m_ctrlWMVGroup.Size = new System.Drawing.Size(312, 180);
+            this.m_ctrlWMVGroup.TabIndex = 2;
+            this.m_ctrlWMVGroup.TabStop = false;
+            this.m_ctrlWMVGroup.Text = "WMV Files";
+            this.m_ctrlWMVGroup.Visible = false;
+            // 
+            // m_ctrlShowPreferred
+            // 
+            this.m_ctrlShowPreferred.Location = new System.Drawing.Point(12, 156);
+            this.m_ctrlShowPreferred.Name = "m_ctrlShowPreferred";
+            this.m_ctrlShowPreferred.Size = new System.Drawing.Size(216, 20);
+            this.m_ctrlShowPreferred.TabIndex = 16;
+            this.m_ctrlShowPreferred.Text = "Show Preferred Only";
+            this.m_ctrlShowPreferred.Click += new System.EventHandler(this.OnClickShowPreferred);
+            // 
+            // m_ctrlGeneralGroup
+            // 
+            this.m_ctrlGeneralGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlGeneralGroup.Controls.Add(this.m_ctrlAutoFilenames);
+            this.m_ctrlGeneralGroup.Controls.Add(this.m_ctrlConfirmOverwrite);
+            this.m_ctrlGeneralGroup.Location = new System.Drawing.Point(328, 8);
+            this.m_ctrlGeneralGroup.Name = "m_ctrlGeneralGroup";
+            this.m_ctrlGeneralGroup.Size = new System.Drawing.Size(256, 112);
+            this.m_ctrlGeneralGroup.TabIndex = 1;
+            this.m_ctrlGeneralGroup.TabStop = false;
+            this.m_ctrlGeneralGroup.Text = "Preferences";
+            // 
+            // m_ctrlAutoFilenames
+            // 
+            this.m_ctrlAutoFilenames.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlAutoFilenames.Location = new System.Drawing.Point(12, 52);
+            this.m_ctrlAutoFilenames.Name = "m_ctrlAutoFilenames";
+            this.m_ctrlAutoFilenames.Size = new System.Drawing.Size(232, 24);
+            this.m_ctrlAutoFilenames.TabIndex = 1;
+            this.m_ctrlAutoFilenames.Text = "Use default filenames if multiple outputs";
+            // 
+            // m_ctrlConfirmOverwrite
+            // 
+            this.m_ctrlConfirmOverwrite.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlConfirmOverwrite.Location = new System.Drawing.Point(12, 24);
+            this.m_ctrlConfirmOverwrite.Name = "m_ctrlConfirmOverwrite";
+            this.m_ctrlConfirmOverwrite.Size = new System.Drawing.Size(228, 24);
+            this.m_ctrlConfirmOverwrite.TabIndex = 0;
+            this.m_ctrlConfirmOverwrite.Text = "Confirm before overwrite existing ouput";
+            // 
+            // m_ctrlViewCodecs
+            // 
+            this.m_ctrlViewCodecs.Location = new System.Drawing.Point(16, 324);
+            this.m_ctrlViewCodecs.Name = "m_ctrlViewCodecs";
+            this.m_ctrlViewCodecs.Size = new System.Drawing.Size(84, 23);
+            this.m_ctrlViewCodecs.TabIndex = 2;
+            this.m_ctrlViewCodecs.Text = "View Codecs";
+            this.m_ctrlViewCodecs.Visible = false;
+            this.m_ctrlViewCodecs.Click += new System.EventHandler(this.OnClickViewCodecs);
+            // 
+            // CFExportVideo
+            // 
+            this.AcceptButton = this.m_ctrlOk;
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.CancelButton = this.m_ctrlCancel;
+            this.ClientSize = new System.Drawing.Size(592, 353);
+            this.Controls.Add(this.m_ctrlViewCodecs);
+            this.Controls.Add(this.m_ctrlGeneralGroup);
+            this.Controls.Add(this.m_ctrlWMVGroup);
+            this.Controls.Add(this.m_ctrlSAMIGroup);
+            this.Controls.Add(this.m_ctrlFormatsGroup);
+            this.Controls.Add(this.m_ctrlCancel);
+            this.Controls.Add(this.m_ctrlOk);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "CFExportVideo";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Export Video Options";
+            this.m_ctrlFormatsGroup.ResumeLayout(false);
+            this.m_ctrlSAMIGroup.ResumeLayout(false);
+            this.m_ctrlSAMIGroup.PerformLayout();
+            this.m_ctrlWMVGroup.ResumeLayout(false);
+            this.m_ctrlGeneralGroup.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 	

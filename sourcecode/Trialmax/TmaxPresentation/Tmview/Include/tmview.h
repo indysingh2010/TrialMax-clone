@@ -595,6 +595,8 @@ class CTMViewCtrl : public COleControl
 	// Dispatch and event IDs
 	public:
 	enum {
+		dispidDoGestureZoomBottom = 150L,
+		dispidDoGestureZoomTop = 149L,
 		dispidZoomedNextPage = 148L,
 		dispidDoGestureZoom = 147L,
 		dispidDoGesturePan = 146L,
@@ -765,9 +767,11 @@ class CTMViewCtrl : public COleControl
 	//}}AFX_DISP_ID
 	};
 public:
-	void DoGesturePan(LONG lX, LONG lY);
+	bool DoGesturePan(LONG lCurrentX, LONG lCurrentY, LONG lLastX, LONG lLastY, bool* bSmooth);
 protected:
 	void DoGestureZoom(FLOAT zoomFactor);
+	void DoGestureZoomTop(FLOAT zoomFactor);
+	void DoGestureZoomBottom(FLOAT zoomFactor);
 	void SetZoomedNextPage(BOOL bZoomed);
 };
 

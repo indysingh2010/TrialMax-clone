@@ -316,6 +316,10 @@ LONG CMainFrame::OnWMNewInstance(WPARAM wParam, LPARAM lParam)
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	cs.style = WS_OVERLAPPED;
+
+	//cs.cx = 440;
+    // cs.cy = 480;
+    // cs.style &= ~WS_SIZEBOX;
 	return CFrameWnd::PreCreateWindow(cs);
 }
 
@@ -476,4 +480,10 @@ void CMainFrame::OnMove(int x, int y)
 	M.Format("L: %d  T: %d  R:  %d  T:  %d", rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom);
 	SetWindowText(M);
 */	
+}
+
+
+void CMainFrame::UpdateBarcode(CString Barcode)
+{
+	((CMainView*)GetActiveView())->UpdateBarcodeText(Barcode);
 }

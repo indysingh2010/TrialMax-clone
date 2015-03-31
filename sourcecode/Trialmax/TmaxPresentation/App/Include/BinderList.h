@@ -31,6 +31,7 @@
 #include <vector>
 #include <afxbutton.h>
 #include <BinderEntry.h>
+#include <afxwin.h>
 #include <list>
 using namespace std;
 
@@ -41,15 +42,15 @@ class CBinderList : public CDialog
 	DECLARE_DYNAMIC(CBinderList)
 
 public:
-	CBinderList(CMainView* parentWindow, CWnd* pParent = NULL);   // standard constructor
+	CBinderList(CMainView* parentWindow, int nTotalRecords,CWnd* pParent = NULL);   // standard constructor
 	virtual ~CBinderList();	// Destructor
 	
 	typedef void (CBinderList::*fn)(int iButtonId);
 	typedef std::map< UINT, fn > EventMessageMap;
 	
-	int					m_xPosition;
-	int					m_yPosition;	
-	BOOL				m_isShowBackButton;
+	int					m_nXPosition;
+	int					m_nYPosition;	
+	BOOL				m_bIsShowBackButton;
 	list<CBinderEntry>  m_binderEntryList;	
 	CBinderEntry		m_parentBinder;	
 	
@@ -59,28 +60,36 @@ public:
 public:
 	virtual BOOL OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo);	
 	void OnCancel();
-
+	void HandleMouseClick();	
+	void PostNcDestroy();
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 			BOOL CBinderList::OnInitDialog();			
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);	
-
-			void CBinderList::Recieved(int iButtonId);		
-			void CBinderList::PostNcDestroy();
-
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);		
+			void CBinderList::Recieved(int iButtonId);			
 	DECLARE_MESSAGE_MAP()
-	
 
 private:
 	long			m_lCurrentParentId;
 	CMainView*		m_parentWindow;
 	CBrush			m_brush;
 	EventMessageMap m_msgMap;	
+	int				m_nCurHeight;
+	int				m_nScrollPos;	
+	int				m_nListHeight;
+	int				m_nTotalRecords;	
 
 private:
-	BOOL AddButtons();
-	void CreateButton(CString sButtonName, DWORD pButtonStyle, int iButtonId, int iButtonWidth, int iButtonHeight, 
-				int iXPosition, int iYPosition,int iButtonNumber, int iMediaType);
-	void CBinderList::CleanButtons();
-	void LogMe(LPCTSTR msg);
+	BOOL		AddButtons();
+	CMFCButton*  CreateButton(CString sButtonName, DWORD pButtonStyle, int nButtonId, int nButtonWidth, int nButtonHeight, 
+	int			nXPosition, int nYPosition,int nButtonNumber, int nMediaType);
+	void		CleanButtons();
+	void		LogMe(LPCTSTR msg);
+public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);			
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+
+public:
+	void HandlePan(int diff);
 };

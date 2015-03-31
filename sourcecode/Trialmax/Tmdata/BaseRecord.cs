@@ -632,35 +632,38 @@ namespace FTI.Trialmax.Database
 		public virtual bool Delete(CBaseRecord dxRecord)
 		{
 			string	strSQL = "";
+            lock (m_dataBase)
+            {
+                try
+                {
+                    //	Get the SQL statement from the object						
+                    strSQL = GetSQLDelete(dxRecord);
+                    Debug.Assert(strSQL.Length > 0);
+
+                    //	Execute the statement
+                    if (m_dataBase.IsConnected == false) return false;
+                    if (m_dataBase.Execute(strSQL) == true)
+                    {
+
+                        base.Remove(dxRecord as object);
+                        return true;
+
+                    }//if(m_dataBase.Connection.Execute(strSQL)) == true)
+
+                }
+                catch (OleDbException oleEx)
+                {
+                    FireError("Delete", this.ExBuilder.Message(CBaseDatabase.ERROR_BASE_RECORDS_DELETE_EX, TableName, strSQL), oleEx, GetErrorItems(dxRecord));
+                }
+                catch (System.Exception Ex)
+                {
+                    FireError("Delete", this.ExBuilder.Message(CBaseDatabase.ERROR_BASE_RECORDS_DELETE_EX, TableName, strSQL), Ex, GetErrorItems(dxRecord));
+                }
+
+                //	Must have been some kind of problem
+                return false;
+            }
 			
-			try
-			{
-				//	Get the SQL statement from the object						
-				strSQL = GetSQLDelete(dxRecord);
-				Debug.Assert(strSQL.Length > 0);
-
-				//	Execute the statement
-				if(m_dataBase.IsConnected == false) return false;
-				if(m_dataBase.Execute(strSQL) == true)
-				{
-
-					base.Remove(dxRecord as object);
-					return true;
-				
-				}//if(m_dataBase.Connection.Execute(strSQL)) == true)
-
-			}
-			catch(OleDbException oleEx)
-			{
-                FireError("Delete",this.ExBuilder.Message(CBaseDatabase.ERROR_BASE_RECORDS_DELETE_EX,TableName,strSQL),oleEx,GetErrorItems(dxRecord));
-			}
-			catch(System.Exception Ex)
-			{
-                FireError("Delete",this.ExBuilder.Message(CBaseDatabase.ERROR_BASE_RECORDS_DELETE_EX,TableName,strSQL),Ex,GetErrorItems(dxRecord));
-			}
-			
-			//	Must have been some kind of problem
-			return false;
 			
 		}// public virtual bool Delete(CBaseRecord dxRecord)
 

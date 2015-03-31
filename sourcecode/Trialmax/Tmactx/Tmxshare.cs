@@ -21,6 +21,7 @@ namespace FTI.Trialmax.ActiveX
 		const int TMSHARE_COMMAND_ADD_TREATMENT = 2;
 		const int TMSHARE_COMMAND_ADD_TO_BINDER = 3;
 		const int TMSHARE_COMMAND_UPDATE_TREATMENT = 4;
+        const int TMSHARE_COMMAND_UPDATE_NUDGE = 5;
 		
 		#region Private Members
 		
@@ -192,6 +193,9 @@ namespace FTI.Trialmax.ActiveX
 
 				case TMSHARE_COMMAND_UPDATE_TREATMENT:
 					return TmxShareCommands.UpdateTreatment;
+
+                case TMSHARE_COMMAND_UPDATE_NUDGE:
+                    return TmxShareCommands.UpdateNudge;
 
 				case TMSHARE_COMMAND_NONE:
 				default:
