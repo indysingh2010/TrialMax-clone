@@ -7556,25 +7556,30 @@
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:BusinessObjects.CrystalReports.10.5"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.0"
+                    "Name" = "8:Crystal Reports Basic for Visual Studio 2008 (x86)"
+                    "ProductCode" = "8:BusinessObjects.CrystalReports.10.5"
                     }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.10.0.x86"
                     {
                     "Name" = "8:Visual C++ 2010 Runtime Libraries (x86)"
                     "ProductCode" = "8:Microsoft.Visual.C++.10.0.x86"
                     }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.8.0.x86"
+                    {
+                    "Name" = "8:Visual C++ 2005 Runtime Libraries (x86)"
+                    "ProductCode" = "8:Microsoft.Visual.C++.8.0.x86"
+                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
                     {
                     "Name" = "8:Windows Installer 3.1"
                     "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
                     }
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:VC++2005.Redistributable.Package"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:k-lite.codec.pack.1105.full"
                     {
-                    "Name" = "8:VC++ 2005 Redistributable"
-                    "ProductCode" = "8:VC++2005.Redistributable.Package"
+                    "Name" = "8:K-Lite Codec Pack"
+                    "ProductCode" = "8:k-lite.codec.pack.1105.full"
                     }
                 }
             }
@@ -21611,7 +21616,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_186D235B781C4893BE8085D071B2C830"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_browse6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_browse6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -21639,7 +21644,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_19E881CFCA6A44E5A057CFE5BE2BC3F7"
             {
-            "SourcePath" = "8:..\\Tmctrls\\obj\\Debug\\Tmctrls.dll"
+            "SourcePath" = "8:..\\Tmctrls\\obj\\Release\\Tmctrls.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -21667,7 +21672,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1BD4EC5BE13C40F098A976ABECF1D599"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_xml6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_xml6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -21695,7 +21700,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_1C7A651D9EE14EFF99A6BFCCA2B4DB7F"
             {
-            "SourcePath" = "8:..\\Tmoffice\\obj\\Debug\\Tmoffice.dll"
+            "SourcePath" = "8:..\\Tmoffice\\obj\\Release\\Tmoffice.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -21723,7 +21728,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_26F96E7DC96B446BAB076971388032F7"
             {
-            "SourcePath" = "8:..\\Tmpanes\\obj\\Debug\\Tmpanes.dll"
+            "SourcePath" = "8:..\\Tmpanes\\obj\\Release\\Tmpanes.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -21751,7 +21756,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_27F714B885BB4EDBB8DCCB4BA225059A"
             {
-            "SourcePath" = "8:..\\TmaxManager\\obj\\Debug\\TmaxManager.exe"
+            "SourcePath" = "8:..\\TmaxManager\\obj\\Release\\TmaxManager.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -21779,7 +21784,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_3BBEF46104434285B2F45FD836CB4535"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_print6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_print6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -21807,7 +21812,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_427CCF944FFD4959BB9C4865A2EE67DE"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\TmaxPresentation.exe"
+            "SourcePath" = "8:..\\Bin\\Release\\TmaxPresentation.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -21835,7 +21840,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_4447082839EE481BBCA38ACF1A6DC6DE"
             {
-            "SourcePath" = "8:..\\Tmencode\\obj\\Debug\\Tmencode.dll"
+            "SourcePath" = "8:..\\Tmencode\\obj\\Release\\Tmencode.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -21863,7 +21868,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_45DFB3B3DFC84441AF317FF4B691F00F"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_view6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_view6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -21891,7 +21896,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_55AE864E7A124B58AC937B756A9E80D8"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_power6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_power6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -21919,7 +21924,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_5A34AE04DE6B43B58C7C7DD0C8E6D64D"
             {
-            "SourcePath" = "8:..\\TmaxSetupInsatller\\obj\\Debug\\TmaxUtilityInsatller.exe"
+            "SourcePath" = "8:..\\TmaxSetupInsatller\\obj\\Release\\TmaxUtilityInsatller.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_402A4DF9B31143B6A328FADCB935CAC7"
@@ -21947,7 +21952,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_5D1295260FFC415388B28683C05D1679"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_setup6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_setup6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -21975,7 +21980,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_5E78AC93C4F0461DA4CF0FC34A3BED85"
             {
-            "SourcePath" = "8:..\\TmaxVideo\\obj\\Debug\\TmaxVideo.exe"
+            "SourcePath" = "8:..\\TmaxVideo\\obj\\Release\\TmaxVideo.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -22003,7 +22008,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7F1310D6E7E6481D9BBE0EDB96AC8033"
             {
-            "SourcePath" = "8:..\\Tmactx\\obj\\Debug\\Tmactx.dll"
+            "SourcePath" = "8:..\\Tmactx\\obj\\Release\\Tmactx.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -22031,7 +22036,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_86D3A16B8C284A0CA27BD71CA6FA1D67"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_text6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_text6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -22059,7 +22064,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_8F6CE15B209A48C8BC05D91D25924E37"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_stat6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_stat6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -22087,7 +22092,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_95E58012D9A94B1F96B41D21CE269041"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_bars6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_bars6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -22115,7 +22120,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_99A129FF5BE44954B178BEB4CCA4DA2F"
             {
-            "SourcePath" = "8:..\\Tmforms\\obj\\Debug\\Tmforms.dll"
+            "SourcePath" = "8:..\\Tmforms\\obj\\Release\\Tmforms.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -22143,7 +22148,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_A9BACBBEFCFD4D6C85556D8E888591B7"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_lpen6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_lpen6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -22171,7 +22176,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_AF2FE8E1DCE64AC5A0DB77730605DB26"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_tool6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_tool6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -22199,7 +22204,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_BED9E3E1AA51439DAB9C67163A9A10EA"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_grab6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_grab6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -22227,7 +22232,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_CA3AB2DE8FD143788EABCF45427DC773"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_share6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_share6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -22255,7 +22260,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_CD717825CF95483DBACA4576AA819DE7"
             {
-            "SourcePath" = "8:..\\Tmshared\\obj\\Debug\\Tmshared.dll"
+            "SourcePath" = "8:..\\Tmshared\\obj\\Release\\Tmshared.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -22283,7 +22288,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F7FC3035DCCE426EAB4EEF98A0EDA765"
             {
-            "SourcePath" = "8:..\\Tmdata\\obj\\Debug\\Tmdata.dll"
+            "SourcePath" = "8:..\\Tmdata\\obj\\Release\\Tmdata.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -22311,7 +22316,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F95727923319438799C3FD1EAD92ED78"
             {
-            "SourcePath" = "8:..\\TmaxInstaller\\obj\\Debug\\TmaxInstaller.exe"
+            "SourcePath" = "8:..\\TmaxInstaller\\obj\\Release\\TmaxInstaller.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
@@ -22339,7 +22344,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_FCA4ECE021FE4FBEB9FDF02366CD07CA"
             {
-            "SourcePath" = "8:..\\Bin\\Debug\\Tm_movie6.ocx"
+            "SourcePath" = "8:..\\Bin\\Release\\Tm_movie6.ocx"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_A9CDC498EB274FB9A8B6C06515003660"
@@ -22367,7 +22372,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_FFE8590545CF409E8D052D45CFD0FC5C"
             {
-            "SourcePath" = "8:..\\Tmpanes\\obj\\Debug\\Tmpanes.dll"
+            "SourcePath" = "8:..\\Tmpanes\\obj\\Release\\Tmpanes.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_03518AD9671F4B708A44D817B89E9A02"
