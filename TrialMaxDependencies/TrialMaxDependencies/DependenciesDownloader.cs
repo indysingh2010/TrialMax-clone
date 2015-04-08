@@ -54,12 +54,20 @@ namespace TrialMaxDependencies
         private static long dependencyDownloadSize = 0;
         private static long latestBuildDownloadSize = 0;
         private static int CurrentFileNumber = 0;
+        private static int TotalFilesOnServer = 0;
+        private static int TotalFilesToDownload = 0;
+        private static int TotalFilesDownloadSuccess = 0;
+        private static int TotalFilesDownloadFail = 0;
+        private static int TotalFilesUncompress = 0;
+        private static int TotalFilesUncompressSuccess = 0;
+        private static int TotalFilesUncompressFail = 0;
         private static ManualResetEvent resetDependency;
         private static ManualResetEvent resetLatestBuild;
         private static List<FileDetails> fileListInfoWeb;
         private static List<FileDetails> fileListInfoLocal;
         private static List<FileDetails> filesToDownload;
         private static string currentFileDownload = string.Empty;
+        private static string currentFileUnCompress = string.Empty;
         static void Main(string[] args)
         {
             Console.WriteLine("TrialMax Dependencies Downloader");
@@ -77,18 +85,30 @@ namespace TrialMaxDependencies
                 Console.WriteLine("Intializing FileList failed.");
                 return;
             }
-
+            Console.WriteLine("========== Downloading files ==========");
             if (!DownloadDependencies())// || !DownloadLatestBuild())
             {
                 Console.WriteLine("Downloading file(s) failed.");
                 return;
             }
-            //if (!UncompressDependencies() || !UncompressLatestBuild())
-            //{
-            //    Console.WriteLine("Uncompressing file(s) failed.");
-            //    return;
-            //}
+            Console.WriteLine("========== Uncompressing files ==========");
+            if (!UncompressDependencies())// || !UncompressLatestBuild())
+            {
+                Console.WriteLine("Uncompressing file(s) failed.");
+                return;
+            }
 
+            Console.WriteLine("========== Summary Start==========");
+            Console.WriteLine("Total Dependencies           : {0}", TotalFilesOnServer);
+            Console.WriteLine("Downloaded From Server       : {0}", TotalFilesToDownload);
+            Console.WriteLine("Already downloaded           : {0}", TotalFilesOnServer - TotalFilesToDownload);
+            Console.WriteLine("Download(s) Success          : {0}", TotalFilesDownloadSuccess);
+            Console.WriteLine("Download(s) Failes           : {0}", TotalFilesDownloadFail);
+            Console.WriteLine("Files to Uncompress          : {0}", TotalFilesUncompress);
+            Console.WriteLine("Files to Uncompress Success  : {0}", TotalFilesUncompressSuccess);
+            Console.WriteLine("Files to Uncompress Failes   : {0}", TotalFilesUncompressFail);
+            Console.WriteLine("========== Summary End==========");
+            //CreateZipFiles.ProcessDirectory(@"D:\Dependencies\Dependencies");
             //if (!InstallLatestBuild())
             //{
             //    Console.WriteLine("Installation of Latest Build unsuccessfull.");
@@ -152,6 +172,8 @@ namespace TrialMaxDependencies
                         filesToDownload.Add(fd);
                     }
                 }
+                TotalFilesToDownload = filesToDownload.Count;
+                TotalFilesUncompress = fileListInfoWeb.Count;
                 return true;
             }
             catch (Exception ex)
@@ -185,6 +207,7 @@ namespace TrialMaxDependencies
                         fileListInfoWeb.Add(new FileDetails(fields[0], Convert.ToInt64(fields[1]), fields[2]));
                     }
                 }
+                TotalFilesOnServer = fileListInfoWeb.Count;
                 return true;
             }
             catch (Exception ex) 
@@ -293,16 +316,30 @@ namespace TrialMaxDependencies
 
         private static bool UncompressDependencies()
         {
-            ExtractZipFiles eZF = new ExtractZipFiles(Path.GetFullPath(SourceFolder), Path.GetFullPath(TargetFolder));
-            Console.WriteLine();
-            Console.WriteLine("Dependencies uncompressed successfully.");
+            CurrentFileNumber = 0;
+            foreach (FileDetails fd in fileListInfoWeb)
+            {
+                try
+                {
+                    CurrentFileNumber++;
+                    currentFileUnCompress = Path.GetFileName(fd.fileName);
+                    if (ExtractFile(fd) == true)
+                        TotalFilesUncompressSuccess++;
+                    else
+                        TotalFilesUncompressFail++; 
+                }
+                catch (Exception ex)
+                {
+                    TotalFilesUncompressFail++;
+                }
+            }
             return true;
         }
 
         static void zip1_ExtractProgress(object sender, ExtractProgressEventArgs e)
         {
             try
-            { Console.Write("\r{0} Uncompressing: {1} {2}%", CurrentFileNumber.ToString() + "/" + filesToDownload.Count, currentFileDownload, e.EntriesExtracted * 100 / e.EntriesTotal); }
+            { Console.Write("\r{0} Uncompressing: {1} {2}%", CurrentFileNumber.ToString() + "/" + fileListInfoWeb.Count, currentFileUnCompress, e.BytesTransferred * 100 / e.TotalBytesToTransfer); }
             catch { }
         }
 
@@ -332,13 +369,17 @@ namespace TrialMaxDependencies
                             request.DownloadFileAsync(new Uri(source), destination);
                             //Block till download completes
                             resetDependency.WaitOne();
+                            if (File.Exists(destination))
+                                TotalFilesDownloadSuccess++;
+                            else
+                                TotalFilesDownloadFail++;
                             Console.WriteLine();
-                            fd.status = ExtractFile(fd);
+                            // fd.status = ExtractFile(fd);
                             
                         }
                         catch (Exception ex)
                         {
-
+                            TotalFilesDownloadFail++;
                         }
                     }
                 }

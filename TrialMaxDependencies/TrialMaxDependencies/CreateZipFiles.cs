@@ -12,6 +12,9 @@ namespace TrialMaxDependencies
     {
         public CreateZipFiles(string directory)
         {
+            try
+            { File.Delete(".lst"); }
+            catch { }
             ProcessDirectory(directory);
         }
 
@@ -49,7 +52,7 @@ namespace TrialMaxDependencies
 
 
                         FileInfo fI = new FileInfo(newFile);
-                        file.WriteLine("{0},{1},{2}", newFile.Remove(0, @"D:\Dependencies\Dependencies\sourcecode\".Length), fI.Length, GetMD5HashFromFile(newFile));
+                        file.WriteLine("{0},{1},{2}", newFile.Remove(0, @"D:\Dependencies\Dependencies\".Length), fI.Length, GetMD5HashFromFile(newFile));
                         try
                         {
                             File.Delete(path);
