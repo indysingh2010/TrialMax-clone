@@ -44,6 +44,8 @@ namespace TmaxDependencyDownloader
         private static string currentFileDownload = string.Empty;
         private static string currentFileUnCompress = string.Empty;
         private static readonly ILog log = LogManager.GetLogger(typeof(Program));
+        private static DateTime lastProgressUpdate;
+        private static TimeSpan timeoutSpan = TimeSpan.FromMilliseconds(5000);
 
         static Program()
         {
@@ -58,6 +60,10 @@ namespace TmaxDependencyDownloader
                 return;
             }
             StartDownloader();
+
+            Console.WriteLine("\nPress enter to exit.");
+            Console.Read();
+            return;
         }
 
         private static void PasswordEncrypter()
@@ -103,24 +109,24 @@ namespace TmaxDependencyDownloader
             }
             if (!IntializeFileList())
             {
-                log.Error("Intializing FileList failed.");
+                log.Error("Initializing FileList failed.");
                 return;
             }
             if (!DownloadDependencies())
             {
                 log.Error("Downloading file(s) failed.");
-                return;
+                // return;
             }
 
             log.Info("========== Summary Start==========");
-            log.Info("Total Dependencies           : "+ TotalFilesOnServer);
-            log.Info("Downloaded From Server       : "+ TotalFilesToDownload);
-            log.Info("Already downloaded           : "+ (TotalFilesOnServer - TotalFilesToDownload));
-            log.Info("Download(s) Success          : "+ TotalFilesDownloadSuccess);
-            log.Info("Download(s) Failes           : "+ TotalFilesDownloadFail);
-            log.Info("Files to Uncompress          : "+ TotalFilesToDownload);
-            log.Info("Files to Uncompress Success  : "+ TotalFilesUncompressSuccess);
-            log.Info("Files to Uncompress Failes   : "+ TotalFilesUncompressFail);
+            log.Info("Total Dependencies           : " + TotalFilesOnServer);
+            log.Info("To be Downloaded From Server : " + TotalFilesToDownload);
+            log.Info("Already downloaded           : " + (TotalFilesOnServer - TotalFilesToDownload));
+            log.Info("Download(s) Success          : " + TotalFilesDownloadSuccess);
+            log.Info("Download(s) Failes           : " + TotalFilesDownloadFail);
+            log.Info("Files to Uncompress          : " + TotalFilesDownloadSuccess);
+            log.Info("Files to Uncompress Success  : " + TotalFilesUncompressSuccess);
+            log.Info("Files to Uncompress Failes   : " + TotalFilesUncompressFail);
             log.Info("========== Summary End==========");
             log.Info("===================== Tmax Dependency Downloader Ending =====================");
         }
@@ -144,12 +150,12 @@ namespace TmaxDependencyDownloader
             }
             catch (Exception Ex)
             {
-                Console.WriteLine(Ex.ToString());
+                log.Fatal(Ex.ToString());
                 return false;
             }
             if (string.IsNullOrEmpty(FileList))
             {
-                Console.WriteLine("FileList value not defined in App.config");
+                log.Error("FileList value not defined in App.config");
                 return false;
             }
             if (FTPPort <= 0)
@@ -157,12 +163,12 @@ namespace TmaxDependencyDownloader
 
             if (string.IsNullOrEmpty(FTPAddress))
             {
-                Console.WriteLine("FTPAddress not defined in App.config");
+                log.Error("FTPAddress not defined in App.config");
                 return false;
             }
             if (string.IsNullOrEmpty(DependencyFileName))
             {
-                Console.WriteLine("FileName not defined in App.config");
+                log.Error("FileName not defined in App.config");
                 return false;
             }
             try
@@ -220,7 +226,8 @@ namespace TmaxDependencyDownloader
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                log.Fatal(ex.ToString());
+                log.Error(ex.Message);
                 return false;
             }
         }
@@ -252,7 +259,7 @@ namespace TmaxDependencyDownloader
             }
             catch (Exception ex)
             {
-                log.Error(ex.ToString());
+                log.Fatal(ex.ToString());
             }
             return checkSum;
         }
@@ -269,7 +276,7 @@ namespace TmaxDependencyDownloader
             }
             catch (Exception ex)
             {
-                log.Error(ex.ToString());
+                log.Fatal(ex.ToString());
                 TotalFilesUncompressFail++;
                 return false;
             }
@@ -281,110 +288,317 @@ namespace TmaxDependencyDownloader
         {
             try
             {
-                TotalFilesToDownload = fileListInfoWeb.Count(x => x.downloadStatus == false);
-                using (WebClient request = new WebClient())
+                try
                 {
-                    request.Credentials = new NetworkCredential(FTPUserName, FTPPassword);
-                    request.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(request_DownloadProgressChanged);
-                    request.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(request_DownloadFileCompleted);
-                    foreach (FileDetails fd in fileListInfoWeb)
+                    foreach (string f in Directory.GetFiles(@SourceFolder + "trash//"))
+                        File.Delete(f);
+                }
+                catch { }
+                TotalFilesToDownload = fileListInfoWeb.Count(x => x.downloadStatus == false);
+                //using (WebClient request = new WebClient())
+                //{
+                //    request.Credentials = new NetworkCredential(FTPUserName, FTPPassword);
+                //    request.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(request_DownloadProgressChanged);
+                //    request.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(request_DownloadFileCompleted);
+                bool quit = false;
+                foreach (FileDetails fd in fileListInfoWeb)
+                {
+                    if (quit) return false;
+                    try
                     {
-                        try
+                        if (fd.fileExists)
                         {
-                            if (fd.fileExists)
+                            if (fd.downloadStatus)
                             {
-                                if (fd.downloadStatus)
-                                {
-                                    log.Info(fd.fileName + " already processed. File ingored.");
-                                    continue;
-                                }
-                                log.Info("Local copy of "+fd.fileName + " is different then on the server. Downloading again.");
+                                log.Info(fd.fileName + " already processed. File ingored.");
+                                continue;
                             }
-                            CurrentFileNumber++;
-                            int totalTries = 0;
-                            while (totalTries < MaxTotalDownloadTries)
+                            log.Info("Local copy of " + fd.fileName + " is different then on the server. Downloading again.");
+                        }
+                        CurrentFileNumber++;
+                        int totalTries = 0;
+                        while (totalTries < MaxTotalDownloadTries)
+                        {
+                            CurrentFileDownloadStatus = DownladFileStatus.Failed;
+                            string source = FTPAddress + DependencyFilePath + @SourceFolder + fd.fileName;
+                            resetDependency = new ManualResetEvent(false);
+                            dependencyDownloadSize = fd.fileSize;
+                            currentFileDownload = Path.GetFileName(fd.fileName);
+                            string destination = @SourceFolder + fd.fileName;
+                            if (File.Exists(destination))
                             {
-                                string source = FTPAddress + DependencyFilePath + @SourceFolder + fd.fileName;
-                                resetDependency = new ManualResetEvent(false);
-                                dependencyDownloadSize = fd.fileSize;
-                                currentFileDownload = Path.GetFileName(fd.fileName);
-                                string destination = @SourceFolder + fd.fileName;
-                                if (!Directory.Exists(Path.GetDirectoryName(destination)))
-                                    Directory.CreateDirectory(Path.GetDirectoryName(destination));
-                                request.DownloadFileAsync(new Uri(source), destination);
-                                //Block till download completes
-                                resetDependency.WaitOne();
-                                Console.WriteLine();
-                                if (CurrentFileDownloadStatus != DownladFileStatus.Success)
+                                try
                                 {
-                                    totalTries++;
-                                    log.Error("Download failed for file: "+fd.fileName+". Retry attempt "+totalTries.ToString() + "/"+MaxTotalDownloadTries+"...");
-                                    continue;
+                                    File.Delete(destination);
                                 }
-                                if (File.Exists(destination))
+                                catch
                                 {
-                                    if (fd.checkSum == GetFileCheckSum(destination) && fd.fileSize == new FileInfo(destination).Length)
-                                    {
-                                        log.Info(fd.fileName + " downloaded successfully.");
-                                        TotalFilesDownloadSuccess++;
-                                        fd.downloadStatus = true;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        TotalFilesDownloadFail++;
-                                    }
+                                    if (!Directory.Exists(@SourceFolder + "trash//"))
+                                        Directory.CreateDirectory(@SourceFolder + "trash//");
+                                    File.Move(destination, @SourceFolder + "trash//" + DateTime.Now.Ticks + Path.GetExtension(destination));
+                                }                                
+                            }
+                            //WebClient request = new WebClient();//using (WebClient request = new WebClient())
+                            //{
+                            //    request.Credentials = new NetworkCredential(FTPUserName, FTPPassword);
+                            //    request.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(request_DownloadProgressChanged);
+                            //    request.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(request_DownloadFileCompleted);
+                            //    request.Disposed += new EventHandler(request_Disposed);
+
+
+                            //    if (!Directory.Exists(Path.GetDirectoryName(destination)))
+                            //        Directory.CreateDirectory(Path.GetDirectoryName(destination));
+                            //    try
+                            //    { File.Delete(destination); }
+                            //    catch { }
+                            //    request.DownloadFileAsync(new Uri(source), destination);
+                            //    lastProgressUpdate = DateTime.Now;
+                            //    //Block till download completes
+                            //    Console.Write("\r{0} Downloading: {1} {2}%", CurrentFileNumber.ToString() + "/" + TotalFilesToDownload,
+                            //    currentFileDownload, 0 * 100 / (latestBuildDownloadSize != 0 ? latestBuildDownloadSize : dependencyDownloadSize));
+                            //    string error = string.Empty;
+                            //    while (!resetDependency.WaitOne(0))
+                            //    {
+                            //        if ((DateTime.Now - lastProgressUpdate) >= timeoutSpan)
+                            //        {
+                            //            Console.WriteLine();
+                            //            request.CancelAsync();
+                                        
+                            //            error = "Connection Timed out.";
+                            //            //request.Dispose();
+                            //            //resetDependency.WaitOne();
+                            //            break;
+                            //        }
+                            //        Thread.Sleep(100);
+                            //    }
+                            //    if (string.IsNullOrEmpty(error))
+                            //        Console.WriteLine();
+                            //    else
+                            //        Console.WriteLine(error);
+                            //    request.DownloadProgressChanged -= request_DownloadProgressChanged;
+                            //    request.DownloadFileCompleted -= request_DownloadFileCompleted;
+                            //    request.Dispose();
+                            //}
+                            DownloadFile(source, destination);
+                            //resetDependency.WaitOne();
+                            //Console.WriteLine();
+                            //if (totalTries >= MaxTotalDownloadTries && CurrentFileDownloadStatus == DownladFileStatus.Failed)
+                            //{
+                            //    try
+                            //    { File.Delete(destination); }
+                            //    catch { }
+                            //    TotalFilesDownloadFail++;
+                            //    break;
+                            //}
+                            //if (CurrentFileDownloadStatus != DownladFileStatus.Success)
+                            //{
+                            //    try
+                            //    { File.Delete(destination); }
+                            //    catch { }
+                            //    totalTries++;
+                            //    log.Error("Download failed for file: " + fd.fileName + ". Retry attempt " + totalTries.ToString() + "/" + MaxTotalDownloadTries + "...");
+                            //    continue;
+                            //}
+                            if (File.Exists(destination))
+                            {
+                                if (fd.checkSum == GetFileCheckSum(destination) && fd.fileSize == new FileInfo(destination).Length)
+                                {
+                                    log.Info(fd.fileName + " downloaded successfully.");
+                                    TotalFilesDownloadSuccess++;
+                                    fd.downloadStatus = true;
+                                    break;
                                 }
                                 else
                                 {
-                                    TotalFilesDownloadFail++;
+                                    try
+                                    { File.Delete(destination); }
+                                    catch { }
+                                    totalTries++;
+                                    log.Error(fd.fileName + " downloaded but CHECKSUM/SIZE mismatch. Retry attempt " + totalTries.ToString() + "/" + MaxTotalDownloadTries + "...");
+                                    continue;
                                 }
                             }
+                            else
+                            {
+                                try
+                                { File.Delete(destination); }
+                                catch { }
+                                totalTries++;
+                                log.Error("Download failed for file: " + fd.fileName + ". Retry attempt " + totalTries.ToString() + "/" + MaxTotalDownloadTries + "...");
+                                //log.Error(fd.fileName + " downloaded file does not exist in .packages folder. Retry attempt " + totalTries.ToString() + "/" + MaxTotalDownloadTries + "...");
+                                continue;
+                            }
+                        }
+                        if (fd.downloadStatus == true)
+                        {
                             currentFileUnCompress = Path.GetFileName(fd.fileName);
                             fd.unCompressStatus = ExtractFile(fd);
                             Console.WriteLine();
                             if (!fd.unCompressStatus)
-                                log.Info("Uncompressing " +fd.fileName + " failed.");
+                                log.Info("Uncompressing " + fd.fileName + " failed.");
                             else
                                 log.Info(fd.fileName + " uncompressed successfully.");
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            log.Error(ex.ToString());
                             TotalFilesDownloadFail++;
+                            while (true)
+                            {
+                                Console.Write("Previous attempts to downloading has failed consecutively. Do you want to try again? (Y/N): ");
+                                string userEntered = Console.ReadLine();
+                                if (userEntered.ToLower().Equals("n"))
+                                {
+                                    quit = true;
+                                    break;
+                                }
+                                else if (userEntered.ToLower().Equals("y"))
+                                {
+                                    break;
+                                }
+                                Console.WriteLine("Invalid input.");
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Fatal(ex.ToString());
+                        TotalFilesDownloadFail++;
                     }
                 }
                 return true;
             }
-            catch (Exception ex)
+            catch (WebException webEx)
             {
-                Console.WriteLine(ex.ToString());
+                log.Fatal(webEx.ToString());
+                log.Error(webEx.Message);
                 return false;
             }
+            catch (Exception ex)
+            {
+                log.Fatal(ex.ToString());
+                log.Error(ex.Message);
+                return false;
+            }
+        }
+
+        static void request_Disposed(object sender, EventArgs e)
+        {
+            resetDependency.Set();
         }
 
         static void request_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             CurrentFileDownloadStatus = DownladFileStatus.Failed;
-            if (e.Error == null || !e.Error.Message.Contains("550"))
+            if (e.Error == null)
             {
                 CurrentFileDownloadStatus = DownladFileStatus.Success;
+                try
+                {
+                    Console.Write("\r{0} Downloading: {1} {2}%", CurrentFileNumber.ToString() + "/" + TotalFilesToDownload,
+                    currentFileDownload, 100);
+                }
+                catch { }
+            }
+            else
+            {
+                try
+                {
+                    log.Fatal(e.Error.ToString());
+                    File.Delete(SourceFolder+currentFileDownload);
+                }
+                catch { }
             }
             resetDependency.Set();
         }
 
-        static void request_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        private static void request_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            Console.Write("\r{0} Downloading: {1} {2}%", CurrentFileNumber.ToString() + "/" + TotalFilesToDownload,
+            lastProgressUpdate = DateTime.Now;
+            if (CurrentFileDownloadStatus != DownladFileStatus.Success)
+                Console.Write("\r{0} Downloading: {1} {2}%", CurrentFileNumber.ToString() + "/" + TotalFilesToDownload,
                 currentFileDownload, e.BytesReceived * 100 / (latestBuildDownloadSize != 0 ? latestBuildDownloadSize : dependencyDownloadSize));
         }
 
-        static void zip1_ExtractProgress(object sender, ExtractProgressEventArgs e)
+        private static void zip1_ExtractProgress(object sender, ExtractProgressEventArgs e)
         {
             try
             { Console.Write("\r{0} Uncompressing: {1} {2}%", CurrentFileNumber.ToString() + "/" + TotalFilesToDownload, currentFileUnCompress, e.BytesTransferred * 100 / e.TotalBytesToTransfer); }
             catch { }
+        }
+
+        private static void DownloadFile(string source, string destination)
+        {
+            try
+            {
+                string paramerters = "--ftp-user=\"" + FTPUserName + "\" --ftp-password=\"" + FTPPassword + "\" --tries=1 --timeout=" + timeoutSpan.Seconds + " --show-progress -q -O \"" + destination + "\" \"" + source.Replace("\\.", "") + "\"";
+                ProcessStartInfo oInfo = new ProcessStartInfo("wget.exe", paramerters);
+                oInfo.UseShellExecute = false;
+                oInfo.CreateNoWindow = true;
+                oInfo.RedirectStandardOutput = true;
+                oInfo.RedirectStandardError = true;
+
+                using (Process proc = Process.Start(oInfo))
+                {
+
+                    //Hook up events
+                    proc.EnableRaisingEvents = true;
+                    proc.ErrorDataReceived += new DataReceivedEventHandler(proc_ErrorDataReceived);
+                    //proc.Exited += new EventHandler(proc_Exited);
+
+                    // allow for reading asynhcronous Output
+                    proc.BeginErrorReadLine();
+
+                    // Blocking untilt the encoding done
+                    proc.WaitForExit();
+
+                    proc.Close();
+                }
+                if (CurrentFileDownloadStatus != DownladFileStatus.Success)
+                {
+                    if (CurrentFileDownloadStatus == DownladFileStatus.Downloading)
+                        Console.WriteLine();
+                    log.Error("Connection timed out.");
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Fatal(ex.ToString());
+            }
+        }
+
+        static void proc_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            lastProgressUpdate = DateTime.Now;
+            if (string.IsNullOrEmpty(e.Data))
+            {
+                //CurrentFileDownloadStatus = DownladFileStatus.Failed;
+                return;
+            }
+            string[] info = e.Data.Split(' ');
+            string percent = info.Where(x=>x.Contains("%")).FirstOrDefault();
+            string eta = info.Where(x => x.Contains("s")).FirstOrDefault();
+            if (string.IsNullOrEmpty(percent))
+                return;
+            if (CurrentFileDownloadStatus != DownladFileStatus.Success && info.Length >= 3)
+                if(percent == "100%")
+                {
+                    CurrentFileDownloadStatus = DownladFileStatus.Success;
+                    Console.Write("\r{0} Downloading: {1} {2}        \n", CurrentFileNumber.ToString() + "/" + TotalFilesToDownload,
+                    currentFileDownload, percent);
+                }
+                else
+                {
+                    eta = eta.Split('=').LastOrDefault();
+                    CurrentFileDownloadStatus = DownladFileStatus.Downloading;
+                    Console.Write("\r{0} Downloading: {1} {2} {3}       ", CurrentFileNumber.ToString() + "/" + TotalFilesToDownload,
+                    currentFileDownload, percent, eta);
+                }
+
+        }
+
+        static void proc_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Console.WriteLine(e.Data);
         }
     }
 
@@ -545,7 +759,8 @@ namespace TmaxDependencyDownloader
     {
         NothingToDownload,
         Success,
-        Failed
+        Failed,
+        Downloading
     }
 
     public class FileDetails

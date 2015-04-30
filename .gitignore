@@ -202,3 +202,10 @@ sourcecode/Trialmax/TmaxCompactor/*
 sourcecode/Trialmax/TmaxSplitter/*
 TrialMaxDependencies/packages/*
 !TrialMaxDependencies/packages/repositories.config
+sourcecode/Trialmax/.packages/*
+sourcecode/Trialmax/packages.log
+sourcecode/Trialmax/TmaxDependencyDownloader/packages/*
+!sourcecode/Trialmax/TmaxDependencyDownloader/packages/repositories.config
+sourcecode/Trialmax/Ionic.Zip.xml
+sourcecode/Trialmax/log4net.xml
+*.vshost.exe*
