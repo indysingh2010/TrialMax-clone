@@ -4927,6 +4927,7 @@ void CMainView::OnChangePane(short sPane)
 				m_Barcode.m_strMediaId.Empty();
 				m_Barcode.m_lSecondaryId = 0;
 				m_Barcode.m_lTertiaryId = 0;
+				m_CurrentPageBarcode = m_Barcode;
 				UpdateStatusBar();
 				return;
 			}
@@ -4938,6 +4939,7 @@ void CMainView::OnChangePane(short sPane)
 					m_Barcode.m_lTertiaryId = pInfo->pTertiary->m_lBarcodeId;
 				else
 					m_Barcode.m_lTertiaryId = 0;
+				m_CurrentPageBarcode = m_Barcode;
 				UpdateStatusBar();
 			}
 
