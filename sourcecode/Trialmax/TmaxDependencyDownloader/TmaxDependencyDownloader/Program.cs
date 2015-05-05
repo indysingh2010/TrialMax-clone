@@ -45,7 +45,7 @@ namespace TmaxDependencyDownloader
         private static string currentFileUnCompress = string.Empty;
         private static readonly ILog log = LogManager.GetLogger(typeof(Program));
         private static DateTime lastProgressUpdate;
-        private static TimeSpan timeoutSpan = TimeSpan.FromMilliseconds(5000);
+        private static TimeSpan timeoutSpan = TimeSpan.FromMilliseconds(30000);
 
         static Program()
         {
@@ -115,7 +115,6 @@ namespace TmaxDependencyDownloader
             if (!DownloadDependencies())
             {
                 log.Error("Downloading file(s) failed.");
-                // return;
             }
 
             log.Info("========== Summary Start==========");
@@ -295,11 +294,6 @@ namespace TmaxDependencyDownloader
                 }
                 catch { }
                 TotalFilesToDownload = fileListInfoWeb.Count(x => x.downloadStatus == false);
-                //using (WebClient request = new WebClient())
-                //{
-                //    request.Credentials = new NetworkCredential(FTPUserName, FTPPassword);
-                //    request.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(request_DownloadProgressChanged);
-                //    request.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(request_DownloadFileCompleted);
                 bool quit = false;
                 foreach (FileDetails fd in fileListInfoWeb)
                 {
@@ -338,67 +332,7 @@ namespace TmaxDependencyDownloader
                                     File.Move(destination, @SourceFolder + "trash//" + DateTime.Now.Ticks + Path.GetExtension(destination));
                                 }                                
                             }
-                            //WebClient request = new WebClient();//using (WebClient request = new WebClient())
-                            //{
-                            //    request.Credentials = new NetworkCredential(FTPUserName, FTPPassword);
-                            //    request.DownloadProgressChanged += new System.Net.DownloadProgressChangedEventHandler(request_DownloadProgressChanged);
-                            //    request.DownloadFileCompleted += new System.ComponentModel.AsyncCompletedEventHandler(request_DownloadFileCompleted);
-                            //    request.Disposed += new EventHandler(request_Disposed);
-
-
-                            //    if (!Directory.Exists(Path.GetDirectoryName(destination)))
-                            //        Directory.CreateDirectory(Path.GetDirectoryName(destination));
-                            //    try
-                            //    { File.Delete(destination); }
-                            //    catch { }
-                            //    request.DownloadFileAsync(new Uri(source), destination);
-                            //    lastProgressUpdate = DateTime.Now;
-                            //    //Block till download completes
-                            //    Console.Write("\r{0} Downloading: {1} {2}%", CurrentFileNumber.ToString() + "/" + TotalFilesToDownload,
-                            //    currentFileDownload, 0 * 100 / (latestBuildDownloadSize != 0 ? latestBuildDownloadSize : dependencyDownloadSize));
-                            //    string error = string.Empty;
-                            //    while (!resetDependency.WaitOne(0))
-                            //    {
-                            //        if ((DateTime.Now - lastProgressUpdate) >= timeoutSpan)
-                            //        {
-                            //            Console.WriteLine();
-                            //            request.CancelAsync();
-                                        
-                            //            error = "Connection Timed out.";
-                            //            //request.Dispose();
-                            //            //resetDependency.WaitOne();
-                            //            break;
-                            //        }
-                            //        Thread.Sleep(100);
-                            //    }
-                            //    if (string.IsNullOrEmpty(error))
-                            //        Console.WriteLine();
-                            //    else
-                            //        Console.WriteLine(error);
-                            //    request.DownloadProgressChanged -= request_DownloadProgressChanged;
-                            //    request.DownloadFileCompleted -= request_DownloadFileCompleted;
-                            //    request.Dispose();
-                            //}
                             DownloadFile(source, destination);
-                            //resetDependency.WaitOne();
-                            //Console.WriteLine();
-                            //if (totalTries >= MaxTotalDownloadTries && CurrentFileDownloadStatus == DownladFileStatus.Failed)
-                            //{
-                            //    try
-                            //    { File.Delete(destination); }
-                            //    catch { }
-                            //    TotalFilesDownloadFail++;
-                            //    break;
-                            //}
-                            //if (CurrentFileDownloadStatus != DownladFileStatus.Success)
-                            //{
-                            //    try
-                            //    { File.Delete(destination); }
-                            //    catch { }
-                            //    totalTries++;
-                            //    log.Error("Download failed for file: " + fd.fileName + ". Retry attempt " + totalTries.ToString() + "/" + MaxTotalDownloadTries + "...");
-                            //    continue;
-                            //}
                             if (File.Exists(destination))
                             {
                                 if (fd.checkSum == GetFileCheckSum(destination) && fd.fileSize == new FileInfo(destination).Length)
@@ -425,7 +359,6 @@ namespace TmaxDependencyDownloader
                                 catch { }
                                 totalTries++;
                                 log.Error("Download failed for file: " + fd.fileName + ". Retry attempt " + totalTries.ToString() + "/" + MaxTotalDownloadTries + "...");
-                                //log.Error(fd.fileName + " downloaded file does not exist in .packages folder. Retry attempt " + totalTries.ToString() + "/" + MaxTotalDownloadTries + "...");
                                 continue;
                             }
                         }
@@ -543,7 +476,6 @@ namespace TmaxDependencyDownloader
                     //Hook up events
                     proc.EnableRaisingEvents = true;
                     proc.ErrorDataReceived += new DataReceivedEventHandler(proc_ErrorDataReceived);
-                    //proc.Exited += new EventHandler(proc_Exited);
 
                     // allow for reading asynhcronous Output
                     proc.BeginErrorReadLine();
@@ -571,7 +503,6 @@ namespace TmaxDependencyDownloader
             lastProgressUpdate = DateTime.Now;
             if (string.IsNullOrEmpty(e.Data))
             {
-                //CurrentFileDownloadStatus = DownladFileStatus.Failed;
                 return;
             }
             string[] info = e.Data.Split(' ');
