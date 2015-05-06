@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Net;
 using System.Diagnostics;
 using Ionic.Zip;
+using Microsoft.Win32;
 
 namespace TmaxDependencyDownloader
 {
@@ -59,6 +60,7 @@ namespace TmaxDependencyDownloader
                 PasswordEncrypter();
                 return;
             }
+
             StartDownloader();
 
             Console.WriteLine("\nPress enter to exit.");
@@ -116,6 +118,7 @@ namespace TmaxDependencyDownloader
             {
                 log.Error("Downloading file(s) failed.");
             }
+            CopyPackagesFolder();
 
             log.Info("========== Summary Start==========");
             log.Info("Total Dependencies           : " + TotalFilesOnServer);
@@ -530,6 +533,31 @@ namespace TmaxDependencyDownloader
         static void proc_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             Console.WriteLine(e.Data);
+        }
+
+        static void CopyPackagesFolder()
+        {
+            try
+            {
+                string path = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A", "InstallationFolder", "Not Exist").ToString();
+                path += @"Bootstrapper\Packages\";
+
+                //Now Create all of the directories
+                foreach (string dirPath in Directory.GetDirectories(@"..\..\Packages\", "*",
+                    SearchOption.AllDirectories))
+                    Directory.CreateDirectory(dirPath.Replace(@"..\..\Packages\", path));
+
+                //Copy all the files & Replaces any files with the same name
+                foreach (string newPath in Directory.GetFiles(@"..\..\Packages\", "*.*",
+                    SearchOption.AllDirectories))
+                    File.Copy(newPath, newPath.Replace(@"..\..\Packages\", path), true);
+
+            }
+            catch (Exception ex)
+            {
+                log.Error("Copying Packages folder failed.");
+                log.Fatal(ex.ToString());
+            }
         }
     }
 
