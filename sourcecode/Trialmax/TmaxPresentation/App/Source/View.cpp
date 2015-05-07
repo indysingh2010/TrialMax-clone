@@ -13649,6 +13649,7 @@ void CMainView::UpdateStatusBar()
 		{
 			m_ctrlTMStat.SetPlaylistInfo(0);	
 			m_ctrlTMStat.SetStatusText(m_pDatabase->GetFilespec());
+			SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
 		}
 		else
 		{
