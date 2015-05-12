@@ -114,6 +114,7 @@ namespace FTI.Trialmax.Database
                 processor = new GhostscriptProcessor(m_gvi, true);
                 AddPageSwitch(pageNum, isColor);
                 SetColorSwitch(isColor);
+                SetResolutionSwitch(isColor);
                 processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
                 processor.StartProcessing(m_switches.ToArray(), null);
                 RemovePageSwitch(isColor);
@@ -336,6 +337,22 @@ namespace FTI.Trialmax.Database
                 m_switches.RemoveAt(m_switches.Count - 2);
             }
         }// private void RemovePageSwitch()
+
+        ///<summary>Set Resolution Switch</summary>
+        private void SetResolutionSwitch(bool isColor)
+        {
+            if (m_resolution == 0)
+            {
+                var index = m_switches.FindIndex(x => x.StartsWith("-r"));
+                if (isColor)
+                {  
+                    m_switches[index] = "-r200";
+                    return;
+                }
+                m_switches[index] = "-r300";
+                return;
+            }
+        }// private void SetResolutionSwitch()
 
         #endregion Private Methods
 

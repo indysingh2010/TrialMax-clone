@@ -2979,6 +2979,7 @@ BOOL CMainView::LoadMedia(CMedia* pMedia, long lSecondary, long lTertiary)
 	m_bIsXPressed = false;
 	m_sTotalRotation = 0;
 	m_sTotalNudge = 0;
+	theApp.ResetHook();
 	m_ctrlTMView->SetRotation(m_sTotalRotation);
 	SMultipageInfo	MPInfo;
 	SPlaylistParams	PLParams;
@@ -3277,7 +3278,7 @@ BOOL CMainView::LoadMultipage(SMultipageInfo* pInfo)
 	ASSERT(pInfo);
 	ASSERT(pInfo->pMultipage);
 	ASSERT(pInfo->pSecondary);
-
+	theApp.ResetHook();
 	//	Just in case
 	if((pInfo == 0) || (pInfo->pMultipage == 0) || (pInfo->pSecondary == 0))
 		return FALSE;
@@ -4903,7 +4904,7 @@ void CMainView::OnCaptureBarcodes()
 void CMainView::OnChangePane(short sPane) 
 {
 	SMultipageInfo* pInfo;
-
+	theApp.ResetHook();
 	//	What is the current state?
 	switch(m_sState)
 	{
@@ -4927,6 +4928,7 @@ void CMainView::OnChangePane(short sPane)
 				m_Barcode.m_strMediaId.Empty();
 				m_Barcode.m_lSecondaryId = 0;
 				m_Barcode.m_lTertiaryId = 0;
+				m_CurrentPageBarcode = m_Barcode;
 				UpdateStatusBar();
 				return;
 			}
@@ -4938,6 +4940,7 @@ void CMainView::OnChangePane(short sPane)
 					m_Barcode.m_lTertiaryId = pInfo->pTertiary->m_lBarcodeId;
 				else
 					m_Barcode.m_lTertiaryId = 0;
+				m_CurrentPageBarcode = m_Barcode;
 				UpdateStatusBar();
 			}
 
@@ -13646,6 +13649,7 @@ void CMainView::UpdateStatusBar()
 		{
 			m_ctrlTMStat.SetPlaylistInfo(0);	
 			m_ctrlTMStat.SetStatusText(m_pDatabase->GetFilespec());
+			SetStatusBarcode(m_CurrentPageBarcode.GetBarcode());
 		}
 		else
 		{

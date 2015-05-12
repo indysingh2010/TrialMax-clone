@@ -7978,7 +7978,7 @@ namespace FTI.Trialmax.Database
 					else
 					{
 						//	Use the value specified by the user
-						strModified = wndResolve.Resolution;
+						strModified = wndResolve.Resolution.Trim();
 					}
 					
 					//	Save the last value
@@ -10400,7 +10400,7 @@ namespace FTI.Trialmax.Database
             try
             {
                 // Start the PDF Manager and provide the data needed for conversion
-                CTmaxPDFManager PDFManager = new CTmaxPDFManager(strAdobeFileSpec.ToLower(), strTarget.ToLower(), m_tmaxRegisterOptions.OutputType, m_tmaxRegisterOptions.CustomDPI, m_tmaxRegisterOptions.DisableCustomDither);
+                CTmaxPDFManager PDFManager = new CTmaxPDFManager(strAdobeFileSpec.ToLower(), strTarget.ToLower(), m_tmaxRegisterOptions.OutputType, m_tmaxRegisterOptions.UseCustomDPI ? m_tmaxRegisterOptions.CustomDPI : (short)0, m_tmaxRegisterOptions.DisableCustomDither);
                 PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
                 if (m_bRegisterCancelled == true)
                     return iPages;
@@ -10601,8 +10601,8 @@ namespace FTI.Trialmax.Database
                         m_cfRegisterProgress.Activate();
                         if (wndResolve.AutoResolveAll == true)
                             m_bAutoResolve = true;
-                        path += @wndResolve.Resolution;
-                        strNewName = wndResolve.Resolution;
+                        path += @wndResolve.Resolution.Trim();
+                        strNewName = wndResolve.Resolution.Trim();
                     }
                     else
                     {
