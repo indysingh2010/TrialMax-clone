@@ -7794,6 +7794,8 @@ namespace FTI.Trialmax.Database
 			switch(tmaxSource.SourceType)
 			{
                 case RegSourceTypes.Document:
+                case RegSourceTypes.Recording:
+                    //	Get the default case path for this media type
                     strCasePath = GetCasePath(dxPrimary.MediaType);
                     if (strCasePath.EndsWith("\\") == true)
                         strCasePath = strCasePath.Substring(0, strCasePath.Length - 1);
@@ -7801,17 +7803,9 @@ namespace FTI.Trialmax.Database
                     //	Is the user doing an in-place registration?
                     if (tmaxSource.Path.ToLower().StartsWith(strCasePath) == true)
                         return true;
-                    
-                        break;
 
-                case RegSourceTypes.Recording:
-                    //	Get the default case path for this media type
-                    strCasePath = GetCasePath(dxPrimary.MediaType);
-                    if (strCasePath.EndsWith("\\") == true)
-                        strCasePath = strCasePath.Substring(0, strCasePath.Length - 1);
-                    
+                    //	Check for the folder
                     break;
-
                 case RegSourceTypes.Adobe:
                 case RegSourceTypes.MultiPageTIFF:
                 case RegSourceTypes.Powerpoint:	//	Only one folder for PowerPoints
