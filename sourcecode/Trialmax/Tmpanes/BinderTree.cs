@@ -821,8 +821,6 @@ namespace FTI.Trialmax.Panes
 			m_bAddFromPresentation = false;
             foreach (CTmaxMediaTreeNode tmaxChild in m_tmaxTreeCtrl.Nodes)
             {
-                PopulateChildNodes(tmaxChild);
-                //Sort(tmaxChild.Nodes, false);
                 SortCompleteTree(tmaxChild.Nodes);
             }
 
