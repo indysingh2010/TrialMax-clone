@@ -209,3 +209,5 @@ sourcecode/Trialmax/TmaxDependencyDownloader/packages/*
 sourcecode/Trialmax/Ionic.Zip.xml
 sourcecode/Trialmax/log4net.xml
 *.vshost.exe*
+Packages
+Prerequisites
