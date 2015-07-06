@@ -211,3 +211,5 @@ sourcecode/Trialmax/log4net.xml
 *.vshost.exe*
 Packages
 Prerequisites
+sourcecode/Trialmax/build/trash/*
+!sourcecode/Trialmax/build/trash/readme.txt
