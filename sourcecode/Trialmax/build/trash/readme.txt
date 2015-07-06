@@ -1,0 +1,1 @@
+This folder is necessary because when Trialmax solution is cleaned and rebuild in Visual Studio, files that the Visual Studio is unable to delete from the Bin directory is copied here.
