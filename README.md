@@ -11,7 +11,7 @@ TrialMax Source Code Setup Guide for Developers:
 
 <b>Steps for source code setup:</b><br>
 <ol>
-<li>Execute command in git bash: <i>git clone https://github.com/cpaulin/TrialMax.git</i></li>
+<li>Execute command in git bash: <i>git clone https://github.com/jameyj/TrialMax.git</i></li>
 <li>Run "TrialMax\sourcecode\Trialmax\TmaxDependencyDownloader.exe" file as an administrator.</li>
 <li>All the required Trialmax sourcecode dependecies will be downloaded automatically from the internet.</li>
 <li>Open "TrialMax\sourcecode\Trialmax\TmaxManager_all.sln" in Visual Studio 2010. Clean the solution TmaxManager_all and then build.</li>
