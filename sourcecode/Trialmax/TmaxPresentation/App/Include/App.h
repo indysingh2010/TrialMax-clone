@@ -98,12 +98,14 @@ class CApp : public CWinApp
 		int						m_iSecondaryWidth;
 		int						m_iSecondaryHeight;
 		POINTL					SecondaryDisplayOffset; // This stores the location of the secondary monitor
-
+		
+		HANDLE					m_hFFmpeg;
 	public:
 	
 		CTMCommandLineInfo		m_TMCmdLineInfo;
 
 								CApp();
+								~CApp();
 
 		void					EnableHook(BOOL bEnable);
 		void					EnableMouseHook(BOOL bEnable);
@@ -120,6 +122,7 @@ class CApp : public CWinApp
 		POINTL					GetSecondaryDisplayDimensions();
 		POINTL					GetPrimaryDisplayDimensions();
 		POINTL					GetSecondaryDisplayOffset(){ return SecondaryDisplayOffset; }
+		void					StartRecordingFFMpeg(char FileName[]);
 
 	protected:
 
@@ -132,6 +135,7 @@ class CApp : public CWinApp
 		static BOOL CALLBACK	OnEnumWindow(HWND hWnd, LPARAM lpParam);
 		void					InitWmGesture(HWND hWnd);
 
+	
 	//	Class Wizard maintained
 	
 	//{{AFX_VIRTUAL(CApp)

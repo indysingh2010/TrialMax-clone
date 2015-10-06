@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.IO;
 
 using FTI.Shared;
 using FTI.Shared.Trialmax;
@@ -13,6 +14,8 @@ using FTI.Trialmax.Database;
 using Infragistics.Shared;
 using Infragistics.Win;
 using Infragistics.Win.UltraWinToolbars;
+
+
 
 namespace FTI.Trialmax.Panes
 {
@@ -30,6 +33,7 @@ namespace FTI.Trialmax.Panes
 			LockRatio,
 			Properties,
 			Presentation,
+            PresentationRecording,
 			Builder,
 			Tuner,
 			Print,
@@ -222,11 +226,13 @@ namespace FTI.Trialmax.Panes
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool3 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Builder");
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool4 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Tuner");
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool5 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Print");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool160 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
 			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool1 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("LockRatio", "");
 			Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool2 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("LockRatio", "");
 			Infragistics.Win.Appearance appearance2 = new Infragistics.Win.Appearance();
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool6 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Presentation");
 			Infragistics.Win.Appearance appearance3 = new Infragistics.Win.Appearance();
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool161 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool7 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Builder");
 			Infragistics.Win.Appearance appearance4 = new Infragistics.Win.Appearance();
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool8 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Tuner");
@@ -280,6 +286,7 @@ namespace FTI.Trialmax.Panes
 			popupMenuTool2.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             buttonTool1,
             buttonTool2,
+            buttonTool160,
             buttonTool3,
             buttonTool4,
             buttonTool5,
@@ -290,7 +297,9 @@ namespace FTI.Trialmax.Panes
 			appearance3.Image = 2;
 			buttonTool6.SharedProps.AppearancesSmall.Appearance = appearance3;
 			buttonTool6.SharedProps.Caption = "Open in Presentation ...";
-			appearance4.Image = 5;
+            buttonTool161.SharedProps.AppearancesSmall.Appearance = appearance3;
+            buttonTool161.SharedProps.Caption = "Open in Presentation with Recording";
+            appearance4.Image = 5;
 			buttonTool7.SharedProps.AppearancesSmall.Appearance = appearance4;
 			buttonTool7.SharedProps.Caption = "Open in Builder";
 			appearance5.Image = 3;
@@ -2096,7 +2105,7 @@ namespace FTI.Trialmax.Panes
 		}// private void OnCmdTuner()
 		
 		/// <summary>This method handles the pane's Presentation command</summary>
-		private void OnCmdPresentation()
+        private void OnCmdPresentation(bool? recording = false)
 		{
 			CTmaxParameters tmaxParameters = null;
 			CDxMediaRecord	dxRecord = null;
@@ -2112,14 +2121,27 @@ namespace FTI.Trialmax.Panes
 			//	Create the required parameters for the event
 			tmaxParameters = new CTmaxParameters();
 			tmaxParameters.Add(TmaxCommandParameters.Presentation, true);
-			
+
+            string fileName = "recording.ini";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\" + fileName;
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            if (recording.Value)
+            {
+                using (TextWriter tw = new StreamWriter(filePath))
+                {
+                    tw.WriteLine("recording=true");
+                }
+            }
+
 			if(FireCommand(TmaxCommands.Open, new CTmaxItem(dxRecord), tmaxParameters) == true)
 			{
 			
 			}
 			
 		}// private void OnCmdPresentation()
-		
+
 		/// <summary>This method handles the pane's Print command</summary>
 		private void OnCmdPrint()
 		{
@@ -2195,6 +2217,11 @@ namespace FTI.Trialmax.Panes
 
 						OnCmdPresentation();
 						break;
+
+                    case MediaViewerCommands.PresentationRecording:
+
+                        OnCmdPresentation(true);
+                        break;
 						
 					case MediaViewerCommands.Builder:
 					

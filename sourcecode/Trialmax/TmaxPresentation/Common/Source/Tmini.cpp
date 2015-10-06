@@ -18,6 +18,7 @@
 #include <stdafx.h>
 #include <direct.h>		// getcwd()
 #include <tmini.h>
+#include <string>
 
 //------------------------------------------------------------------------------
 //	DEFINES
@@ -292,6 +293,7 @@ BOOL CTMIni::ReadBool(int iLine, BOOL bDefault, BOOL bDelete)
 //==============================================================================
 BOOL CTMIni::ReadCaptureOptions(SCaptureOptions* pOptions)
 {
+	char FilePath[200]="";
 	if(bFileFound)
 	{
 		//	Line up on the correct section
@@ -301,6 +303,8 @@ BOOL CTMIni::ReadCaptureOptions(SCaptureOptions* pOptions)
 		pOptions->sHotkey = (short)ReadLong(CAPTURE_HOTKEY_LINE, DEFAULT_CO_HOTKEY);
 		pOptions->sCancelKey = (short)ReadLong(CAPTURE_CANCELKEY_LINE, DEFAULT_CO_CANCELKEY);
 		pOptions->sArea = (short)ReadLong(CAPTURE_AREA_LINE, DEFAULT_CO_AREA);
+		ReadString(CAPTURE_FILE_PATH,FilePath,sizeof(FilePath) ,DEFAULT_FILE_PATH);
+		pOptions->sFilePath=FilePath;
 	}
 	else
 	{
@@ -308,6 +312,7 @@ BOOL CTMIni::ReadCaptureOptions(SCaptureOptions* pOptions)
 		pOptions->sHotkey = DEFAULT_CO_HOTKEY;
 		pOptions->sCancelKey = DEFAULT_CO_CANCELKEY;
 		pOptions->sArea = DEFAULT_CO_AREA;
+		pOptions->sFilePath = DEFAULT_FILE_PATH;
 	}
 
 	return TRUE;
@@ -1178,6 +1183,7 @@ void CTMIni::WriteCaptureOptions(SCaptureOptions* pOptions)
 	WriteLong(CAPTURE_HOTKEY_LINE, pOptions->sHotkey);
 	WriteLong(CAPTURE_CANCELKEY_LINE, pOptions->sCancelKey);
 	WriteLong(CAPTURE_AREA_LINE, pOptions->sArea);
+	WriteString(CAPTURE_FILE_PATH, pOptions->sFilePath);
 }
 
 //==============================================================================

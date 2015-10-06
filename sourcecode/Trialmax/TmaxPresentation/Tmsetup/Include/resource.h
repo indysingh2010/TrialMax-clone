@@ -197,6 +197,8 @@
 #define IDC_ANNTOOL                     1095
 #define IDC_CHANGEFONT                  1096
 #define IDC_FONTNAME                    1097
+#define IDC_FILEPATH					1125
+#define IDC_BROWSEFILEPATH				1126
 
 // Next default values for new objects
 // 

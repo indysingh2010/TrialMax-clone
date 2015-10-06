@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Threading;
 using System.Messaging;
+using System.IO;
 
 using FTI.Shared.Trialmax;
 using FTI.Trialmax.Controls;
@@ -154,6 +155,7 @@ namespace FTI.Trialmax.Panes
 			SetTargetBinder,
 			AddObjection,
 			RepeatObjection,
+            PresentationRecording
 		}
 		
 		/// <summary>Actions to be taken when user drops in the tree</summary>
@@ -1339,6 +1341,7 @@ namespace FTI.Trialmax.Panes
                     //	Top level must be a script
                     return (tmaxNodes[0].MediaType != TmaxMediaTypes.Script);
 				case TreePaneCommands.Presentation:
+                //case TreePaneCommands.PresentationRecording:
 				case TreePaneCommands.Properties:
 				case TreePaneCommands.Codes:
 	
@@ -1371,7 +1374,45 @@ namespace FTI.Trialmax.Panes
 					{
 						return true;
 					}
-					
+
+                case TreePaneCommands.PresentationRecording:
+                //	These commands require single media selections
+                    if (tmaxNodes.Count != 1) return false;
+                    if (tmaxNodes[0].IPrimary == null) return false;
+
+                    if (eCommand == TreePaneCommands.Codes)
+                    {
+                        if (GetCodesEnabled() == false) return false;
+                    }
+
+                    //	Is this a document,PPT or one of it's descendants?
+                    if (tmaxNodes[0].IPrimary.GetMediaType() == TmaxMediaTypes.Document)
+                    {
+                        //	Presentation can't view Documents directly
+                        return (eCommand != TreePaneCommands.PresentationRecording);
+                    }
+
+                    if (tmaxNodes[0].IPrimary.GetMediaType() == TmaxMediaTypes.Powerpoint)
+                    {
+                        //	Presentation can't view Powerpoints directly
+                        return (eCommand != TreePaneCommands.PresentationRecording);
+                    }
+                    
+                    if (tmaxNodes[0].IPrimary.GetMediaType() == TmaxMediaTypes.Recording)
+                    {
+                        //	Presentation can't view Recordings directly
+                        return (eCommand != TreePaneCommands.PresentationRecording);
+                    }
+                    //	No metadata for quaternary records
+                    if (tmaxNodes[0].IQuaternary != null)
+                    {
+                        return (eCommand != TreePaneCommands.Codes);
+                    }
+                    else
+                    {
+                        return true;
+                    }
+
 				case TreePaneCommands.Builder:
 				case TreePaneCommands.Tuner:
 	
@@ -1842,6 +1883,10 @@ namespace FTI.Trialmax.Panes
 				
 					return Shortcut.F5;
 
+//                case TreePaneCommands.PresentationRecording:
+
+  //                  return Shortcut.F6;
+
 				case TreePaneCommands.AddObjection:
 
 					return Shortcut.CtrlJ;
@@ -2227,6 +2272,7 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.Appearance appearance43 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool92 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Presentation");
             Infragistics.Win.Appearance appearance44 = new Infragistics.Win.Appearance();
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool161 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool93 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SortDesignations");
             Infragistics.Win.Appearance appearance45 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool94 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Duplicate");
@@ -2238,6 +2284,7 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool96 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Properties");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool154 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Explorer");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool97 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Presentation");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool160 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool98 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Builder");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool99 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Tuner");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool100 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Viewer");
@@ -2705,6 +2752,9 @@ namespace FTI.Trialmax.Panes
             appearance44.Image = 32;
             buttonTool92.SharedProps.AppearancesSmall.Appearance = appearance44;
             buttonTool92.SharedProps.Caption = "Open in Presentation";
+            appearance44.Image = 32;
+            buttonTool161.SharedProps.AppearancesSmall.Appearance = appearance44;
+            buttonTool161.SharedProps.Caption = "Open in Presentation with Recording";
             appearance45.Image = 34;
             buttonTool93.SharedProps.AppearancesSmall.Appearance = appearance45;
             buttonTool93.SharedProps.Caption = "Sort Designations";
@@ -2721,6 +2771,7 @@ namespace FTI.Trialmax.Panes
             buttonTool96,
             buttonTool154,
             buttonTool97,
+            buttonTool160,
             buttonTool98,
             buttonTool99,
             buttonTool100,
@@ -2929,6 +2980,7 @@ namespace FTI.Trialmax.Panes
             buttonTool90,
             buttonTool91,
             buttonTool92,
+            buttonTool161,
             buttonTool93,
             buttonTool94,
             buttonTool95,
@@ -3283,7 +3335,6 @@ namespace FTI.Trialmax.Panes
 			{
 				//	Add to the parent collection
 				tmaxParent.Nodes.Add(tmaxNode);
-				
 				//	Set the property values AFTER adding to the tree
 				tmaxNode.SetProperties(GetImageIndex(tmaxNode));
 					
@@ -4172,7 +4223,7 @@ namespace FTI.Trialmax.Panes
 		
 		/// <summary>This method handles the event fired when the user clicks on Open in Presentation from the context menu</summary>
 		/// <param name="tmaxNode">The node under the current mouse position</param>
-		protected virtual void OnCmdPresentation(CTmaxMediaTreeNode tmaxNode)
+		protected virtual void OnCmdPresentation(CTmaxMediaTreeNode tmaxNode, bool? recording=false)
 		{
 			CTmaxParameters tmaxParameters = null;
 
@@ -4180,13 +4231,25 @@ namespace FTI.Trialmax.Panes
 			tmaxParameters = new CTmaxParameters();
 			tmaxParameters.Add(TmaxCommandParameters.Presentation, true);
 
+            string fileName = "recording.ini";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\" + fileName;
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            if (recording.Value) {
+                using (TextWriter tw = new StreamWriter(filePath))
+                {
+               //   tw.WriteLine("[RECORDING]");
+                    tw.WriteLine(tmaxNode.FullPath.ToLower().Replace("scripts\\",String.Empty)+ ".wmv");
+                }
+            }
 			if(FireCommand(TmaxCommands.Open, tmaxNode, false, tmaxParameters) == true)
 			{
-			
+			    
 			}
 			
 		}// OnCmdPresentation(CTmaxMediaTreeNode tmaxNode)
-		
+
 		/// <summary>This method handles the event fired when the user clicks on Refresh Filter from the context menu</summary>
 		protected virtual void OnCmdRefreshFiltered()
 		{
@@ -6129,7 +6192,12 @@ namespace FTI.Trialmax.Panes
 					
 						OnCmdPresentation(GetSelection());
 						break;
-						
+					
+                    case TreePaneCommands.PresentationRecording:
+
+                        OnCmdPresentation(GetSelection(),true);
+                        break;
+
 					case TreePaneCommands.Builder:
 					
 						OnCmdBuilder(GetSelection());
@@ -7493,7 +7561,7 @@ namespace FTI.Trialmax.Panes
 			//	NOTE:	We do not clear the drop node because the owner may 
 			//			want to know what node we were on for the operation
 		}
-
+      
 		#endregion Public Methods
 
 		#region Properties

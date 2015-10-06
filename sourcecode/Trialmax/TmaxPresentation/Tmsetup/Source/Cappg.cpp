@@ -38,6 +38,7 @@ static char THIS_FILE[] = __FILE__;
 //------------------------------------------------------------------------------
 BEGIN_MESSAGE_MAP(CCapturePage, CSetupPage)
 	//{{AFX_MSG_MAP(CCapturePage)
+	ON_BN_CLICKED(IDC_BROWSEFILEPATH, OnBrowseFilePath)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -60,6 +61,30 @@ CCapturePage::CCapturePage(CWnd* pParent) : CSetupPage(CCapturePage::IDD, pParen
 	m_bSilent = FALSE;
 	//}}AFX_DATA_INIT
 }
+//==============================================================================
+//
+// 	Function Name:	CCapturePage::OnInitDialog()
+//
+// 	Description:	This function manages the exchange of data between the class
+//					members and the associated dialog box controls
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
+
+BOOL CCapturePage::OnInitDialog() 
+{
+	//	Perform base class initialization
+	CDialog::OnInitDialog();
+	
+	//	Load the bitmaps for the browse buttons
+	m_btnFolder.AutoLoad(IDC_BROWSEFILEPATH, this);
+
+	//	Fill the list box and set the current 
+	return TRUE;  
+}
 
 //==============================================================================
 //
@@ -80,7 +105,67 @@ void CCapturePage::DoDataExchange(CDataExchange* pDX)
 	DDX_CBIndex(pDX, IDC_AREA, m_iArea);
 	DDX_CBIndex(pDX, IDC_HOTKEY, m_iHotkey);
 	DDX_Check(pDX, IDC_SILENT, m_bSilent);
+	DDX_Text(pDX, IDC_FILEPATH, m_sFilePath);
+	DDX_Control(pDX, IDC_FILEPATH, m_ctrlFilePath);
 	//}}AFX_DATA_MAP
+}
+
+
+
+//==============================================================================
+//
+// 	Function Name:	CCapturePage::OnBrowseFilePath()
+//
+// 	Description:	This function is called to read the page options from the
+//					ini file.
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
+void CCapturePage::OnBrowseFilePath()
+{
+	BROWSEINFO		BrowseInfo;
+	IMalloc*		pMalloc;
+	LPITEMIDLIST	pItemIDList;
+	TCHAR			szFolder[MAX_PATH];
+	CString			strFolder;
+	int				iIndex;
+	SCaptureOptions Options;
+	
+	//	Initialize the browse information
+	memset(&BrowseInfo, 0, sizeof(BrowseInfo));
+	BrowseInfo.hwndOwner = m_hWnd;
+	BrowseInfo.lpszTitle = "Select the case folder";
+	BrowseInfo.ulFlags = BIF_RETURNONLYFSDIRS;
+	BrowseInfo.pszDisplayName = szFolder;
+
+	//	Open the browser dialog
+	if((pItemIDList = SHBrowseForFolder(&BrowseInfo)) == NULL)
+		return;
+
+	//	Translate the folder's display name to a path specification
+	if(!SHGetPathFromIDList(pItemIDList, szFolder))
+		return;
+
+	// Convert to lower case so we can do exact comparisons
+	strFolder = szFolder;
+	strFolder.MakeLower();
+	strFolder.AppendChar('\\');
+//Temp
+	m_ctrlFilePath.SetWindowText(strFolder);
+	Options.sFilePath=strFolder;
+//
+	//	Delete the PIDL using the shells task allocator
+	if(SHGetMalloc(&pMalloc) != NOERROR)
+		return;
+	//	Free the memory returned by the shell
+	if(pMalloc)
+	{
+		pMalloc->Free(pItemIDList);
+		pMalloc->Release();
+	}
 }
 
 //==============================================================================
@@ -105,6 +190,7 @@ void CCapturePage::ReadOptions(CTMIni& rIni)
 	//	Set the class members
 	m_iArea = Options.sArea;
 	m_bSilent = Options.bSilent;
+	m_sFilePath= Options.sFilePath;
 
 	switch(Options.sHotkey)
 	{
@@ -168,6 +254,7 @@ BOOL CCapturePage::WriteOptions(CTMIni& rIni)
 	//	Fill the transfer structure
 	Options.sArea = m_iArea;
 	Options.bSilent = m_bSilent;
+	Options.sFilePath = m_sFilePath;
 
 	switch(m_iHotkey)
 	{

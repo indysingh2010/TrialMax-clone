@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
 using System.Threading;
+using System.IO;
 
 using FTI.Shared;
 using FTI.Shared.Win32;
@@ -41,6 +42,7 @@ namespace FTI.Trialmax.Panes
 			Cut,
 			PinScript,
 			Presentation,
+            PresentationRecording,
 			Tuner,
 			Print,
 			Find,
@@ -904,6 +906,7 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool2 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("PinScript", "");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool4 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Properties");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool5 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Presentation");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool160 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool6 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Tuner");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool7 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Viewer");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool8 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Print");
@@ -949,6 +952,7 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.Appearance appearance17 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.LabelTool labelTool9 = new Infragistics.Win.UltraWinToolbars.LabelTool("AutoPeriodLabel");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool27 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Presentation");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool161 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
             Infragistics.Win.Appearance appearance18 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool28 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Tuner");
             Infragistics.Win.Appearance appearance19 = new Infragistics.Win.Appearance();
@@ -1106,6 +1110,7 @@ namespace FTI.Trialmax.Panes
             buttonTool4,
             buttonTool5,
             buttonTool6,
+            buttonTool160,
             buttonTool7,
             buttonTool8,
             buttonTool9,
@@ -1176,6 +1181,8 @@ namespace FTI.Trialmax.Panes
             appearance18.Image = 20;
             buttonTool27.SharedProps.AppearancesSmall.Appearance = appearance18;
             buttonTool27.SharedProps.Caption = "Open in Presentation ...";
+            buttonTool161.SharedProps.AppearancesSmall.Appearance = appearance18;
+            buttonTool161.SharedProps.Caption = "Open in Presentation with Recording";
             appearance19.Image = 21;
             buttonTool28.SharedProps.AppearancesSmall.Appearance = appearance19;
             buttonTool28.SharedProps.Caption = "Open In Tuner";
@@ -1232,6 +1239,7 @@ namespace FTI.Trialmax.Panes
             stateButtonTool3,
             labelTool9,
             buttonTool27,
+            buttonTool161,
             buttonTool28,
             buttonTool29,
             buttonTool30,
@@ -1740,21 +1748,35 @@ namespace FTI.Trialmax.Panes
 		
 		/// <summary>This method handles the event fired when the user clicks on Presentation from the context menu</summary>
 		/// <param name="Selection">The current scene selection</param>
-		private void OnCmdPresentation(CScriptScene Selection)
+        private void OnCmdPresentation(CScriptScene Selection, bool? recording = false)
 		{
 			CTmaxParameters tmaxParameters = null;
 			
 			//	Create the required parameters for the event
 			tmaxParameters = new CTmaxParameters();
 			tmaxParameters.Add(TmaxCommandParameters.Presentation, true);
-				
+
+            string fileName = "recording.ini";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + "\\" + fileName;
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            if (recording.Value)
+            {
+                using (TextWriter tw = new StreamWriter(filePath))
+                {
+                    tw.WriteLine("recording=true");
+                }
+            }
+	
 			if(FireCommand(TmaxCommands.Open, Selection, false, tmaxParameters) == true)
 			{
 			
 			}
 			
 		}// OnCmdPresentation(CScriptScene Selection)
-		
+
+        
 		/// <summary>This method handles the event fired when the user clicks on PinScript from the context menu</summary>
 		private void OnCmdPinScript()
 		{
@@ -3829,7 +3851,13 @@ namespace FTI.Trialmax.Panes
 						if((aSelections != null) && (aSelections.Count == 1))
 							OnCmdPresentation(aSelections[0]);
 						break;
-						
+
+                    case ScriptBuilderCommands.PresentationRecording:
+                        
+                        if((aSelections != null) && (aSelections.Count == 1))
+							OnCmdPresentation(aSelections[0],true);
+						break;
+
 					case ScriptBuilderCommands.Viewer:
 					
 						if((aSelections != null) && (aSelections.Count == 1))
@@ -4089,6 +4117,7 @@ namespace FTI.Trialmax.Panes
 				case ScriptBuilderCommands.Properties:
 				case ScriptBuilderCommands.Viewer:
 				case ScriptBuilderCommands.Presentation:
+                case ScriptBuilderCommands.PresentationRecording:
 				case ScriptBuilderCommands.Tuner:
 	
 					//	These commands require single selection
@@ -4179,6 +4208,10 @@ namespace FTI.Trialmax.Panes
 				case ScriptBuilderCommands.Presentation:
 				
 					return Shortcut.F5;
+
+                case ScriptBuilderCommands.PresentationRecording:
+
+                    return Shortcut.F6;
 				
 				default:
 				

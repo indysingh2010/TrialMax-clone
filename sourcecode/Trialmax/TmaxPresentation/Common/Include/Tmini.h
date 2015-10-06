@@ -185,6 +185,7 @@
 #define CAPTURE_CANCELKEY_LINE				"CancelKey"
 #define CAPTURE_SILENT_LINE					"Silent"
 #define CAPTURE_AREA_LINE					"Area"
+#define CAPTURE_FILE_PATH					"FilePath"
 
 //	Default shared values
 #define DEFAULT_VIDEODRIVE					"D"
@@ -295,6 +296,7 @@
 #define DEFAULT_CO_CANCELKEY				27
 #define DEFAULT_CO_SILENT					TRUE
 #define DEFAULT_CO_AREA						2
+#define DEFAULT_FILE_PATH					"C:\\Vid\\"
 
 //	Default Ringtail options
 #define DEFAULT_RT_SHOWREDACTIONS			TRUE
@@ -457,6 +459,7 @@ typedef struct
 	short		sHotkey;
 	short		sCancelKey;
 	short		sArea;
+	CString		sFilePath;
 }SCaptureOptions;
 
 //	This structure is used to transfer RingTail display options

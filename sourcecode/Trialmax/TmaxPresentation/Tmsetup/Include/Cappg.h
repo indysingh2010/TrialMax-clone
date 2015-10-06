@@ -34,6 +34,7 @@
 class CCapturePage : public CSetupPage
 {
 	private:
+			CBitmapButton			m_btnFolder;
 
 	public:
 
@@ -52,6 +53,8 @@ class CCapturePage : public CSetupPage
 	int		m_iArea;
 	int		m_iHotkey;
 	BOOL	m_bSilent;
+	CString m_sFilePath;
+	CStatic m_ctrlFilePath;
 	//}}AFX_DATA
 
 	// ClassWizard generated virtual function overrides
@@ -65,6 +68,8 @@ class CCapturePage : public CSetupPage
 	// Generated message map functions
 	//{{AFX_MSG(CCapturePage)
 		// NOTE: the ClassWizard will add member functions here
+		afx_msg void OnBrowseFilePath();
+		virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

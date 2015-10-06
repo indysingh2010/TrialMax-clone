@@ -64,6 +64,7 @@ namespace FTI.Trialmax.Panes
 			OpenProperties,
 			OpenCodes,
 			OpenPresentation,
+            PresentationRecording
 		}
 		
 		private const string XMLKEY_DOUBLE_SPIT_BEFORE		= "DoubleSplitBefore";
@@ -1483,6 +1484,10 @@ namespace FTI.Trialmax.Panes
 				case TranscriptPaneCommands.OpenPresentation:
 
 					return Shortcut.F5;
+
+                case TranscriptPaneCommands.PresentationRecording:
+
+                    return Shortcut.F6;
 
 				default:
 				
@@ -4256,6 +4261,7 @@ namespace FTI.Trialmax.Panes
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool43 = new Infragistics.Win.UltraWinToolbars.ButtonTool("OpenProperties");
 			Infragistics.Win.Appearance appearance33 = new Infragistics.Win.Appearance();
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool44 = new Infragistics.Win.UltraWinToolbars.ButtonTool("OpenPresentation");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool161 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
 			Infragistics.Win.Appearance appearance34 = new Infragistics.Win.Appearance();
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool45 = new Infragistics.Win.UltraWinToolbars.ButtonTool("OpenCodes");
 			Infragistics.Win.Appearance appearance35 = new Infragistics.Win.Appearance();
@@ -4264,6 +4270,7 @@ namespace FTI.Trialmax.Panes
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool46 = new Infragistics.Win.UltraWinToolbars.ButtonTool("OpenProperties");
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool47 = new Infragistics.Win.UltraWinToolbars.ButtonTool("OpenPresentation");
 			Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool48 = new Infragistics.Win.UltraWinToolbars.ButtonTool("OpenCodes");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool160 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CTranscriptPane));
 			Infragistics.Win.Appearance appearance1 = new Infragistics.Win.Appearance();
 			Infragistics.Win.UltraWinStatusBar.UltraStatusPanel ultraStatusPanel1 = new Infragistics.Win.UltraWinStatusBar.UltraStatusPanel();
@@ -4463,6 +4470,8 @@ namespace FTI.Trialmax.Panes
 			appearance34.Image = 21;
 			buttonTool44.SharedProps.AppearancesSmall.Appearance = appearance34;
 			buttonTool44.SharedProps.Caption = "Open in Presentation";
+            buttonTool161.SharedProps.AppearancesSmall.Appearance = appearance34;
+            buttonTool161.SharedProps.Caption = "Open in Presentation with Recording";
 			appearance35.Image = 23;
 			buttonTool45.SharedProps.AppearancesSmall.Appearance = appearance35;
 			buttonTool45.SharedProps.Caption = "Open in Fielded Data";
@@ -4472,6 +4481,7 @@ namespace FTI.Trialmax.Panes
 			popupMenuTool4.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             buttonTool46,
             buttonTool47,
+            buttonTool160,
             buttonTool48});
 			this.m_ultraToolbarManager.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             buttonTool7,
@@ -4509,6 +4519,7 @@ namespace FTI.Trialmax.Panes
             buttonTool39,
             buttonTool43,
             buttonTool44,
+            buttonTool161,
             buttonTool45,
             popupMenuTool4});
 			this.m_ultraToolbarManager.ToolValueChanged += new Infragistics.Win.UltraWinToolbars.ToolEventHandler(this.OnUltraToolValueChanged);

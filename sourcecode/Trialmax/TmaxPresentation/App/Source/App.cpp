@@ -33,7 +33,11 @@
 #include <afxwin.h>
 #include <enumdisplays.h>
 #include <toolbox.h>
+#include <fstream>
+#include <string>
+#include <sstream>
 
+#include "Tmini.h"
 //------------------------------------------------------------------------------
 //	DEFINES
 //------------------------------------------------------------------------------
@@ -147,9 +151,9 @@ void CApp::ActivateInstance(HWND hMainWnd)
 
 //==============================================================================
 //
-// 	Function Name:	CApp::CMainView()
+// 	Function Name:	CApp::CApp()
 //
-// 	Description:	This is the constructor for CMainView objects.
+// 	Description:	This is the constructor for CApp().
 //
 // 	Returns:		None
 //
@@ -177,7 +181,124 @@ CApp::CApp()
 	m_cVK = 0;
 	bSetDisplay = FALSE;
 	memset(m_szKey, 0, sizeof(m_szKey));
+	
+	DWORD cchCurDir = MAX_PATH;
+	char szCurDir[MAX_PATH];	
+	GetCurrentDirectory(cchCurDir, szCurDir);
+	strcat(szCurDir,"\\recording.ini");
+	
+	char FileName[200]="";
+	char temp[200]="";
+	ifstream myfile;
+	myfile.open(szCurDir);
+	if (myfile.is_open()) {
+		 while (!myfile.eof()) {
+			myfile>>temp;
+			strcat(FileName,temp);
+		 }
+	}
+	myfile.close();
+
+	if(FileName[0] != '\0'){		
+		m_hFFmpeg=0;
+		StartRecordingFFMpeg(FileName);	
+	}
+	
 }
+//==============================================================================
+//
+// 	Function Name:	CApp::~CApp()
+//
+// 	Description:	This is the destructor for CApp.
+//
+// 	Returns:		None
+//
+//	Notes:			Currently being used to exit FFmpeg Recording functional
+//
+//==============================================================================
+
+
+CApp::~CApp(){
+	if(m_hFFmpeg!=NULL)
+	{
+		ofstream outFile("FFmpeg-Exit.txt", ios::out|ios::trunc);
+		outFile<<1;
+		outFile.close();
+
+		CloseHandle(m_hFFmpeg);
+	}
+}
+
+//==============================================================================
+//
+// 	Function Name:	CApp::StartRecordingFFmpeg()
+//
+// 	Description:	This function is called to create an FFmpeg Recording Process.
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//==============================================================================
+void CApp::StartRecordingFFMpeg(char FileName[]){
+	
+	DWORD cchCurDir = MAX_PATH;
+	char szCurDir[MAX_PATH];	
+	GetCurrentDirectory(cchCurDir, szCurDir);
+	strcat(szCurDir,"\\FTI.ini");
+	
+	SCaptureOptions * pOptions = new SCaptureOptions();
+	
+	CTMIni*	m_pIni = new CTMIni(szCurDir,"TMGRAB");
+	m_pIni->ReadCaptureOptions(pOptions);
+
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	ZeroMemory(&si, sizeof(si));
+	si.cb=sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+	
+	CString Folder = pOptions->sFilePath;
+	/*if (GetFileAttributes(Folder) == INVALID_FILE_ATTRIBUTES) {
+	 CreateDirectory(Folder,NULL);
+	}*/
+
+	char cmd[400] = "cmd.exe /C FFmpegRun.bat ";
+	strcat(cmd,Folder);
+	strcat(cmd,FileName);
+	
+	//
+	DWORD cchCurDir1 = MAX_PATH;
+	char szCurDir1[MAX_PATH];	
+	GetCurrentDirectory(cchCurDir1, szCurDir1);
+	strcat(szCurDir1,"\\recording.ini");
+	
+	ofstream myfile2;
+	myfile2.open(szCurDir1);
+	myfile2<<cmd;
+	myfile2.close();
+	//
+
+	//Start the child process
+	if(!CreateProcess(NULL,
+		cmd,
+		NULL,
+		NULL,
+		FALSE,
+		CREATE_NO_WINDOW,
+		NULL,
+		NULL,
+		&si,
+		&pi)
+	)
+	{
+		printf("FFMpeg CreateProcess failed (%d).\n", GetLastError());
+	}
+
+	CloseHandle(pi.hThread);
+	m_hFFmpeg=pi.hProcess;
+}
+
 
 //==============================================================================
 //
