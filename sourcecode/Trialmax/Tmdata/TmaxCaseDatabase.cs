@@ -421,7 +421,7 @@ namespace FTI.Trialmax.Database
         private List<CTmaxPDFManager> ConversionTasksArray = null;
 
         /// <summary>Lock for accessing ConverstionTasksArray above</summary>
-        private static object lockConversionTasksArray = true;
+        //private static object lockConversionTasksArray = true;
 
         /// <summary>Lock for Conflict Resolution form because only 1 form should appear at any given instance</summary>
         private static object lockForConflictForm = true;
@@ -1317,13 +1317,7 @@ namespace FTI.Trialmax.Database
 				}// if((dxPrimary = CreatePrimary(tmaxSource)) != null)
 				
 			}// if(tmaxSource.Files.Count > 0)
-                    /// <summary>Semaphore for PDF Import Process for multi threading</summary>
-            Semaphore PdfSemaphore = new Semaphore(Math.Min(4, Environment.ProcessorCount), Math.Min(4, Environment.ProcessorCount));
-
-            /// <summary>Semaphore for Non PDF Import Process for NO multi threading</summary>
-            Semaphore NonPdfSemaphore = new Semaphore(1, 1);
-
-            List<Task> PdfTasks = new List<Task>();
+            
             //	Add each subfolder
             foreach (CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
             {
@@ -1334,36 +1328,8 @@ namespace FTI.Trialmax.Database
                         AddSourceAgs variables = new AddSourceAgs();
                         variables.tmaxSource = tmaxSource;
                         variables.tmaxSubFolder = tmaxSubFolder;
-                        if (variables.tmaxSubFolder.SourceType == RegSourceTypes.Adobe)
-                        {
-                            PdfTasks.Add(new Task(delegate
-                                {
-                                    AddSourceProcess(variables);
-                                    PdfSemaphore.Release();
-                                }));
-                            PdfSemaphore.WaitOne(); // Wait and see if there are enough resources to start the task
-                            PdfTasks[PdfTasks.Count - 1].Start(); // Start the conversion process
-                        }
-                        else if (variables.tmaxSubFolder.SourceType == RegSourceTypes.NoSource)
-                        {
-                            AddSourceProcess(variables);
-                        }
-                        else
-                        {
-                            PdfTasks.Add(new Task(delegate
-                            {
-                                AddSourceProcess(variables);
-                                NonPdfSemaphore.Release();
-                            }));
-                            NonPdfSemaphore.WaitOne(); // Wait and see if there are enough resources to start the task
-                            PdfTasks[PdfTasks.Count - 1].Start(); // Start the conversion process
-                        }
+                        AddSourceProcess(variables);
                     }
-                    else
-                    {
-
-                    }
-
                 }
                 catch (System.Exception Ex)
                 {
@@ -1373,7 +1339,7 @@ namespace FTI.Trialmax.Database
             }//foreach(CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
 
 
-            Task.WaitAll(PdfTasks.ToArray());
+            //Task.WaitAll(PdfTasks.ToArray());
 
             return m_bRegisterCancelled;
 		
@@ -5614,8 +5580,8 @@ namespace FTI.Trialmax.Database
                         //  Now we need to check if any tasks are pending. If there are then we need to signal each task to stop processing and perform cleanp.
                         if (RegThread != null)
                         {
-                            lock (lockConversionTasksArray)
-                            {
+                            //lock (lockConversionTasksArray)
+                            //{
                                 if (ConversionTasksArray != null)
                                 {
                                     for (int i = 0; i < ConversionTasksArray.Count; i++)
@@ -5624,7 +5590,7 @@ namespace FTI.Trialmax.Database
                                     }
                                     ConversionTasksArray = null;
                                 }
-                            }
+                            //}
                             RegThread.Join();   // We need to wait for all tasks to be stopped (if any) and then proceed so proper cleanup is done.
                             RegThread = null;
                         }
@@ -8966,13 +8932,13 @@ namespace FTI.Trialmax.Database
                 Debug.Assert(m_RegSourceFolder != null);
                 if (ConversionTasksArray == null)
                 {
-                    lock (lockConversionTasksArray)
-                    {
+                    //lock (lockConversionTasksArray)
+                    //{
                         if (ConversionTasksArray == null)
                         {
                             ConversionTasksArray = new List<CTmaxPDFManager>();
                         }
-                    }
+                    //}
                 }
                 //	Are we merging all source files into a single primary media object?
                 if ((m_tmaxRegisterOptions != null) && (m_tmaxRegisterOptions.MediaCreation == RegMediaCreations.Merge))
@@ -9006,7 +8972,7 @@ namespace FTI.Trialmax.Database
                 logDetailed.Info("********************************* STARTING REGISTRATION PROCESS *********************************");
                 logUser.Info("********************************* STARTING REGISTRATION PROCESS *********************************");
                 CalculateTotalPages(m_RegSourceFolder);
-                m_cfRegisterProgress.TotalPages = m_totalPages;
+                m_cfRegisterProgress.TotalPages = m_totalPages*3;//33% Detection 33% extraction and 33% conversion;
                 SetRegisterProgress("Registration in progress ...");
                 //	Add the new records to the database
                 if ((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
@@ -9015,7 +8981,7 @@ namespace FTI.Trialmax.Database
                 //	Notify the progress form
                 if ((m_cfRegisterProgress != null) && (m_bRegisterCancelled == false))
                 {
-                    m_cfRegisterProgress.CompletedPages = m_totalPages;
+                    m_cfRegisterProgress.CompletedPages = m_totalPages * 3; //Same as above;
                     m_cfRegisterProgress.Finished = true;
                     SetRegisterProgress("Registration complete");
                 }
@@ -10404,12 +10370,12 @@ namespace FTI.Trialmax.Database
                 PDFManager.notifyRegOptionsForm += new EventHandler(UpdateProgressBar);
                 if (m_bRegisterCancelled == true)
                     return iPages;
-                lock (lockConversionTasksArray)
-                {
+                //lock (lockConversionTasksArray)
+                //{
                     if (ConversionTasksArray == null)
                         return iPages;
                     ConversionTasksArray.Add(PDFManager);
-                }
+                //}
                 Console.WriteLine("Starting converting file = " + strAdobeFileSpec.ToLower());
                 bool status = PDFManager.StartConversion();
 
@@ -10424,14 +10390,14 @@ namespace FTI.Trialmax.Database
                 }
                 else // File was converted successfully
                 {
-                    lock (lockConversionTasksArray)
-                    {
+                    //lock (lockConversionTasksArray)
+                    //{
                         if (ConversionTasksArray == null)
                         {
                             return iPages;
                         }
                         ConversionTasksArray.Remove(PDFManager);
-                    }
+                    //}
                     if (strTarget.EndsWith("\\") == false)
                         strTarget += "\\";
                     while (true)

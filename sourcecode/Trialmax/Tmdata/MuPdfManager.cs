@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
+using System.Collections;
+using System.Text.RegularExpressions;
 
 using Ghostscript.NET;
 
@@ -52,6 +55,10 @@ namespace FTI.Trialmax.Database
         /// <summary>Local member that will store if Custom Dither should be disabled</summary>
         private bool m_DisableCustomDither = false;
 
+        private string result = string.Empty;
+
+        private ArrayList arrList = new ArrayList();
+
         #endregion Private Members
 
         #region Public Members
@@ -71,12 +78,16 @@ namespace FTI.Trialmax.Database
             m_resolution            = outResolution;
             m_totalThreads          = totThreads;
             m_DisableCustomDither   = disableCustomDither;
+
             try
             {
                 if (InitializeGhostscript())
                     m_TotalPages = m_GsManager.GetTotalPages();
                 else
                     m_TotalPages = 0;
+
+                GetColorString();
+                PopulateColorArray(result);
             }
             catch (Exception Ex)
             {
@@ -85,7 +96,7 @@ namespace FTI.Trialmax.Database
         }// public CTmaxMuPdfManager(string docPath, string outPath, short outResolution = 0, short totThreads = 0)
 
         ///<summary>Start the conversion process using MuPdf/Leadtools/Ghostscript</summary>
-        public bool Process()
+        public bool Process(short m_CustomDPI)
         {
             if (m_TotalPages == 0)
                 return false;
@@ -94,7 +105,7 @@ namespace FTI.Trialmax.Database
                 if (!DoConvert)
                     return false;
 
-                if (!m_GsManager.ProcessPage(i, isColor(i)))
+                if (!m_GsManager.ProcessPage(i, isColor(i),m_CustomDPI))
                     return false;
                 //if (isColor(i))
                 //{
@@ -150,10 +161,21 @@ namespace FTI.Trialmax.Database
         ///<summary>Check if the page is colored or not using MuDraw.exe</summary>
         private bool isColor(int pageNum)
         {
-            bool result = true;
+            bool bresult = true;
+
+            bresult = (bool)arrList[pageNum - 1];
+
+            return bresult;
+        }// private bool isColor(int pageNum)
+
+
+        
+        ///<summary>Redirects standard output of MuPDF to populate list of color detection</summary>
+        private void GetColorString()
+        {
             try
             {
-                string parameters = "-T \"" + m_documentNameWithPath + "\" " + pageNum;
+                string parameters = "-T \"" + m_documentNameWithPath + "\" ";
                 System.Diagnostics.ProcessStartInfo oInfo = new System.Diagnostics.ProcessStartInfo(@"PDFManager\mudraw.exe", parameters);
                 oInfo.UseShellExecute = false;
                 oInfo.CreateNoWindow = true;
@@ -165,10 +187,17 @@ namespace FTI.Trialmax.Database
                     // allow for reading asynhcronous Output
                     proc.BeginErrorReadLine();
 
-                    // Blocking until the process exits
-                    proc.WaitForExit();
-                    result = proc.StandardOutput.ReadToEnd().Contains("color");
+                    //// Blocking until the process exits
+                    result = proc.StandardOutput.ReadToEnd();
 
+                    if (notifyPDFManager != null)
+                    {
+                        for (int i = 0; i < m_TotalPages; i++)
+                        {
+                            notifyPDFManager(null, null);
+                        }
+                    }
+                    //proc.WaitForExit();
                     proc.Close();
                     proc.Dispose();
                 }
@@ -177,8 +206,31 @@ namespace FTI.Trialmax.Database
             {
                 logDetailed.Error(Ex.ToString());
             }
-            return result;
-        }// private bool isColor(int pageNum)
+        }
+
+        ///<summary>Initialize Leadtools object for color conversions</summary>
+        private void PopulateColorArray(string result)
+        {
+            var lines = Regex.Split(result, "\r\n|\r|\n");
+            foreach(string line in lines)
+            {
+                string lastWord = line.Split(' ').Last();
+                if (lastWord.Contains("color"))
+                {
+                    arrList.Add(true);
+                }
+                else if (lastWord.Contains("grayscale"))
+                {
+                    arrList.Add(false);
+                }
+                else 
+                {
+                
+                }
+            }
+
+        }
+
 
         ///<summary>Initialize Leadtools object for color conversions</summary>
         private bool InitializeLeadtools()

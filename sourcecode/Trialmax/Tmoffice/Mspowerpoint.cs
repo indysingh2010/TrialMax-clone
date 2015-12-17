@@ -82,11 +82,13 @@ namespace FTI.Trialmax.MSOffice.MSPowerPoint
 			m_strProduct = "PowerPoint";
 			m_tmaxEventSource.Name = m_strProduct;
 		}
-		
+
+        //private static object lockUniversal = new object();
 		/// <summary>This method is called to initialize the control</summary>
 		/// <returns>True if successful</returns>
 		public override bool Initialize()
 		{
+            
 			//	Have we already initialized?
 			if(m_ppPresentations != null) 
 				return true;
@@ -95,10 +97,13 @@ namespace FTI.Trialmax.MSOffice.MSPowerPoint
 			{
 				try
 				{
-					if(m_ppApplication == null)
-						m_ppApplication = new PowerPoint.Application();
-						
-					if((m_ppPresentations = m_ppApplication.Presentations) != null)					
+                    if (m_ppApplication == null) 
+                    {
+                        System.Threading.Thread.Sleep(50);
+                        m_ppApplication = new PowerPoint.Application();
+                    }
+					
+                    if((m_ppPresentations = m_ppApplication.Presentations) != null)					
 						break;
 					else
 						System.Threading.Thread.Sleep(500);

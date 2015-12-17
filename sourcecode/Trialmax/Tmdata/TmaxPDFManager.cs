@@ -235,7 +235,7 @@ namespace FTI.Shared.Database
             if (MuManager == null)
                 return false;
             MuManager.notifyPDFManager += new EventHandler(UpdateRegStatusBar);
-            return MuManager.Process();
+            return MuManager.Process(m_CustomDPI);
         }// private bool ConvertAutoDetect()
 
         private bool ConvertGS()

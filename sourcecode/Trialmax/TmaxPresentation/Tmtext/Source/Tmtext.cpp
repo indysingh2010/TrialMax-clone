@@ -1508,8 +1508,6 @@ BSTR CTMTextCtrl::GetVerTextShort()
 //==============================================================================
 short CTMTextCtrl::Initialize()
 {
-	//AfxMessageBox("txt initialize");
-	
 	RECT rcClient;
 
 	//	Don't bother if not in user mode

@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 using FTI.Shared;
 using FTI.Shared.Win32;
 using FTI.Shared.Trialmax;
 using FTI.Trialmax.Forms;
 
+using Tmdata;
 using Ghostscript.NET;
 using Ghostscript.NET.Rasterizer;
 using Ghostscript.NET.Processor;
 
 using iTextSharp.text.pdf;
+using System.IO;
+
 
 namespace FTI.Trialmax.Database
 {
@@ -63,12 +68,18 @@ namespace FTI.Trialmax.Database
 
         private bool m_DisableCustomDither = true;
 
+        private bool m_IsExtracted = false;
+
         #endregion Private Members
 
         #region Public Members
 
         /// <summary> Notify Parent to update Progress bar on a single task completion </summary>
         public event EventHandler notifyPDFManager;
+
+
+        /// <summary>Notify the RegOptionsForm to update the statusbar</summary>
+        public event EventHandler notifyRegOptionsForm;
 
         #endregion Public Members
 
@@ -96,6 +107,7 @@ namespace FTI.Trialmax.Database
                 processor = new GhostscriptProcessor(m_gvi, true);
                 processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
                 processor.StartProcessing(m_switches.ToArray(), null);
+
             }
             catch (Exception ex)
             {
@@ -106,24 +118,77 @@ namespace FTI.Trialmax.Database
             return true;
         }// public bool Process()
 
-        ///<summary>Process a single page</summary>
-        public bool ProcessPage(int pageNum, bool isColor)
+        ///<summary>Process the document page by page</summary>
+        public bool ProcessPage(int pageNum, bool isColor, short m_CustomDPI)
         {
             try
             {
-                processor = new GhostscriptProcessor(m_gvi, true);
-                AddPageSwitch(pageNum, isColor);
-                SetColorSwitch(isColor);
-                SetResolutionSwitch(isColor);
-                processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
-                processor.StartProcessing(m_switches.ToArray(), null);
-                RemovePageSwitch(isColor);
+                if (!m_IsExtracted)
+                {
+                        using (processor = new GhostscriptProcessor(m_gvi, true))
+                        {
+                            SetColorSwitch(isColor);
+                            // Set 200 dpi as default -BW is converted in the next condition.
+                            SetResolutionSwitch(true); 
+                            processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
+                            processor.StartProcessing(m_switches.ToArray(), null);
+                            // Extraction successfully completed
+                            m_IsExtracted = true;
+                        }
+                }
+
+                if (m_IsExtracted)
+                {
+                    string imagePath = m_outputPath + "\\" + pageNum.ToString("D" + 4);
+                    // Copy as a dummy from original image
+                    using (System.Drawing.Image dummy = System.Drawing.Image.FromFile(imagePath + ".png"))
+                    {
+                        // Check if image has color
+                        if (!isColor)
+                        {
+                            // Initialize new bitmap
+                            using (Bitmap bitmap = new Bitmap(dummy))
+                            {
+                                // Convert it into a binary Tiff image
+                                using (Bitmap destinationBitmap = bitmap.ConvertToMonochromeTiff())
+                                {
+                                    //C heck if Custom DPI has been set 
+                                    if (m_CustomDPI == 0)
+                                    {
+                                        destinationBitmap.SetResolution(300, 300);
+                                    }
+                                    else
+                                    {
+                                        destinationBitmap.SetResolution(m_CustomDPI, m_CustomDPI);
+                                    }
+                                    destinationBitmap.Save(imagePath + ".tif", ImageFormat.Tiff);
+                                }
+                            }
+                            // Call Garbage Collector to dispose of any unused handles.
+                            GC.Collect();
+                        }
+                    }
+                    // Delete the originals of converted images
+                    if (!isColor && System.IO.File.Exists(imagePath + ".png"))
+                    {
+                        System.IO.File.Delete(imagePath + ".png");
+                    }
+                    // Update status bar
+                    if (notifyPDFManager != null)
+                    {
+                        notifyPDFManager(null, null);
+                    }
+                }
             }
             catch (Exception Ex)
             {
                 logDetailed.Error(Ex.ToString());
                 StopProcess();
                 return false;
+            }
+            finally
+            {
+                GC.Collect();
             }
             return true;
         }
@@ -264,7 +329,13 @@ namespace FTI.Trialmax.Database
         private void AddOutputSwitch()
         {
             if (m_OutputType == TmaxPDFOutputType.ForceBW)
+            {
                 m_switches.Add(@"-sOutputFile=" + m_outputPath + "\\%04d.tif");
+                if (m_DisableCustomDither == false)
+                {   // Add Custom Dither Switches
+                    AddCustomDitherSwitch();
+                }
+            }
             else
                 m_switches.Add(@"-sOutputFile=" + m_outputPath + "\\%04d.png");
         }// private void AddOutputSwitch()
@@ -353,6 +424,12 @@ namespace FTI.Trialmax.Database
                 return;
             }
         }// private void SetResolutionSwitch()
+
+        private void UpdateRegStatusBar(object sender, EventArgs e)
+        {
+            if (notifyRegOptionsForm != null)
+                notifyRegOptionsForm(sender, e);
+        }// protected void UpdateRegStatusBar(object sender, EventArgs e)
 
         #endregion Private Methods
 

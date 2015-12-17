@@ -883,8 +883,17 @@ CSnapshot* CPowerPoint::GetSnapshot(BOOL bPopup)
 	return pSnapshot;
 }
 
-//#define POWERPOINT_CAPTION		_T("TMPower Main Window")
-
+//==============================================================================
+//
+// 	Function Name:	CPowerPoint::MyEnumDesktopWindows()
+//
+// 	Description:	This function is called to handle the Powerpoint.exe windows.
+//
+// 	Returns:		Returns BOOL for succesful launch of Powerpoint window.
+//
+//	Notes:			None
+//
+//==============================================================================
 HWND pppWnd=0;
 DWORD oppThread=0;
 BOOL CPowerPoint::MyEnumDesktopWindows(HWND hWnd)
@@ -916,7 +925,12 @@ BOOL CPowerPoint::MyEnumDesktopWindows(HWND hWnd)
 			return TRUE;
 		}
 		
-		if((m_hNSSWnd = ::FindWindowEx(hwndmdiClass, NULL, "paneClassDC", NULL)) == NULL) {
+		// Powerpoint 2013 fix. The paneClassDC does not exist in this scenario.
+		if(m_fPPVersion == PpVersion::ppVersion2013){
+			
+			m_hNSSWnd = hwndmdiClass;
+		}
+		else if((m_hNSSWnd = ::FindWindowEx(hwndmdiClass, NULL, "paneClassDC", NULL)) == NULL) {
 
 			return TRUE;
 		}

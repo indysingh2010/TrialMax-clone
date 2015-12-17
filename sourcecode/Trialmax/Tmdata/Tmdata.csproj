@@ -156,6 +156,7 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="BaseDatabase.cs" />
+    <Compile Include="BitmapExtensions.cs" />
     <Compile Include="CxCodesInfo.cs" />
     <Compile Include="DatabaseResults.cs">
       <SubType>Code</SubType>
