@@ -19,6 +19,9 @@
 #include <stdafx.h>
 #include <tmsetap.h>
 #include <cappg.h>
+#include  <io.h>
+#include  <stdio.h>
+#include  <stdlib.h>
 
 //------------------------------------------------------------------------------
 //	DEFINES
@@ -131,8 +134,19 @@ void CCapturePage::OnBrowseFilePath()
 	LPITEMIDLIST	pItemIDList;
 	TCHAR			szFolder[MAX_PATH];
 	CString			strFolder;
+	CString			oldstrFolder;
 	int				iIndex;
 	SCaptureOptions Options;
+	bool			successful=true;
+	DWORD			cchCurDir = MAX_PATH;
+	char			szCurDir[MAX_PATH];	
+	
+	GetCurrentDirectory(cchCurDir, szCurDir);
+	strcat(szCurDir,"\\FTI.ini");
+	
+	CTMIni*	m_pIni = new CTMIni(szCurDir,"TMGRAB");
+	m_pIni ->ReadCaptureOptions(&Options);
+	oldstrFolder = Options.sFilePath;
 	
 	//	Initialize the browse information
 	memset(&BrowseInfo, 0, sizeof(BrowseInfo));
@@ -152,11 +166,45 @@ void CCapturePage::OnBrowseFilePath()
 	// Convert to lower case so we can do exact comparisons
 	strFolder = szFolder;
 	strFolder.MakeLower();
-	strFolder.AppendChar('\\');
-//Temp
-	m_ctrlFilePath.SetWindowText(strFolder);
-	Options.sFilePath=strFolder;
-//
+	
+	//to avoid double back slash on root directories
+	if(strFolder.GetLength()>3){
+		strFolder.Append("\\");
+	}
+	
+	FILE *fp = fopen(strFolder +"folderaccess.txt", "w");
+	if (fp == NULL) {
+		if (errno == EACCES)
+		{
+			AfxMessageBox("TrialMax does not have access to save files in this folder! Please correct Video Export Path.", MB_OK|MB_ICONEXCLAMATION);
+		}
+		else
+		{
+			AfxMessageBox(strerror(errno));
+		}
+		successful = false;
+	}
+	else
+	{
+		 fclose(fp);
+		 if( remove(strFolder +"folderaccess.txt") != 0 )
+		 {
+			AfxMessageBox("Failed to delete file");
+		 }
+	}
+
+	if(successful)
+	{
+		Options.sFilePath=strFolder;
+		m_ctrlFilePath.SetWindowText(strFolder);
+		m_pIni ->WriteCaptureOptions(&Options);
+	}
+	else
+	{
+		Options.sFilePath=oldstrFolder;
+		m_ctrlFilePath.SetWindowText(oldstrFolder);
+	}
+
 	//	Delete the PIDL using the shells task allocator
 	if(SHGetMalloc(&pMalloc) != NOERROR)
 		return;

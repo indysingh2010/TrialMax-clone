@@ -241,6 +241,7 @@
     <Compile Include="OxState.cs" />
     <Compile Include="OxUser.cs" />
     <Compile Include="OxVersion.cs" />
+    <Compile Include="PNGFile.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

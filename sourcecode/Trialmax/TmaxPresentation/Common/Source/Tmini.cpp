@@ -19,6 +19,7 @@
 #include <direct.h>		// getcwd()
 #include <tmini.h>
 #include <string>
+#include <Windows.h>
 
 //------------------------------------------------------------------------------
 //	DEFINES
@@ -294,16 +295,33 @@ BOOL CTMIni::ReadBool(int iLine, BOOL bDefault, BOOL bDelete)
 BOOL CTMIni::ReadCaptureOptions(SCaptureOptions* pOptions)
 {
 	char FilePath[200]="";
+	char DefFilePath[MAX_PATH];
+	_getcwd(DefFilePath, sizeof(DefFilePath));
+	strDirectory = DefFilePath;
+	
+	strDirectory.MakeLower();
+	if(strDirectory.Right(1) != "\\")
+		strDirectory += "\\";
+	strDirectory+= "video capture\\";
+	if(CreateDirectory(strDirectory, NULL) || ERROR_ALREADY_EXISTS ==GetLastError())
+	{
+		//Directory Created
+	}
+	else
+	{
+		//Failed to create directory
+	}
+	
 	if(bFileFound)
 	{
 		//	Line up on the correct section
 		SetSection(TMGRAB_SECTION);
-
+		ReadString(CAPTURE_FILE_PATH,FilePath,sizeof(FilePath) ,strDirectory);
+		//AfxMessageBox("Test Tmini.cpp Read Capture Options");
 		pOptions->bSilent = ReadBool(CAPTURE_SILENT_LINE, DEFAULT_CO_SILENT);
 		pOptions->sHotkey = (short)ReadLong(CAPTURE_HOTKEY_LINE, DEFAULT_CO_HOTKEY);
 		pOptions->sCancelKey = (short)ReadLong(CAPTURE_CANCELKEY_LINE, DEFAULT_CO_CANCELKEY);
 		pOptions->sArea = (short)ReadLong(CAPTURE_AREA_LINE, DEFAULT_CO_AREA);
-		ReadString(CAPTURE_FILE_PATH,FilePath,sizeof(FilePath) ,DEFAULT_FILE_PATH);
 		pOptions->sFilePath=FilePath;
 	}
 	else
@@ -312,7 +330,7 @@ BOOL CTMIni::ReadCaptureOptions(SCaptureOptions* pOptions)
 		pOptions->sHotkey = DEFAULT_CO_HOTKEY;
 		pOptions->sCancelKey = DEFAULT_CO_CANCELKEY;
 		pOptions->sArea = DEFAULT_CO_AREA;
-		pOptions->sFilePath = DEFAULT_FILE_PATH;
+		pOptions->sFilePath = strDirectory;
 	}
 
 	return TRUE;

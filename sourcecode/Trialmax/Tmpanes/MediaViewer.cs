@@ -41,6 +41,7 @@ namespace FTI.Trialmax.Panes
 		}
 		
 		protected const string KEY_LOCKED_RATIO	= "LockedRatio";
+        protected bool folderaccess = true;
 
 		#endregion Constants
 		
@@ -205,7 +206,48 @@ namespace FTI.Trialmax.Panes
 			return true;
 			
 		}// public override bool Activate(FTI.Shared.Trialmax.CTmaxItem tmaxItem)
-		
+
+        public bool CheckFolderAccess()
+        {
+            bool successful = true;
+            string folder = null;
+            string folderLoc = null;
+            string fileName = "Fti.ini";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + fileName;
+
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader(filePath))
+                {
+                    // Read the stream to a string, and write the string to the console.
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line.Contains("FilePath"))
+                        {
+                            string[] tokens = line.Split('=');
+                            folder = tokens[1];
+                        }
+                    }
+
+                    folderLoc = folder + "checkaccess.txt";
+
+                    File.Create(folderLoc).Close(); //Will show exception if access is not granted
+                    if (File.Exists(folderLoc))
+                    {
+                        File.Delete(folderLoc);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "Presentation Recording", "TrialMax does not have access to save files in the current Video Export Path! Please correct Video Export Path found in Presentation Options", Ex);
+                successful = false;
+            }
+
+            return successful;
+        }
+
 		#endregion Public Methods
 		
 		#region Protected Methods
@@ -1775,15 +1817,16 @@ namespace FTI.Trialmax.Panes
 
 		}// protected void OnMouseDblClick(object sender, System.Windows.Forms.MouseEventArgs e)
 
+        /// <summary>Overridden by derived classes to provide access to the pane's toolbar manager</summary>
+        /// <returns>The pane's toolbar manager if available</returns>
+        protected override Infragistics.Win.UltraWinToolbars.UltraToolbarsManager GetUltraToolbarManager()
+        {
+            return m_ultraToolbarManager;
+        }
+
+
 		#endregion Protected Methods
-
-		/// <summary>Overridden by derived classes to provide access to the pane's toolbar manager</summary>
-		/// <returns>The pane's toolbar manager if available</returns>
-		protected override Infragistics.Win.UltraWinToolbars.UltraToolbarsManager GetUltraToolbarManager()
-		{
-			return m_ultraToolbarManager;
-		}
-
+	
 		#region Private Methods
 		
 		/// <summary>This method is called to determine if the specified command should be enabled</summary>
@@ -2141,7 +2184,7 @@ namespace FTI.Trialmax.Panes
 			}
 			
 		}// private void OnCmdPresentation()
-
+       
 		/// <summary>This method handles the pane's Print command</summary>
 		private void OnCmdPrint()
 		{
@@ -2220,7 +2263,11 @@ namespace FTI.Trialmax.Panes
 
                     case MediaViewerCommands.PresentationRecording:
 
-                        OnCmdPresentation(true);
+                        folderaccess = CheckFolderAccess();
+                        if (folderaccess)
+                        {
+                            OnCmdPresentation(true);
+                        }
                         break;
 						
 					case MediaViewerCommands.Builder:

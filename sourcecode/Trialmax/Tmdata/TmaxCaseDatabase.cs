@@ -8972,7 +8972,7 @@ namespace FTI.Trialmax.Database
                 logDetailed.Info("********************************* STARTING REGISTRATION PROCESS *********************************");
                 logUser.Info("********************************* STARTING REGISTRATION PROCESS *********************************");
                 CalculateTotalPages(m_RegSourceFolder);
-                m_cfRegisterProgress.TotalPages = m_totalPages*3;//33% Detection 33% extraction and 33% conversion;
+                m_cfRegisterProgress.TotalPages = m_totalPages*2;//33% Detection 33% extraction and 33% conversion;
                 SetRegisterProgress("Registration in progress ...");
                 //	Add the new records to the database
                 if ((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
@@ -8981,7 +8981,7 @@ namespace FTI.Trialmax.Database
                 //	Notify the progress form
                 if ((m_cfRegisterProgress != null) && (m_bRegisterCancelled == false))
                 {
-                    m_cfRegisterProgress.CompletedPages = m_totalPages * 3; //Same as above;
+                    m_cfRegisterProgress.CompletedPages = m_totalPages * 2; //Same as above;
                     m_cfRegisterProgress.Finished = true;
                     SetRegisterProgress("Registration complete");
                 }

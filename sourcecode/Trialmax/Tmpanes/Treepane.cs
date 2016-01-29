@@ -32,7 +32,8 @@ namespace FTI.Trialmax.Panes
 	{
 		/// <summary>Delegate used to fire asynchronous command events</summary>
 		protected delegate void AsyncCommandDelegate();
-		
+
+        protected bool folderaccess = true;
 		/// <summary>This structure groups the members required to manage a drop target</summary>
 		protected struct SDropTarget
 		{
@@ -6195,7 +6196,11 @@ namespace FTI.Trialmax.Panes
 					
                     case TreePaneCommands.PresentationRecording:
 
-                        OnCmdPresentation(GetSelection(),true);
+                        folderaccess = CheckFolderAccess();
+                        if (folderaccess)
+                        {
+                            OnCmdPresentation(GetSelection(), true);
+                        }
                         break;
 
 					case TreePaneCommands.Builder:
@@ -7561,7 +7566,48 @@ namespace FTI.Trialmax.Panes
 			//	NOTE:	We do not clear the drop node because the owner may 
 			//			want to know what node we were on for the operation
 		}
-      
+
+        public bool CheckFolderAccess()
+        {
+            bool successful = true;
+            string folder = null;
+            string folderLoc = null;
+            string fileName = "Fti.ini";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + fileName;
+
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader(filePath))
+                {
+                    // Read the stream to a string, and write the string to the console.
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line.Contains("FilePath"))
+                        {
+                            string[] tokens = line.Split('=');
+                            folder = tokens[1];
+                        }
+                    }
+
+                    folderLoc = folder + "checkaccess.txt";
+
+                    File.Create(folderLoc).Close(); //Will show exception if access is not granted
+                    if (File.Exists(folderLoc))
+                    {
+                        File.Delete(folderLoc);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "Presentation Recording", "TrialMax does not have access to save files in the current Video Export Path! Please correct Video Export Path found in Presentation Options", Ex);
+                successful = false;
+            }
+
+            return successful;
+        }
+
 		#endregion Public Methods
 
 		#region Properties

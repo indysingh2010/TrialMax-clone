@@ -18,6 +18,7 @@ using Ghostscript.NET.Processor;
 
 using iTextSharp.text.pdf;
 using System.IO;
+using System.Runtime.InteropServices;
 
 
 namespace FTI.Trialmax.Database
@@ -119,66 +120,11 @@ namespace FTI.Trialmax.Database
         }// public bool Process()
 
         ///<summary>Process the document page by page</summary>
-        public bool ProcessPage(int pageNum, bool isColor, short m_CustomDPI)
+        public bool ProcessPage(int pageNum, short m_CustomDPI)
         {
             try
             {
-                if (!m_IsExtracted)
-                {
-                        using (processor = new GhostscriptProcessor(m_gvi, true))
-                        {
-                            SetColorSwitch(isColor);
-                            // Set 200 dpi as default -BW is converted in the next condition.
-                            SetResolutionSwitch(true); 
-                            processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
-                            processor.StartProcessing(m_switches.ToArray(), null);
-                            // Extraction successfully completed
-                            m_IsExtracted = true;
-                        }
-                }
-
-                if (m_IsExtracted)
-                {
-                    string imagePath = m_outputPath + "\\" + pageNum.ToString("D" + 4);
-                    // Copy as a dummy from original image
-                    using (System.Drawing.Image dummy = System.Drawing.Image.FromFile(imagePath + ".png"))
-                    {
-                        // Check if image has color
-                        if (!isColor)
-                        {
-                            // Initialize new bitmap
-                            using (Bitmap bitmap = new Bitmap(dummy))
-                            {
-                                // Convert it into a binary Tiff image
-                                using (Bitmap destinationBitmap = bitmap.ConvertToMonochromeTiff())
-                                {
-                                    //C heck if Custom DPI has been set 
-                                    if (m_CustomDPI == 0)
-                                    {
-                                        destinationBitmap.SetResolution(300, 300);
-                                    }
-                                    else
-                                    {
-                                        destinationBitmap.SetResolution(m_CustomDPI, m_CustomDPI);
-                                    }
-                                    destinationBitmap.Save(imagePath + ".tif", ImageFormat.Tiff);
-                                }
-                            }
-                            // Call Garbage Collector to dispose of any unused handles.
-                            GC.Collect();
-                        }
-                    }
-                    // Delete the originals of converted images
-                    if (!isColor && System.IO.File.Exists(imagePath + ".png"))
-                    {
-                        System.IO.File.Delete(imagePath + ".png");
-                    }
-                    // Update status bar
-                    if (notifyPDFManager != null)
-                    {
-                        notifyPDFManager(null, null);
-                    }
-                }
+                //ProcessPNG(pageNum, m_CustomDPI);
             }
             catch (Exception Ex)
             {
@@ -186,11 +132,21 @@ namespace FTI.Trialmax.Database
                 StopProcess();
                 return false;
             }
-            finally
-            {
-                GC.Collect();
-            }
             return true;
+        }
+
+        public void ExtractPNG()
+        {
+            using (processor = new GhostscriptProcessor(m_gvi, true))
+            {
+                SetColorSwitch(true);
+                // Set 200 dpi as default -BW is converted in the next condition.
+                SetResolutionSwitch(true);
+                processor.Processing += new GhostscriptProcessorProcessingEventHandler(processor_Processing);
+                processor.StartProcessing(m_switches.ToArray(), null);
+                // Extraction successfully completed
+                m_IsExtracted = true;
+            }
         }
 
         ///<summary>TmaxPdfManager signalled to stop the conversion process</summary>
@@ -235,6 +191,11 @@ namespace FTI.Trialmax.Database
                 logDetailed.Error(Ex.ToString());
             }
         }// public void Dispose()
+
+        public int GetTotalPages()
+        {
+            return m_PageCount;
+        }
 
         #endregion Public Methods
 
@@ -438,9 +399,6 @@ namespace FTI.Trialmax.Database
         #endregion Properties
 
 
-        public int GetTotalPages()
-        {
-            return m_PageCount;
-        }
+        
     }// public class CTmaxGsPdfManager
 }// namespace FTI.Trialmax.Database

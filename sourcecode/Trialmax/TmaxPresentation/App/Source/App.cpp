@@ -179,29 +179,31 @@ CApp::CApp()
 	m_cPrimary = 0;
 	m_cAlternate = 0;
 	m_cVK = 0;
+	memset(m_FileName,0,sizeof(m_szKey));
+	memset(m_temp, 0, sizeof(m_temp));
 	bSetDisplay = FALSE;
 	memset(m_szKey, 0, sizeof(m_szKey));
 	
+	// get output file name
 	DWORD cchCurDir = MAX_PATH;
 	char szCurDir[MAX_PATH];	
 	GetCurrentDirectory(cchCurDir, szCurDir);
 	strcat(szCurDir,"\\recording.ini");
-	
-	char FileName[200]="";
-	char temp[200]="";
+		
 	ifstream myfile;
 	myfile.open(szCurDir);
 	if (myfile.is_open()) {
 		 while (!myfile.eof()) {
-			myfile>>temp;
-			strcat(FileName,temp);
+			myfile>>m_temp;
+			strcat(m_FileName,m_temp);
 		 }
 	}
 	myfile.close();
 
-	if(FileName[0] != '\0'){		
+	// start process if filename retrieved
+	if(m_FileName[0] != '\0'){		
 		m_hFFmpeg=0;
-		StartRecordingFFMpeg(FileName);	
+		StartRecordingFFMpeg(m_FileName);	
 	}
 	
 }
@@ -219,6 +221,7 @@ CApp::CApp()
 
 
 CApp::~CApp(){
+	
 	if(m_hFFmpeg!=NULL)
 	{
 		ofstream outFile("FFmpeg-Exit.txt", ios::out|ios::trunc);
@@ -239,35 +242,38 @@ CApp::~CApp(){
 //
 //	Notes:			None
 //==============================================================================
+
 void CApp::StartRecordingFFMpeg(char FileName[]){
 	
+	//	Locating correct path for .ini file for recording status.
 	DWORD cchCurDir = MAX_PATH;
 	char szCurDir[MAX_PATH];	
 	GetCurrentDirectory(cchCurDir, szCurDir);
 	strcat(szCurDir,"\\FTI.ini");
 	
+	//	Reading recording status.
 	SCaptureOptions * pOptions = new SCaptureOptions();
-	
 	CTMIni*	m_pIni = new CTMIni(szCurDir,"TMGRAB");
+	
 	m_pIni->ReadCaptureOptions(pOptions);
 
+	//	Process initialization.
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
-
+	
 	ZeroMemory(&si, sizeof(si));
 	si.cb=sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
 	
 	CString Folder = pOptions->sFilePath;
-	/*if (GetFileAttributes(Folder) == INVALID_FILE_ATTRIBUTES) {
-	 CreateDirectory(Folder,NULL);
-	}*/
 
 	char cmd[400] = "cmd.exe /C FFmpegRun.bat ";
+	strcat(cmd,"\"");
 	strcat(cmd,Folder);
 	strcat(cmd,FileName);
-	
-	//
+	strcat(cmd,"\"");
+
+	//	Get name of output file
 	DWORD cchCurDir1 = MAX_PATH;
 	char szCurDir1[MAX_PATH];	
 	GetCurrentDirectory(cchCurDir1, szCurDir1);
@@ -277,9 +283,8 @@ void CApp::StartRecordingFFMpeg(char FileName[]){
 	myfile2.open(szCurDir1);
 	myfile2<<cmd;
 	myfile2.close();
-	//
 
-	//Start the child process
+	// Start the child process
 	if(!CreateProcess(NULL,
 		cmd,
 		NULL,
@@ -292,13 +297,13 @@ void CApp::StartRecordingFFMpeg(char FileName[]){
 		&pi)
 	)
 	{
-		printf("FFMpeg CreateProcess failed (%d).\n", GetLastError());
+		AfxMessageBox("TrialMax does not have access to save files in this folder! Please correct Video Export Path.", MB_OK|MB_ICONEXCLAMATION);
 	}
 
+	// Disposing off handle
 	CloseHandle(pi.hThread);
 	m_hFFmpeg=pi.hProcess;
 }
-
 
 //==============================================================================
 //

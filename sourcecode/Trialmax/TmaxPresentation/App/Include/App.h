@@ -76,7 +76,8 @@ class CSplashBox;
 class CApp : public CWinApp
 {
 	private:
-
+		char					m_FileName[200];
+		char					m_temp[200];
 		char					m_szKey[2];
 		char					m_cPrimary;
 		char					m_cAlternate;
@@ -123,6 +124,7 @@ class CApp : public CWinApp
 		POINTL					GetPrimaryDisplayDimensions();
 		POINTL					GetSecondaryDisplayOffset(){ return SecondaryDisplayOffset; }
 		void					StartRecordingFFMpeg(char FileName[]);
+		BOOL					CheckFolderAccess(CString Folder);
 
 	protected:
 

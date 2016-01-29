@@ -6149,7 +6149,6 @@ void CMainView::OnInitialUpdate()
 		m_ctrlTMPower.SetEnableErrors(FALSE);
 		m_ctrlTMPower.SetData(TMPOWER_LEFTVIEW, (long)&m_TMPower1);
 		m_ctrlTMPower.SetData(TMPOWER_RIGHTVIEW, (long)&m_TMPower2);
-
 		if(m_ctrlTMPower.Initialize() == TMPOWER_NOERROR)
 		{
 			m_ctrlTMPower.SetFocusWnd((long)m_pFrame->m_hWnd);

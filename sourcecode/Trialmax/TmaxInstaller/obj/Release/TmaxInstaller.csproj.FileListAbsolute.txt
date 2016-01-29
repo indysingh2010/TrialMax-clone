@@ -18,3 +18,17 @@ D:\TrialMax-SVN\trunk\Source Code\Trialmax\Bin\Release\TmaxInstaller.exe
 D:\TrialMax-SVN\trunk\Source Code\Trialmax\TmaxInstaller\obj\Release\FTI.Trialmax.TmaxInstaller.CTmaxInstallerForm.resources
 D:\TrialMax-SVN\trunk\Source Code\Trialmax\TmaxInstaller\obj\Release\TmaxInstaller.csproj.GenerateResource.Cache
 D:\TrialMax-SVN\trunk\Source Code\Trialmax\TmaxInstaller\obj\Release\TmaxInstaller.exe
+D:\10Pearls\TrialMax\sourcecode\Trialmax\Bin\Release\TmaxInstaller.exe.config
+D:\10Pearls\TrialMax\sourcecode\Trialmax\Bin\Release\TmaxInstaller.exe
+D:\10Pearls\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\FTI.Trialmax.TmaxInstaller.CTmaxInstallerForm.resources
+D:\10Pearls\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\TmaxInstaller.exe
+D:\10Pearls\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\ResolveAssemblyReference.cache
+D:\10Pearls\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\GenerateResource.read.1.tlog
+D:\10Pearls\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\GenerateResource.write.1.tlog
+D:\10Pearls-30O15\TrialMax\sourcecode\Trialmax\Bin\Release\TmaxInstaller.exe.config
+D:\10Pearls-30O15\TrialMax\sourcecode\Trialmax\Bin\Release\TmaxInstaller.exe
+D:\10Pearls-30O15\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\ResolveAssemblyReference.cache
+D:\10Pearls-30O15\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\FTI.Trialmax.TmaxInstaller.CTmaxInstallerForm.resources
+D:\10Pearls-30O15\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\GenerateResource.read.1.tlog
+D:\10Pearls-30O15\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\GenerateResource.write.1.tlog
+D:\10Pearls-30O15\TrialMax\sourcecode\Trialmax\TmaxInstaller\obj\Release\TmaxInstaller.exe

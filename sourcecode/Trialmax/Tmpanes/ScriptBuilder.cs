@@ -88,7 +88,8 @@ namespace FTI.Trialmax.Panes
 		protected const string KEY_COLUMNS					= "Columns";
 		protected const string KEY_SCENE_TEXT_MODE			= "SceneTextMode";
 		protected const string KEY_STATUS_TEXT_MODE			= "StatusTextMode";
-		
+        protected bool folderaccess = true;
+
 		#endregion Constants
 
 		#region Private Members
@@ -3853,8 +3854,9 @@ namespace FTI.Trialmax.Panes
 						break;
 
                     case ScriptBuilderCommands.PresentationRecording:
-                        
-                        if((aSelections != null) && (aSelections.Count == 1))
+
+                        folderaccess = CheckFolderAccess();
+                        if((aSelections != null) && (aSelections.Count == 1) && (folderaccess))
 							OnCmdPresentation(aSelections[0],true);
 						break;
 
@@ -5289,6 +5291,47 @@ namespace FTI.Trialmax.Panes
 		{
 		
 		}
+
+        public bool CheckFolderAccess()
+        {
+            bool successful = true;
+            string folder = null;
+            string folderLoc = null;
+            string fileName = "Fti.ini";
+            string filePath = AppDomain.CurrentDomain.BaseDirectory + fileName;
+
+            try
+            {   // Open the text file using a stream reader.
+                using (StreamReader sr = new StreamReader(filePath))
+                {
+                    // Read the stream to a string, and write the string to the console.
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        if (line.Contains("FilePath"))
+                        {
+                            string[] tokens = line.Split('=');
+                            folder = tokens[1];
+                        }
+                    }
+
+                    folderLoc = folder + "checkaccess.txt";
+
+                    File.Create(folderLoc).Close(); //Will show exception if access is not granted
+                    if (File.Exists(folderLoc))
+                    {
+                        File.Delete(folderLoc);
+                    }
+                }
+            }
+            catch (Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "Presentation Recording", "TrialMax does not have access to save files in the current Video Export Path! Please correct Video Export Path found in Presentation Options", Ex);
+                successful = false;
+            }
+
+            return successful;
+        }
 
 		#region Properties
 		
