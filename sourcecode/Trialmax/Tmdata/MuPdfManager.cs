@@ -203,20 +203,17 @@ namespace FTI.Trialmax.Database
                         isColor = ColorPNG(bitmap);
                         if (!isColor)
                         {
-                            // Convert it into a binary Tiff image
-                            using (Bitmap destinationBitmap = bitmap.ConvertToMonochromeTiff())
-                            {
-                                //Check if Custom DPI has not been set 
-                                if (m_CustomDPI == 0)
-                                {
-                                    destinationBitmap.SetResolution(300, 300);
-                                }
-                                else
-                                {
-                                    destinationBitmap.SetResolution(m_CustomDPI, m_CustomDPI);
-                                }
-                                destinationBitmap.Save(fileNameTiff, ImageFormat.Tiff);
-                            }
+                            ConvertPNGToTiff(fileNamePNG, fileNameTiff);
+                            ////Check if Custom DPI has not been set 
+                            //if (m_CustomDPI == 0)
+                            //{
+                            //    bitmap.SetResolution(300, 300);
+                            //}
+                            //else
+                            //{
+                            //    bitmap.SetResolution(m_CustomDPI, m_CustomDPI);
+                            //}
+                            //bitmap.Save(fileNameTiff, ImageFormat.Tiff);
                         }
                     }
                     // Call Garbage Collector to dispose of any unused handles.
@@ -249,6 +246,42 @@ namespace FTI.Trialmax.Database
         
         }
 
+        public static void ConvertPNGToTiff(string fileNamePNG, string fileNameTiff)
+        {
+            EncoderParameters encoderParams = new EncoderParameters(3);
+            ImageCodecInfo tiffCodecInfo = ImageCodecInfo.GetImageEncoders()
+                .First(ie => ie.MimeType == "image/tiff");
+
+            System.Drawing.Imaging.Encoder myEncoder1;
+            System.Drawing.Imaging.Encoder myEncoder2;
+            System.Drawing.Imaging.Encoder myEncoder3;
+            myEncoder1 = System.Drawing.Imaging.Encoder.Quality;
+            myEncoder2 = System.Drawing.Imaging.Encoder.Compression;
+            myEncoder3 = System.Drawing.Imaging.Encoder.ColorDepth;
+
+            System.Drawing.Image tiffImg = null;
+            try
+            {
+                tiffImg = System.Drawing.Image.FromFile(fileNamePNG);
+                encoderParams.Param[0] = new EncoderParameter(myEncoder1, 100L);
+                encoderParams.Param[1] = new EncoderParameter(myEncoder2, (long)EncoderValue.CompressionLZW);
+                encoderParams.Param[2] = new EncoderParameter(myEncoder3, 4L);
+                tiffImg.Save(fileNameTiff, tiffCodecInfo, encoderParams);
+            }
+            catch (Exception Ex)
+            {
+                logDetailed.Error(Ex.ToString());
+            }
+            finally
+            {
+                if (tiffImg != null)
+                {
+                    tiffImg.Dispose();
+                    tiffImg = null;
+                }
+            }
+        }
+
         /// <summary>
         /// This function accepts a bitmap and then performs a delta
         /// comparison on all the pixels to find the highest delta
@@ -258,8 +291,7 @@ namespace FTI.Trialmax.Database
         /// calculated color is a sample of the "field". From this we
         /// can infer which color in the image actualy represents a
         /// contiguous field in which we're interested.
-        /// See the documentation of GetRgbDelta for more information.
-        /// </summary>
+        /// See the documentation of GetRgbDelta for more information.</summary>
         /// <param name="bmp">A bitmap for sampling</param>
         /// <returns>The highest delta color</returns>
         public static bool ColorPNG(Bitmap bmp)
