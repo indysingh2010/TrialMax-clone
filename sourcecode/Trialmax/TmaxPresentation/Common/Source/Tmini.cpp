@@ -51,6 +51,9 @@ static char THIS_FILE[] = __FILE__;
 //==============================================================================
 CTMIni::CTMIni(LPCSTR lpFilename, LPCSTR lpSection)
 {
+	
+	
+
     char szDirectory[512];
 
 	bFileFound = FALSE;

@@ -904,6 +904,10 @@ namespace FTI.Shared.Trialmax
 
 		/// <summary>Local member bound to Concatenate property</summary>
 		private bool m_bConcatenate = false;
+
+        /// <summary> To store video bitrate, default is 789 kbps</summary>
+        private int m_iBitRate = 786;
+
 		
 		#endregion Private Members
 		
@@ -1555,7 +1559,18 @@ namespace FTI.Shared.Trialmax
 			get { return m_bRefreshSource; }
 			set { m_bRefreshSource = value; }
 		}
-		
+
+        public int VideoBitRate
+        {
+            get 
+            {
+                return m_iBitRate;
+            }
+            set
+            {
+                m_iBitRate = value;
+            }
+        }
 		#endregion Properties
 
 	}//	public class CTmaxExportOptions

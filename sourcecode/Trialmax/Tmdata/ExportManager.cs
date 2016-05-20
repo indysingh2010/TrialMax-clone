@@ -1829,6 +1829,8 @@ namespace FTI.Trialmax.Database
                 ffmpegEncoder.EncoderStatusUpdate += new CFFMpegEncoder.EncoderStatusHandler(this.OnEncoderStatus);
                 ffmpegEncoder.ShowCancel = false;
                 ffmpegEncoder.m_bIsMpeg2Selected = m_bIsMpeg2Selected;
+                ffmpegEncoder.VideoBitRate = m_tmaxExportOptions.VideoBitRate.ToString() + 'k';
+
 				while(bSuccessful == false)
 				{
 					//	Initialize for this operation
@@ -1889,6 +1891,9 @@ namespace FTI.Trialmax.Database
 					//	Should we skip encoding
 					if(bEncode == false) break;
 					
+
+
+
 					if(ffmpegEncoder.Encode() == false)
 					{
                         /*
@@ -3001,6 +3006,12 @@ namespace FTI.Trialmax.Database
 					saveFile.OverwritePrompt = false;
 					saveFile.FileName = System.IO.Path.GetFileName(strFilename);
 					saveFile.DefaultExt = m_strExtension;
+
+                    if ("mp4" == m_strExtension)
+                    {
+                        saveFile.FilterIndex = 2;
+                    }
+
 					saveFile.Filter = m_strFileFilter;
 					saveFile.InitialDirectory = m_strExportFolder;
 
@@ -3268,7 +3279,7 @@ namespace FTI.Trialmax.Database
 					//	Set up default file filters and extension for prompting the user
 					if(m_tmaxExportOptions.VideoWMV == true)
 					{
-						m_strExtension = "wmv";
+						m_strExtension = "mp4";
                         m_strFileFilter = "WMV Files (*.wmv)|*.wmv|MP4 Files (*.mp4)|*.mp4|MPEG-1 Files (*.mpg)|*.mpg|MPEG-2 Files (*.mpg)|*.mpg|AVI Files (*.avi)|*.avi|MOV Files (*.mov)|*.mov|";
 					}
 					if(m_tmaxExportOptions.VideoEDL == true)

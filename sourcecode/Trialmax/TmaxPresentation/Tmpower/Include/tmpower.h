@@ -87,7 +87,6 @@ class CTMPowerCtrl : public COleControl
 		BOOL				KillProcessByName(char *szProcessToKill);
 
 		LONG				OnWMErrorEvent(WPARAM wParam, LPARAM lParam);
-
 	protected:
 
 		void				CalcRects();

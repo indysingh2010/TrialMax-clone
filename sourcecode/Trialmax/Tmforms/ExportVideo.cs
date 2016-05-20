@@ -106,7 +106,10 @@ namespace FTI.Trialmax.Forms
 		/// <summary>Pushbutton to allow user to display list of registered codecs</summary>
 		private System.Windows.Forms.Button m_ctrlViewCodecs;
 		private System.Windows.Forms.CheckBox m_ctrlShowPreferred;
-		private System.Windows.Forms.CheckBox m_ctrlSAMIPageNumbers;
+        private System.Windows.Forms.CheckBox m_ctrlSAMIPageNumbers;
+        private Label label2;
+        private Label label1;
+        private ComboBox m_ctrlVideoBitRate;
 		
 		/// <summary>Collection of Windows Media Encoder Profiles</summary>
 		private FTI.Trialmax.Encode.CWMEncoder m_wmEncoder = null;
@@ -161,6 +164,8 @@ namespace FTI.Trialmax.Forms
 		/// <param name="e">The event arguments</param>
 		protected override void OnLoad(EventArgs e)
 		{
+            m_ctrlVideoBitRate.SelectedIndex = m_ctrlVideoBitRate.FindStringExact("786");
+
 			//	Initialize all the child controls
 			m_ctrlOk.Enabled = Exchange(false);
 			
@@ -325,9 +330,11 @@ namespace FTI.Trialmax.Forms
 					m_tmaxExportOptions.VideoWMV  = m_ctrlVideoWMV.Checked;
 					m_tmaxExportOptions.AutoFilenames = m_ctrlAutoFilenames.Checked;
 					m_tmaxExportOptions.ConfirmOverwrite = m_ctrlConfirmOverwrite.Checked;
-					
+					m_tmaxExportOptions.VideoBitRate = Convert.ToInt32(m_ctrlVideoBitRate.Text);
 					m_wmEncoder.UsePreferred = m_ctrlShowPreferred.Checked;
-					
+                    m_tmaxExportOptions.VideoBitRate = Convert.ToInt32(m_ctrlVideoBitRate.Text);
+
+
 					//	Do we have any encoder profiles?
 					if(m_ctrlProfiles.Items.Count > 0)
 					{
@@ -453,6 +460,9 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlProfiles = new System.Windows.Forms.ListBox();
             this.m_ctrlProfilesLabel = new System.Windows.Forms.Label();
             this.m_ctrlFormatsGroup = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.m_ctrlVideoBitRate = new System.Windows.Forms.ComboBox();
             this.m_ctrlSAMIGroup = new System.Windows.Forms.GroupBox();
             this.m_ctrlSAMIPageNumbers = new System.Windows.Forms.CheckBox();
             this.m_ctrlSAMIHighlighter = new System.Windows.Forms.CheckBox();
@@ -521,9 +531,10 @@ namespace FTI.Trialmax.Forms
             // 
             this.m_ctrlVideoWMV.Location = new System.Drawing.Point(12, 24);
             this.m_ctrlVideoWMV.Name = "m_ctrlVideoWMV";
-            this.m_ctrlVideoWMV.Size = new System.Drawing.Size(204, 24);
+            this.m_ctrlVideoWMV.Size = new System.Drawing.Size(137, 24);
             this.m_ctrlVideoWMV.TabIndex = 0;
             this.m_ctrlVideoWMV.Text = "Create Video File";
+            this.m_ctrlVideoWMV.CheckedChanged += new System.EventHandler(this.m_ctrlVideoWMV_CheckedChanged);
             this.m_ctrlVideoWMV.Click += new System.EventHandler(this.OnClickWMV);
             // 
             // m_ctrlProfiles
@@ -551,6 +562,9 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlFormatsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlFormatsGroup.Controls.Add(this.label2);
+            this.m_ctrlFormatsGroup.Controls.Add(this.label1);
+            this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoBitRate);
             this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoWMV);
             this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoSAMI);
             this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoEDL);
@@ -560,6 +574,47 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlFormatsGroup.TabIndex = 0;
             this.m_ctrlFormatsGroup.TabStop = false;
             this.m_ctrlFormatsGroup.Text = "Output File Formats";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(276, 29);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(30, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "kbps";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(146, 28);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(67, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Video Bitrate";
+            // 
+            // m_ctrlVideoBitRate
+            // 
+            this.m_ctrlVideoBitRate.Enabled = false;
+            this.m_ctrlVideoBitRate.FormattingEnabled = true;
+            this.m_ctrlVideoBitRate.Items.AddRange(new object[] {
+            "512",
+            "786",
+            "1000",
+            "5000",
+            "8000",
+            "10000",
+            "12000",
+            "15000",
+            "18000",
+            "20000"});
+            this.m_ctrlVideoBitRate.Location = new System.Drawing.Point(216, 26);
+            this.m_ctrlVideoBitRate.Name = "m_ctrlVideoBitRate";
+            this.m_ctrlVideoBitRate.Size = new System.Drawing.Size(54, 21);
+            this.m_ctrlVideoBitRate.TabIndex = 5;
+            this.m_ctrlVideoBitRate.Text = "786";
+            this.m_ctrlVideoBitRate.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_ctrlVideoBitRate_KeyDown);
+            this.m_ctrlVideoBitRate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_ctrlVideoBitRate_KeyPress);
             // 
             // m_ctrlSAMIGroup
             // 
@@ -757,6 +812,7 @@ namespace FTI.Trialmax.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Export Video Options";
             this.m_ctrlFormatsGroup.ResumeLayout(false);
+            this.m_ctrlFormatsGroup.PerformLayout();
             this.m_ctrlSAMIGroup.ResumeLayout(false);
             this.m_ctrlSAMIGroup.PerformLayout();
             this.m_ctrlWMVGroup.ResumeLayout(false);
@@ -770,9 +826,42 @@ namespace FTI.Trialmax.Forms
 		/// <param name="e">The event arguments</param>
 		private void OnClickOk(object sender, System.EventArgs e)
 		{
+            //Yasir Alam
+            //Bitrate must be a valid integer
+            if (m_tmaxExportOptions.VideoWMV)
+            {
+                string msg = "Please enter valid bitrate.";
+                try
+                {
+                    int bitRate = Convert.ToInt32(m_ctrlVideoBitRate.Text);
+                    if (bitRate < 512)
+                    {
+                        msg = "Bit rate can not be less than 512 kbps";
+                    }
+                    else if (bitRate > 20000)
+                    {
+                        msg = "Bit rate can not be greater than 20000 kbps";
+                    }
+                    else
+                    { 
+                        msg = ""; 
+                    }
+                }
+                catch (FormatException) { }
+                catch (OverflowException) {  }
+
+                if (!string.IsNullOrEmpty(msg))
+                {
+                    MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
+
 			//	Get the user settings
 			Exchange(true);
-			
+
+
 			//	Must have selected at least on output format
 			if((m_tmaxExportOptions.VideoEDL == false) &&
 			   (m_tmaxExportOptions.VideoWMV == false) &&
@@ -874,6 +963,26 @@ namespace FTI.Trialmax.Forms
 		
 		}// private void OnClickShowPreferred(object sender, System.EventArgs e)
 
+        /// <summary>
+        ///  Yasir Alam
+        ///  2016-04-06
+        ///  on checking 'Create Video File' checkbox, 
+        ///  Bitrate dropdown gets enable, On uncheck 'Create video File' checkbox
+        ///  bitrate dropdown gets disabled and 786 kbps will be restored as a default.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void m_ctrlVideoWMV_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                m_ctrlVideoBitRate.Enabled = m_ctrlVideoWMV.Checked;
+                m_ctrlVideoBitRate.SelectedIndex = m_ctrlVideoBitRate.FindStringExact("786");
+            }
+            catch (Exception)
+            {
+            }
+        }
 		#endregion Private Methods
 
 		#region Properties
@@ -893,7 +1002,58 @@ namespace FTI.Trialmax.Forms
 		}
 		
 		#endregion Properties
-	
-	}// public class CFExportVideo : CFTmaxBaseForm
+
+        
+       
+
+        //Yasir ALam
+        //2016-04-11
+        //User can only enter numeric in video bit rate drop down 
+        private void m_ctrlVideoBitRate_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine(e.KeyChar);
+
+            if (char.IsLetter(e.KeyChar)
+                || char.IsSymbol(e.KeyChar)
+                || char.IsWhiteSpace(e.KeyChar)
+                || char.IsPunctuation(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+
+            //if (!char.IsNumber(e.KeyChar))
+            //{
+            //    e.Handled = true;
+            //}
+        }
+
+        /// <summary>
+        /// Yasir Alam
+        /// 2016-04-13
+        /// allowing to paste number
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void m_ctrlVideoBitRate_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                string copiedText = System.Windows.Forms.Clipboard.GetText();
+                try
+                {
+                    Convert.ToInt32(copiedText);
+                }
+                catch (FormatException)
+                {
+                    e.SuppressKeyPress = true;
+                }
+                catch (OverflowException) 
+                {
+                    e.SuppressKeyPress = true;
+                }
+            }
+        }
+
+}// public class CFExportVideo : CFTmaxBaseForm
 
 }// namespace FTI.Trialmax.Forms

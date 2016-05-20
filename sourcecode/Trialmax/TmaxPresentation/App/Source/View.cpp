@@ -6838,7 +6838,6 @@ void CMainView::OnNextPage()
 		
 		case S_POWERPOINT:
 		case S_LINKEDPOWER:
-
 			m_ctrlTMPower.Next(-1);
 
 			if(m_sState == S_CLEAR)
@@ -7289,7 +7288,6 @@ void CMainView::OnPreviousPage()
 		case S_LINKEDPOWER:
 
 			m_ctrlTMPower.Previous(-1);
-
 			if(m_sState == S_CLEAR)
 				RestoreDisplay();
 
