@@ -90,7 +90,7 @@ class CCallout : public CDialog
 		void			SetOriginalPosition(RECT* pPosition);
 		void			SetContainer(RECT* pContainer);
 		void			Rescale();
-		void			SetRects(RECT* pMax, RECT* pDst, RECT* pRubberBand, int iFrame);
+		void			SetRects(RECT* pMax, RECT* pDst, RECT* pRubberBand, int iFrame, BOOL isResize = FALSE);
 		void			SetAnnotations(HGLOBAL hAnnMem, long lAnnBytes);
 		void			Rotate(BOOL bClockwise, BOOL bRedraw);
 		void			SetAnnId(WORD wId);

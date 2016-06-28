@@ -1546,7 +1546,7 @@ BOOL CCallout::Resize()
 	rcWnd.right  = rcWnd.left + (rcTrack.right - rcTrack.left);
 	rcWnd.bottom = rcWnd.top + (rcTrack.bottom - rcTrack.top);
 
-	SetRects(&rcWnd, &m_rcDst, &m_rcRubberBand, m_Tracker.GetFrameThickness());
+	SetRects(&rcWnd, &m_rcDst, &m_rcRubberBand, m_Tracker.GetFrameThickness(), TRUE);
 
 	//	Notify the source
 	if(m_pSource != 0)
@@ -2291,7 +2291,7 @@ void CCallout::SetPanCallouts(BOOL bPan)
 //	Notes:			None
 //
 //==============================================================================
-void CCallout::SetRects(RECT* pMax, RECT *pDst, RECT* pRubberBand, int iFrame) 
+void CCallout::SetRects(RECT* pMax, RECT *pDst, RECT* pRubberBand, int iFrame, BOOL isResize) 
 {
 	RECT	rcDstCall;
 	RECT	rcTMLead;
@@ -2348,18 +2348,31 @@ void CCallout::SetRects(RECT* pMax, RECT *pDst, RECT* pRubberBand, int iFrame)
 	ASSERT(fRubberBandHeight != 0);
 	fRubberBandRatio = fRubberBandHeight / fRubberBandWidth;
 
-	//	Now calculate the dimensions of the TMLead window such that it will
-	//	have the desired aspect ratio
-	if((fMaxWidth * fRubberBandRatio) <= fMaxHeight)
+	// If the callout is been resized, we do not want reizeability
+	// to follow any aspect ratio.
+	if (isResize == TRUE)
 	{
-		fWidth  = fMaxWidth;
-		fHeight = fMaxWidth * fRubberBandRatio;
+		fWidth = pMax->right - pMax->left - (2.0f * (float)iFrame);
+		fHeight = pMax->bottom - pMax->top - (2.0f * (float)iFrame);
 	}
+	// The code enters here when the callout is made for the very first time
+	// and is not resizing. Therefore we want the callout to be drawn as per
+	// the aspect ratio.
 	else
 	{
-		fHeight = fMaxHeight;
-		ASSERT(fRubberBandRatio != 0);
-		fWidth  = fMaxHeight / fRubberBandRatio;
+		//	Now calculate the dimensions of the TMLead window such that it will
+		//	have the desired aspect ratio
+		if((fMaxWidth * fRubberBandRatio) <= fMaxHeight)
+		{
+			fWidth  = fMaxWidth;
+			fHeight = fMaxWidth * fRubberBandRatio;
+		}
+		else
+		{
+			fHeight = fMaxHeight;
+			ASSERT(fRubberBandRatio != 0);
+			fWidth  = fMaxHeight / fRubberBandRatio;
+		}
 	}
 
     //  Find the center point of the bounding rectangle (not the Lead window)

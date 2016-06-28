@@ -51,19 +51,6 @@ void CTMTracker::AdjustRect(int iHandle, LPRECT lpRect)
 	float	fWidth = (float)(lpRect->right - lpRect->left) - (2.0f * (float)m_iFrameThickness);
 	float	fHeight = (float)(lpRect->bottom - lpRect->top) - (2.0f * (float)m_iFrameThickness);
 
-	//  Keep the maximum available rectangle while maintaining the requested
-	//	adjustment ratio
-    if((fWidth * m_fAspectRatio) <= fHeight)
-    {
-        fHeight = fWidth * m_fAspectRatio + (2.0f * (float)m_iFrameThickness);
-        fWidth += (2.0f * (float)m_iFrameThickness);
-    }
-    else
-    {   
-        fWidth = fHeight / m_fAspectRatio + (2.0f * (float)m_iFrameThickness);
-        fHeight += (2.0f * (float)m_iFrameThickness);
-   }
-
 	//	Has the owner set the adjustment ratio?
 	if(m_fAspectRatio > 0)
 	{
