@@ -234,6 +234,9 @@ namespace FTI.Trialmax.Database
 		/// <summary>Status form displayed during a compact operation</summary>
 		private FTI.Trialmax.Forms.CFCompactorStatus m_wndCompactorStatus = null;
 		
+        /// <summary>Designations overlap form for merging scripts</summary>
+        private FTI.Trialmax.Forms.CFDesignationsOverlap m_wndDesignationsOverlap = null;
+
 		/// <summary>Local member associated with the StationOptions property</summary>
 		private CTmaxStationOptions m_tmaxStationOptions = null;
 		
@@ -5235,7 +5238,7 @@ namespace FTI.Trialmax.Database
 			//	The return collection should be empty
 			if((tmaxResults != null) && (tmaxResults.Added != null))
 				tmaxResults.Added.Clear();
-			
+
 			//	Are we merging scripts?
 			if(tmaxItem.MediaType == TmaxMediaTypes.Script)
 			{
@@ -5245,7 +5248,13 @@ namespace FTI.Trialmax.Database
 					//	Allocate the working collections
 					tmaxSource = new CTmaxItems();
 					tmaxScenes = new CTmaxItems();
-					
+
+                    // Will contain all the designations that have been already added to compare with the new
+                    // one for overlapping.
+                    // Key in this object represents the barcode of the designation and the value is the designation
+                    // itself.
+                    Dictionary<string, CTmaxItem> mergingDesignations = new Dictionary<string, CTmaxItem>();
+
 					//	Build the collection of source records
 					foreach(CTmaxItem O in tmaxItem.SubItems)
 					{
@@ -5263,14 +5272,30 @@ namespace FTI.Trialmax.Database
 							//	Add an item for each scene
 							foreach(CDxSecondary dxScene in dxScript.Secondaries)
 							{
-								if(dxScene.GetSource() != null)
-									tmaxSource.Add(new CTmaxItem(dxScene.GetSource()));
+                                if (dxScene.GetSource() != null)
+                                {
+                                    // Check if the new designation is overlapping with previously added designations
+                                    CheckOverlappingDesignations(mergingDesignations, dxScene);
+                                    
+                                    // Add the new designation to a custom list so it can be checked with the next designation
+                                    // that will be added for overlapping
+                                    mergingDesignations.Add(GetBarcode(dxScene, false), new CTmaxItem(dxScene.GetSource()));
+
+                                    tmaxSource.Add(new CTmaxItem(dxScene.GetSource()));
+                                }
 							}
-						
 						}
 						
 					}// foreach(CTmaxItem O in tmaxItem.SubItems)
-					
+
+                    // If m_wndDesignationsOverlap is null, it means no overlapping of designations occured
+                    if (m_wndDesignationsOverlap != null)
+                    {
+                        // Show the overlapping report for user to save
+                        m_wndDesignationsOverlap.ShowDialog();
+                        m_wndDesignationsOverlap = null;
+                    }
+
 					//	Add the scenes
 					if(tmaxSource.Count > 0)
 						InsertScenes(dxMerged, tmaxSource, tmaxScenes, null, null);
@@ -5299,10 +5324,83 @@ namespace FTI.Trialmax.Database
 				//	Don't know how to merge anything else now
 				Debug.Assert(tmaxItem.MediaType == TmaxMediaTypes.Script);
 			}
-			
 			return (tmaxItem.ReturnItem != null);
 				
 		}// public bool Merge(CTmaxItem tmaxItem, CTmaxDatabaseResults tmaxResults)
+
+        /// <summary>
+        /// Check if the new designation been added is overlapping with already added designations
+        /// </summary>
+        /// <param name="mergingDesignations">List of designations already added and checked for overlapping</param>
+        /// <param name="dxScene">New designation that is about to be added</param>
+        private void CheckOverlappingDesignations(Dictionary<string, CTmaxItem> mergingDesignations, CDxSecondary dxScene)
+        {
+            CDxMediaRecord dxSource = dxScene.GetSource();
+
+            foreach (KeyValuePair<string, CTmaxItem> item in mergingDesignations)
+            {
+                CXmlDesignation xmlDesignationNew, xmlDesignationExisting = null;
+
+                // Retrieve the designation and transcripts for the new item
+                CDxTertiary dxTertiaryNew = (CDxTertiary)dxSource;
+                xmlDesignationNew = GetXmlDesignation(dxTertiaryNew, true, false, false);
+
+                // Retrieve the designation and transcripts for the exisiting item
+                CDxTertiary dxTertiaryExisting = (CDxTertiary)item.Value.ITertiary;
+                xmlDesignationExisting = GetXmlDesignation(dxTertiaryExisting, true, false, false);
+
+                // Check for overlapping transcripts
+                List<CXmlTranscript> overlappingTranscripts = CheckOverlappingDesignations(xmlDesignationExisting, xmlDesignationNew);
+                
+                // Count is greater than 0 if there were any overlapping
+                if (overlappingTranscripts.Count > 0)
+                {
+                    // Check if the Overlapping Report form is already created
+                    if (m_wndDesignationsOverlap == null)
+                    {
+                        m_wndDesignationsOverlap = new CFDesignationsOverlap();
+                    }
+                    
+                    // Add the overlapping designations to the report form
+                    foreach (CXmlTranscript transcript in overlappingTranscripts)
+                    {
+                        m_wndDesignationsOverlap.AppendItemToList(new string[]{
+                            "0",
+                            item.Key,
+                            GetBarcode(dxScene, false),
+                            transcript.Segment,
+                            transcript.PL.ToString(),
+                            transcript.Page.ToString(),
+                            transcript.Line.ToString(),
+                            transcript.QA,
+                            transcript.Start.ToString(),
+                            transcript.Stop.ToString(),
+                            transcript.Text
+                        });
+                    }
+                }
+            }
+        }// CheckOverlappingDesignations(Dictionary<string, CTmaxItem> mergingDesignations, CDxSecondary dxScene)
+
+        /// <summary>Check if the provided designations have any overlapping transcripts</summary>
+        /// <param name="xmlDesignationExisting">Designation that has already been added and would be used to check overlapping</param>
+        /// <param name="xmlDesignationNew">The new designation that is about to be added</param>
+        /// <returns>A list of overlapping designations</returns>
+        private List<CXmlTranscript> CheckOverlappingDesignations(CXmlDesignation xmlDesignationExisting, CXmlDesignation xmlDesignationNew)
+        {
+            List<CXmlTranscript> overlappingTranscript = new List<CXmlTranscript>();
+            foreach (CXmlTranscript existingTrans in xmlDesignationExisting.Transcripts)
+            {
+                foreach (CXmlTranscript newTrans in xmlDesignationNew.Transcripts)
+                {
+                    if (newTrans.Equals(existingTrans))
+                    {
+                        overlappingTranscript.Add(newTrans);
+                    }
+			    }
+            }   
+            return overlappingTranscript;
+        }// private List<CXmlTranscript> CheckOverlappingDesignations(CXmlDesignation xmlDesignationExisting, CXmlDesignation xmlDesignationNew)
 					
 		/// <summary>This method will move the records in the SourceItems collection of the event item</summary>
 		/// <param name="tmaxMove">The event item that identifies the new parent, the new insertion point, and the records to be moved</param>
