@@ -228,6 +228,12 @@
     <Compile Include="CaseOptions.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="DesignationsOverlap.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DesignationsOverlap.Designer.cs">
+      <DependentUpon>DesignationsOverlap.cs</DependentUpon>
+    </Compile>
     <Compile Include="GetConfirmation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -415,6 +421,9 @@
     <EmbeddedResource Include="CompactorStatus.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CompactorStatus.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesignationsOverlap.resx">
+      <DependentUpon>DesignationsOverlap.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="GetConfirmation.resx">
       <DependentUpon>GetConfirmation.cs</DependentUpon>

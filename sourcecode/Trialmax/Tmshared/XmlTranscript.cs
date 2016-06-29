@@ -358,7 +358,33 @@ namespace FTI.Shared.Xml
 			return strText;
 			
 		}// public string GetFormattedText()
-		
+
+        /// <summary>
+        /// Compare if the provided transcript object has same properties as this
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(Object obj)
+        {
+            try
+            {
+                return this.DisplayString == ((CXmlTranscript)obj).DisplayString &&
+                   this.Line == ((CXmlTranscript)obj).Line &&
+                   this.Page == ((CXmlTranscript)obj).Page &&
+                   this.PL == ((CXmlTranscript)obj).PL &&
+                   this.QA == ((CXmlTranscript)obj).QA &&
+                   this.Segment == ((CXmlTranscript)obj).Segment &&
+                   this.Start == ((CXmlTranscript)obj).Start &&
+                   this.Stop == ((CXmlTranscript)obj).Stop &&
+                   this.Text == ((CXmlTranscript)obj).Text &&
+                   this.Edited == ((CXmlTranscript)obj).Edited &&
+                   this.Synchronized == ((CXmlTranscript)obj).Synchronized;
+            }
+            catch {
+                return false;
+            }   
+        }
+
 		#endregion Public Methods
 		
 		#region Protected Methods

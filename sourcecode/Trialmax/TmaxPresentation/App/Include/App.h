@@ -101,8 +101,6 @@ class CApp : public CWinApp
 		POINTL					SecondaryDisplayOffset; // This stores the location of the secondary monitor
 		
 		HANDLE					m_hFFmpeg;
-
-		static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
 	public:
 	
 		CTMCommandLineInfo		m_TMCmdLineInfo;
