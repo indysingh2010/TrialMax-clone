@@ -91,8 +91,9 @@ typedef enum
 typedef enum
 {
 	ppVersion2003 = 11,
-	ppVersion2007= 13,
-	ppVersion2010= 14,
-	ppVersion2013=15
+	ppVersion2007 = 13,
+	ppVersion2010 = 14,
+	ppVersion2013 = 15,
+	ppVersion2016 = 16
 }PpVersion;
 #endif // !defined(__MSPPENUM_H__)
