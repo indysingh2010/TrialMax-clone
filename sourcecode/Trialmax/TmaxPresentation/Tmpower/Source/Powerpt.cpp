@@ -1952,9 +1952,9 @@ short CPowerPoint::SetFilename(LPCSTR lpFilename, long lStart, BOOL bSlideId)
 
 	//	Load the file
 	long bWithWindow;
-	if(m_fPPVersion >= PpVersion::ppVersion2010)
+	if(m_fPPVersion > PpVersion::ppVersion2010)
 	{
-		bWithWindow = FALSE;
+		bWithWindow = TRUE;
 	}
 	else
 	{
