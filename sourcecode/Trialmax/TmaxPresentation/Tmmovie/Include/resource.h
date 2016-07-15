@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by D:\TrialMax2-VS2012\Trialmax_640_64bit_beta\TmaxPresentation\Tmmovie\Tm_movie6.rc
+// Used by D:\10Pearls\Client_Github_Repo\sourcecode\Trialmax\TmaxPresentation\Tmmovie\Tm_movie6.rc
 //
 #define IDS_TMMOVIE                     1
 #define IDB_TMMOVIE                     1
@@ -46,6 +46,7 @@
 #define IDS_TMMOVIE_CREATEFILTERFAILED  219
 #define IDS_TMMOVIE_ADDFILTERFAILED     220
 #define IDS_TMMOVIE_FINDWINDOWFAILED    221
+#define IDS_TMMOVIE_VIDEOSLIDER         222
 
 // Next default values for new objects
 // 

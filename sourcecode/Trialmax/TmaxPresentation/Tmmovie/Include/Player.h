@@ -77,6 +77,7 @@ class CPlayer
 		long				m_lHeight;
 		double				m_dMinTime;
 		double				m_dMaxTime;
+		int					m_iVideoSliderHeight;
 		BOOL				m_bAdjRate;
 		BOOL				m_bAdjVolume;
 		BOOL				m_bAdjBalance;
@@ -91,6 +92,7 @@ class CPlayer
 		void				Resize();
 		void				EnableSnapshots(BOOL bEnable);
 		void				Redraw();
+		void				SetVideoSliderHeight(int height) { m_iVideoSliderHeight = height; }
 		long				ConvertToFrames(double dSeconds); 
 		double				ConvertToTime(long lFrame);
 		double				GetDuration(LPCSTR lpszFilename); 

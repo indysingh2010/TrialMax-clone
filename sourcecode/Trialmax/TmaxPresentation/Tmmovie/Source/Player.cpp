@@ -268,6 +268,7 @@ CPlayer::CPlayer()
 	m_lWidth			 = 640;
 	m_lHeight			 = 480;
 	m_iFilters			 = 0;
+	m_iVideoSliderHeight = 0;
 	m_sRate				 = 0;
 	m_sVolume			 = 0;
 	m_sBalance			 = 0;
@@ -654,6 +655,7 @@ CIDXShow* CPlayer::GetIDXShow()
 	pIDXShow->SetMaxRect(&m_rcMaxWnd);
 	pIDXShow->SetScaleProps(m_bScale, m_bAspect);
 	pIDXShow->SetDetachBeforeLoad(m_bDetachBeforeLoad);
+	pIDXShow->SetVideoSliderHeight(m_iVideoSliderHeight);
 
 	return pIDXShow;
 }
