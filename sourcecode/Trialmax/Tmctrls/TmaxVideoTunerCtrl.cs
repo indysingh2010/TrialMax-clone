@@ -326,7 +326,7 @@ namespace FTI.Trialmax.Controls
             Bitmap bim = new Bitmap(Values.Count, 200);
             using (System.Drawing.Graphics g = Graphics.FromImage(bim))
             {
-                Pen pen = new Pen(Color.Red, 2.0f);
+                Pen pen = new Pen(Color.White, 2.0f);
                 g.Clear(Color.Black);
 
                 var mid = 100;
