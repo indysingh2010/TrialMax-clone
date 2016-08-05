@@ -9,11 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Win32;
-
+using System.Drawing;
 using FTI.Shared;
+using FTI.Shared.Trialmax;
 using FTI.Shared.Xml;
 using FTI.Shared.Win32;
-using FTI.Shared.Trialmax;
 using FTI.Trialmax.Forms;
 using FTI.Trialmax.ActiveX;
 using FTI.Trialmax.MSOffice.MSPowerPoint;
@@ -29,6 +29,7 @@ using iTextSharp.text.pdf;
 using Interop.TiffPageSplitDLL;
 using System.Collections.Generic;
 using FTI.Shared.Database;
+using System.Drawing.Imaging;
 namespace FTI.Trialmax.Database
 {
 	/// <summary>This class serves as the outer wrapper for all Trialmax database services</summary>
@@ -10010,6 +10011,22 @@ namespace FTI.Trialmax.Database
 			try
 			{
 				xmlDeposition = (CXmlDeposition)(tmaxSource.UserData);
+
+                string m_currentVideoPath = m_aCaseFolders[5].Path;
+                List<long> depositionsDuration = new List<long>();
+
+                for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                {
+                    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
+                    depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
+                }
+
+                for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                {
+                    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
+                    AudioWaveformGenerator.GenerateAudioWave(filePath);
+                }
+
 				
 				//	Initialize a new transcript exchange object
 				dxTranscript = new CDxTranscript(dxPrimary);
@@ -10065,7 +10082,7 @@ namespace FTI.Trialmax.Database
 			return false;
 			
 		}// private bool AddTranscript(CTmaxSourceFolder tmaxSource, CDxPrimary dxPrimary)
-		
+
 		/// <summary>
 		/// This method will add the extent information associated with the secondary segment
 		/// </summary>
