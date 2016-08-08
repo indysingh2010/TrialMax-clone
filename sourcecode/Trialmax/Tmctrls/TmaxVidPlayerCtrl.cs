@@ -501,14 +501,7 @@ namespace FTI.Trialmax.Controls
         /// <returns>Duration of the video file</returns>
         public double GetDuration(string strFileName)
         {
-            try
-            {
-                return m_ctrlViewer.GetDuration(strFileName);
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
+            return m_ctrlViewer.GetDuration(strFileName);
         }// public double GetDuration(string strFileName)
 
 		#endregion Public Methods
