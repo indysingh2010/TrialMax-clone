@@ -540,7 +540,7 @@ namespace FTI.Trialmax.Encode
                     destinationFileName = destinationFileName + "_" + m_lCompleted + extension;
 
                     // encoding parameters
-                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(m_lEndTime) + " -acodec copy -vcodec copy \"" + destinationFileName + "\"";
+                    param = "-i \"" + source.m_strSourceFile + "\" -ss " + TimeSpan.FromSeconds(source.m_dStartTime) + " -t " + TimeSpan.FromSeconds(m_lEndTime) + " -acodec copy -vcodec copy " + " -b:v " + m_strBitrate + " " + " \"" + destinationFileName + "\"";
                 }               
 
                 // mark that encoding is in progress
@@ -630,7 +630,7 @@ namespace FTI.Trialmax.Encode
             string finalInput = GetMergeFilename();
 
             // encoding parameters            
-            string param = "-i \"" + finalInput + "\" " + GetCodec(m_strFileSpec) + " \"" + m_strFileSpec + "\"";            
+            string param = "-i \"" + finalInput + "\" " + GetCodec(m_strFileSpec) + " -b:v " + m_strBitrate + " \"" + m_strFileSpec + "\"";            
 
             // start encoding in a seperate thread, so we can cancel the encoding in UI thread
             System.Threading.ParameterizedThreadStart threadStart = new System.Threading.ParameterizedThreadStart(RunProcess);

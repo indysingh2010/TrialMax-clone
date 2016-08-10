@@ -7,10 +7,9 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 using FTI.Shared;
+using FTI.Shared.Trialmax;
 using FTI.Shared.Xml;
 using FTI.Trialmax.ActiveX;
-using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 using System.Collections.Generic;
 
 namespace FTI.Trialmax.Controls
@@ -19,7 +18,7 @@ namespace FTI.Trialmax.Controls
 	public class CTmaxVideoTunerCtrl : CTmaxVideoBaseCtrl
 	{
 		#region Private Members
-		
+
 		/// <summary>Required designer variable</summary>
 		private System.ComponentModel.Container components = null;
         
@@ -46,6 +45,12 @@ namespace FTI.Trialmax.Controls
         
         /// <summary>Format for the converted audio</summary>
         private const string m_convertToFormat = "wav";
+
+        /// <summary>Bitmap object for the current loaded script</summary>
+        private Bitmap m_bActiveBitmap = null;
+
+        /// <summary>Total duration of the current loaded script</summary>
+        private double m_dDuration = 0;
 
 		/// <summary>Custom tune bar control for managing tune states</summary>
         private FTI.Trialmax.Controls.CTmaxVideoTuneBarCtrl m_ctrlTuneBar;
@@ -254,7 +259,51 @@ namespace FTI.Trialmax.Controls
             if (m_ctrlPlayer.SetProperties(strFileSpec, xmlDesignation) == true)
             {
                 m_strFileSpec = m_ctrlPlayer.FileSpec;
-                GenerateAudioWave();
+
+                try
+                {
+                    m_dDuration = m_ctrlPlayer.GetDuration(m_strFileSpec);
+                    if (m_dDuration > 0)
+                    {
+                        using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
+                        {
+                            Rectangle cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(m_ctrlPlayer.StopPosition, bmpAudioWave.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
+
+                            if (m_orignalWave != null)
+                                m_orignalWave.Dispose();
+
+                            m_orignalWave = new Bitmap(cropRect.Width, cropRect.Height);
+                            using (Graphics grpAudioWave = Graphics.FromImage(m_orignalWave))
+                            {
+                                grpAudioWave.DrawImage(bmpAudioWave, new Rectangle(0, 0, m_orignalWave.Width, m_orignalWave.Height),
+                                                    cropRect,
+                                                    GraphicsUnit.Pixel);
+                            }
+                            m_picWave.Image = (Bitmap)m_orignalWave;
+                        }                        
+                    }
+                    else
+                    {
+                        bSuccessful = false;
+
+                        if (m_orignalWave != null)
+                            m_orignalWave.Dispose();
+
+                        m_orignalWave = null;
+
+                        if (m_picWave.Image != null)
+                            m_picWave.Image.Dispose();
+
+                        m_picWave.Image = null;
+                    }
+                }
+                catch (Exception)
+                {
+                    bSuccessful = false;
+
+                    m_picWave.Image = null;
+                    m_orignalWave = null;
+                }
             }
             else
                 bSuccessful = false;
@@ -268,126 +317,11 @@ namespace FTI.Trialmax.Controls
 		
 		}// public override bool SetProperties(string strFileSpec, CXmlDesignation xmlDesignation)
 
-        /// <summary>This method is called to generate the audio wave form</summary>
-        private void GenerateAudioWave()
+        private int GetLocationOnImage(double dOffset, int iWidth)
         {
-            // Check if a valid video file is assigned to the player
-            if (string.IsNullOrEmpty(m_ctrlPlayer.FileSpec)) return;
+            return Convert.ToInt32(dOffset * iWidth / m_dDuration);
+        }
 
-            // Setup FFMPEG location
-            string ffmpeg = System.IO.Directory.GetCurrentDirectory() + m_converter;
-
-            // Verify that ffmpeg exists
-            if (!System.IO.File.Exists(ffmpeg)) return;
-
-            if (System.IO.File.Exists(System.IO.Path.ChangeExtension(m_ctrlPlayer.FileSpec, m_convertToFormat)))
-                System.IO.File.Delete(System.IO.Path.ChangeExtension(m_ctrlPlayer.FileSpec, m_convertToFormat));
-
-            // Execute Video to Audio conversion
-            System.Diagnostics.Process process = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = false;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.RedirectStandardError = true;
-            startInfo.FileName = ffmpeg;
-            startInfo.Arguments = " -y -i ";
-            startInfo.Arguments += "\"" + m_ctrlPlayer.FileSpec + "\"";
-            startInfo.Arguments += " -ss " + m_ctrlPlayer.StartPosition;
-            startInfo.Arguments += " -to " + m_ctrlPlayer.StopPosition;
-            startInfo.Arguments += " \"" + System.IO.Path.ChangeExtension(m_ctrlPlayer.FileSpec, m_convertToFormat) + "\"";
-            process.StartInfo = startInfo;
-
-            Cursor.Current = Cursors.WaitCursor;
-                
-            process.Start();
-            process.WaitForExit();
-
-            m_orignalWave = CreateAudioWave(System.IO.Path.ChangeExtension(m_ctrlPlayer.FileSpec, m_convertToFormat));
-            System.IO.File.Delete(System.IO.Path.ChangeExtension(m_ctrlPlayer.FileSpec, m_convertToFormat));
-            m_picWave.Image = (Bitmap)m_orignalWave.Clone();
-
-            Cursor.Current = Cursors.Default;
-        }// private void GenerateAudioWave()
-
-        /// <summary>Generate the wave from the audio file.</summary>
-        /// <param name="fileName">Location of the audio file for which the wave form is to be generated</param>
-        /// <returns></returns>
-        public Bitmap CreateAudioWave(string fileName)
-        {
-            if (!System.IO.File.Exists(fileName)) return null;
-
-            var fileStream = new WaveFileReader(fileName);
-
-            var sampleProvider = fileStream.ToSampleProvider();
-            var Values = GetWaveFormValues(sampleProvider, fileStream.WaveFormat, fileStream.Length, fileStream.WaveFormat.SampleRate / 10);
-
-            // Generating the wave form image
-            Bitmap bim = new Bitmap(Values.Count, 200);
-            using (System.Drawing.Graphics g = Graphics.FromImage(bim))
-            {
-                Pen pen = new Pen(Color.White, 2.0f);
-                g.Clear(Color.Black);
-
-                var mid = 100;
-                var yScale = 100;
-
-                List<Point> p = new List<Point>();
-
-                for (int i = 0; i < Values.Count; i++)
-                {
-                    float Y1 = mid + (Values[i] * yScale);
-                    float Y2 = mid - (Values[i] * yScale);
-                    p.Add(new Point(i, Convert.ToInt32(Math.Ceiling(Y1))));
-                    p.Add(new Point(i, Convert.ToInt32(Math.Ceiling(Y2))));
-                }
-                g.DrawLines(pen, p.ToArray());
-            }
-
-            fileStream.Close();
-            return bim;
-        }// public Bitmap CreateAudioWave(string fileName)
-
-        /// <summary>
-        /// This function is called to generate the Y-values for the waveform
-        /// Source: https://naudio.codeplex.com/discussions/649903
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <param name="format"></param>
-        /// <param name="length"></param>
-        /// <param name="notificationCount"></param>
-        /// <returns></returns>
-        private List<float> GetWaveFormValues(ISampleProvider provider, WaveFormat format, long length, int notificationCount)
-        {
-            try
-            {
-                int bufferSize = format.ConvertLatencyToByteSize((m_desiredLatency + m_numberOfBuffers - 1) / m_numberOfBuffers);
-                var buf = new float[bufferSize];
-                int samplesRead = 0;
-                int count = 0;
-
-                List<float> Values = new List<float>((int)(length / notificationCount));
-
-                float maxValue = 0;
-                while ((samplesRead = provider.Read(buf, 0, buf.Length)) > 0)
-                {
-                    for (int n = 0; n < samplesRead; n++)
-                    {
-                        maxValue = Math.Max(maxValue, buf[n]);
-                        count++;
-                        if (count >= notificationCount && notificationCount > 0)
-                        {
-                            Values.Add(maxValue);
-                            maxValue = count = 0;
-                        }
-                    }
-                }
-                return Values;
-            }
-            catch (Exception ex) { }
-            return new List<float>();
-            
-        }// private List<float> GetWaveForm
 
         /// <summary>
         /// This function is called to draw a vertical bar on the waveform to show the current position of the video
@@ -403,19 +337,28 @@ namespace FTI.Trialmax.Controls
 
             position = position - m_ctrlPlayer.XmlDesignation.Start;
 
-            Bitmap bmp = (Bitmap)m_orignalWave.Clone();
-            Pen blackPen = new Pen(Color.Blue, Math.Max(1, bmp.Width / 1000));
+            Bitmap orignalWaveCopy = (Bitmap)m_orignalWave.Clone();
+            Pen blackPen = new Pen(Color.Blue, Math.Max(1, orignalWaveCopy.Width / 1000));
 
             float x1 = (float)(position / length * m_orignalWave.Width);
             float y1 = 0;
             float x2 = x1;
             float y2 = 200;
+
             // Draw line to screen.
-            using (var graphics = Graphics.FromImage(bmp))
+            using (var graphics = Graphics.FromImage(orignalWaveCopy))
             {
                 graphics.DrawLine(blackPen, x1, y1, x2, y2);
             }
-            m_picWave.Image = bmp;
+
+            m_picWave.Image = orignalWaveCopy;
+
+            if (m_bActiveBitmap != null)
+                m_bActiveBitmap.Dispose();
+
+            // Save the reference of the loaded bitmap so that before loading 
+            // another bitmap, we can dispose the previous one
+            m_bActiveBitmap = orignalWaveCopy;
         }// public void UpdateLocation(double position)
 		
 		/// <summary>This method is called to set the control properties</summary>
