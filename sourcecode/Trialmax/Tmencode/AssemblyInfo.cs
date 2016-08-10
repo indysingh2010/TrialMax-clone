@@ -27,7 +27,7 @@ using System.Runtime.CompilerServices;
 // by using the '*' as shown below:
 
 //[assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("7.0.6.03165")]
+[assembly: AssemblyVersion("7.0.7.08086")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
