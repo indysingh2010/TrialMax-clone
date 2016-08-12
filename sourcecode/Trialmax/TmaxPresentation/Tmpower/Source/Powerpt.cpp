@@ -1951,16 +1951,7 @@ short CPowerPoint::SetFilename(LPCSTR lpFilename, long lStart, BOOL bSlideId)
 	}
 
 	//	Load the file
-	long bWithWindow;
-	if(m_fPPVersion > PpVersion::ppVersion2010)
-	{
-		bWithWindow = TRUE;
-	}
-	else
-	{
-		bWithWindow = FALSE;
-	}
-	if((lpDispatch = m_pNIPresentations->Open(lpFilename, TRUE, FALSE, bWithWindow)) == 0)
+	if((lpDispatch = m_pNIPresentations->Open(lpFilename, TRUE, FALSE, FALSE)) == 0)
 	{
 		Unlock();
 		ReleaseNew();
