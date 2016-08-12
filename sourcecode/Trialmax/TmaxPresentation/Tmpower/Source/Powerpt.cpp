@@ -928,7 +928,7 @@ BOOL CPowerPoint::MyEnumDesktopWindows(HWND hWnd)
 		// Powerpoint 2013/2016 fix. The paneClassDC does not exist in this scenario.
 		if(m_fPPVersion == PpVersion::ppVersion2013 || m_fPPVersion == PpVersion::ppVersion2016){
 			
-			m_hNSSWnd = hwndmdiClass;
+			m_hNSSWnd = hwndMDIClient;
 		}
 		else if((m_hNSSWnd = ::FindWindowEx(hwndmdiClass, NULL, "paneClassDC", NULL)) == NULL) {
 
