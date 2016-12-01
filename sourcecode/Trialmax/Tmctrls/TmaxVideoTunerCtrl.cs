@@ -76,6 +76,16 @@ namespace FTI.Trialmax.Controls
         /// <summary>This variable will hold the previous position of the video before the event was fired</summary>
         private double m_previousPosition = 0;
 
+        /// <summary>This variable will hold the tarting and ending time of each segments against a segment number</summary>
+        private Dictionary<double, List<double>> startEndTimesMapToSegment = new Dictionary<double, List<double>>();
+
+        /// <summary>This variable will hold the segment number against a starting time</summary>
+        private Dictionary<double, double> segmentMapToStartTime = new Dictionary<double, double>(); 
+
+
+
+
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -288,9 +298,6 @@ namespace FTI.Trialmax.Controls
                     {
                         using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
                         {
-
-                            
-
                             Rectangle cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(m_ctrlPlayer.StopPosition, bmpAudioWave.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
 
                             if (m_orignalWave != null)
@@ -304,24 +311,37 @@ namespace FTI.Trialmax.Controls
                                                     GraphicsUnit.Pixel);
                             }
 
-                            m_currentWaveFormSegment = Math.Ceiling(m_ctrlPlayer.StartPosition / m_secondsPerSegment);
-                            m_totalWaveFormSegments = Math.Ceiling(m_dDuration / m_secondsPerSegment);
-                            m_originalPosition = m_ctrlPlayer.StartPosition;
-                            m_currentPosition = 0;
+                            m_currentPosition = m_ctrlPlayer.StartPosition;
                             m_previousPosition = m_ctrlPlayer.StartPosition;
+                            m_totalWaveFormSegments = Math.Ceiling(m_dDuration / m_secondsPerSegment);
 
-                            double stopPosition = 0;
+                            segmentMapToStartTime.Clear();
+                            startEndTimesMapToSegment.Clear();
+                            double count = 0;
+                            for (int i = 1; i <= m_totalWaveFormSegments; i++) 
+                            {
+                                segmentMapToStartTime.Add(count, i);
+                                List<double> timeList = new List<double>();
+                                timeList.Add(count);
+                                timeList.Add(count + m_secondsPerSegment);
+                                startEndTimesMapToSegment.Add(i, timeList);
+                                count += 30;
+                            }
+
+                            m_currentWaveFormSegment = segmentMapToStartTime[getSegmentStartPositionFromCurrentPosition(m_ctrlPlayer.StartPosition)];
+                            List<double> currentTimeList = startEndTimesMapToSegment[m_currentWaveFormSegment];
+
+                            double segmentStartPosition = currentTimeList[0];
+                            double segmentStopPosition = currentTimeList[1];
+
                             Bitmap waveFormSegment = null;
-                            if (m_ctrlPlayer.StartPosition + m_secondsPerSegment < bmpAudioWave.Width)
+
+                            if (segmentStopPosition + segmentStartPosition > bmpAudioWave.Width)
                             {
-                                stopPosition = m_ctrlPlayer.StartPosition + m_secondsPerSegment;
-                            }
-                            else 
-                            {
-                                stopPosition = bmpAudioWave.Width;
+                                segmentStopPosition = bmpAudioWave.Width;
                             }
 
-                            cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(stopPosition, bmpAudioWave.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
+                            cropRect = new Rectangle(GetLocationOnImage(segmentStartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(segmentStopPosition, bmpAudioWave.Width) - GetLocationOnImage(segmentStartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
 
                             if (waveFormSegment != null)
                                 waveFormSegment.Dispose();
@@ -373,53 +393,54 @@ namespace FTI.Trialmax.Controls
 		}// public override bool SetProperties(string strFileSpec, CXmlDesignation xmlDesignation)
 
 
+        /// <summary>This method is called to get the position from it's nearest 30th interval</summary>
+        /// <summary>for example, if i put in 61, i should get 60, if i put in 55, i should get 30</summary>
+        /// <param name="position">the position after which to show the waveform</param>
+        /// <returns>the staarting position of the segment</returns>
+        private double getSegmentStartPositionFromCurrentPosition(double position)
+        {
+            return Math.Floor((double)position / m_secondsPerSegment) * m_secondsPerSegment;
+
+        }//private double getSegmentStartPositionFromCurrentPosition(double position)
+
         /// <summary>This method is called to change the waveform segment</summary>
         /// <param name="position">the position after which to show the waveform</param>
         /// <returns>true if successful</returns>
-        private void UpdateWaveformSegment(double position, Boolean goForward)
+        private void UpdateWaveformSegment(double position)
         {
-           
-            if (goForward == true) 
-            {
-                m_currentWaveFormSegment = Math.Ceiling(position / m_secondsPerSegment);
-            }
+
+            m_currentWaveFormSegment = segmentMapToStartTime[getSegmentStartPositionFromCurrentPosition(position)];
+            List<double> currentTimeList = startEndTimesMapToSegment[m_currentWaveFormSegment];
+
+            double segmentStartPosition = currentTimeList[0];
+            double segmentStopPosition = currentTimeList[1];
 
                 using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
                 {
-
-                    double stopPosition = 0;
                     Bitmap waveFormSegment = null;
 
-                    if (goForward == true)
+                    if (segmentStopPosition + segmentStartPosition > bmpAudioWave.Width)
                     {
-                        if (position + m_secondsPerSegment < bmpAudioWave.Width)
-                        {
-                            stopPosition = position + m_secondsPerSegment;
-                        }
-                        else
-                        {
-                            stopPosition = bmpAudioWave.Width;
-                        }
-
-                        Rectangle cropRect = new Rectangle(GetLocationOnImage(position, bmpAudioWave.Width), 0, GetLocationOnImage(stopPosition, bmpAudioWave.Width) - GetLocationOnImage(position, bmpAudioWave.Width), bmpAudioWave.Height);
-
-                        if (waveFormSegment != null)
-                            waveFormSegment.Dispose();
-
-                        waveFormSegment = new Bitmap(cropRect.Width, cropRect.Height);
-                        using (Graphics grpAudioWave = Graphics.FromImage(waveFormSegment))
-                        {
-                            grpAudioWave.DrawImage(bmpAudioWave, new Rectangle(0, 0, waveFormSegment.Width, waveFormSegment.Height),
-                                                cropRect,
-                                                GraphicsUnit.Pixel);
-                        }
-                    
-
+                        segmentStopPosition = bmpAudioWave.Width;
                     }
+
+                    Rectangle cropRect = new Rectangle(GetLocationOnImage(segmentStartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(segmentStopPosition, bmpAudioWave.Width) - GetLocationOnImage(segmentStartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
+
+                    if (waveFormSegment != null)
+                        waveFormSegment.Dispose();
+
+                    waveFormSegment = new Bitmap(cropRect.Width, cropRect.Height);
+                    using (Graphics grpAudioWave = Graphics.FromImage(waveFormSegment))
+                    {
+                        grpAudioWave.DrawImage(bmpAudioWave, new Rectangle(0, 0, waveFormSegment.Width, waveFormSegment.Height),
+                                            cropRect,
+                                            GraphicsUnit.Pixel);
+                    }
+
                     m_currentWaveFormSegmentImage = (Bitmap)waveFormSegment;
-                    m_currentPosition = 0;
                 }     
-        }
+        }//private void UpdateWaveformSegment(double position)
+
 
         private int GetLocationOnImage(double dOffset, int iWidth)
         {
@@ -442,12 +463,12 @@ namespace FTI.Trialmax.Controls
             try
             {
                 //the current position which must be set of the pen
-                m_currentPosition = m_currentPosition + (position - m_previousPosition);
-                Boolean goForward = true;
+                m_currentPosition = (m_currentPosition + (position - m_previousPosition)) / m_secondsPerSegment;
+                m_currentPosition = m_secondsPerSegment * (m_currentPosition - Math.Floor(m_currentPosition));
 
-                if (m_currentWaveFormSegment < Math.Ceiling(position / m_secondsPerSegment))
+                if (m_currentWaveFormSegment != segmentMapToStartTime[getSegmentStartPositionFromCurrentPosition(position)])
                 {
-                    UpdateWaveformSegment(position, goForward);
+                        UpdateWaveformSegment(position);
                 }
 
                 Bitmap m_currentWaveFormSegmentClone = (Bitmap)m_currentWaveFormSegmentImage.Clone();
