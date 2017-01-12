@@ -587,10 +587,26 @@ namespace FTI.Trialmax.ActiveX
 					break;
 					
 				case TmaxMediaBarCommands.Callout:
-				
-					m_ctrlTmview.Action = (short)TmxViewActions.Callout;
-					SetToolButton(eCommand, false);
-					break;
+
+					DialogResult result = MessageBox.Show("Do you want to fixed aspect ratio?", "Aspect Ratio", MessageBoxButtons.YesNoCancel);
+                    if(result == DialogResult.Yes)
+                    {
+                        m_ctrlTmview.Action = (short)TmxViewActions.Callout;
+                        m_ctrlTmview.KeepAspect = 1;
+                        SetToolButton(eCommand, false);
+                        break;
+                    }
+                    else if (result == DialogResult.No)
+                    {
+                        m_ctrlTmview.Action = (short)TmxViewActions.Callout;
+                        m_ctrlTmview.KeepAspect = 0;
+                        SetToolButton(eCommand, false);
+                        break;
+                    }
+                    else
+                    {
+                        break;
+                    }
 					
 				case TmaxMediaBarCommands.Highlight:
 				

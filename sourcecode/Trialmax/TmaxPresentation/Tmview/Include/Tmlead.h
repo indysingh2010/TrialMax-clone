@@ -317,6 +317,7 @@ class CTMLead : public CLead
 		CString			m_strAnnFontName;
 		short			m_sAnnFontSize;
 		short			m_sAction;
+		short			m_sMaintainAspectRatio;
 		short			m_sAnnTool;
 		short			m_sAnnThickness;
 		short			m_sAnnColor;
@@ -418,6 +419,7 @@ class CTMLead : public CLead
 		int				GetScreenWidth();
 		int				GetScreenHeight();
 		short			GetAction();
+		short			GetMaintainAspectRatio();
 		short			GetAngle();
 		LPCTSTR			GetFilename();
 		float			GetSrcAspect();
@@ -448,6 +450,7 @@ class CTMLead : public CLead
 	
 		//	Property change handlers
 		void			SetAction(short sAction);
+		void			SetMaintainAspectRatio(short sMaintainAspectRatio);
 		void			SetBackColor(OLE_COLOR ocColor, COLORREF crColor); 
 		void			SetRedactColor(short sRedactColor);
 		void			SetHighlightColor(short sHighlightColor);
@@ -476,6 +479,7 @@ class CTMLead : public CLead
 		void			SetFitToImage(BOOL bFitToImage);
 		void			SetHideScrollBars(BOOL bHideScrollBars);
 		void			SetKeepAspect(BOOL bKeepAspect);
+		BOOL            GetKeepAspect();
 		void			SetZoomToRect(BOOL bZoomToRect);
 		void			SetRightClickPan(BOOL bRightClickPan);
 		void			SetLoopAnimate(BOOL bLoop);

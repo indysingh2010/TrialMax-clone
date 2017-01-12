@@ -5388,6 +5388,25 @@ void CTMViewCtrl::OnHighlightColorChanged()
 //==============================================================================
 void CTMViewCtrl::OnKeepAspectChanged() 
 {
+	if(m_sAction == CALLOUT) {
+	    SetModifiedFlag();
+	
+	    if(!AmbientUserMode())
+	    {
+		    return;
+	    }
+	    else if(m_bSyncPanes)
+	    {
+		
+		    m_PaneA.SetMaintainAspectRatio(m_bKeepAspect);
+		    m_PaneB.SetMaintainAspectRatio(m_bKeepAspect);
+	    }
+	    else
+	    {
+		    GetPane()->SetMaintainAspectRatio(m_bKeepAspect);
+	    }
+	    return;
+	}
 	SetModifiedFlag();
 	
 	if(!AmbientUserMode())
@@ -5396,6 +5415,7 @@ void CTMViewCtrl::OnKeepAspectChanged()
 	}
 	else if(m_bSyncPanes)
 	{
+		
 		m_PaneA.SetKeepAspect(m_bKeepAspect);
 		m_PaneB.SetKeepAspect(m_bKeepAspect);
 	}
