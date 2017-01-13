@@ -588,7 +588,7 @@ namespace FTI.Trialmax.ActiveX
 					
 				case TmaxMediaBarCommands.Callout:
 
-					DialogResult result = MessageBox.Show("Do you want to fixed aspect ratio?", "Aspect Ratio", MessageBoxButtons.YesNoCancel);
+					DialogResult result = MessageBox.Show("Maintain Aspect Ratio?", "Aspect Ratio", MessageBoxButtons.YesNoCancel);
                     if(result == DialogResult.Yes)
                     {
                         m_ctrlTmview.Action = (short)TmxViewActions.Callout;

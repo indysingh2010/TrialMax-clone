@@ -50,13 +50,14 @@ class CTMTracker : public CRectTracker
 		float					m_fAspectRatio;
 		int						m_iFrameThickness;
 		COLORREF				m_crHandle;
+		short					m_sMaintainAspectRatio;
 
 	public:
 
 								CTMTracker();
 		virtual				   ~CTMTracker();
 
-		void					Attach(HWND hWnd);
+		void					Attach(HWND hWnd, short maintainAspectRatio);
 		void					Move();
 		void					Draw();
 		void					SetHandleColor(COLORREF crColor){ m_crHandle = crColor; }

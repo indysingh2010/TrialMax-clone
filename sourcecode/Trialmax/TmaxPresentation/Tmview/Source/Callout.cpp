@@ -612,7 +612,7 @@ int CCallout::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_TMLead.SetAction(NONE);
 	
 	//	Attach and initialize the tracker
-	m_Tracker.Attach(m_hWnd);
+	m_Tracker.Attach(m_hWnd, !m_TMLead.GetMaintainAspectRatio());
 	m_Tracker.SetHandleColor(m_pSource->GetCallHandleColor());
 	
 	return 0;
