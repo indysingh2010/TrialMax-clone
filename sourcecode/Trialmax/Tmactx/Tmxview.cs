@@ -585,29 +585,40 @@ namespace FTI.Trialmax.ActiveX
 					m_ctrlTmview.Action = (short)TmxViewActions.Zoom;
 					SetToolButton(eCommand, false);
 					break;
-					
-				case TmaxMediaBarCommands.Callout:
 
-					DialogResult result = MessageBox.Show("Maintain Aspect Ratio?", "Aspect Ratio", MessageBoxButtons.YesNoCancel);
-                    if(result == DialogResult.Yes)
-                    {
-                        m_ctrlTmview.Action = (short)TmxViewActions.Callout;
-                        m_ctrlTmview.KeepAspect = 1;
-                        SetToolButton(eCommand, false);
-                        break;
-                    }
-                    else if (result == DialogResult.No)
-                    {
-                        m_ctrlTmview.Action = (short)TmxViewActions.Callout;
-                        m_ctrlTmview.KeepAspect = 0;
-                        SetToolButton(eCommand, false);
-                        break;
-                    }
-                    else
-                    {
-                        break;
-                    }
-					
+                case TmaxMediaBarCommands.Callout:
+                    m_ctrlTmview.Action = (short)TmxViewActions.Callout;
+                    m_ctrlTmview.KeepAspect = 1;
+                    SetToolButton(eCommand, false);
+                    break;
+
+                //DialogResult result = MessageBox.Show("Maintain Aspect Ratio?", "Aspect Ratio", MessageBoxButtons.YesNoCancel);
+                //if(result == DialogResult.Yes)
+                //{
+                //    m_ctrlTmview.Action = (short)TmxViewActions.Callout;
+                //    m_ctrlTmview.KeepAspect = 1;
+                //    SetToolButton(eCommand, false);
+                //    break;
+                //}
+                //else if (result == DialogResult.No)
+                //{
+                //    m_ctrlTmview.Action = (short)TmxViewActions.Callout;
+                //    m_ctrlTmview.KeepAspect = 0;
+                //    SetToolButton(eCommand, false);
+                //    break;
+                //}
+                //else
+                //{
+                //    break;
+                //}
+
+
+                case TmaxMediaBarCommands.adjustableCallout:
+                    m_ctrlTmview.Action = (short)TmxViewActions.Callout;
+                    m_ctrlTmview.KeepAspect = 0;
+                    SetToolButton(eCommand, false);
+                    break;
+                  
 				case TmaxMediaBarCommands.Highlight:
 				
 					m_ctrlTmview.Action = (short)TmxViewActions.Highlight;
