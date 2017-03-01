@@ -209,6 +209,7 @@ BEGIN
     IDS_TMTB_NUDGELEFT      "Nudge Left"
     IDS_TMTB_NUDGERIGHT     "Nudge Right"
     IDS_TMTB_SAVENUDGE      "Save Nudge"
+    IDS_TMTB_ADJUSTABLECALLOUT "Adjustable Callout"
 END
 
 STRINGTABLE

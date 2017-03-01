@@ -4834,8 +4834,34 @@ void CMainView::OnCallout()
 	if(!IsCommandEnabled(TMAX_CALLOUT))
 		return;
 	
-	for(int i = 0; i < SZ_ARR_TM_VW; i++)
+	for(int i = 0; i < SZ_ARR_TM_VW; i++) {
+		m_ctrlTMView->SetKeepAspect(TRUE);
 		m_arrTmView[i]->SetAction(CALLOUT);
+	}
+		
+}
+
+//==============================================================================
+//
+// 	Function Name:	CMainView::OnAdjustableCallout()
+//
+// 	Description:	This function will enable the adjustable callout tool.
+//
+// 	Returns:		None
+//
+//	Notes:			None
+//
+//==============================================================================
+void CMainView::OnAdjustableCallout() 
+{
+	if(!IsCommandEnabled(TMAX_CALLOUT))
+		return;
+	
+	for(int i = 0; i < SZ_ARR_TM_VW; i++) {
+		m_ctrlTMView->SetKeepAspect(FALSE);
+		m_arrTmView[i]->SetAction(CALLOUT);
+	}
+		
 }
 
 //==============================================================================
@@ -8925,7 +8951,6 @@ BOOL CMainView::OpenDatabase(LPCSTR lpFolder)
 void CMainView::ParseHotKeySpec(short sIndex, LPSTR lpSpec) 
 {
 	int	iLength;
-
 	ASSERT(sIndex >= 0);
 	ASSERT(sIndex < MAX_HOTKEYS);
 	ASSERT(lpSpec);
@@ -9199,6 +9224,8 @@ BOOL CMainView::ProcessCommand(short sCommand)
 										return TRUE;
 		case TMAX_SAVENUDGE:			SaveNudgePage();
 										return TRUE;
+		case TMAX_ADJUSTABLECALLOUT:	OnAdjustableCallout();
+										return TRUE;
 		default:						return FALSE;
 	}
 }
@@ -9217,6 +9244,7 @@ BOOL CMainView::ProcessCommand(short sCommand)
 //==============================================================================
 BOOL CMainView::ProcessCommandKey(char cKey)
 {
+
 	char	cHotkey = toupper(cKey);
 	short	sKeyState = GetTMKeyState();
 
@@ -9242,6 +9270,10 @@ MessageBox(M, "ProcessCommandKey");
 	else if(cHotkey == m_Hotkeys[HK_CALLOUT].cKey &&
 	        sKeyState == m_Hotkeys[HK_CALLOUT].sState)
 		return ProcessCommand(TMAX_CALLOUT);
+
+		else if(cHotkey == m_Hotkeys[HK_ADJUSTABLECALLOUT].cKey &&
+	        sKeyState == m_Hotkeys[HK_ADJUSTABLECALLOUT].sState)
+		return ProcessCommand(TMAX_ADJUSTABLECALLOUT);
 	
 	else if(cHotkey == m_Hotkeys[HK_PAN].cKey &&
 	        sKeyState == m_Hotkeys[HK_PAN].sState)
@@ -10092,6 +10124,11 @@ BOOL CMainView::ProcessVirtualKey(WORD wKey)
 				ProcessCommand(TMAX_NUDGERIGHT);
 				return TRUE;
 			}
+			else if (wKey == VK_OEM_PLUS)
+			{
+				ProcessCommand(TMAX_ADJUSTABLECALLOUT);
+				return TRUE;
+			}
 			else
 			{
 				return FALSE;//	Return to caller for processing
@@ -10512,6 +10549,10 @@ void CMainView::ReadHotkeys()
 	//	Callout
 	m_Ini.ReadString(HK_CALLOUT_LINE, szIniStr, sizeof(szIniStr), DEFAULT_HK_CALLOUT);
 	ParseHotKeySpec(HK_CALLOUT, szIniStr);
+
+	//	Adjustable Callout
+	m_Ini.ReadString(HK_ADJUSTABLECALLOUT_LINE, szIniStr, sizeof(szIniStr), DEFAULT_HK_ADJUSTABLECALLOUT);
+	ParseHotKeySpec(HK_ADJUSTABLECALLOUT, szIniStr);
 
 	//	Draw
 	m_Ini.ReadString(HK_DRAW_LINE, szIniStr, sizeof(szIniStr), DEFAULT_HK_DRAW);

@@ -146,7 +146,7 @@ namespace FTI.Shared.Trialmax
                 case TmaxMediaBarCommands.NudgeLeft:        return 81;
                 case TmaxMediaBarCommands.NudgeRight:       return 82;
                 case TmaxMediaBarCommands.SaveNudge:        return 83;
-                case TmaxMediaBarCommands.adjustableCallout: return 84;
+                case TmaxMediaBarCommands.AdjustableCallout: return 84;
 				default:									return -1;
 			}
 			
@@ -268,15 +268,17 @@ namespace FTI.Shared.Trialmax
 			
 			}// else if(eModifiers == (Keys.Control | Keys.Shift))
 
+
+
             else if (eModifiers == (Keys.Control | Keys.Alt))
             {
-                switch(eKey)
+                switch (eKey)
                 {
                     case Keys.C:
-                    eCommand = TmaxMediaBarCommands.adjustableCallout;
-                    break;
+                        eCommand = TmaxMediaBarCommands.AdjustableCallout;
+                        break;
                 }
-            }//else if (eModifiers == Keys.Alt)
+            }//else if (eModifiers == (Keys.Control | Keys.Alt))
 			
 			return eCommand;
 			
@@ -385,7 +387,7 @@ namespace FTI.Shared.Trialmax
 					eModifiers = (Keys.Control | Keys.Shift);
 					break;
 
-                case TmaxMediaBarCommands.adjustableCallout:
+                case TmaxMediaBarCommands.AdjustableCallout:
                     eKey = Keys.C;
                     eModifiers = (Keys.Control | Keys.Alt);
                     break;

@@ -177,7 +177,8 @@
 #define HK_UPDATE_ZAP					62
 #define HK_SPLIT_ZAP					63
 #define HK_GESTURE_PAN					64
-#define MAX_HOTKEYS						65
+#define HK_ADJUSTABLECALLOUT			65
+#define MAX_HOTKEYS						66
 
 //	INI section identifiers
 #define HOTKEYS_SECTION					"TM HOTKEYS"
@@ -276,6 +277,7 @@
 #define HK_UPDATE_ZAP_LINE				"UpdateZap"
 #define HK_SPLIT_ZAP_LINE				"SaveSplitZap"
 #define HK_ENABLE_GESTURE				"EnableGesture"
+#define HK_ADJUSTABLECALLOUT_LINE		"AdjustableCallout"
 
 //	Default hotkey assignments
 #define DEFAULT_HK_BLANK				"B"
@@ -343,6 +345,7 @@
 #define DEFAULT_HK_SPLITPAGES_PREVIOUS	",C"
 #define DEFAULT_HK_SPLITPAGES_NEXT		".C"
 #define DEFAULT_HK_ENABLE_GESTURE		"PC"
+#define DEFAULT_HK_ADJUSTABLECALLOUT	"L"
 
 //	Test setup ini line identifiers
 #define TEST_PLAYLISTS_LINE				"Playlists"
@@ -908,6 +911,7 @@ class CMainView : public CFormView
 	afx_msg void OnSaveSplitZap();
 	afx_msg void OnFilePrint();
 	afx_msg void OnCallout();
+	afx_msg void OnAdjustableCallout();
 	afx_msg void OnPan();
 	afx_msg void OnZoomWidth();
 	afx_msg void OnAxCreateCallout(long hCallout);

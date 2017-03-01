@@ -613,7 +613,7 @@ namespace FTI.Trialmax.ActiveX
                 //}
 
 
-                case TmaxMediaBarCommands.adjustableCallout:
+                case TmaxMediaBarCommands.AdjustableCallout:
                     m_ctrlTmview.Action = (short)TmxViewActions.Callout;
                     m_ctrlTmview.KeepAspect = 0;
                     SetToolButton(eCommand, false);
@@ -947,6 +947,7 @@ namespace FTI.Trialmax.ActiveX
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool21 = new Infragistics.Win.UltraWinToolbars.ButtonTool("NudgeLeft");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool22 = new Infragistics.Win.UltraWinToolbars.ButtonTool("NudgeRight");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool23 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SaveNudge");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool33 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("AdjustableCallout", "");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool11 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Erase");
             Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool17 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Callout", "");
             Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool18 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("Highlight", "");
@@ -981,14 +982,15 @@ namespace FTI.Trialmax.ActiveX
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool24 = new Infragistics.Win.UltraWinToolbars.ButtonTool("NudgeLeft");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool25 = new Infragistics.Win.UltraWinToolbars.ButtonTool("NudgeRight");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool26 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SaveNudge");
+            Infragistics.Win.UltraWinToolbars.StateButtonTool stateButtonTool34 = new Infragistics.Win.UltraWinToolbars.StateButtonTool("AdjustableCallout", "");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CTmxView));
             this.m_ctrlUltraToolbarManager = new Infragistics.Win.UltraWinToolbars.UltraToolbarsManager(this.components);
             this.m_ctrlFillPanel = new System.Windows.Forms.Panel();
+            this.m_ctrlTmview = new AxTM_VIEW6Lib.AxTm_view6();
             this._CTmxView_Toolbars_Dock_Area_Left = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
             this._CTmxView_Toolbars_Dock_Area_Right = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
             this._CTmxView_Toolbars_Dock_Area_Top = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
             this._CTmxView_Toolbars_Dock_Area_Bottom = new Infragistics.Win.UltraWinToolbars.UltraToolbarsDockArea();
-            this.m_ctrlTmview = new AxTM_VIEW6Lib.AxTm_view6();
             ((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraToolbarManager)).BeginInit();
             this.m_ctrlFillPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.m_ctrlTmview)).BeginInit();
@@ -1040,7 +1042,8 @@ namespace FTI.Trialmax.ActiveX
             buttonToolShowPresentation1,
             buttonTool21,
             buttonTool22,
-            buttonTool23});
+            buttonTool23,
+            stateButtonTool33});
             ultraToolbar1.Settings.AllowCustomize = Infragistics.Win.DefaultableBoolean.False;
             ultraToolbar1.Settings.AllowDockBottom = Infragistics.Win.DefaultableBoolean.False;
             ultraToolbar1.Settings.AllowDockLeft = Infragistics.Win.DefaultableBoolean.False;
@@ -1123,6 +1126,8 @@ namespace FTI.Trialmax.ActiveX
             buttonTool25.SharedProps.Caption = "Nudge Right";
             buttonTool25.SharedProps.ToolTipText = "Nudge Right - (Shortcut = Shift+])";
             buttonTool26.SharedProps.Caption = "Save Nudge";
+            stateButtonTool34.SharedProps.Caption = "AdjustableCallout";
+            stateButtonTool34.SharedProps.ToolTipText = "Adjustable Callout (Shortcut = Ctrl+Alt+C)";
             this.m_ctrlUltraToolbarManager.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             buttonTool11,
             stateButtonTool17,
@@ -1155,7 +1160,8 @@ namespace FTI.Trialmax.ActiveX
             buttonToolShowPresentation2,
             buttonTool24,
             buttonTool25,
-            buttonTool26});
+            buttonTool26,
+            stateButtonTool34});
             this.m_ctrlUltraToolbarManager.BeforeToolbarListDropdown += new Infragistics.Win.UltraWinToolbars.BeforeToolbarListDropdownEventHandler(this.OnUltraBeforeToolbarListDropdown);
             this.m_ctrlUltraToolbarManager.ToolClick += new Infragistics.Win.UltraWinToolbars.ToolClickEventHandler(this.OnUltraToolClick);
             this.m_ctrlUltraToolbarManager.ToolKeyDown += new Infragistics.Win.UltraWinToolbars.ToolKeyEventHandler(this.OnUltraToolKeyDown);
@@ -1165,11 +1171,20 @@ namespace FTI.Trialmax.ActiveX
             this.m_ctrlFillPanel.Controls.Add(this.m_ctrlTmview);
             this.m_ctrlFillPanel.Cursor = System.Windows.Forms.Cursors.Default;
             this.m_ctrlFillPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.m_ctrlFillPanel.Location = new System.Drawing.Point(0, 30);
+            this.m_ctrlFillPanel.Location = new System.Drawing.Point(0, 107);
             this.m_ctrlFillPanel.Name = "m_ctrlFillPanel";
-            this.m_ctrlFillPanel.Size = new System.Drawing.Size(540, 120);
+            this.m_ctrlFillPanel.Size = new System.Drawing.Size(540, 43);
             this.m_ctrlFillPanel.TabIndex = 0;
             this.m_ctrlFillPanel.Resize += new System.EventHandler(this.OnPanelResize);
+            // 
+            // m_ctrlTmview
+            // 
+            this.m_ctrlTmview.Enabled = true;
+            this.m_ctrlTmview.Location = new System.Drawing.Point(115, 36);
+            this.m_ctrlTmview.Name = "m_ctrlTmview";
+            this.m_ctrlTmview.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("m_ctrlTmview.OcxState")));
+            this.m_ctrlTmview.Size = new System.Drawing.Size(200, 72);
+            this.m_ctrlTmview.TabIndex = 0;
             // 
             // _CTmxView_Toolbars_Dock_Area_Left
             // 
@@ -1177,9 +1192,9 @@ namespace FTI.Trialmax.ActiveX
             this._CTmxView_Toolbars_Dock_Area_Left.BackColor = System.Drawing.SystemColors.Control;
             this._CTmxView_Toolbars_Dock_Area_Left.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Left;
             this._CTmxView_Toolbars_Dock_Area_Left.ForeColor = System.Drawing.SystemColors.ControlText;
-            this._CTmxView_Toolbars_Dock_Area_Left.Location = new System.Drawing.Point(0, 30);
+            this._CTmxView_Toolbars_Dock_Area_Left.Location = new System.Drawing.Point(0, 107);
             this._CTmxView_Toolbars_Dock_Area_Left.Name = "_CTmxView_Toolbars_Dock_Area_Left";
-            this._CTmxView_Toolbars_Dock_Area_Left.Size = new System.Drawing.Size(0, 120);
+            this._CTmxView_Toolbars_Dock_Area_Left.Size = new System.Drawing.Size(0, 43);
             this._CTmxView_Toolbars_Dock_Area_Left.ToolbarsManager = this.m_ctrlUltraToolbarManager;
             // 
             // _CTmxView_Toolbars_Dock_Area_Right
@@ -1188,9 +1203,9 @@ namespace FTI.Trialmax.ActiveX
             this._CTmxView_Toolbars_Dock_Area_Right.BackColor = System.Drawing.SystemColors.Control;
             this._CTmxView_Toolbars_Dock_Area_Right.DockedPosition = Infragistics.Win.UltraWinToolbars.DockedPosition.Right;
             this._CTmxView_Toolbars_Dock_Area_Right.ForeColor = System.Drawing.SystemColors.ControlText;
-            this._CTmxView_Toolbars_Dock_Area_Right.Location = new System.Drawing.Point(540, 30);
+            this._CTmxView_Toolbars_Dock_Area_Right.Location = new System.Drawing.Point(540, 107);
             this._CTmxView_Toolbars_Dock_Area_Right.Name = "_CTmxView_Toolbars_Dock_Area_Right";
-            this._CTmxView_Toolbars_Dock_Area_Right.Size = new System.Drawing.Size(0, 120);
+            this._CTmxView_Toolbars_Dock_Area_Right.Size = new System.Drawing.Size(0, 43);
             this._CTmxView_Toolbars_Dock_Area_Right.ToolbarsManager = this.m_ctrlUltraToolbarManager;
             // 
             // _CTmxView_Toolbars_Dock_Area_Top
@@ -1201,7 +1216,7 @@ namespace FTI.Trialmax.ActiveX
             this._CTmxView_Toolbars_Dock_Area_Top.ForeColor = System.Drawing.SystemColors.ControlText;
             this._CTmxView_Toolbars_Dock_Area_Top.Location = new System.Drawing.Point(0, 0);
             this._CTmxView_Toolbars_Dock_Area_Top.Name = "_CTmxView_Toolbars_Dock_Area_Top";
-            this._CTmxView_Toolbars_Dock_Area_Top.Size = new System.Drawing.Size(540, 30);
+            this._CTmxView_Toolbars_Dock_Area_Top.Size = new System.Drawing.Size(540, 107);
             this._CTmxView_Toolbars_Dock_Area_Top.ToolbarsManager = this.m_ctrlUltraToolbarManager;
             // 
             // _CTmxView_Toolbars_Dock_Area_Bottom
@@ -1214,15 +1229,6 @@ namespace FTI.Trialmax.ActiveX
             this._CTmxView_Toolbars_Dock_Area_Bottom.Name = "_CTmxView_Toolbars_Dock_Area_Bottom";
             this._CTmxView_Toolbars_Dock_Area_Bottom.Size = new System.Drawing.Size(540, 0);
             this._CTmxView_Toolbars_Dock_Area_Bottom.ToolbarsManager = this.m_ctrlUltraToolbarManager;
-            // 
-            // m_ctrlTmview
-            // 
-            this.m_ctrlTmview.Enabled = true;
-            this.m_ctrlTmview.Location = new System.Drawing.Point(115, 36);
-            this.m_ctrlTmview.Name = "m_ctrlTmview";
-            this.m_ctrlTmview.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("m_ctrlTmview.OcxState")));
-            this.m_ctrlTmview.Size = new System.Drawing.Size(262, 43);
-            this.m_ctrlTmview.TabIndex = 0;
             // 
             // CTmxView
             // 
@@ -1574,6 +1580,7 @@ namespace FTI.Trialmax.ActiveX
 				SetUltraToolChecked(TmaxMediaBarCommands.Text, eCommand == TmaxMediaBarCommands.Text);
 				SetUltraToolChecked(TmaxMediaBarCommands.FilledEllipse, eCommand == TmaxMediaBarCommands.FilledEllipse);
 				SetUltraToolChecked(TmaxMediaBarCommands.FilledPolygon, eCommand == TmaxMediaBarCommands.FilledPolygon);
+                SetUltraToolChecked(TmaxMediaBarCommands.AdjustableCallout, eCommand == TmaxMediaBarCommands.AdjustableCallout);
 			
 				SetColorImage();
 			}

@@ -461,7 +461,7 @@ namespace FTI.Shared.Trialmax
         NudgeLeft,
         NudgeRight,
         SaveNudge,
-        adjustableCallout
+        AdjustableCallout
 	}
 	
 	/// <summary>Enumerations to identify groups for highlighter assignments</summary>
