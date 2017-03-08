@@ -1696,6 +1696,7 @@ BOOL CTMToolCtrl::IsButton(short sId)
 //==============================================================================
 BOOL CTMToolCtrl::IsCheckButton(short sId) 
 {
+
 	switch(sId)
 	{
 		case TMTB_SPLITVERTICAL:
@@ -1846,6 +1847,7 @@ BOOL CTMToolCtrl::IsShapeGroup(short sId)
 //==============================================================================
 BOOL CTMToolCtrl::IsToolGroup(short sId) 
 {
+
 	switch(sId)
 	{
 		case TMTB_CALLOUT:
@@ -3157,7 +3159,7 @@ short CTMToolCtrl::SetButtonLabel(short sId, LPCTSTR lpLabel)
 //==============================================================================
 short CTMToolCtrl::SetButtonMap(short FAR* pMap) 
 {
-	//MessageBox("in set button Map");
+
 	short	aMap[TMTB_MAXBUTTONS];
 	int		i;
 
@@ -3498,6 +3500,7 @@ short CTMToolCtrl::SetShapeButton(short sId)
 //==============================================================================
 short CTMToolCtrl::SetToolButton(short sId) 
 {
+
 	//	Is this toolbar available?
 	if(!IsWindow(m_Toolbar.m_hWnd))
 	{
@@ -3517,6 +3520,7 @@ short CTMToolCtrl::SetToolButton(short sId)
 	CheckButton(TMTB_SELECT, (sId == TMTB_SELECT));
 	CheckButton(TMTB_GESTUREPAN, (sId == TMTB_GESTUREPAN));
 	CheckButton(TMTB_BINDERLIST, (sId == TMTB_BINDERLIST));
+	CheckButton(TMTB_ADJUSTABLECALLOUT, (sId == TMTB_ADJUSTABLECALLOUT));
 
 	return TMTB_NOERROR;
 }

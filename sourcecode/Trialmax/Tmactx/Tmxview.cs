@@ -592,27 +592,6 @@ namespace FTI.Trialmax.ActiveX
                     SetToolButton(eCommand, false);
                     break;
 
-                //DialogResult result = MessageBox.Show("Maintain Aspect Ratio?", "Aspect Ratio", MessageBoxButtons.YesNoCancel);
-                //if(result == DialogResult.Yes)
-                //{
-                //    m_ctrlTmview.Action = (short)TmxViewActions.Callout;
-                //    m_ctrlTmview.KeepAspect = 1;
-                //    SetToolButton(eCommand, false);
-                //    break;
-                //}
-                //else if (result == DialogResult.No)
-                //{
-                //    m_ctrlTmview.Action = (short)TmxViewActions.Callout;
-                //    m_ctrlTmview.KeepAspect = 0;
-                //    SetToolButton(eCommand, false);
-                //    break;
-                //}
-                //else
-                //{
-                //    break;
-                //}
-
-
                 case TmaxMediaBarCommands.AdjustableCallout:
                     m_ctrlTmview.Action = (short)TmxViewActions.Callout;
                     m_ctrlTmview.KeepAspect = 0;
@@ -1127,7 +1106,7 @@ namespace FTI.Trialmax.ActiveX
             buttonTool25.SharedProps.ToolTipText = "Nudge Right - (Shortcut = Shift+])";
             buttonTool26.SharedProps.Caption = "Save Nudge";
             stateButtonTool34.SharedProps.Caption = "AdjustableCallout";
-            stateButtonTool34.SharedProps.ToolTipText = "Adjustable Callout (Shortcut = Ctrl+Alt+C)";
+            stateButtonTool34.SharedProps.ToolTipText = "Adjustable Callout (Shortcut = Q)";
             this.m_ctrlUltraToolbarManager.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             buttonTool11,
             stateButtonTool17,

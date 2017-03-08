@@ -345,7 +345,7 @@
 #define DEFAULT_HK_SPLITPAGES_PREVIOUS	",C"
 #define DEFAULT_HK_SPLITPAGES_NEXT		".C"
 #define DEFAULT_HK_ENABLE_GESTURE		"PC"
-#define DEFAULT_HK_ADJUSTABLECALLOUT	"L"
+#define DEFAULT_HK_ADJUSTABLECALLOUT	"Q"
 
 //	Test setup ini line identifiers
 #define TEST_PLAYLISTS_LINE				"Playlists"

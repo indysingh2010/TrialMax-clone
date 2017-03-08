@@ -1880,6 +1880,7 @@ void CMainView::InitializeToolbars()
 //==============================================================================
 BOOL CMainView::IsCommandChecked(short sCommand)
 {
+	
 	//	What command?
 	switch(sCommand)
 	{
@@ -1984,9 +1985,11 @@ BOOL CMainView::IsCommandChecked(short sCommand)
 			return (m_ctrlTMView->GetSplitScreen() && m_ctrlTMView->GetSplitHorizontal());
 
 		case TMAX_CALLOUT:
-		
-			return m_ctrlTMView->GetAction() == CALLOUT;
-		
+			return (m_ctrlTMView->GetAction() == CALLOUT && m_ctrlTMView->GetKeepAspect() == TRUE);
+
+			case TMAX_ADJUSTABLECALLOUT:
+			return (m_ctrlTMView->GetAction() == CALLOUT && m_ctrlTMView->GetKeepAspect() == FALSE);
+
 		case TMAX_DRAWTOOL:
 		
 			return m_ctrlTMView->GetAction() == DRAW;
@@ -2091,6 +2094,7 @@ BOOL CMainView::IsCommandEnabled(short sCommand)
 	switch(sCommand)
 	{
 		case TMAX_CALLOUT:
+		case TMAX_ADJUSTABLECALLOUT:
 		case TMAX_DRAWTOOL:
 		case TMAX_ERASE:
 		case TMAX_PRINT:
@@ -3929,7 +3933,6 @@ void CMainView::OnAxButtonClick(short sId, BOOL bChecked)
 
 void CMainView::OnAxButtonClickLarge(short sId, BOOL bChecked) 
 {
-	
 	short index;
 	// Getting reference of Document and Large Toolbars	
 	CTMTool* tempControl = m_aToolbars[S_DOCUMENT_LARGE].pControl;
@@ -4854,7 +4857,7 @@ void CMainView::OnCallout()
 //==============================================================================
 void CMainView::OnAdjustableCallout() 
 {
-	if(!IsCommandEnabled(TMAX_CALLOUT))
+	if(!IsCommandEnabled(TMAX_ADJUSTABLECALLOUT))
 		return;
 	
 	for(int i = 0; i < SZ_ARR_TM_VW; i++) {
@@ -6089,9 +6092,11 @@ LRESULT CMainView::OnIdleUpdateCmdUI(WPARAM wParam, LPARAM)
 	if(!m_bDoUpdates)
 		return 0;
 
+	
 	//	Set the appropriate states for each button in the toolbar
 	for(int i = 0; i < TMTB_MAXBUTTONS; i++)
 	{
+
 		//	Get the button identifier
 		if(m_pToolbar->IsButton(i))
 		{
@@ -14754,6 +14759,7 @@ void CMainView::DisableGestureOnCommand(short sCommand)
 		case TMAX_POLYGON:
 		case TMAX_ANNTEXT:
 		case TMAX_PAN:
+        case TMAX_ADJUSTABLECALLOUT:
 			{
 				CGestureConfig config;
 				config.EnablePan(FALSE);

@@ -57,10 +57,11 @@ namespace FTI.Shared.Trialmax
 				return (m_ctrlImages.Images.Count > 0);
 				
 			}
-			catch
-			{
-				return false;
-			}
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+                return false;
+            }
 		
 		}// public bool Initialize(System.ComponentModel.IContainer Container)
 		
@@ -215,6 +216,9 @@ namespace FTI.Shared.Trialmax
 					case Keys.OemPeriod:	
 						eCommand = TmaxMediaBarCommands.Next;
 						break;
+                    case Keys.Q:
+                        eCommand = TmaxMediaBarCommands.AdjustableCallout;
+                        break;
 				}
 			
 			}// if(eModifiers == Keys.None)
@@ -267,18 +271,6 @@ namespace FTI.Shared.Trialmax
 				}
 			
 			}// else if(eModifiers == (Keys.Control | Keys.Shift))
-
-
-
-            else if (eModifiers == (Keys.Control | Keys.Alt))
-            {
-                switch (eKey)
-                {
-                    case Keys.C:
-                        eCommand = TmaxMediaBarCommands.AdjustableCallout;
-                        break;
-                }
-            }//else if (eModifiers == (Keys.Control | Keys.Alt))
 			
 			return eCommand;
 			
@@ -348,6 +340,9 @@ namespace FTI.Shared.Trialmax
 				case TmaxMediaBarCommands.Previous:
 					eKey = Keys.Oemcomma;
 					break;
+                case TmaxMediaBarCommands.AdjustableCallout:
+                    eKey = Keys.Q;
+                    break;
 					
 				case TmaxMediaBarCommands.Freehand:
 					eKey = Keys.F;
@@ -386,11 +381,6 @@ namespace FTI.Shared.Trialmax
 					eKey = Keys.H;
 					eModifiers = (Keys.Control | Keys.Shift);
 					break;
-
-                case TmaxMediaBarCommands.AdjustableCallout:
-                    eKey = Keys.C;
-                    eModifiers = (Keys.Control | Keys.Alt);
-                    break;
             
 					
 			}
