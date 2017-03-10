@@ -44,6 +44,7 @@
 #include <redact.h>
 #include <filever.h>
 #include <toolbox.h>
+#include <stdexcept>
 #include <fprintercaps.h>
 #include "..\Include\tmview.h"
 
@@ -5382,27 +5383,63 @@ void CTMViewCtrl::OnHighlightColorChanged()
 // 	Description:	This function is called when the KeepAspect property changes
 //
 // 	Returns:		None
-//
+//`
 //	Notes:			None
 //
 //==============================================================================
 void CTMViewCtrl::OnKeepAspectChanged() 
 {
-	SetModifiedFlag();
+
+
+	if(m_sAction == CALLOUT) {
+	//		char buffer[30];
+	//sprintf(buffer, "%d", m_bKeepAspect);
+	//MessageBox(buffer);
+	    SetModifiedFlag();
 	
-	if(!AmbientUserMode())
-	{
+	    if(!AmbientUserMode())
+	    {
+		    return;
+	    }
+	    else if(m_bSyncPanes)
+	    {
+		
+		    m_PaneA.SetMaintainAspectRatio(m_bKeepAspect);
+		    m_PaneB.SetMaintainAspectRatio(m_bKeepAspect);
+	    }
+	    else
+	    {
+		    GetPane()->SetMaintainAspectRatio(m_bKeepAspect);
+	    }
+	    return;
+	}
+	else {
 		return;
+
+		//the reason why this code has been commented out is that the keepAspect property stretches the document if the 
+		//adjustable callout feature is used in the presentation mode. since there is no practical use for that property,
+		//we used it for the purpose of callout and adjustable callout. if that property is needed in the future then this code
+		//must be uncommented
+
+	//SetModifiedFlag();
+	//
+	//if(!AmbientUserMode())
+	//{
+	//	return;
+	//}
+	//else if(m_bSyncPanes)
+	//{
+	//	
+	//	m_PaneA.SetKeepAspect(m_bKeepAspect);
+	//	m_PaneB.SetKeepAspect(m_bKeepAspect);
+	//}
+	//else
+	//{
+	//	GetPane()->SetKeepAspect(m_bKeepAspect);
+	//}
+
 	}
-	else if(m_bSyncPanes)
-	{
-		m_PaneA.SetKeepAspect(m_bKeepAspect);
-		m_PaneB.SetKeepAspect(m_bKeepAspect);
-	}
-	else
-	{
-		GetPane()->SetKeepAspect(m_bKeepAspect);
-	}
+
 }
 
 //==============================================================================

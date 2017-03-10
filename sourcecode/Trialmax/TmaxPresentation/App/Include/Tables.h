@@ -133,7 +133,8 @@
 #define TMAX_NUDGELEFT					99
 #define TMAX_NUDGERIGHT					100
 #define TMAX_SAVENUDGE					101
-#define MAX_COMMANDS					102	//	UPDATE THIS WHEN COMMANDS ARE
+#define TMAX_ADJUSTABLECALLOUT			102
+#define MAX_COMMANDS					103	//	UPDATE THIS WHEN COMMANDS ARE
 											//	ADDED OR REMOVED !!!
 
 //------------------------------------------------------------------------------

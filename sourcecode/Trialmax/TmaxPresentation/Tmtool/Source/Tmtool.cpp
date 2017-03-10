@@ -932,6 +932,7 @@ CTMToolCtrl::CTMToolCtrl()
 	m_aLabels[TMTB_NUDGELEFT].LoadString(IDS_TMTB_NUDGELEFT);
 	m_aLabels[TMTB_NUDGERIGHT].LoadString(IDS_TMTB_NUDGERIGHT);
 	m_aLabels[TMTB_SAVENUDGE].LoadString(IDS_TMTB_SAVENUDGE);
+	m_aLabels[TMTB_ADJUSTABLECALLOUT].LoadString(IDS_TMTB_ADJUSTABLECALLOUT);
 
 	//	Get the registry information
 	GetRegistration();
@@ -1695,6 +1696,7 @@ BOOL CTMToolCtrl::IsButton(short sId)
 //==============================================================================
 BOOL CTMToolCtrl::IsCheckButton(short sId) 
 {
+
 	switch(sId)
 	{
 		case TMTB_SPLITVERTICAL:
@@ -1739,6 +1741,7 @@ BOOL CTMToolCtrl::IsCheckButton(short sId)
 		case TMTB_ZOOM:
 		case TMTB_GESTUREPAN:	
 		case TMTB_BINDERLIST:
+		case TMTB_ADJUSTABLECALLOUT:
 		case TMTB_ZOOMRESTRICTED:	return TRUE;
 		default:					return FALSE;
 	}
@@ -1844,9 +1847,11 @@ BOOL CTMToolCtrl::IsShapeGroup(short sId)
 //==============================================================================
 BOOL CTMToolCtrl::IsToolGroup(short sId) 
 {
+
 	switch(sId)
 	{
 		case TMTB_CALLOUT:
+		case TMTB_ADJUSTABLECALLOUT:
 		case TMTB_PAN:
 		case TMTB_DRAWTOOL:
 		case TMTB_HIGHLIGHT:
@@ -3154,6 +3159,7 @@ short CTMToolCtrl::SetButtonLabel(short sId, LPCTSTR lpLabel)
 //==============================================================================
 short CTMToolCtrl::SetButtonMap(short FAR* pMap) 
 {
+
 	short	aMap[TMTB_MAXBUTTONS];
 	int		i;
 
@@ -3494,6 +3500,7 @@ short CTMToolCtrl::SetShapeButton(short sId)
 //==============================================================================
 short CTMToolCtrl::SetToolButton(short sId) 
 {
+
 	//	Is this toolbar available?
 	if(!IsWindow(m_Toolbar.m_hWnd))
 	{
@@ -3503,6 +3510,7 @@ short CTMToolCtrl::SetToolButton(short sId)
 
 	//	Set the check states of the color buttons
 	CheckButton(TMTB_CALLOUT, (sId == TMTB_CALLOUT));
+	CheckButton(TMTB_ADJUSTABLECALLOUT, (sId == TMTB_ADJUSTABLECALLOUT));
 	CheckButton(TMTB_PAN, (sId == TMTB_PAN));
 	CheckButton(TMTB_DRAWTOOL, (sId == TMTB_DRAWTOOL));
 	CheckButton(TMTB_HIGHLIGHT, (sId == TMTB_HIGHLIGHT));
@@ -3512,6 +3520,7 @@ short CTMToolCtrl::SetToolButton(short sId)
 	CheckButton(TMTB_SELECT, (sId == TMTB_SELECT));
 	CheckButton(TMTB_GESTUREPAN, (sId == TMTB_GESTUREPAN));
 	CheckButton(TMTB_BINDERLIST, (sId == TMTB_BINDERLIST));
+	CheckButton(TMTB_ADJUSTABLECALLOUT, (sId == TMTB_ADJUSTABLECALLOUT));
 
 	return TMTB_NOERROR;
 }

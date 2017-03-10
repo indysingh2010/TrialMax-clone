@@ -70,6 +70,7 @@ class CCallout : public CDialog
 		long			m_lDragY;
 		WORD			m_wAnnId;
 		short			m_sAction;
+		short			m_sMaintainAspectRatio;
 		float			m_fScaleFactor;
 		int				m_iMouseButton;
 

@@ -19,7 +19,6 @@
 #include <tmviewap.h>
 #include <callout.h>
 #include <tmview.h>
-
 //------------------------------------------------------------------------------
 //	DEFINES
 //------------------------------------------------------------------------------
@@ -613,7 +612,7 @@ int CCallout::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		m_TMLead.SetAction(NONE);
 	
 	//	Attach and initialize the tracker
-	m_Tracker.Attach(m_hWnd);
+	m_Tracker.Attach(m_hWnd, !m_TMLead.GetMaintainAspectRatio());
 	m_Tracker.SetHandleColor(m_pSource->GetCallHandleColor());
 	
 	return 0;
@@ -1545,8 +1544,7 @@ BOOL CCallout::Resize()
 	rcWnd.top   += rcTrack.top;
 	rcWnd.right  = rcWnd.left + (rcTrack.right - rcTrack.left);
 	rcWnd.bottom = rcWnd.top + (rcTrack.bottom - rcTrack.top);
-
-	SetRects(&rcWnd, &m_rcDst, &m_rcRubberBand, m_Tracker.GetFrameThickness(), TRUE);
+	SetRects(&rcWnd, &m_rcDst, &m_rcRubberBand, m_Tracker.GetFrameThickness(), !m_TMLead.GetMaintainAspectRatio());
 
 	//	Notify the source
 	if(m_pSource != 0)

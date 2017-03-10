@@ -338,4 +338,9 @@ echo regsvr32 exec. time &gt; "$(OutDir)regsvr32.trg"
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="Tm_view6.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by E:\10Pearls Projects\Trail Max\TrialMax\sourcecode\Trialmax\TmaxPresentation\App\TmaxPresentation.rc
+// Used by D:\TrialMax-Hussain\TrialMax\sourcecode\Trialmax\TmaxPresentation\App\TmaxPresentation.rc
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
@@ -312,8 +312,8 @@
 #define IDC_TMGRABCTRL                  1123
 #define IDC_TMSHARECTRL1                1124
 #define IDC_TMSHARE                     1124
-#define IDC_FILEPATH					1125
-#define IDC_BROWSEFILEPATH				1126
+#define IDC_FILEPATH                    1125
+#define IDC_BROWSEFILEPATH              1126
 #define IDC_TMVIEWCTRL                  5000
 #define IDC_TMVIEWCTRL2                 5001
 #define IDC_TMVIEWCTRL3                 5002
