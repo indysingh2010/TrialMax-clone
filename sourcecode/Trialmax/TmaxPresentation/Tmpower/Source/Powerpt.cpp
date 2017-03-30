@@ -928,7 +928,7 @@ BOOL CPowerPoint::MyEnumDesktopWindows(HWND hWnd)
 		// Powerpoint 2013/2016 fix. The paneClassDC does not exist in this scenario.
 		if(m_fPPVersion == PpVersion::ppVersion2013 || m_fPPVersion == PpVersion::ppVersion2016){
 			
-			m_hNSSWnd = hwndMDIClient;
+			m_hNSSWnd = hwndmdiClass;
 		}
 		else if((m_hNSSWnd = ::FindWindowEx(hwndmdiClass, NULL, "paneClassDC", NULL)) == NULL) {
 
@@ -1951,7 +1951,16 @@ short CPowerPoint::SetFilename(LPCSTR lpFilename, long lStart, BOOL bSlideId)
 	}
 
 	//	Load the file
-	if((lpDispatch = m_pNIPresentations->Open(lpFilename, TRUE, FALSE, FALSE)) == 0)
+	long bWithWindow;
+	if(m_fPPVersion > PpVersion::ppVersion2010)
+	{
+		bWithWindow = TRUE;
+	}
+	else
+	{
+		bWithWindow = FALSE;
+	}
+	if((lpDispatch = m_pNIPresentations->Open(lpFilename, TRUE, FALSE, bWithWindow)) == 0)
 	{
 		Unlock();
 		ReleaseNew();
