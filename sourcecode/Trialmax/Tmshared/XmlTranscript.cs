@@ -360,6 +360,8 @@ namespace FTI.Shared.Xml
 		}// public string GetFormattedText()
 
 
+        //since this feature was implemented in 69 and reverted in 72, this code is being kept as commented
+
         //Part of the duplicate designations on merge script feature. Kept for future use.
         ///// <summary>
         ///// Compare if the provided transcript object has same properties as this
