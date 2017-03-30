@@ -572,12 +572,13 @@ double CIDXShow::GetDuration(LPCSTR lpszFilename)
 
 	ASSERT(lpszFilename);
 
-	// Check if lpszFilename is empty
-	// return since duration cannot be calculated
-	if (((CString)lpszFilename).Trim() == "")
-	{
-		return dDuration;
-	}
+	//revert for build 61 v2
+	//// Check if lpszFilename is empty
+	//// return since duration cannot be calculated
+	//if (((CString)lpszFilename).Trim() == "")
+	//{
+	//	return dDuration;
+	//}
 
     //	Convert to wide character format
 	MultiByteToWideChar(CP_ACP, 0, lpszFilename, -1, wFile, sizeof(wFile));

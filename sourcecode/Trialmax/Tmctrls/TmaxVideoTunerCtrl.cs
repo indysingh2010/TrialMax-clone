@@ -261,49 +261,24 @@ namespace FTI.Trialmax.Controls
             {
                 m_strFileSpec = m_ctrlPlayer.FileSpec;
 
-                try
+                m_dDuration = m_ctrlPlayer.GetDuration(m_strFileSpec);
+                if (m_dDuration != 0)
                 {
-                    m_dDuration = m_ctrlPlayer.GetDuration(m_strFileSpec);
-                    if (m_dDuration > 0)
+                    Bitmap b = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp"));
+                    Rectangle cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, b.Width), 0, GetLocationOnImage(m_ctrlPlayer.StopPosition, b.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, b.Width), 200);
+
+                    if (m_orignalWave != null)
+                        m_orignalWave.Dispose();
+
+                    m_orignalWave = new Bitmap(cropRect.Width, cropRect.Height);
+                    using (Graphics g = Graphics.FromImage(m_orignalWave))
                     {
-                        using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
-                        {
-                            Rectangle cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(m_ctrlPlayer.StopPosition, bmpAudioWave.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
-
-                            if (m_orignalWave != null)
-                                m_orignalWave.Dispose();
-
-                            m_orignalWave = new Bitmap(cropRect.Width, cropRect.Height);
-                            using (Graphics grpAudioWave = Graphics.FromImage(m_orignalWave))
-                            {
-                                grpAudioWave.DrawImage(bmpAudioWave, new Rectangle(0, 0, m_orignalWave.Width, m_orignalWave.Height),
-                                                    cropRect,
-                                                    GraphicsUnit.Pixel);
-                            }
-                            m_picWave.Image = (Bitmap)m_orignalWave;
-                        }
+                        g.DrawImage(b, new Rectangle(0, 0, m_orignalWave.Width, m_orignalWave.Height),
+                                            cropRect,
+                                            GraphicsUnit.Pixel);
                     }
-                    else
-                    {
-                        bSuccessful = false;
-
-                        if (m_orignalWave != null)
-                            m_orignalWave.Dispose();
-
-                        m_orignalWave = null;
-
-                        if (m_picWave.Image != null)
-                            m_picWave.Image.Dispose();
-
-                        m_picWave.Image = null;
-                    }
-                }
-                catch (Exception)
-                {
-                    bSuccessful = false;
-
-                    m_picWave.Image = null;
-                    m_orignalWave = null;
+                    m_picWave.Image = (Bitmap)m_orignalWave;
+                    b.Dispose();
                 }
             }
             else
