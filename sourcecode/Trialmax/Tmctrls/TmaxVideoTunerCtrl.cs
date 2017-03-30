@@ -14,23 +14,23 @@ using System.Collections.Generic;
 
 namespace FTI.Trialmax.Controls
 {
-	/// <summary>Control used to tune video clips and designations</summary>
-	public class CTmaxVideoTunerCtrl : CTmaxVideoBaseCtrl
-	{
-		#region Private Members
+    /// <summary>Control used to tune video clips and designations</summary>
+    public class CTmaxVideoTunerCtrl : CTmaxVideoBaseCtrl
+    {
+        #region Private Members
 
-		/// <summary>Required designer variable</summary>
-		private System.ComponentModel.Container components = null;
-        
+        /// <summary>Required designer variable</summary>
+        private System.ComponentModel.Container components = null;
+
         /// <summary>The object for accessing the video player</summary>
         private CTmaxVideoPlayerCtrl m_ctrlPlayer;
-        
+
         /// <summary>Panel used to group Tune Bar and the wave form picture box</summary>
         private Panel m_ctrlPanel;
-        
+
         /// <summary>The picture box that will show the wave form</summary>
         private PictureBox m_picWave;
-        
+
         /// <summary>The bitmap object which will store the orignal wave form for the loaded file</summary>
         private Bitmap m_orignalWave;
 
@@ -39,10 +39,10 @@ namespace FTI.Trialmax.Controls
 
         /// <summary>Number of buffers to be used for NAudio sampling</summary>
         private const int m_numberOfBuffers = 2;
-        
+
         /// <summary>Location of the converter to be used for video to audio conversion</summary>
         private const string m_converter = "//ffmpeg.exe";
-        
+
         /// <summary>Format for the converted audio</summary>
         private const string m_convertToFormat = "wav";
 
@@ -52,64 +52,44 @@ namespace FTI.Trialmax.Controls
         /// <summary>Total duration of the current loaded script</summary>
         private double m_dDuration = 0;
 
-		/// <summary>Custom tune bar control for managing tune states</summary>
+        /// <summary>Custom tune bar control for managing tune states</summary>
         private FTI.Trialmax.Controls.CTmaxVideoTuneBarCtrl m_ctrlTuneBar;
 
-        /// <summary>This variable will hold the current segment number of the divided waveform</summary>
-        private double m_currentWaveFormSegment = 1;
+        #endregion Private Members
 
-        /// <summary>This variable will hold the total number of segments of the waveform</summary>
-        private double m_totalWaveFormSegments = 0;
+        #region Public Methods
 
-        /// <summary>This variable will hold the number of segments in a waveform</summary>
-        private double m_secondsPerSegment = 30;
+        public CTmaxVideoTunerCtrl()
+            : base()
+        {
+            //	Set the default event source name
+            m_tmaxEventSource.Name = "Video Tuner Control";
 
-        /// <summary>This variable will hold the current segment of the waveform image</summary>
-        private Bitmap m_currentWaveFormSegmentImage = null;
+            //	Initialize the child controls
+            InitializeComponent();
 
-        /// <summary>This variable will hold the original starting position of the video</summary>
-        private double m_originalPosition = 0;
+            //	Attach to the child controls' event sources
+            m_ctrlTuneBar.EventSource.ErrorEvent += new FTI.Shared.Trialmax.ErrorEventHandler(m_tmaxEventSource.OnError);
+            m_ctrlTuneBar.EventSource.DiagnosticEvent += new FTI.Shared.Trialmax.DiagnosticEventHandler(m_tmaxEventSource.OnDiagnostic);
+            m_ctrlTuneBar.PreviewPeriod = m_ctrlPlayer.PreviewPeriod;
+            m_ctrlPlayer.EventSource.ErrorEvent += new FTI.Shared.Trialmax.ErrorEventHandler(m_tmaxEventSource.OnError);
+            m_ctrlPlayer.EventSource.DiagnosticEvent += new FTI.Shared.Trialmax.DiagnosticEventHandler(m_tmaxEventSource.OnDiagnostic);
 
-        /// <summary>This variable will hold the current position of the video</summary>
-        private double m_currentPosition = 0;
+            //	Connect the video event handlers/triggers
+            m_ctrlTuneBar.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(this.OnTmaxVideoCtrlEvent);
+            m_ctrlTuneBar.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(m_ctrlPlayer.OnTmaxVideoCtrlEvent);
+            m_ctrlPlayer.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(this.OnTmaxVideoCtrlEvent);
+            m_ctrlPlayer.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(m_ctrlTuneBar.OnTmaxVideoCtrlEvent);
 
-        /// <summary>This variable will hold the previous position of the video before the event was fired</summary>
-        private double m_previousPosition = 0;
+        }// CTmaxVideoTunerCtrl()
 
-		#endregion Private Members
-		
-		#region Public Methods
-		
-		public CTmaxVideoTunerCtrl() : base()
-		{
-			//	Set the default event source name
-			m_tmaxEventSource.Name = "Video Tuner Control";
-			
-			//	Initialize the child controls
-			InitializeComponent();
-
-			//	Attach to the child controls' event sources
-			m_ctrlTuneBar.EventSource.ErrorEvent += new FTI.Shared.Trialmax.ErrorEventHandler(m_tmaxEventSource.OnError);
-			m_ctrlTuneBar.EventSource.DiagnosticEvent += new FTI.Shared.Trialmax.DiagnosticEventHandler(m_tmaxEventSource.OnDiagnostic);
-			m_ctrlTuneBar.PreviewPeriod = m_ctrlPlayer.PreviewPeriod;
-			m_ctrlPlayer.EventSource.ErrorEvent += new FTI.Shared.Trialmax.ErrorEventHandler(m_tmaxEventSource.OnError);
-			m_ctrlPlayer.EventSource.DiagnosticEvent += new FTI.Shared.Trialmax.DiagnosticEventHandler(m_tmaxEventSource.OnDiagnostic);
-			
-			//	Connect the video event handlers/triggers
-			m_ctrlTuneBar.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(this.OnTmaxVideoCtrlEvent);
-			m_ctrlTuneBar.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(m_ctrlPlayer.OnTmaxVideoCtrlEvent);
-			m_ctrlPlayer.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(this.OnTmaxVideoCtrlEvent);
-			m_ctrlPlayer.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(m_ctrlTuneBar.OnTmaxVideoCtrlEvent);
-
-		}// CTmaxVideoTunerCtrl()
-		
-		/// <summary>This method handles all video events fired by the player and tune bar</summary>
-		/// <param name="sender">The object sending the event</param>
-		/// <param name="e">event arguments</param>
-		public override void OnTmaxVideoCtrlEvent(object sender, CTmaxVideoCtrlEventArgs e)
-		{
-			//	Propagate the events
-			BubbleTmaxVideoCtrlEvent(sender, e);
+        /// <summary>This method handles all video events fired by the player and tune bar</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">event arguments</param>
+        public override void OnTmaxVideoCtrlEvent(object sender, CTmaxVideoCtrlEventArgs e)
+        {
+            //	Propagate the events
+            BubbleTmaxVideoCtrlEvent(sender, e);
 
             switch (e.EventId)
             {
@@ -120,162 +100,162 @@ namespace FTI.Trialmax.Controls
                     break;
 
             }
-			
-		}// protected void OnTmaxVideoCtrlEvent(object sender, CTmaxVideoCtrlEventArgs e)
-	
-		/// <summary>This method is called when the attributes associated with the active designation have changed</summary>
-		/// <param name="xmlDesignation">The designation to be updated with the current property values</param>
-		/// <returns>true if successful</returns>
-		public override bool OnAttributesChanged(CXmlDesignation xmlDesignation)
-		{
-			bool bSuccessful = true;
-			
-			if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-			{
-				if(m_ctrlTuneBar.OnAttributesChanged(xmlDesignation) == false)
-					bSuccessful = false;
-			}
-			
-			if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-			{
-				if(m_ctrlPlayer.OnAttributesChanged(xmlDesignation) == false)
-					bSuccessful = false;
-			}
-				
-			return bSuccessful;
-		
-		}// public override bool OnAttributesChanged()
-		
-		/// <summary>This method is called when the attributes associated with the active designation have changed</summary>
-		/// <param name="xmlLink">The link to be updated with the current property values</param>
-		/// <returns>true if successful</returns>
-		public override bool OnAttributesChanged(CXmlLink xmlLink)
-		{
-			bool bSuccessful = true;
-			
-			if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-			{
-				if(m_ctrlTuneBar.OnAttributesChanged(xmlLink) == false)
-					bSuccessful = false;
-			}
-			
-			if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-			{
-				if(m_ctrlPlayer.OnAttributesChanged(xmlLink) == false)
-					bSuccessful = false;
-			}
-				
-			return bSuccessful;
-		
-		}// public override bool OnAttributesChanged()
-		
-		/// <summary>This method is called to determine if modifications have been made to the active designation</summary>
-		/// <param name="xmlDesignation">The active designation</param>
-		///	<param name="aModifications">An array in which to put the description of all modifications</param>
-		/// <returns>true if modified</returns>
-		public override bool IsModified(CXmlDesignation xmlDesignation, ArrayList aModifications)
-		{
-			bool bModified = false;
-			
-			if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-			{
-				if(m_ctrlTuneBar.IsModified(xmlDesignation, aModifications) == true)
-					bModified = true;
-			}
-				
-			if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-			{
-				if(m_ctrlPlayer.IsModified(xmlDesignation, aModifications) == true)
-					bModified = true;
-			}
-				
-			return bModified;
-		
-		}// public override bool IsModified(CXmlDesignation xmlDesignation)
-			
-		/// <summary>This method is called to determine if modifications have been made to the active link</summary>
-		/// <param name="xmlLink">The active link</param>
-		///	<param name="aModifications">An array in which to put the description of all modifications</param>
-		/// <returns>true if modified</returns>
-		public override bool IsModified(CXmlLink xmlLink, ArrayList aModifications)
-		{
-			bool bModified = false;
-			
-			if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-			{
-				if(m_ctrlTuneBar.IsModified(xmlLink, aModifications) == true)
-					bModified = true;
-			}
-				
-			if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-			{
-				if(m_ctrlPlayer.IsModified(xmlLink, aModifications) == true)
-					bModified = true;
-			}
-				
-			return bModified;
-		
-		}// public override bool IsModified(CXmlLink xmlLink)
-			
-		/// <summary>This method is called to get the derived class property values and use them to set the designation attributes</summary>
-		/// <param name="xmlDesignation">The designation to be updated with the current property values</param>
-		/// <returns>true if successful</returns>
-		public override bool SetAttributes(CXmlDesignation xmlDesignation)
-		{
-			bool bSuccessful = true;
-			
-			if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-			{
-				if(m_ctrlTuneBar.SetAttributes(xmlDesignation) == false)
-					bSuccessful = false;
-			}
-			
-			if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-			{
-				if(m_ctrlPlayer.SetAttributes(xmlDesignation) == false)
-					bSuccessful = false;
-			}
-				
-			return bSuccessful;
-		
-		}// public override bool SetAttributes(CXmlDesignation xmlDesignation)
-			
-		/// <summary>This method is called to get the derived class property values and use them to set the link attributes</summary>
-		/// <param name="xmlLink">The link to be updated with the current property values</param>
-		/// <returns>true if successful</returns>
-		public override bool SetAttributes(CXmlLink xmlLink)
-		{
-			bool bSuccessful = true;
-			
-			if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-			{
-				if(m_ctrlTuneBar.SetAttributes(xmlLink) == false)
-					bSuccessful = false;
-			}
-			
-			if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-			{
-				if(m_ctrlPlayer.SetAttributes(xmlLink) == false)
-					bSuccessful = false;
-			}
-				
-			return bSuccessful;
-		
-		}// public override bool SetAttributes(CXmlLink xmlLink)
-		
-		/// <summary>This method is called to set the control properties</summary>
-		/// <param name="strFileSpec">The fully qualified file specification used to set property values</param>
-		/// <param name="xmlDesignation">The designation used to set property values</param>
-		/// <returns>true if successful</returns>
-		public override bool SetProperties(string strFileSpec, CXmlDesignation xmlDesignation)
-		{
-			bool bSuccessful = true;
-			
-			//	Can't set the properties unless we have the child controls
-			Debug.Assert(m_ctrlPlayer != null);
-			Debug.Assert(m_ctrlPlayer.IsDisposed == false);
-			Debug.Assert(m_ctrlTuneBar != null);
-			Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
+
+        }// protected void OnTmaxVideoCtrlEvent(object sender, CTmaxVideoCtrlEventArgs e)
+
+        /// <summary>This method is called when the attributes associated with the active designation have changed</summary>
+        /// <param name="xmlDesignation">The designation to be updated with the current property values</param>
+        /// <returns>true if successful</returns>
+        public override bool OnAttributesChanged(CXmlDesignation xmlDesignation)
+        {
+            bool bSuccessful = true;
+
+            if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+            {
+                if (m_ctrlTuneBar.OnAttributesChanged(xmlDesignation) == false)
+                    bSuccessful = false;
+            }
+
+            if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+            {
+                if (m_ctrlPlayer.OnAttributesChanged(xmlDesignation) == false)
+                    bSuccessful = false;
+            }
+
+            return bSuccessful;
+
+        }// public override bool OnAttributesChanged()
+
+        /// <summary>This method is called when the attributes associated with the active designation have changed</summary>
+        /// <param name="xmlLink">The link to be updated with the current property values</param>
+        /// <returns>true if successful</returns>
+        public override bool OnAttributesChanged(CXmlLink xmlLink)
+        {
+            bool bSuccessful = true;
+
+            if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+            {
+                if (m_ctrlTuneBar.OnAttributesChanged(xmlLink) == false)
+                    bSuccessful = false;
+            }
+
+            if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+            {
+                if (m_ctrlPlayer.OnAttributesChanged(xmlLink) == false)
+                    bSuccessful = false;
+            }
+
+            return bSuccessful;
+
+        }// public override bool OnAttributesChanged()
+
+        /// <summary>This method is called to determine if modifications have been made to the active designation</summary>
+        /// <param name="xmlDesignation">The active designation</param>
+        ///	<param name="aModifications">An array in which to put the description of all modifications</param>
+        /// <returns>true if modified</returns>
+        public override bool IsModified(CXmlDesignation xmlDesignation, ArrayList aModifications)
+        {
+            bool bModified = false;
+
+            if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+            {
+                if (m_ctrlTuneBar.IsModified(xmlDesignation, aModifications) == true)
+                    bModified = true;
+            }
+
+            if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+            {
+                if (m_ctrlPlayer.IsModified(xmlDesignation, aModifications) == true)
+                    bModified = true;
+            }
+
+            return bModified;
+
+        }// public override bool IsModified(CXmlDesignation xmlDesignation)
+
+        /// <summary>This method is called to determine if modifications have been made to the active link</summary>
+        /// <param name="xmlLink">The active link</param>
+        ///	<param name="aModifications">An array in which to put the description of all modifications</param>
+        /// <returns>true if modified</returns>
+        public override bool IsModified(CXmlLink xmlLink, ArrayList aModifications)
+        {
+            bool bModified = false;
+
+            if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+            {
+                if (m_ctrlTuneBar.IsModified(xmlLink, aModifications) == true)
+                    bModified = true;
+            }
+
+            if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+            {
+                if (m_ctrlPlayer.IsModified(xmlLink, aModifications) == true)
+                    bModified = true;
+            }
+
+            return bModified;
+
+        }// public override bool IsModified(CXmlLink xmlLink)
+
+        /// <summary>This method is called to get the derived class property values and use them to set the designation attributes</summary>
+        /// <param name="xmlDesignation">The designation to be updated with the current property values</param>
+        /// <returns>true if successful</returns>
+        public override bool SetAttributes(CXmlDesignation xmlDesignation)
+        {
+            bool bSuccessful = true;
+
+            if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+            {
+                if (m_ctrlTuneBar.SetAttributes(xmlDesignation) == false)
+                    bSuccessful = false;
+            }
+
+            if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+            {
+                if (m_ctrlPlayer.SetAttributes(xmlDesignation) == false)
+                    bSuccessful = false;
+            }
+
+            return bSuccessful;
+
+        }// public override bool SetAttributes(CXmlDesignation xmlDesignation)
+
+        /// <summary>This method is called to get the derived class property values and use them to set the link attributes</summary>
+        /// <param name="xmlLink">The link to be updated with the current property values</param>
+        /// <returns>true if successful</returns>
+        public override bool SetAttributes(CXmlLink xmlLink)
+        {
+            bool bSuccessful = true;
+
+            if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+            {
+                if (m_ctrlTuneBar.SetAttributes(xmlLink) == false)
+                    bSuccessful = false;
+            }
+
+            if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+            {
+                if (m_ctrlPlayer.SetAttributes(xmlLink) == false)
+                    bSuccessful = false;
+            }
+
+            return bSuccessful;
+
+        }// public override bool SetAttributes(CXmlLink xmlLink)
+
+        /// <summary>This method is called to set the control properties</summary>
+        /// <param name="strFileSpec">The fully qualified file specification used to set property values</param>
+        /// <param name="xmlDesignation">The designation used to set property values</param>
+        /// <returns>true if successful</returns>
+        public override bool SetProperties(string strFileSpec, CXmlDesignation xmlDesignation)
+        {
+            bool bSuccessful = true;
+
+            //	Can't set the properties unless we have the child controls
+            Debug.Assert(m_ctrlPlayer != null);
+            Debug.Assert(m_ctrlPlayer.IsDisposed == false);
+            Debug.Assert(m_ctrlTuneBar != null);
+            Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
 
             if (m_ctrlPlayer.SetProperties(strFileSpec, xmlDesignation) == true)
             {
@@ -288,9 +268,6 @@ namespace FTI.Trialmax.Controls
                     {
                         using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
                         {
-
-                            
-
                             Rectangle cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(m_ctrlPlayer.StopPosition, bmpAudioWave.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
 
                             if (m_orignalWave != null)
@@ -303,39 +280,8 @@ namespace FTI.Trialmax.Controls
                                                     cropRect,
                                                     GraphicsUnit.Pixel);
                             }
-
-                            m_currentWaveFormSegment = Math.Ceiling(m_ctrlPlayer.StartPosition / m_secondsPerSegment);
-                            m_totalWaveFormSegments = Math.Ceiling(m_dDuration / m_secondsPerSegment);
-                            m_originalPosition = m_ctrlPlayer.StartPosition;
-                            m_currentPosition = 0;
-                            m_previousPosition = m_ctrlPlayer.StartPosition;
-
-                            double stopPosition = 0;
-                            Bitmap waveFormSegment = null;
-                            if (m_ctrlPlayer.StartPosition + m_secondsPerSegment < bmpAudioWave.Width)
-                            {
-                                stopPosition = m_ctrlPlayer.StartPosition + m_secondsPerSegment;
-                            }
-                            else 
-                            {
-                                stopPosition = bmpAudioWave.Width;
-                            }
-
-                            cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(stopPosition, bmpAudioWave.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
-
-                            if (waveFormSegment != null)
-                                waveFormSegment.Dispose();
-
-                            waveFormSegment = new Bitmap(cropRect.Width, cropRect.Height);
-                            using (Graphics grpAudioWave = Graphics.FromImage(waveFormSegment))
-                            {
-                                grpAudioWave.DrawImage(bmpAudioWave, new Rectangle(0, 0, waveFormSegment.Width, waveFormSegment.Height),
-                                                    cropRect,
-                                                    GraphicsUnit.Pixel);
-                            }
-                            m_currentWaveFormSegmentImage =  (Bitmap)waveFormSegment;
-                            m_picWave.Image = m_currentWaveFormSegmentImage;
-                        }                        
+                            m_picWave.Image = (Bitmap)m_orignalWave;
+                        }
                     }
                     else
                     {
@@ -362,64 +308,15 @@ namespace FTI.Trialmax.Controls
             }
             else
                 bSuccessful = false;
-				
-			if(m_ctrlTuneBar.SetProperties(strFileSpec, xmlDesignation) == true)
-				m_xmlDesignation = m_ctrlTuneBar.XmlDesignation;
-			else
-				bSuccessful = false;
-	
-			return bSuccessful;
-		
-		}// public override bool SetProperties(string strFileSpec, CXmlDesignation xmlDesignation)
 
+            if (m_ctrlTuneBar.SetProperties(strFileSpec, xmlDesignation) == true)
+                m_xmlDesignation = m_ctrlTuneBar.XmlDesignation;
+            else
+                bSuccessful = false;
 
-        /// <summary>This method is called to change the waveform segment</summary>
-        /// <param name="position">the position after which to show the waveform</param>
-        /// <returns>true if successful</returns>
-        private void UpdateWaveformSegment(double position, Boolean goForward)
-        {
-           
-            if (goForward == true) 
-            {
-                m_currentWaveFormSegment = Math.Ceiling(position / m_secondsPerSegment);
-            }
+            return bSuccessful;
 
-                using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
-                {
-
-                    double stopPosition = 0;
-                    Bitmap waveFormSegment = null;
-
-                    if (goForward == true)
-                    {
-                        if (position + m_secondsPerSegment < bmpAudioWave.Width)
-                        {
-                            stopPosition = position + m_secondsPerSegment;
-                        }
-                        else
-                        {
-                            stopPosition = bmpAudioWave.Width;
-                        }
-
-                        Rectangle cropRect = new Rectangle(GetLocationOnImage(position, bmpAudioWave.Width), 0, GetLocationOnImage(stopPosition, bmpAudioWave.Width) - GetLocationOnImage(position, bmpAudioWave.Width), bmpAudioWave.Height);
-
-                        if (waveFormSegment != null)
-                            waveFormSegment.Dispose();
-
-                        waveFormSegment = new Bitmap(cropRect.Width, cropRect.Height);
-                        using (Graphics grpAudioWave = Graphics.FromImage(waveFormSegment))
-                        {
-                            grpAudioWave.DrawImage(bmpAudioWave, new Rectangle(0, 0, waveFormSegment.Width, waveFormSegment.Height),
-                                                cropRect,
-                                                GraphicsUnit.Pixel);
-                        }
-                    
-
-                    }
-                    m_currentWaveFormSegmentImage = (Bitmap)waveFormSegment;
-                    m_currentPosition = 0;
-                }     
-        }
+        }// public override bool SetProperties(string strFileSpec, CXmlDesignation xmlDesignation)
 
         private int GetLocationOnImage(double dOffset, int iWidth)
         {
@@ -439,242 +336,219 @@ namespace FTI.Trialmax.Controls
 
             if (length < 1) return;
 
-            try
+            position = position - m_ctrlPlayer.XmlDesignation.Start;
+
+            Bitmap orignalWaveCopy = (Bitmap)m_orignalWave.Clone();
+            Pen blackPen = new Pen(Color.Blue, Math.Max(1, orignalWaveCopy.Width / 1000));
+
+            float x1 = (float)(position / length * m_orignalWave.Width);
+            float y1 = 0;
+            float x2 = x1;
+            float y2 = 200;
+
+            // Draw line to screen.
+            using (var graphics = Graphics.FromImage(orignalWaveCopy))
             {
-                //the current position which must be set of the pen
-                m_currentPosition = m_currentPosition + (position - m_previousPosition);
-                Boolean goForward = true;
-
-                if (m_currentWaveFormSegment < Math.Ceiling(position / m_secondsPerSegment))
-                {
-                    UpdateWaveformSegment(position, goForward);
-                }
-
-                Bitmap m_currentWaveFormSegmentClone = (Bitmap)m_currentWaveFormSegmentImage.Clone();
-
-                m_previousPosition = position;
-                position = position - m_ctrlPlayer.XmlDesignation.Start;
-
-                //the width and other properties of the pen
-                Pen blackPen = new Pen(Color.Yellow, Math.Max(1, m_currentWaveFormSegmentClone.Width / 100));
-
-                //calculating where to place the line at
-                double x1Float = ((m_currentPosition * m_currentWaveFormSegmentImage.Width )/ m_secondsPerSegment);
-
-                float x1 = (float)x1Float;
-                float y1 = 0;
-                float x2 = x1;
-                float y2 = 200;
-
-                // Draw line to screen.
-                using (var graphics = Graphics.FromImage(m_currentWaveFormSegmentClone))
-                {
-                    graphics.DrawLine(blackPen, x1, y1, x2, y2);
-                }
-
-                m_picWave.Image = m_currentWaveFormSegmentClone;
-
-                if (m_bActiveBitmap != null)
-                    m_bActiveBitmap.Dispose();
-
-                // Save the reference of the loaded bitmap so that before loading 
-                // another bitmap, we can dispose the previous one
-                m_bActiveBitmap = m_currentWaveFormSegmentClone;
+                graphics.DrawLine(blackPen, x1, y1, x2, y2);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("An error occurred: '{0}'", e);
-            } 
 
+            m_picWave.Image = orignalWaveCopy;
+
+            if (m_bActiveBitmap != null)
+                m_bActiveBitmap.Dispose();
+
+            // Save the reference of the loaded bitmap so that before loading 
+            // another bitmap, we can dispose the previous one
+            m_bActiveBitmap = orignalWaveCopy;
         }// public void UpdateLocation(double position)
-		
-		/// <summary>This method is called to set the control properties</summary>
-		/// <param name="xmlLink">The link used to set property values</param>
-		/// <returns>true if successful</returns>
-		public override bool SetProperties(CXmlLink xmlLink)
-		{
-			bool bSuccessful = true;
-			
-			m_xmlLink = xmlLink;
-			
-			//	Can't set the properties unless we have the child controls
-			Debug.Assert(m_ctrlPlayer != null);
-			Debug.Assert(m_ctrlPlayer.IsDisposed == false);
-			Debug.Assert(m_ctrlTuneBar != null);
-			Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
-			
-			if(m_ctrlPlayer.SetProperties(xmlLink) == false)
-				bSuccessful = false;
-				
-			if(m_ctrlTuneBar.SetProperties(xmlLink) == false)
-				bSuccessful = false;
-			
-			return bSuccessful;
-		
-		}// public override bool SetProperties(CXmlLink xmlLink)
-		
-		/// <summary>This method is called to play the specified collection of designations</summary>
-		///	<param name="xmlDesignations">the collection of designations that define the script</param>
-		///	<param name="iFirst">the index of the designation to start with</param>
-		/// <param name="bPlayToEnd">true to play to end</param>
-		/// <returns>true if successful</returns>
-		public override bool SetScript(CXmlDesignations xmlDesignations, int iFirst, bool bPlayToEnd)
-		{
-			bool bSuccessful = true;
-			
-			//	Can't set the properties unless we have the child controls
-			Debug.Assert(m_ctrlPlayer != null);
-			Debug.Assert(m_ctrlPlayer.IsDisposed == false);
-			Debug.Assert(m_ctrlTuneBar != null);
-			Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
-			
-			if(m_ctrlPlayer.SetScript(xmlDesignations, iFirst, bPlayToEnd) == false)
-				bSuccessful = false;
-				
-			if(m_ctrlTuneBar.SetScript(xmlDesignations, iFirst, bPlayToEnd) == false)
-				bSuccessful = false;
-	
-			return bSuccessful;
-		
-		}// public virtual bool SetScript(CXmlDesignations xmlDesignations, int iFirst, bool bPlayToEnd)
-		
-		/// <summary>This method is called when the user wants to start playing a script</summary>
-		/// <returns>true if successful</returns>
-		public override bool StartScript()
-		{
-			bool bSuccessful = true;
-			
-			//	Can't set the properties unless we have the child controls
-			Debug.Assert(m_ctrlPlayer != null);
-			Debug.Assert(m_ctrlPlayer.IsDisposed == false);
-			Debug.Assert(m_ctrlTuneBar != null);
-			Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
-			
-			if(m_ctrlTuneBar.StartScript() == false)
-				bSuccessful = false;
-	
-			// NOTE: Do the player last because it's going to be firing the runtime events
-			if(m_ctrlPlayer.StartScript() == false)
-				bSuccessful = false;
-				
-			return bSuccessful;
-		
-		}// public virtual bool StartScript()
-		
-		/// <summary>This method is called when the user wants to stop playing a script</summary>
-		/// <returns>true if successful</returns>
-		public override bool StopScript()
-		{
-			bool bSuccessful = true;
-			
-			//	Can't set the properties unless we have the child controls
-			Debug.Assert(m_ctrlPlayer != null);
-			Debug.Assert(m_ctrlPlayer.IsDisposed == false);
-			Debug.Assert(m_ctrlTuneBar != null);
-			Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
-			
-			// NOTE: Do the player first because it's going to be firing the runtime events
-			if(m_ctrlPlayer.StopScript() == false)
-				bSuccessful = false;
-				
-			if(m_ctrlTuneBar.StopScript() == false)
-				bSuccessful = false;
-	
-			return bSuccessful;
-		
-		}// public virtual bool StopScript()
-		
-		/// <summary>This method is called to set the video position</summary>
-		/// <param name="dPosition">The new position in seconds</param>
-		/// <returns>true if successful</returns>
-		public bool SetPosition(double dPosition)
-		{
-			//	Can't set the properties unless we have the child controls
-			Debug.Assert(m_ctrlPlayer != null);
-			Debug.Assert(m_ctrlPlayer.IsDisposed == false);
-			
-			if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-				return m_ctrlPlayer.SetPosition(dPosition);
-			else
-				return false;
-		
-		}// public bool SetPosition(double dPosition)
-		
-		/// <summary>This method is called to set the active tune mode</summary>
-		/// <param name="eMode">The desired mode</param>
-		/// <param name="bSilent">true to inhibit mode change events</param>
-		/// <returns>The new tune mode</returns>
-		public TmaxVideoCtrlTuneModes SetTuneMode(TmaxVideoCtrlTuneModes eMode, bool bSilent)
-		{
-			Debug.Assert(m_ctrlTuneBar != null);
-			Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
-			
-			if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-				return m_ctrlTuneBar.SetTuneMode(eMode, bSilent);
-			else
-				return TmaxVideoCtrlTuneModes.None;
-		
-		}// public TmaxVideoCtrlTuneModes SetTuneMode(TmaxVideoCtrlTuneModes eMode, bool bSilent)
-		
-		/// <summary>This method is called to set the active tune mode</summary>
-		/// <param name="eMode">The desired mode</param>
-		/// <returns>The new tune mode</returns>
-		public TmaxVideoCtrlTuneModes SetTuneMode(TmaxVideoCtrlTuneModes eMode)
-		{
-			//	Set the mode and fire the event
-			return SetTuneMode(eMode, false);
-		}
-		
-		/// <summary>This method is called to force an update of the active tune mode</summary>
-		/// <returns>The new tune mode</returns>
-		public TmaxVideoCtrlTuneModes SetTuneMode()
-		{
-			//	Set the mode and fire the event
-			return SetTuneMode(TuneMode, false);
-		}
-		
-		/// <summary>This function is notify the control that the parent window has been moved</summary>
-		/// <remarks>It is expected that derived classes will override this function</remarks>
-		public override void OnParentMoved()
-		{
-			if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-			{
-				m_ctrlTuneBar.OnParentMoved();
-			}
-			
-			if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-			{
-				m_ctrlPlayer.OnParentMoved();
-			}
-		
-		}// public override void OnParentMoved()
-		
-		#endregion Public Methods
-		
-		#region Protected Methods
 
-		/// <summary>Clean up any resources being used</summary>
-		protected override void Dispose(bool disposing)
-		{
-			if(disposing)
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-			}
-				
-			//	Do the base class cleanup
-			base.Dispose(disposing);
-		
-		}// protected override void Dispose(bool disposing)
+        /// <summary>This method is called to set the control properties</summary>
+        /// <param name="xmlLink">The link used to set property values</param>
+        /// <returns>true if successful</returns>
+        public override bool SetProperties(CXmlLink xmlLink)
+        {
+            bool bSuccessful = true;
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
-		/// </summary>
-		protected new void InitializeComponent()
-		{
+            m_xmlLink = xmlLink;
+
+            //	Can't set the properties unless we have the child controls
+            Debug.Assert(m_ctrlPlayer != null);
+            Debug.Assert(m_ctrlPlayer.IsDisposed == false);
+            Debug.Assert(m_ctrlTuneBar != null);
+            Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
+
+            if (m_ctrlPlayer.SetProperties(xmlLink) == false)
+                bSuccessful = false;
+
+            if (m_ctrlTuneBar.SetProperties(xmlLink) == false)
+                bSuccessful = false;
+
+            return bSuccessful;
+
+        }// public override bool SetProperties(CXmlLink xmlLink)
+
+        /// <summary>This method is called to play the specified collection of designations</summary>
+        ///	<param name="xmlDesignations">the collection of designations that define the script</param>
+        ///	<param name="iFirst">the index of the designation to start with</param>
+        /// <param name="bPlayToEnd">true to play to end</param>
+        /// <returns>true if successful</returns>
+        public override bool SetScript(CXmlDesignations xmlDesignations, int iFirst, bool bPlayToEnd)
+        {
+            bool bSuccessful = true;
+
+            //	Can't set the properties unless we have the child controls
+            Debug.Assert(m_ctrlPlayer != null);
+            Debug.Assert(m_ctrlPlayer.IsDisposed == false);
+            Debug.Assert(m_ctrlTuneBar != null);
+            Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
+
+            if (m_ctrlPlayer.SetScript(xmlDesignations, iFirst, bPlayToEnd) == false)
+                bSuccessful = false;
+
+            if (m_ctrlTuneBar.SetScript(xmlDesignations, iFirst, bPlayToEnd) == false)
+                bSuccessful = false;
+
+            return bSuccessful;
+
+        }// public virtual bool SetScript(CXmlDesignations xmlDesignations, int iFirst, bool bPlayToEnd)
+
+        /// <summary>This method is called when the user wants to start playing a script</summary>
+        /// <returns>true if successful</returns>
+        public override bool StartScript()
+        {
+            bool bSuccessful = true;
+
+            //	Can't set the properties unless we have the child controls
+            Debug.Assert(m_ctrlPlayer != null);
+            Debug.Assert(m_ctrlPlayer.IsDisposed == false);
+            Debug.Assert(m_ctrlTuneBar != null);
+            Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
+
+            if (m_ctrlTuneBar.StartScript() == false)
+                bSuccessful = false;
+
+            // NOTE: Do the player last because it's going to be firing the runtime events
+            if (m_ctrlPlayer.StartScript() == false)
+                bSuccessful = false;
+
+            return bSuccessful;
+
+        }// public virtual bool StartScript()
+
+        /// <summary>This method is called when the user wants to stop playing a script</summary>
+        /// <returns>true if successful</returns>
+        public override bool StopScript()
+        {
+            bool bSuccessful = true;
+
+            //	Can't set the properties unless we have the child controls
+            Debug.Assert(m_ctrlPlayer != null);
+            Debug.Assert(m_ctrlPlayer.IsDisposed == false);
+            Debug.Assert(m_ctrlTuneBar != null);
+            Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
+
+            // NOTE: Do the player first because it's going to be firing the runtime events
+            if (m_ctrlPlayer.StopScript() == false)
+                bSuccessful = false;
+
+            if (m_ctrlTuneBar.StopScript() == false)
+                bSuccessful = false;
+
+            return bSuccessful;
+
+        }// public virtual bool StopScript()
+
+        /// <summary>This method is called to set the video position</summary>
+        /// <param name="dPosition">The new position in seconds</param>
+        /// <returns>true if successful</returns>
+        public bool SetPosition(double dPosition)
+        {
+            //	Can't set the properties unless we have the child controls
+            Debug.Assert(m_ctrlPlayer != null);
+            Debug.Assert(m_ctrlPlayer.IsDisposed == false);
+
+            if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+                return m_ctrlPlayer.SetPosition(dPosition);
+            else
+                return false;
+
+        }// public bool SetPosition(double dPosition)
+
+        /// <summary>This method is called to set the active tune mode</summary>
+        /// <param name="eMode">The desired mode</param>
+        /// <param name="bSilent">true to inhibit mode change events</param>
+        /// <returns>The new tune mode</returns>
+        public TmaxVideoCtrlTuneModes SetTuneMode(TmaxVideoCtrlTuneModes eMode, bool bSilent)
+        {
+            Debug.Assert(m_ctrlTuneBar != null);
+            Debug.Assert(m_ctrlTuneBar.IsDisposed == false);
+
+            if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+                return m_ctrlTuneBar.SetTuneMode(eMode, bSilent);
+            else
+                return TmaxVideoCtrlTuneModes.None;
+
+        }// public TmaxVideoCtrlTuneModes SetTuneMode(TmaxVideoCtrlTuneModes eMode, bool bSilent)
+
+        /// <summary>This method is called to set the active tune mode</summary>
+        /// <param name="eMode">The desired mode</param>
+        /// <returns>The new tune mode</returns>
+        public TmaxVideoCtrlTuneModes SetTuneMode(TmaxVideoCtrlTuneModes eMode)
+        {
+            //	Set the mode and fire the event
+            return SetTuneMode(eMode, false);
+        }
+
+        /// <summary>This method is called to force an update of the active tune mode</summary>
+        /// <returns>The new tune mode</returns>
+        public TmaxVideoCtrlTuneModes SetTuneMode()
+        {
+            //	Set the mode and fire the event
+            return SetTuneMode(TuneMode, false);
+        }
+
+        /// <summary>This function is notify the control that the parent window has been moved</summary>
+        /// <remarks>It is expected that derived classes will override this function</remarks>
+        public override void OnParentMoved()
+        {
+            if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+            {
+                m_ctrlTuneBar.OnParentMoved();
+            }
+
+            if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+            {
+                m_ctrlPlayer.OnParentMoved();
+            }
+
+        }// public override void OnParentMoved()
+
+        #endregion Public Methods
+
+        #region Protected Methods
+
+        /// <summary>Clean up any resources being used</summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+            }
+
+            //	Do the base class cleanup
+            base.Dispose(disposing);
+
+        }// protected override void Dispose(bool disposing)
+
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
+        /// the contents of this method with the code editor.
+        /// </summary>
+        protected new void InitializeComponent()
+        {
             this.m_ctrlPlayer = new FTI.Trialmax.Controls.CTmaxVideoPlayerCtrl();
             this.m_ctrlPanel = new System.Windows.Forms.Panel();
             this.m_ctrlTuneBar = new FTI.Trialmax.Controls.CTmaxVideoTuneBarCtrl();
@@ -751,127 +625,127 @@ namespace FTI.Trialmax.Controls
             ((System.ComponentModel.ISupportInitialize)(this.m_picWave)).EndInit();
             this.ResumeLayout(false);
 
-		}
-		
-		#endregion Protected Methods
+        }
 
-		#region Properties
-		
-		/// <summary>Video Player control</summary>
-		public FTI.Trialmax.Controls.CTmaxVideoPlayerCtrl Player
-		{
-			get	{ return m_ctrlPlayer; }
-			
-		}// Player property
-		
-		/// <summary>Tune bar control</summary>
-		public FTI.Trialmax.Controls.CTmaxVideoTuneBarCtrl TuneBar
-		{
-			get	{ return m_ctrlTuneBar; }
-			
-		}// TuneBar property
-		
-		
-		/// <summary>Current playback position</summary>
-		public double PlayerPosition
-		{
-			get 
-			{ 
-				if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-					return m_ctrlPlayer.PlayerPosition;
-				else
-					return -1;
-			}
-		
-		}// PlayerPosition
-		
-		/// <summary>Time for previewing video from current position</summary>
-		public double PreviewPeriod
-		{
-			get 
-			{ 
-				if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-					return m_ctrlTuneBar.PreviewPeriod;
-				else
-					return -1.0;
-			}
-			set 
-			{
-				if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-					m_ctrlTuneBar.PreviewPeriod = value;
-			}
-		
-		}// PreviewPeriod
-		
-		/// <summary>Enable simulated playback if unable to find the video file</summary>
-		public bool EnableSimulation
-		{
-			get 
-			{ 
-				if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-					return m_ctrlPlayer.EnableSimulation;
-				else
-					return false;
-			}
-			set 
-			{
-				if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-					m_ctrlPlayer.EnableSimulation = value;
-			}
-		
-		}// EnableSimulation
-		
-		/// <summary>Text displayed by the player when simulating playback</summary>
-		public string SimulationText
-		{
-			get 
-			{ 
-				if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-					return m_ctrlPlayer.SimulationText;
-				else
-					return "";
-			}
-			set 
-			{
-				if((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
-					m_ctrlPlayer.SimulationText = value;
-			}
-		
-		}// SimulationText
-		
-		/// <summary>Current tune mode</summary>
-		public TmaxVideoCtrlTuneModes TuneMode
-		{
-			get 
-			{ 
-				if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-					return m_ctrlTuneBar.TuneMode;
-				else
-					return TmaxVideoCtrlTuneModes.None;
-			}
-		
-		}// TuneMode
-		
-		/// <summary>True to enable tuning of links</summary>
-		public bool EnableLinks
-		{
-			get 
-			{ 
-				if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-					return m_ctrlTuneBar.EnableLinks;
-				else
-					return true;
-			}
-			set 
-			{
-				if((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
-					m_ctrlTuneBar.EnableLinks = value;
-			}
-		
-		}// EnableLinks
-		
-		#endregion Properties
+        #endregion Protected Methods
 
-	}// public class CTmaxVideoTunerCtrl : System.Windows.Forms.UserControl
+        #region Properties
+
+        /// <summary>Video Player control</summary>
+        public FTI.Trialmax.Controls.CTmaxVideoPlayerCtrl Player
+        {
+            get { return m_ctrlPlayer; }
+
+        }// Player property
+
+        /// <summary>Tune bar control</summary>
+        public FTI.Trialmax.Controls.CTmaxVideoTuneBarCtrl TuneBar
+        {
+            get { return m_ctrlTuneBar; }
+
+        }// TuneBar property
+
+
+        /// <summary>Current playback position</summary>
+        public double PlayerPosition
+        {
+            get
+            {
+                if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+                    return m_ctrlPlayer.PlayerPosition;
+                else
+                    return -1;
+            }
+
+        }// PlayerPosition
+
+        /// <summary>Time for previewing video from current position</summary>
+        public double PreviewPeriod
+        {
+            get
+            {
+                if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+                    return m_ctrlTuneBar.PreviewPeriod;
+                else
+                    return -1.0;
+            }
+            set
+            {
+                if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+                    m_ctrlTuneBar.PreviewPeriod = value;
+            }
+
+        }// PreviewPeriod
+
+        /// <summary>Enable simulated playback if unable to find the video file</summary>
+        public bool EnableSimulation
+        {
+            get
+            {
+                if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+                    return m_ctrlPlayer.EnableSimulation;
+                else
+                    return false;
+            }
+            set
+            {
+                if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+                    m_ctrlPlayer.EnableSimulation = value;
+            }
+
+        }// EnableSimulation
+
+        /// <summary>Text displayed by the player when simulating playback</summary>
+        public string SimulationText
+        {
+            get
+            {
+                if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+                    return m_ctrlPlayer.SimulationText;
+                else
+                    return "";
+            }
+            set
+            {
+                if ((m_ctrlPlayer != null) && (m_ctrlPlayer.IsDisposed == false))
+                    m_ctrlPlayer.SimulationText = value;
+            }
+
+        }// SimulationText
+
+        /// <summary>Current tune mode</summary>
+        public TmaxVideoCtrlTuneModes TuneMode
+        {
+            get
+            {
+                if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+                    return m_ctrlTuneBar.TuneMode;
+                else
+                    return TmaxVideoCtrlTuneModes.None;
+            }
+
+        }// TuneMode
+
+        /// <summary>True to enable tuning of links</summary>
+        public bool EnableLinks
+        {
+            get
+            {
+                if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+                    return m_ctrlTuneBar.EnableLinks;
+                else
+                    return true;
+            }
+            set
+            {
+                if ((m_ctrlTuneBar != null) && (m_ctrlTuneBar.IsDisposed == false))
+                    m_ctrlTuneBar.EnableLinks = value;
+            }
+
+        }// EnableLinks
+
+        #endregion Properties
+
+    }// public class CTmaxVideoTunerCtrl : System.Windows.Forms.UserControl
 
 }// namespace FTI.Trialmax.Controls
