@@ -25,6 +25,7 @@ using FTI.Trialmax.Reports;
 using FTI.Trialmax.MSOffice;
 using FTI.Trialmax.MSOffice.MSPowerPoint;
 using FTI.Trialmax.Encode;
+using Microsoft.Win32;
 
 namespace FTI.Trialmax.TmaxManager
 {
@@ -9715,6 +9716,47 @@ namespace FTI.Trialmax.TmaxManager
         /// <param name="e">Form closing event arguments</param>
         protected override void OnLoad(EventArgs e)
         {
+            //Power Point 2013 on full screen & key capture issues hot fix.
+            //Read the installed power point information.
+            //Save info into a file
+            //Presentation.exe will read power point information from this file to hook low level keyboard keystrocks.
+            try
+            {
+                string powerPointExePath = null;
+                const string RegKey = @"Software\Microsoft\Windows\CurrentVersion\App Paths";
+                RegistryKey _mainKey = Registry.CurrentUser;
+
+                _mainKey = _mainKey.OpenSubKey(RegKey + "\\" + "powerpnt.exe", false);
+                if (_mainKey != null)
+                {
+                    powerPointExePath = _mainKey.GetValue(string.Empty).ToString();
+                }
+
+                if (powerPointExePath == null)
+                {
+                    _mainKey = Registry.LocalMachine;
+                    _mainKey = _mainKey.OpenSubKey(RegKey + "\\" + "powerpnt.exe", false);
+                    if (_mainKey != null)
+                    {
+                        powerPointExePath = _mainKey.GetValue(string.Empty).ToString();
+                    }
+                }
+
+                //closing the handle:
+                if (_mainKey != null)
+                    _mainKey.Close();
+
+                FileVersionInfo _fileVersion = FileVersionInfo.GetVersionInfo(powerPointExePath);
+                string versionInfo = _fileVersion.FileMajorPart.ToString();
+
+
+                var filePath = System.IO.Directory.GetCurrentDirectory();
+                filePath = System.IO.Path.Combine(filePath, "MSOfficeVersion.txt");
+                System.IO.File.WriteAllText(filePath, versionInfo);
+            }
+            catch (Exception)
+            {
+            }
             //	Set the instance key to prevent multiple instances of this application
             CTmaxInstanceManager.SetInstanceKey((int)Handle, TmaxApplications.TmaxManager);
 

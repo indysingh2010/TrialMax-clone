@@ -97,6 +97,10 @@ BEGIN_MESSAGE_MAP(CApp, CWinApp)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
+static HHOOK hHook;
+static CMainFrame* gInstance;
+static int ppVersion;
+
 #if defined _USE_DAO36_
 STDAPI Access2KStringAllocCallback(DWORD dwLen, DWORD pData, void** ppv)
 {
@@ -401,6 +405,11 @@ void CApp::EnableMouseHook(BOOL bEnable)
 //==============================================================================
 int CApp::ExitInstance() 
 {
+	if(ppVersion == 15)
+	{
+		UnhookWindowsHookEx(hHook);
+	}
+	
 	//	Make sure the task bar is visible. 
 	CTMToolbox::SetTaskBarVisible(TRUE);
 	
@@ -618,7 +627,7 @@ BOOL CApp::InitInstance()
 
 	//	Save a casted pointer to the main frame
 	m_pFrame = (CMainFrame*)m_pMainWnd;
-
+	gInstance = (CMainFrame*)m_pMainWnd;
 	//	Set the window title so that we can check to see if this is the
 	//	first instance
 	m_pFrame->SetWindowText(TRIALMAX_WINDOW_TITLE);
@@ -678,6 +687,7 @@ BOOL CApp::InitInstance()
 		// show toolbar on blank presentation (Ctrl+F5)
 		CMainView* pView = (CMainView*)m_pFrame->GetActiveView();
 		pView->BlankPresentationToolbar();
+		
 	}
 
 	//FreeConsole();
@@ -685,7 +695,74 @@ BOOL CApp::InitInstance()
 	// uncomment below line to endable 2 finger gertures on whole presentaion
 	//InitWmGesture(m_pFrame->m_hWnd);
 
+
+		//Hotfix 
+	//Application does not get keyboard keys when power point presentation is running
+	//PreTranslateMessaage procedure does not get invoked because power point 2013/2016
+	//is capturing the key and disposing it.
+	//Here we have checked the version of power point if it's 2013/2016 then we are hooking
+	//low level keyboards intrupts.
+	char temp[5];
+	DWORD cchCurDir = MAX_PATH;
+	char szCurDir[MAX_PATH];	
+	GetCurrentDirectory(cchCurDir, szCurDir);
+	strcat(szCurDir,"\\MSOfficeVersion.txt");
+
+	ifstream myfile;
+	myfile.open(szCurDir);
+	if (myfile.is_open()) {
+		 while (!myfile.eof()) {
+			myfile>>temp;
+		 }
+	}
+	myfile.close();
+
+	ppVersion = atoi(temp);
+	if(ppVersion == 15 || ppVersion == 16)
+	{
+		hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(NULL), 0);
+		MSG msg;
+		while(GetMessage(&msg, NULL, 0, 0))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+
+	
+  
 	return TRUE;
+}
+
+
+LRESULT CALLBACK CApp::LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
+{
+  BOOL fEatKeystroke = FALSE;
+
+  if (nCode == HC_ACTION)
+  {
+     switch (wParam)
+     {
+        case WM_KEYDOWN:
+        case WM_SYSKEYDOWN:
+        case WM_KEYUP:
+        case WM_SYSKEYUP:
+ 
+           // Get hook struct
+           PKBDLLHOOKSTRUCT p = ( PKBDLLHOOKSTRUCT ) lParam;
+           fEatKeystroke = (( p->vkCode == VK_ESCAPE ) != 0 );
+ 
+           // Check whether we have a key
+           if( fEatKeystroke )
+           {
+			  CMainView* pView = (CMainView*)gInstance->GetActiveView();
+			  pView->ProcessVirtualKey(VK_ESCAPE);
+              break;
+           } 
+     }
+  }
+ 
+  return CallNextHookEx( hHook, nCode, wParam, lParam );
 }
 
 //==============================================================================
