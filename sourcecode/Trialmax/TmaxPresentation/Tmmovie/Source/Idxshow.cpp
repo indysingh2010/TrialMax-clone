@@ -169,7 +169,7 @@ void CIDXShow::CalcVideoRect()
 
 	//	Store the new position
 	m_rcVideoPos.left   = (int)fLeft;
-	m_rcVideoPos.top    = (int)fTop + m_iVideoSliderHeight; // Adding offset so that the player top starts after the slider
+	m_rcVideoPos.top    = (int)fTop;
 	m_rcVideoPos.right  = (int)fWidth;
 	m_rcVideoPos.bottom = (int)fHeight;
 }
@@ -239,7 +239,6 @@ CIDXShow::CIDXShow(CPlayer* pPlayer, long lId)
 	m_lHeight				= 480;
 	m_lWidth				= 640;
 	m_iSeekMode				= TMMOVIE_SEEK_FRAMES;
-	m_iVideoSliderHeight	= 0;
 	m_dDuration				= (double)0;
 	m_iFilters				= 0;
 	m_fAspectRatio			= (float)m_lWidth / (float)m_lHeight;

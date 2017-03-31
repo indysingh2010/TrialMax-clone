@@ -80,7 +80,6 @@ class CIDXShow
 		BOOL					m_bAspect;
 		BOOL					m_bDetachBeforeLoad;
 		int						m_iSeekMode;
-		int						m_iVideoSliderHeight;
 
 	public:
 
@@ -133,7 +132,6 @@ class CIDXShow
 		BOOL					ConvertToTime(long lFrame, double* pConverted); 
 		void					Redraw();
 		void					OnTimer();
-		void					SetVideoSliderHeight(int height) { m_iVideoSliderHeight = height; }
 		BITMAPINFOHEADER*		GetDIBitmap(long* pSize);
 		HBITMAP					GetDDBitmap(int* pWidth, int* pHeight);
 		RECT*					GetVideoRect();

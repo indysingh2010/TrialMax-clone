@@ -46,7 +46,6 @@
 #define IDS_TMMOVIE_CREATEFILTERFAILED  219
 #define IDS_TMMOVIE_ADDFILTERFAILED     220
 #define IDS_TMMOVIE_FINDWINDOWFAILED    221
-#define IDS_TMMOVIE_VIDEOSLIDER         222
 
 // Next default values for new objects
 // 

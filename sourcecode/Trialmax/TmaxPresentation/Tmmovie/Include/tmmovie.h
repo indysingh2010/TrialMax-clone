@@ -64,7 +64,6 @@ class CTMMovieCtrl : public COleControl
 		CTextLine*			m_pLine;
 		short				m_sState;
 		short				m_sPlaylistState;
-		int					m_iVideoSliderHeight;
 		long				m_lPlaylistStart;
 		long				m_lPlaylistStop;
 		double				m_dPosition;
@@ -79,7 +78,6 @@ class CTMMovieCtrl : public COleControl
 		HBITMAP				m_hAudioBitmap;
 		BITMAP				m_bmAudioInfo;
 		CString				m_strDebugFilename;
-		CSliderCtrl *		m_sldVideoSliderControl;
 	
 	public:
 	
@@ -181,7 +179,6 @@ class CTMMovieCtrl : public COleControl
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

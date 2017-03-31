@@ -81,7 +81,6 @@ BEGIN_MESSAGE_MAP(CTMMovieCtrl, COleControl)
 	ON_WM_TIMER()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_RBUTTONDBLCLK()
-	ON_WM_HSCROLL()
 	//}}AFX_MSG_MAP
 	ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
 	ON_MESSAGE(WM_ERROR_NOTIFICATION, OnWMErrorNotification)
@@ -1015,8 +1014,6 @@ CTMMovieCtrl::CTMMovieCtrl()
 	m_dElapsedDesignation	= 0.0;
 	m_hAudioBitmap			= 0;
 	m_strDebugFilename		= "";
-	m_iVideoSliderHeight	= 40;
-	m_sldVideoSliderControl = NULL;
 	ZeroMemory(&m_bmAudioInfo, sizeof(m_bmAudioInfo));
 	ZeroMemory(&m_rcOverlay, sizeof(m_rcOverlay));
 
@@ -1148,42 +1145,6 @@ BOOL CTMMovieCtrl::FindFile(LPCSTR lpFile, BOOL bPrompt)
 	return TRUE;
 		
 }
-
-void CTMMovieCtrl::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)  
-{  
-    CSliderCtrl* pSlider = reinterpret_cast<CSliderCtrl*>(pScrollBar);  
-
-    // Check which slider sent the notification  
-	if (pSlider == m_sldVideoSliderControl)  
-    {  
-		double val = pSlider->GetPos(); // Get the current slider value
-
-		// Get the start and end position of the current playing designation/script
-		double startPosition = m_dStartPosition, stopPosition = m_dStopPosition;
-
-		// Pause the video since the user is seeking
-		m_Player.Pause();
-
-		if (m_pDesignation == NULL) // The video is played in manager mode
-		{
-			double newPosition = val / m_sldVideoSliderControl->GetRangeMax() * (m_dStopPosition - m_dStartPosition);
-			newPosition += m_dStartPosition;
-			m_Player.SetPos(newPosition); // Update the player time location
-		}
-		else // The video is played in presentation mode
-		{
-			double newPosition = val / m_sldVideoSliderControl->GetRangeMax() * (m_pDesignation->m_dStopTime - m_pDesignation->m_dStartTime);
-			newPosition += m_pDesignation->m_dStartTime;
-			m_Player.SetPos(newPosition); // Update the player time location
-			
-			// In presentation mode, we autoplay the video when seeking in order to 
-			// keep the behavior consistent with seek buttons in toolbar
-			Resume();
-		}
-    }
-
-	GetFocus(); // We need to keep focus on the container
-} 
 
 //==============================================================================
 //
@@ -2355,7 +2316,6 @@ short CTMMovieCtrl::Initialize()
 	m_Player.EnableSnapshots(m_bUseSnapshots);
 	m_Player.SetDetachBeforeLoad(m_bDetachBeforeLoad);
 	m_Player.SetHideTaskBar(m_bHideTaskBar);
-	m_Player.SetVideoSliderHeight(m_iVideoSliderHeight);
 
 	//	Build the player's filter list
 	SetFilters();
@@ -2530,20 +2490,6 @@ short CTMMovieCtrl::Load(LPCTSTR lpFilename, double dStart, double dStop, BOOL b
 	//	Update the state and position
 	UpdateState();
 	UpdatePos();
-
-	if (m_sldVideoSliderControl == NULL) // Make sure that the video slider control is not already created
-	{
-		m_sldVideoSliderControl = new CSliderCtrl;
-		
-		RECT playerRect;
-		GetWindowRect(&playerRect); // Get the container location i.e. CTMMovieCtrl
-		m_sldVideoSliderControl->Create(WS_VISIBLE | WS_EX_TOPMOST,
-			CRect(0, 0, playerRect.right - playerRect.left, m_iVideoSliderHeight),
-				 this, IDS_TMMOVIE_VIDEOSLIDER);
-
-		// The max range is set high so the slider represents an accurate location with resepect to the videos actual position
-		m_sldVideoSliderControl->SetRange(0, 10000, TRUE);
-	}
 
 	return TMMOVIE_NOERROR;
 }
@@ -2832,13 +2778,6 @@ void CTMMovieCtrl::OnDraw(CDC* pdc, const CRect& rcBounds,const CRect& rcInvalid
 		{
 			//	Redraw the video window
 			m_Player.Redraw();
-
-			RECT playerRect;
-			GetClientRect(&playerRect); // Get the container location i.e. CTMMovieCtrl
-			// Position the slider bar to the top left of the container and set the width
-			// to be same as the width of the container. The height is set to 
-			// m_iVideoSliderHeight = 40 as a arbitrary constant.
-			m_sldVideoSliderControl->MoveWindow(0, 0, playerRect.right - playerRect.left, m_iVideoSliderHeight);
 		}
 
 		//	Should we redraw the overlay?
@@ -4817,25 +4756,6 @@ short CTMMovieCtrl::SetRange(double dStart, double dStop)
 //==============================================================================
 void CTMMovieCtrl::SetState(short sState)
 {	
-	// Get the current play time and update the slider
-	if (sState == TMMOVIE_PLAYING)
-	{
-		// Get the start, end and current position of the video that is played
-		double startPosition = m_dStartPosition, stopPosition = m_dStopPosition, currentPostion = GetPosition(), newPosition = 0;
-		if (m_pDesignation == NULL) // The video is played in manager mode
-		{
-			newPosition = (currentPostion - m_dStartPosition) / (m_dStopPosition - m_dStartPosition) * 10000;
-		}
-		else // The video is played in presentation mode
-		{
-			newPosition = (currentPostion - m_pDesignation->m_dStartTime) / (m_pDesignation->m_dStopTime - m_pDesignation->m_dStartTime) * 10000;
-		}
-		if (newPosition != 0)
-			m_sldVideoSliderControl->SetPos(newPosition); // Update the slider position
-
-		GetFocus(); // We need to keep focus on the container
-	}
-	
 	//	Has the state changed?
 	if(m_sState == sState)
 	{
@@ -5354,15 +5274,6 @@ void CTMMovieCtrl::UpdatePos()
 	{
 		m_dPosition = dPosition;
 		FirePositionChange(m_dPosition);
-	}
-
-	// We need to make sure that the slider is updated as soon as the position changes
-	if (m_sldVideoSliderControl != NULL)
-	{
-		double startPosition = m_dStartPosition, stopPosition = m_dStopPosition, currentPostion = m_dPosition;
-		double newPosition = (currentPostion - m_dStartPosition) / (m_dStopPosition - m_dStartPosition) * 10000;
-		m_sldVideoSliderControl->SetPos(newPosition);
-		GetFocus(); // We need to keep focus on the container
 	}
 }
 

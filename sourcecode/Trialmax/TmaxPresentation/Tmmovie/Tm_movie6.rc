@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,0,3,8086
- PRODUCTVERSION 7,0,3,8086
+ FILEVERSION 7,0,1,1223
+ PRODUCTVERSION 7,0,1,1223
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "FTI Consulting"
             VALUE "FileDescription", "TrialMax Multimedia Playback ActiveX Control"
-            VALUE "FileVersion", "7.0.3.8086"
+            VALUE "FileVersion", "7.0.1.01223"
             VALUE "InternalName", "TMMOVIE"
             VALUE "LegalCopyright", "Copyright (C) FTI Consulting 2004"
             VALUE "OriginalFilename", "TM_MOVIE6.OCX"
             VALUE "ProductName", "TrialMax Multimedia Playback ActiveX Control"
-            VALUE "ProductVersion", "7.0.3.8086"
+            VALUE "ProductVersion", "7.0.1.01223"
         END
     END
     BLOCK "VarFileInfo"
@@ -137,12 +137,11 @@ BEGIN
     DEFPUSHBUTTON   "&Ok",IDOK,216,105,50,14
 END
 
-IDD_OVERLAY DIALOGEX 0, 0, 337, 174
+IDD_OVERLAY DIALOGEX 0, 0, 187, 19
 STYLE DS_SETFONT | WS_CHILD
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    CONTROL         "",IDC_TMVIEW,"{5A3A9FC9-D747-4B92-9106-A32C7E6E84A3}",WS_TABSTOP,2,2,335,170
-    GROUPBOX        "Static",IDC_STATIC,35,20,48,40
+    CONTROL         "",IDC_TMVIEW,"{5A3A9FC9-D747-4B92-9106-A32C7E6E84A3}",WS_TABSTOP,2,2,183,15
 END
 
 
@@ -181,8 +180,9 @@ BEGIN
     IDD_OVERLAY, DIALOG
     BEGIN
         LEFTMARGIN, 2
+        RIGHTMARGIN, 185
         TOPMARGIN, 2
-        BOTTOMMARGIN, 172
+        BOTTOMMARGIN, 17
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -196,7 +196,7 @@ END
 IDD_OVERLAY DLGINIT
 BEGIN
     IDC_TMVIEW, 0x376, 154, 0
-0x0000, 0x0000, 0x0004, 0x0006, 0x33fd, 0x0000, 0x1c87, 0x0000, 0x0061, 
+0x0000, 0x0000, 0x0004, 0x0006, 0x1c6c, 0x0000, 0x027b, 0x0000, 0x0061, 
 0x0000, 0x0000, 0x0000, 0x0000, 0x0d01, 0x6f4e, 0x2074, 0x7661, 0x6961, 
 0x616c, 0x6c62, 0x0065, 0x0000, 0x0100, 0x0100, 0x0100, 0x0400, 0x0000, 
 0x0500, 0x0000, 0x1900, 0x0000, 0x0100, 0x0000, 0x0000, 0x0001, 0x0000, 
@@ -263,7 +263,6 @@ BEGIN
                             "Unable to add the DirectX filter named ""%1"" to the graph builder."
     IDS_TMMOVIE_FINDWINDOWFAILED 
                             "Unable to retrieve handle for the video rendering window."
-    IDS_TMMOVIE_VIDEOSLIDER "Video Control Slider"
 END
 
 #endif    // English (United States) resources
