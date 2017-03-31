@@ -13,444 +13,437 @@ using FTI.Trialmax.Encode;
 
 namespace FTI.Trialmax.Forms
 {
-	/// <summary>This form allows the user to edit the properties of a meta field</summary>
-	public class CFExportVideo : CFTmaxBaseForm
-	{
-		#region Constants
-		
-		/// <summary>Error message identifiers</summary>
-		protected const int ERROR_EXCHANGE_EX		= ERROR_TMAX_FORM_MAX + 1;
-		protected const int ERROR_FILL_PROFILES_EX	= ERROR_TMAX_FORM_MAX + 2;
-		protected const int ERROR_SET_PROFILE_EX	= ERROR_TMAX_FORM_MAX + 3;
-		protected const int ERROR_SET_SAMI_FONT_EX	= ERROR_TMAX_FORM_MAX + 4;
-		
-		#endregion Constants
+    /// <summary>This form allows the user to edit the properties of a meta field</summary>
+    public class CFExportVideo : CFTmaxBaseForm
+    {
+        #region Constants
 
-		#region Private Members
-		
-		/// <summary>Required designer variable</summary>
-		private System.ComponentModel.Container components = null;
-		
-		/// <summary>The form's cancel button</summary>
-		private System.Windows.Forms.Button m_ctrlCancel;
-		
-		/// <summary>The form's OK button</summary>
-		private System.Windows.Forms.Button m_ctrlOk;
-		
-		/// <summary>Check box for VideoEDL option</summary>
-		private System.Windows.Forms.CheckBox m_ctrlVideoEDL;
-		
-		/// <summary>Check box for VideoSAMI option</summary>
-		private System.Windows.Forms.CheckBox m_ctrlVideoSAMI;
-		
-		/// <summary>Check box for VideoWMV option</summary>
-		private System.Windows.Forms.CheckBox m_ctrlVideoWMV;
-		
-		/// <summary>Local member bound to ExportOptions property</summary>
-		private CTmaxExportOptions m_tmaxExportOptions = null;
-		
-		/// <summary>List box to display WMV encoder profiles</summary>
-		private System.Windows.Forms.ListBox m_ctrlProfiles;
-		
-		/// <summary>Static text label for profiles list box</summary>
-		private System.Windows.Forms.Label m_ctrlProfilesLabel;
-		
-		/// <summary>Group box for file format options</summary>
-		private System.Windows.Forms.GroupBox m_ctrlFormatsGroup;
-		
-		/// <summary>Group box for SAMI options</summary>
-		private System.Windows.Forms.GroupBox m_ctrlSAMIGroup;
-		
-		/// <summary>Group box for WMV options</summary>
-		private System.Windows.Forms.GroupBox m_ctrlWMVGroup;
-		
-		/// <summary>List box of fonts for SAMI files</summary>
-		private System.Windows.Forms.ComboBox m_ctrlSAMIFonts;
-		
-		/// <summary>Color selection button for SAMI text</summary>
-		private System.Windows.Forms.Button m_ctrlSAMIColor;
-		
-		/// <summary>Color picker dialog for SAMI text color</summary>
-		private System.Windows.Forms.ColorDialog m_ctrlColorPicker;
-		
-		/// <summary>Static text label for SAMI font name</summary>
-		private System.Windows.Forms.Label m_ctrlSAMIFontLabel;
-		
-		/// <summary>Static text label for SAMI text color</summary>
-		private System.Windows.Forms.Label m_ctrlSAMIColorLabel;
-		
-		/// <summary>Group box for WMV options</summary>
-		private System.Windows.Forms.Label m_ctrlSAMISizeLabel;
-		
-		/// <summary>Text box to allow user to set the SAMI text point size</summary>
-		private System.Windows.Forms.TextBox m_ctrlSAMISize;
-		
-		/// <summary>Text box to allow user to set the SAMI lines of text</summary>
-		private System.Windows.Forms.TextBox m_ctrlSAMILines;
-		
-		/// <summary>Static text label for SAMI lines of text</summary>
-		private System.Windows.Forms.Label m_ctrlSAMILinesLabel;
-		
-		/// <summary>Text box to request use of highlighter colors for SAMI filess</summary>
-		private System.Windows.Forms.CheckBox m_ctrlSAMIHighlighter;
-		
-		/// <summary>Group box for general preferences</summary>
-		private System.Windows.Forms.GroupBox m_ctrlGeneralGroup;
-		
-		/// <summary>Check box to set AutoFilenames option</summary>
-		private System.Windows.Forms.CheckBox m_ctrlAutoFilenames;
-		
-		/// <summary>Check box to set ConfirmOverwrite option</summary>
-		private System.Windows.Forms.CheckBox m_ctrlConfirmOverwrite;
-		
-		/// <summary>Pushbutton to allow user to display list of registered codecs</summary>
-		private System.Windows.Forms.Button m_ctrlViewCodecs;
-		private System.Windows.Forms.CheckBox m_ctrlShowPreferred;
+        /// <summary>Error message identifiers</summary>
+        protected const int ERROR_EXCHANGE_EX = ERROR_TMAX_FORM_MAX + 1;
+        protected const int ERROR_FILL_PROFILES_EX = ERROR_TMAX_FORM_MAX + 2;
+        protected const int ERROR_SET_PROFILE_EX = ERROR_TMAX_FORM_MAX + 3;
+        protected const int ERROR_SET_SAMI_FONT_EX = ERROR_TMAX_FORM_MAX + 4;
+
+        #endregion Constants
+
+        #region Private Members
+
+        /// <summary>Required designer variable</summary>
+        private System.ComponentModel.Container components = null;
+
+        /// <summary>The form's cancel button</summary>
+        private System.Windows.Forms.Button m_ctrlCancel;
+
+        /// <summary>The form's OK button</summary>
+        private System.Windows.Forms.Button m_ctrlOk;
+
+        /// <summary>Check box for VideoEDL option</summary>
+        private System.Windows.Forms.CheckBox m_ctrlVideoEDL;
+
+        /// <summary>Check box for VideoSAMI option</summary>
+        private System.Windows.Forms.CheckBox m_ctrlVideoSAMI;
+
+        /// <summary>Check box for VideoWMV option</summary>
+        private System.Windows.Forms.CheckBox m_ctrlVideoWMV;
+
+        /// <summary>Local member bound to ExportOptions property</summary>
+        private CTmaxExportOptions m_tmaxExportOptions = null;
+
+        /// <summary>List box to display WMV encoder profiles</summary>
+        private System.Windows.Forms.ListBox m_ctrlProfiles;
+
+        /// <summary>Static text label for profiles list box</summary>
+        private System.Windows.Forms.Label m_ctrlProfilesLabel;
+
+        /// <summary>Group box for file format options</summary>
+        private System.Windows.Forms.GroupBox m_ctrlFormatsGroup;
+
+        /// <summary>Group box for SAMI options</summary>
+        private System.Windows.Forms.GroupBox m_ctrlSAMIGroup;
+
+        /// <summary>Group box for WMV options</summary>
+        private System.Windows.Forms.GroupBox m_ctrlWMVGroup;
+
+        /// <summary>List box of fonts for SAMI files</summary>
+        private System.Windows.Forms.ComboBox m_ctrlSAMIFonts;
+
+        /// <summary>Color selection button for SAMI text</summary>
+        private System.Windows.Forms.Button m_ctrlSAMIColor;
+
+        /// <summary>Color picker dialog for SAMI text color</summary>
+        private System.Windows.Forms.ColorDialog m_ctrlColorPicker;
+
+        /// <summary>Static text label for SAMI font name</summary>
+        private System.Windows.Forms.Label m_ctrlSAMIFontLabel;
+
+        /// <summary>Static text label for SAMI text color</summary>
+        private System.Windows.Forms.Label m_ctrlSAMIColorLabel;
+
+        /// <summary>Group box for WMV options</summary>
+        private System.Windows.Forms.Label m_ctrlSAMISizeLabel;
+
+        /// <summary>Text box to allow user to set the SAMI text point size</summary>
+        private System.Windows.Forms.TextBox m_ctrlSAMISize;
+
+        /// <summary>Text box to allow user to set the SAMI lines of text</summary>
+        private System.Windows.Forms.TextBox m_ctrlSAMILines;
+
+        /// <summary>Static text label for SAMI lines of text</summary>
+        private System.Windows.Forms.Label m_ctrlSAMILinesLabel;
+
+        /// <summary>Text box to request use of highlighter colors for SAMI filess</summary>
+        private System.Windows.Forms.CheckBox m_ctrlSAMIHighlighter;
+
+        /// <summary>Group box for general preferences</summary>
+        private System.Windows.Forms.GroupBox m_ctrlGeneralGroup;
+
+        /// <summary>Check box to set AutoFilenames option</summary>
+        private System.Windows.Forms.CheckBox m_ctrlAutoFilenames;
+
+        /// <summary>Check box to set ConfirmOverwrite option</summary>
+        private System.Windows.Forms.CheckBox m_ctrlConfirmOverwrite;
+
+        /// <summary>Pushbutton to allow user to display list of registered codecs</summary>
+        private System.Windows.Forms.Button m_ctrlViewCodecs;
+        private System.Windows.Forms.CheckBox m_ctrlShowPreferred;
         private System.Windows.Forms.CheckBox m_ctrlSAMIPageNumbers;
-        private Label label2;
-        private Label label1;
-        private ComboBox m_ctrlVideoBitRate;
-		
-		/// <summary>Collection of Windows Media Encoder Profiles</summary>
-		private FTI.Trialmax.Encode.CWMEncoder m_wmEncoder = null;
-		
-		#endregion Private Members
-		
-		#region Public Methods
-		
-		public CFExportVideo()
-		{
-			// Required for Windows Form Designer support
-			InitializeComponent();
-			
-		}// public CFExportVideo()
 
-		#endregion Public Methods
-		
-		#region Protected Methods
-		
-		/// <summary>This method is called to populate the error builder's format string collection</summary>
-		protected override void SetErrorStrings()
-		{
-			if(m_tmaxErrorBuilder == null) return;
-			if(m_tmaxErrorBuilder.FormatStrings == null) return;
-			
-			//	Let the base class add its strings first
-			base.SetErrorStrings();
-			
-			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to exchange the form's properties: SetMembers = %1");
-			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to fill the list of WMV encoder profiles.");
-			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to set the profile selection: Name = %1");
-			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to set the SAMI font selection: Name = %1");
-		
-		}// protected override void SetErrorStrings()
+        /// <summary>Collection of Windows Media Encoder Profiles</summary>
+        private FTI.Trialmax.Encode.CWMEncoder m_wmEncoder = null;
 
-		/// <summary>Clean up any resources being used</summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if(components != null)
-				{
-					components.Dispose();
-				}
-				
-			}
-			base.Dispose( disposing );
-		
-		}// protected override void Dispose( bool disposing )
-		
-		/// <summary>This method handles the form's Load event</summary>
-		/// <param name="e">The event arguments</param>
-		protected override void OnLoad(EventArgs e)
-		{
-            m_ctrlVideoBitRate.SelectedIndex = m_ctrlVideoBitRate.FindStringExact("786");
+        #endregion Private Members
 
-			//	Initialize all the child controls
-			m_ctrlOk.Enabled = Exchange(false);
-			
-			base.OnLoad(e);
-			
-		}// protected override void OnLoad(EventArgs e)
-		
-		#endregion Protected Methods
+        #region Public Methods
 
-		#region Private Methods
-		
-		/// <summary>Called to populate the list of Fonts for SAMI text</summary>
-		/// <returns>true if successful</returns>
-		private bool FillSAMIFonts()
-		{
-			InstalledFontCollection	aInstalled = null;
-			FontFamily[]			aFamilies = null;
-			bool					bSuccessful = false;
+        public CFExportVideo()
+        {
+            // Required for Windows Form Designer support
+            InitializeComponent();
 
-			try
-			{
-				//	Get the collection of installed fonts
-				aInstalled = new InstalledFontCollection();
+        }// public CFExportVideo()
 
-				//	Get the array of FontFamily objects.
-				aFamilies = aInstalled.Families;
-				
-				for(int i = 0; i <= aFamilies.GetUpperBound(0); i++)
-				{
-					m_ctrlSAMIFonts.Items.Add(aFamilies[i].Name);
-				}
-				
-				bSuccessful = true;
-			}
-			catch(System.Exception Ex)
-			{
-				m_tmaxEventSource.FireDiagnostic(this, "FillSAMIFonts", "Ex:", Ex);
-			}
-			
-			return bSuccessful;
-		
-		}// private bool FillSAMIFonts()
-				
-		/// <summary>Called to populate the list of encoder profiles</summary>
-		/// <returns>true if successful</returns>
-		private bool FillProfiles()
-		{
-			bool bSuccessful = false;
-			bool bPreferred = false;
-			
-			try
-			{
-				//	Clear the existing profiles
-				m_ctrlProfiles.Items.Clear();
-				
-				//	Caller should have provided the encoder object
-				if((m_wmEncoder == null) || (m_wmEncoder.Profiles == null))
-					return false;
-					
-				//	Are we showing only preferred profiles?
-				if((bPreferred = m_ctrlShowPreferred.Checked) == true)
-				{
-					//	Make sure the Preferred are properly flagged
-					if(m_wmEncoder.PreferredProfiles != null)
-						m_wmEncoder.Profiles.SetPreferred(m_wmEncoder.PreferredProfiles);
-				}
-				
-				foreach(CWMProfile O in m_wmEncoder.Profiles)
-				{
-					if((bPreferred == false) || (O.Preferred == true))
-						m_ctrlProfiles.Items.Add(O);
-				}
-						
-				bSuccessful = (m_ctrlProfiles.Items.Count > 0);
+        #endregion Public Methods
 
-			}
-			catch(System.Exception Ex)
-			{
-				m_tmaxEventSource.FireError(this, "FillProfiles", m_tmaxErrorBuilder.Message(ERROR_FILL_PROFILES_EX), Ex);
-			}
-			
-			return bSuccessful;
-			
-		}// private bool FillProfiles()
-		
-		/// <summary>Called to set the profile selection</summary>
-		/// <param name="strName">The name to be selected</param>
-		private void SetProfileSelection(string strName)
-		{
-			int iIndex = -1;
-			try
-			{
-				//	Locate the specified profile name
-				if((strName != null) && (strName.Length > 0))
-				{
-					iIndex = m_ctrlProfiles.FindStringExact(strName);
-				}
-				
-				//	Did we locate the requested profile?
-				if(iIndex < 0)
-					iIndex = 0;
-					
-				//	Make the selection
-				if(m_ctrlProfiles.Items.Count > 0)
-					m_ctrlProfiles.SetSelected(iIndex, true);
-					
-			}
-			catch(System.Exception Ex)
-			{
-				m_tmaxEventSource.FireError(this, "SetProfileSelection", m_tmaxErrorBuilder.Message(ERROR_SET_PROFILE_EX, strName), Ex);
-			}
-			
-		}// private void SetProfileSelection(string strName)
-		
-		/// <summary>Called to set the font selection</summary>
-		/// <param name="strName">The name to be selected</param>
-		private void SetSAMIFontSelection(string strName)
-		{
-			int iIndex = -1;
-			try
-			{
-				//	Locate the specified font name
-				if((strName != null) && (strName.Length > 0))
-				{
-					iIndex = m_ctrlSAMIFonts.FindStringExact(strName);
-				}
-				if(iIndex < 0)
-				{
-					iIndex = m_ctrlSAMIFonts.FindStringExact("Arial");
-				}
-				
-				//	Did we locate the requested font?
-				if(iIndex < 0)
-					iIndex = 0;
-					
-				//	Make the selection
-				if(m_ctrlSAMIFonts.Items.Count > 0)
-					m_ctrlSAMIFonts.SelectedIndex = iIndex;
-					
-			}
-			catch(System.Exception Ex)
-			{
-				m_tmaxEventSource.FireError(this, "SetSAMIFontSelection", m_tmaxErrorBuilder.Message(ERROR_SET_SAMI_FONT_EX, strName), Ex);
-			}
-			
-		}// private void SetProfileSelection(string strName)
-		
-		/// <summary>This method is called to manage the exchange of data between the class members and child controls</summary>
-		/// <param name="bSetMembers">true to set the class members</param>
-		/// <returns>true if successful</returns>
-		private bool Exchange(bool bSetMembers)
-		{
-			bool bSuccessful = false;
-			
-			try
-			{
-				//	Are we setting the class members?
-				if(bSetMembers == true)
-				{
-					m_tmaxExportOptions.VideoEDL  = m_ctrlVideoEDL.Checked;
-					m_tmaxExportOptions.VideoSAMI = m_ctrlVideoSAMI.Checked;
-					m_tmaxExportOptions.VideoWMV  = m_ctrlVideoWMV.Checked;
-					m_tmaxExportOptions.AutoFilenames = m_ctrlAutoFilenames.Checked;
-					m_tmaxExportOptions.ConfirmOverwrite = m_ctrlConfirmOverwrite.Checked;
-					m_tmaxExportOptions.VideoBitRate = Convert.ToInt32(m_ctrlVideoBitRate.Text);
-					m_wmEncoder.UsePreferred = m_ctrlShowPreferred.Checked;
-                    m_tmaxExportOptions.VideoBitRate = Convert.ToInt32(m_ctrlVideoBitRate.Text);
+        #region Protected Methods
 
+        /// <summary>This method is called to populate the error builder's format string collection</summary>
+        protected override void SetErrorStrings()
+        {
+            if (m_tmaxErrorBuilder == null) return;
+            if (m_tmaxErrorBuilder.FormatStrings == null) return;
 
-					//	Do we have any encoder profiles?
-					if(m_ctrlProfiles.Items.Count > 0)
-					{
-						if(m_ctrlProfiles.SelectedItem != null)
-						{
-							m_wmEncoder.LastProfile = ((CWMProfile)m_ctrlProfiles.SelectedItem).Name;
-							
-						}
-						else
-						{
-							m_wmEncoder.LastProfile = "";
-						}
+            //	Let the base class add its strings first
+            base.SetErrorStrings();
 
-					}
-				
-					//	Do we have any SAMI fonts
-					m_tmaxExportOptions.SAMIFontFamily = "Arial";
-					if(m_ctrlSAMIFonts.Items.Count > 0)
-					{
-						if(m_ctrlSAMIFonts.SelectedItem != null)
-						{
-							m_tmaxExportOptions.SAMIFontFamily = m_ctrlSAMIFonts.SelectedItem.ToString();
-						}
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to exchange the form's properties: SetMembers = %1");
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to fill the list of WMV encoder profiles.");
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to set the profile selection: Name = %1");
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to set the SAMI font selection: Name = %1");
 
-					}
-					m_tmaxExportOptions.SAMIFontColor = m_ctrlSAMIColor.BackColor;
-					m_tmaxExportOptions.SAMIFontHighlighter = m_ctrlSAMIHighlighter.Checked;
-					m_tmaxExportOptions.SAMIPageNumbers = m_ctrlSAMIPageNumbers.Checked;
-						
-					try { m_tmaxExportOptions.SAMIFontSize = System.Convert.ToInt32(m_ctrlSAMISize.Text); }
-					catch { m_tmaxExportOptions.SAMIFontSize = 12; }
-					
-					try { m_tmaxExportOptions.SAMILines = System.Convert.ToInt32(m_ctrlSAMILines.Text); }
-					catch { m_tmaxExportOptions.SAMILines = 3; }
-				
-				}
-				else
-				{
-					m_ctrlAutoFilenames.Checked = m_tmaxExportOptions.AutoFilenames;
-					m_ctrlConfirmOverwrite.Checked = m_tmaxExportOptions.ConfirmOverwrite;
-					m_ctrlVideoEDL.Checked = m_tmaxExportOptions.VideoEDL;
-					m_ctrlVideoSAMI.Checked = m_tmaxExportOptions.VideoSAMI;
-					m_ctrlShowPreferred.Checked = m_wmEncoder.UsePreferred;
-					
-					//	Do we have any encoder profiles?
-					FillProfiles();
-					if(m_ctrlProfiles.Items.Count > 0)
-					{
-						m_ctrlVideoWMV.Checked = m_tmaxExportOptions.VideoWMV;
-					
-						SetProfileSelection(m_wmEncoder.LastProfile);
-					}
-					
-					FillSAMIFonts();
-					if(m_ctrlSAMIFonts.Items.Count > 0)
-						SetSAMIFontSelection(m_tmaxExportOptions.SAMIFontFamily);
-					m_ctrlSAMIColor.BackColor = m_tmaxExportOptions.SAMIFontColor;
-					m_ctrlSAMISize.Text = m_tmaxExportOptions.SAMIFontSize.ToString();
-					m_ctrlSAMILines.Text = m_tmaxExportOptions.SAMILines.ToString();
-					m_ctrlSAMIHighlighter.Checked = m_tmaxExportOptions.SAMIFontHighlighter;
-					m_ctrlSAMIPageNumbers.Checked = m_tmaxExportOptions.SAMIPageNumbers;
-					
-					SetControlStates();
-					
-				}// if(bSetMembers == true)
-				
-				bSuccessful = true;
-			}
-			catch(System.Exception Ex)
-			{
-				m_tmaxEventSource.FireError(this, "Exchange", m_tmaxErrorBuilder.Message(ERROR_EXCHANGE_EX, bSetMembers), Ex);
-			}
-			
-			return bSuccessful; 
-			
-		}// private bool Exchange(bool bSetMembers)
-		
-		/// <summary>This method is called to enable / disable child controls based on current settings</summary>
-		private void SetControlStates()
-		{
-			try
-			{
-				//	Do we have any encoder profiles?
-				if((m_wmEncoder != null) && (m_wmEncoder.Profiles != null))
-				{
+        }// protected override void SetErrorStrings()
+
+        /// <summary>Clean up any resources being used</summary>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (components != null)
+                {
+                    components.Dispose();
+                }
+
+            }
+            base.Dispose(disposing);
+
+        }// protected override void Dispose( bool disposing )
+
+        /// <summary>This method handles the form's Load event</summary>
+        /// <param name="e">The event arguments</param>
+        protected override void OnLoad(EventArgs e)
+        {
+            //	Initialize all the child controls
+            m_ctrlOk.Enabled = Exchange(false);
+
+            base.OnLoad(e);
+
+        }// protected override void OnLoad(EventArgs e)
+
+        #endregion Protected Methods
+
+        #region Private Methods
+
+        /// <summary>Called to populate the list of Fonts for SAMI text</summary>
+        /// <returns>true if successful</returns>
+        private bool FillSAMIFonts()
+        {
+            InstalledFontCollection aInstalled = null;
+            FontFamily[] aFamilies = null;
+            bool bSuccessful = false;
+
+            try
+            {
+                //	Get the collection of installed fonts
+                aInstalled = new InstalledFontCollection();
+
+                //	Get the array of FontFamily objects.
+                aFamilies = aInstalled.Families;
+
+                for (int i = 0; i <= aFamilies.GetUpperBound(0); i++)
+                {
+                    m_ctrlSAMIFonts.Items.Add(aFamilies[i].Name);
+                }
+
+                bSuccessful = true;
+            }
+            catch (System.Exception Ex)
+            {
+                m_tmaxEventSource.FireDiagnostic(this, "FillSAMIFonts", "Ex:", Ex);
+            }
+
+            return bSuccessful;
+
+        }// private bool FillSAMIFonts()
+
+        /// <summary>Called to populate the list of encoder profiles</summary>
+        /// <returns>true if successful</returns>
+        private bool FillProfiles()
+        {
+            bool bSuccessful = false;
+            bool bPreferred = false;
+
+            try
+            {
+                //	Clear the existing profiles
+                m_ctrlProfiles.Items.Clear();
+
+                //	Caller should have provided the encoder object
+                if ((m_wmEncoder == null) || (m_wmEncoder.Profiles == null))
+                    return false;
+
+                //	Are we showing only preferred profiles?
+                if ((bPreferred = m_ctrlShowPreferred.Checked) == true)
+                {
+                    //	Make sure the Preferred are properly flagged
+                    if (m_wmEncoder.PreferredProfiles != null)
+                        m_wmEncoder.Profiles.SetPreferred(m_wmEncoder.PreferredProfiles);
+                }
+
+                foreach (CWMProfile O in m_wmEncoder.Profiles)
+                {
+                    if ((bPreferred == false) || (O.Preferred == true))
+                        m_ctrlProfiles.Items.Add(O);
+                }
+
+                bSuccessful = (m_ctrlProfiles.Items.Count > 0);
+
+            }
+            catch (System.Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "FillProfiles", m_tmaxErrorBuilder.Message(ERROR_FILL_PROFILES_EX), Ex);
+            }
+
+            return bSuccessful;
+
+        }// private bool FillProfiles()
+
+        /// <summary>Called to set the profile selection</summary>
+        /// <param name="strName">The name to be selected</param>
+        private void SetProfileSelection(string strName)
+        {
+            int iIndex = -1;
+            try
+            {
+                //	Locate the specified profile name
+                if ((strName != null) && (strName.Length > 0))
+                {
+                    iIndex = m_ctrlProfiles.FindStringExact(strName);
+                }
+
+                //	Did we locate the requested profile?
+                if (iIndex < 0)
+                    iIndex = 0;
+
+                //	Make the selection
+                if (m_ctrlProfiles.Items.Count > 0)
+                    m_ctrlProfiles.SetSelected(iIndex, true);
+
+            }
+            catch (System.Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "SetProfileSelection", m_tmaxErrorBuilder.Message(ERROR_SET_PROFILE_EX, strName), Ex);
+            }
+
+        }// private void SetProfileSelection(string strName)
+
+        /// <summary>Called to set the font selection</summary>
+        /// <param name="strName">The name to be selected</param>
+        private void SetSAMIFontSelection(string strName)
+        {
+            int iIndex = -1;
+            try
+            {
+                //	Locate the specified font name
+                if ((strName != null) && (strName.Length > 0))
+                {
+                    iIndex = m_ctrlSAMIFonts.FindStringExact(strName);
+                }
+                if (iIndex < 0)
+                {
+                    iIndex = m_ctrlSAMIFonts.FindStringExact("Arial");
+                }
+
+                //	Did we locate the requested font?
+                if (iIndex < 0)
+                    iIndex = 0;
+
+                //	Make the selection
+                if (m_ctrlSAMIFonts.Items.Count > 0)
+                    m_ctrlSAMIFonts.SelectedIndex = iIndex;
+
+            }
+            catch (System.Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "SetSAMIFontSelection", m_tmaxErrorBuilder.Message(ERROR_SET_SAMI_FONT_EX, strName), Ex);
+            }
+
+        }// private void SetProfileSelection(string strName)
+
+        /// <summary>This method is called to manage the exchange of data between the class members and child controls</summary>
+        /// <param name="bSetMembers">true to set the class members</param>
+        /// <returns>true if successful</returns>
+        private bool Exchange(bool bSetMembers)
+        {
+            bool bSuccessful = false;
+
+            try
+            {
+                //	Are we setting the class members?
+                if (bSetMembers == true)
+                {
+                    m_tmaxExportOptions.VideoEDL = m_ctrlVideoEDL.Checked;
+                    m_tmaxExportOptions.VideoSAMI = m_ctrlVideoSAMI.Checked;
+                    m_tmaxExportOptions.VideoWMV = m_ctrlVideoWMV.Checked;
+                    m_tmaxExportOptions.AutoFilenames = m_ctrlAutoFilenames.Checked;
+                    m_tmaxExportOptions.ConfirmOverwrite = m_ctrlConfirmOverwrite.Checked;
+
+                    m_wmEncoder.UsePreferred = m_ctrlShowPreferred.Checked;
+
+                    //	Do we have any encoder profiles?
+                    if (m_ctrlProfiles.Items.Count > 0)
+                    {
+                        if (m_ctrlProfiles.SelectedItem != null)
+                        {
+                            m_wmEncoder.LastProfile = ((CWMProfile)m_ctrlProfiles.SelectedItem).Name;
+
+                        }
+                        else
+                        {
+                            m_wmEncoder.LastProfile = "";
+                        }
+
+                    }
+
+                    //	Do we have any SAMI fonts
+                    m_tmaxExportOptions.SAMIFontFamily = "Arial";
+                    if (m_ctrlSAMIFonts.Items.Count > 0)
+                    {
+                        if (m_ctrlSAMIFonts.SelectedItem != null)
+                        {
+                            m_tmaxExportOptions.SAMIFontFamily = m_ctrlSAMIFonts.SelectedItem.ToString();
+                        }
+
+                    }
+                    m_tmaxExportOptions.SAMIFontColor = m_ctrlSAMIColor.BackColor;
+                    m_tmaxExportOptions.SAMIFontHighlighter = m_ctrlSAMIHighlighter.Checked;
+                    m_tmaxExportOptions.SAMIPageNumbers = m_ctrlSAMIPageNumbers.Checked;
+
+                    try { m_tmaxExportOptions.SAMIFontSize = System.Convert.ToInt32(m_ctrlSAMISize.Text); }
+                    catch { m_tmaxExportOptions.SAMIFontSize = 12; }
+
+                    try { m_tmaxExportOptions.SAMILines = System.Convert.ToInt32(m_ctrlSAMILines.Text); }
+                    catch { m_tmaxExportOptions.SAMILines = 3; }
+
+                }
+                else
+                {
+                    m_ctrlAutoFilenames.Checked = m_tmaxExportOptions.AutoFilenames;
+                    m_ctrlConfirmOverwrite.Checked = m_tmaxExportOptions.ConfirmOverwrite;
+                    m_ctrlVideoEDL.Checked = m_tmaxExportOptions.VideoEDL;
+                    m_ctrlVideoSAMI.Checked = m_tmaxExportOptions.VideoSAMI;
+                    m_ctrlShowPreferred.Checked = m_wmEncoder.UsePreferred;
+
+                    //	Do we have any encoder profiles?
+                    FillProfiles();
+                    if (m_ctrlProfiles.Items.Count > 0)
+                    {
+                        m_ctrlVideoWMV.Checked = m_tmaxExportOptions.VideoWMV;
+
+                        SetProfileSelection(m_wmEncoder.LastProfile);
+                    }
+
+                    FillSAMIFonts();
+                    if (m_ctrlSAMIFonts.Items.Count > 0)
+                        SetSAMIFontSelection(m_tmaxExportOptions.SAMIFontFamily);
+                    m_ctrlSAMIColor.BackColor = m_tmaxExportOptions.SAMIFontColor;
+                    m_ctrlSAMISize.Text = m_tmaxExportOptions.SAMIFontSize.ToString();
+                    m_ctrlSAMILines.Text = m_tmaxExportOptions.SAMILines.ToString();
+                    m_ctrlSAMIHighlighter.Checked = m_tmaxExportOptions.SAMIFontHighlighter;
+                    m_ctrlSAMIPageNumbers.Checked = m_tmaxExportOptions.SAMIPageNumbers;
+
+                    SetControlStates();
+
+                }// if(bSetMembers == true)
+
+                bSuccessful = true;
+            }
+            catch (System.Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "Exchange", m_tmaxErrorBuilder.Message(ERROR_EXCHANGE_EX, bSetMembers), Ex);
+            }
+
+            return bSuccessful;
+
+        }// private bool Exchange(bool bSetMembers)
+
+        /// <summary>This method is called to enable / disable child controls based on current settings</summary>
+        private void SetControlStates()
+        {
+            try
+            {
+                //	Do we have any encoder profiles?
+                if ((m_wmEncoder != null) && (m_wmEncoder.Profiles != null))
+                {
                     m_ctrlVideoWMV.Enabled = true;// (m_ctrlProfiles.Items.Count > 0);
-					m_ctrlViewCodecs.Enabled = true;
-					m_ctrlWMVGroup.Enabled = (m_wmEncoder.Profiles.Count > 0);
-					m_ctrlShowPreferred.Enabled = (m_wmEncoder.Profiles.Count > 0);
-					m_ctrlProfilesLabel.Enabled = (m_ctrlProfiles.Items.Count > 0);
-					m_ctrlProfiles.Enabled = (m_ctrlProfiles.Items.Count > 0);
-				}
-				else
-				{
+                    m_ctrlViewCodecs.Enabled = true;
+                    m_ctrlWMVGroup.Enabled = (m_wmEncoder.Profiles.Count > 0);
+                    m_ctrlShowPreferred.Enabled = (m_wmEncoder.Profiles.Count > 0);
+                    m_ctrlProfilesLabel.Enabled = (m_ctrlProfiles.Items.Count > 0);
+                    m_ctrlProfiles.Enabled = (m_ctrlProfiles.Items.Count > 0);
+                }
+                else
+                {
                     m_ctrlVideoWMV.Enabled = true;//false;
-					m_ctrlWMVGroup.Enabled = false;
-					m_ctrlProfilesLabel.Enabled = false;
-					m_ctrlProfiles.Enabled = false;
-					//m_ctrlVideoWMV.Checked = false;
-					m_ctrlViewCodecs.Enabled = false;
-					m_ctrlShowPreferred.Checked = false;
-					m_ctrlShowPreferred.Enabled = false;
-				}
-				
-				m_ctrlSAMIGroup.Enabled = m_ctrlVideoSAMI.Checked;
-			
-			}
-			catch
-			{
-			}
-			
-		}// private void SetControlStates()
-		
-		/// <summary>Required method for Designer support</summary>
-		private void InitializeComponent()
-		{
+                    m_ctrlWMVGroup.Enabled = false;
+                    m_ctrlProfilesLabel.Enabled = false;
+                    m_ctrlProfiles.Enabled = false;
+                    //m_ctrlVideoWMV.Checked = false;
+                    m_ctrlViewCodecs.Enabled = false;
+                    m_ctrlShowPreferred.Checked = false;
+                    m_ctrlShowPreferred.Enabled = false;
+                }
+
+                m_ctrlSAMIGroup.Enabled = m_ctrlVideoSAMI.Checked;
+
+            }
+            catch
+            {
+            }
+
+        }// private void SetControlStates()
+
+        /// <summary>Required method for Designer support</summary>
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CFExportVideo));
             this.m_ctrlCancel = new System.Windows.Forms.Button();
             this.m_ctrlOk = new System.Windows.Forms.Button();
@@ -460,9 +453,6 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlProfiles = new System.Windows.Forms.ListBox();
             this.m_ctrlProfilesLabel = new System.Windows.Forms.Label();
             this.m_ctrlFormatsGroup = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.m_ctrlVideoBitRate = new System.Windows.Forms.ComboBox();
             this.m_ctrlSAMIGroup = new System.Windows.Forms.GroupBox();
             this.m_ctrlSAMIPageNumbers = new System.Windows.Forms.CheckBox();
             this.m_ctrlSAMIHighlighter = new System.Windows.Forms.CheckBox();
@@ -531,16 +521,15 @@ namespace FTI.Trialmax.Forms
             // 
             this.m_ctrlVideoWMV.Location = new System.Drawing.Point(12, 24);
             this.m_ctrlVideoWMV.Name = "m_ctrlVideoWMV";
-            this.m_ctrlVideoWMV.Size = new System.Drawing.Size(137, 24);
+            this.m_ctrlVideoWMV.Size = new System.Drawing.Size(204, 24);
             this.m_ctrlVideoWMV.TabIndex = 0;
             this.m_ctrlVideoWMV.Text = "Create Video File";
-            this.m_ctrlVideoWMV.CheckedChanged += new System.EventHandler(this.m_ctrlVideoWMV_CheckedChanged);
             this.m_ctrlVideoWMV.Click += new System.EventHandler(this.OnClickWMV);
             // 
             // m_ctrlProfiles
             // 
-            this.m_ctrlProfiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.m_ctrlProfiles.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_ctrlProfiles.HorizontalScrollbar = true;
             this.m_ctrlProfiles.IntegralHeight = false;
@@ -559,12 +548,9 @@ namespace FTI.Trialmax.Forms
             // 
             // m_ctrlFormatsGroup
             // 
-            this.m_ctrlFormatsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.m_ctrlFormatsGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.m_ctrlFormatsGroup.Controls.Add(this.label2);
-            this.m_ctrlFormatsGroup.Controls.Add(this.label1);
-            this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoBitRate);
             this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoWMV);
             this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoSAMI);
             this.m_ctrlFormatsGroup.Controls.Add(this.m_ctrlVideoEDL);
@@ -575,50 +561,9 @@ namespace FTI.Trialmax.Forms
             this.m_ctrlFormatsGroup.TabStop = false;
             this.m_ctrlFormatsGroup.Text = "Output File Formats";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(276, 29);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(30, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "kbps";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(146, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Video Bitrate";
-            // 
-            // m_ctrlVideoBitRate
-            // 
-            this.m_ctrlVideoBitRate.Enabled = false;
-            this.m_ctrlVideoBitRate.FormattingEnabled = true;
-            this.m_ctrlVideoBitRate.Items.AddRange(new object[] {
-            "512",
-            "786",
-            "1000",
-            "5000",
-            "8000",
-            "10000",
-            "12000",
-            "15000",
-            "18000",
-            "20000"});
-            this.m_ctrlVideoBitRate.Location = new System.Drawing.Point(216, 26);
-            this.m_ctrlVideoBitRate.Name = "m_ctrlVideoBitRate";
-            this.m_ctrlVideoBitRate.Size = new System.Drawing.Size(54, 21);
-            this.m_ctrlVideoBitRate.TabIndex = 5;
-            this.m_ctrlVideoBitRate.Text = "786";
-            this.m_ctrlVideoBitRate.KeyDown += new System.Windows.Forms.KeyEventHandler(this.m_ctrlVideoBitRate_KeyDown);
-            this.m_ctrlVideoBitRate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.m_ctrlVideoBitRate_KeyPress);
-            // 
             // m_ctrlSAMIGroup
             // 
-            this.m_ctrlSAMIGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.m_ctrlSAMIGroup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIPageNumbers);
             this.m_ctrlSAMIGroup.Controls.Add(this.m_ctrlSAMIHighlighter);
@@ -729,8 +674,8 @@ namespace FTI.Trialmax.Forms
             // 
             // m_ctrlWMVGroup
             // 
-            this.m_ctrlWMVGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.m_ctrlWMVGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_ctrlWMVGroup.Controls.Add(this.m_ctrlShowPreferred);
             this.m_ctrlWMVGroup.Controls.Add(this.m_ctrlProfilesLabel);
@@ -812,248 +757,143 @@ namespace FTI.Trialmax.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Export Video Options";
             this.m_ctrlFormatsGroup.ResumeLayout(false);
-            this.m_ctrlFormatsGroup.PerformLayout();
             this.m_ctrlSAMIGroup.ResumeLayout(false);
             this.m_ctrlSAMIGroup.PerformLayout();
             this.m_ctrlWMVGroup.ResumeLayout(false);
             this.m_ctrlGeneralGroup.ResumeLayout(false);
             this.ResumeLayout(false);
 
-		}
-	
-		/// <summary>This method is called when the user clicks on OK</summary>
-		/// <param name="sender">The object sending the event</param>
-		/// <param name="e">The event arguments</param>
-		private void OnClickOk(object sender, System.EventArgs e)
-		{
-            //Yasir Alam
-            //Bitrate must be a valid integer
-            if (m_tmaxExportOptions.VideoWMV)
-            {
-                string msg = "Please enter valid bitrate.";
-                try
-                {
-                    int bitRate = Convert.ToInt32(m_ctrlVideoBitRate.Text);
-                    if (bitRate < 512)
-                    {
-                        msg = "Bit rate can not be less than 512 kbps";
-                    }
-                    else if (bitRate > 20000)
-                    {
-                        msg = "Bit rate can not be greater than 20000 kbps";
-                    }
-                    else
-                    { 
-                        msg = ""; 
-                    }
-                }
-                catch (FormatException) { }
-                catch (OverflowException) {  }
+        }
 
-                if (!string.IsNullOrEmpty(msg))
-                {
-                    MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+        /// <summary>This method is called when the user clicks on OK</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">The event arguments</param>
+        private void OnClickOk(object sender, System.EventArgs e)
+        {
+            //	Get the user settings
+            Exchange(true);
+
+            //	Must have selected at least on output format
+            if ((m_tmaxExportOptions.VideoEDL == false) &&
+               (m_tmaxExportOptions.VideoWMV == false) &&
+               (m_tmaxExportOptions.VideoSAMI == false))
+            {
+                MessageBox.Show("You must select at least one output format for the operation", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                //	Close the form
+                DialogResult = DialogResult.OK;
+                this.Close();
             }
 
+        }// private void OnClickOk(object sender, System.EventArgs e)
 
-			//	Get the user settings
-			Exchange(true);
+        /// <summary>This method is called when the user clicks on Cancel</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">The event arguments</param>
+        private void OnClickCancel(object sender, System.EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            this.Close();
 
+        }// private void OnClickCancel(object sender, System.EventArgs e)
 
-			//	Must have selected at least on output format
-			if((m_tmaxExportOptions.VideoEDL == false) &&
-			   (m_tmaxExportOptions.VideoWMV == false) &&
-			   (m_tmaxExportOptions.VideoSAMI == false))
-			{
-				MessageBox.Show("You must select at least one output format for the operation", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			}
-			else
-			{
-				//	Close the form
-				DialogResult = DialogResult.OK;
-				this.Close();
-			}
-		
-		}// private void OnClickOk(object sender, System.EventArgs e)
+        /// <summary>This method is called when the user clicks on Create WMV</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">The event arguments</param>
+        private void OnClickWMV(object sender, System.EventArgs e)
+        {
+            SetControlStates();
+        }
 
-		/// <summary>This method is called when the user clicks on Cancel</summary>
-		/// <param name="sender">The object sending the event</param>
-		/// <param name="e">The event arguments</param>
-		private void OnClickCancel(object sender, System.EventArgs e)
-		{
-			DialogResult = DialogResult.Cancel;
-			this.Close();
-		
-		}// private void OnClickCancel(object sender, System.EventArgs e)
+        /// <summary>This method is called when the user clicks on Create SAMI</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">The event arguments</param>
+        private void OnClickSAMI(object sender, System.EventArgs e)
+        {
+            SetControlStates();
+        }
 
-		/// <summary>This method is called when the user clicks on Create WMV</summary>
-		/// <param name="sender">The object sending the event</param>
-		/// <param name="e">The event arguments</param>
-		private void OnClickWMV(object sender, System.EventArgs e)
-		{
-			SetControlStates();
-		}
-
-		/// <summary>This method is called when the user clicks on Create SAMI</summary>
-		/// <param name="sender">The object sending the event</param>
-		/// <param name="e">The event arguments</param>
-		private void OnClickSAMI(object sender, System.EventArgs e)
-		{
-			SetControlStates();
-		}
-
-		/// <summary>This method is called when the user clicks on SAMI Font Color</summary>
-		/// <param name="sender">The object sending the event</param>
-		/// <param name="e">The event arguments</param>
-		private void OnClickSAMIColor(object sender, System.EventArgs e)
-		{
-			try
-			{
-				m_ctrlColorPicker.Color = m_ctrlSAMIColor.BackColor;
-				if(m_ctrlColorPicker.ShowDialog() == DialogResult.OK)
-					m_ctrlSAMIColor.BackColor = m_ctrlColorPicker.Color;
-			}
-			catch
-			{
-			}
-		
-		}
-
-		/// <summary>This method is called when the user clicks on View Codecs</summary>
-		/// <param name="sender">The object sending the event</param>
-		/// <param name="e">The event arguments</param>
-		private void OnClickViewCodecs(object sender, System.EventArgs e)
-		{
-			try
-			{
-				CFEnumCodecs enumCodecs = new CFEnumCodecs();
-
-				//	Do we have a profile selection?
-				if(m_ctrlProfiles.SelectedItem != null)
-					enumCodecs.Profile = ((CWMProfile)m_ctrlProfiles.SelectedItem).Name;
-
-				enumCodecs.ShowDialog();
-			}
-			catch
-			{
-			}
-		
-		}// private void OnClickViewCodecs(object sender, System.EventArgs e)
-
-		/// <summary>This method is called when the user clicks on Show Preferred profiles</summary>
-		/// <param name="sender">The object sending the event</param>
-		/// <param name="e">The event arguments</param>
-		private void OnClickShowPreferred(object sender, System.EventArgs e)
-		{
-			string strProfile = "";
-			
-			//	Get the name of the current profile selection
-			if(m_ctrlProfiles.SelectedItem != null)
-				strProfile = ((CWMProfile)m_ctrlProfiles.SelectedItem).Name;
-				
-			//	Rebuild the profiles list
-			FillProfiles();
-			
-			//	Update the profile selection
-			SetProfileSelection(strProfile);
-			
-			SetControlStates();
-		
-		}// private void OnClickShowPreferred(object sender, System.EventArgs e)
-
-        /// <summary>
-        ///  Yasir Alam
-        ///  2016-04-06
-        ///  on checking 'Create Video File' checkbox, 
-        ///  Bitrate dropdown gets enable, On uncheck 'Create video File' checkbox
-        ///  bitrate dropdown gets disabled and 786 kbps will be restored as a default.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void m_ctrlVideoWMV_CheckedChanged(object sender, EventArgs e)
+        /// <summary>This method is called when the user clicks on SAMI Font Color</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">The event arguments</param>
+        private void OnClickSAMIColor(object sender, System.EventArgs e)
         {
             try
             {
-                m_ctrlVideoBitRate.Enabled = m_ctrlVideoWMV.Checked;
-                m_ctrlVideoBitRate.SelectedIndex = m_ctrlVideoBitRate.FindStringExact("786");
+                m_ctrlColorPicker.Color = m_ctrlSAMIColor.BackColor;
+                if (m_ctrlColorPicker.ShowDialog() == DialogResult.OK)
+                    m_ctrlSAMIColor.BackColor = m_ctrlColorPicker.Color;
             }
-            catch (Exception)
+            catch
             {
             }
+
         }
-		#endregion Private Methods
 
-		#region Properties
-		
-		/// <summary>The user defined export options</summary>
-		public CTmaxExportOptions ExportOptions
-		{
-			get { return m_tmaxExportOptions;  }
-			set { m_tmaxExportOptions = value; }
-		}
-		
-		/// <summary>TrialMax media encoder wrapper</summary>
-		public FTI.Trialmax.Encode.CWMEncoder WMEncoder
-		{
-			get { return m_wmEncoder; }
-			set { m_wmEncoder = value; }
-		}
-		
-		#endregion Properties
-
-        
-       
-
-        //Yasir ALam
-        //2016-04-11
-        //User can only enter numeric in video bit rate drop down 
-        private void m_ctrlVideoBitRate_KeyPress(object sender, KeyPressEventArgs e)
+        /// <summary>This method is called when the user clicks on View Codecs</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">The event arguments</param>
+        private void OnClickViewCodecs(object sender, System.EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine(e.KeyChar);
-
-            if (char.IsLetter(e.KeyChar)
-                || char.IsSymbol(e.KeyChar)
-                || char.IsWhiteSpace(e.KeyChar)
-                || char.IsPunctuation(e.KeyChar))
+            try
             {
-                e.Handled = true;
+                CFEnumCodecs enumCodecs = new CFEnumCodecs();
+
+                //	Do we have a profile selection?
+                if (m_ctrlProfiles.SelectedItem != null)
+                    enumCodecs.Profile = ((CWMProfile)m_ctrlProfiles.SelectedItem).Name;
+
+                enumCodecs.ShowDialog();
+            }
+            catch
+            {
             }
 
-            //if (!char.IsNumber(e.KeyChar))
-            //{
-            //    e.Handled = true;
-            //}
-        }
+        }// private void OnClickViewCodecs(object sender, System.EventArgs e)
 
-        /// <summary>
-        /// Yasir Alam
-        /// 2016-04-13
-        /// allowing to paste number
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void m_ctrlVideoBitRate_KeyDown(object sender, KeyEventArgs e)
+        /// <summary>This method is called when the user clicks on Show Preferred profiles</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">The event arguments</param>
+        private void OnClickShowPreferred(object sender, System.EventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.V)
-            {
-                string copiedText = System.Windows.Forms.Clipboard.GetText();
-                try
-                {
-                    Convert.ToInt32(copiedText);
-                }
-                catch (FormatException)
-                {
-                    e.SuppressKeyPress = true;
-                }
-                catch (OverflowException) 
-                {
-                    e.SuppressKeyPress = true;
-                }
-            }
+            string strProfile = "";
+
+            //	Get the name of the current profile selection
+            if (m_ctrlProfiles.SelectedItem != null)
+                strProfile = ((CWMProfile)m_ctrlProfiles.SelectedItem).Name;
+
+            //	Rebuild the profiles list
+            FillProfiles();
+
+            //	Update the profile selection
+            SetProfileSelection(strProfile);
+
+            SetControlStates();
+
+        }// private void OnClickShowPreferred(object sender, System.EventArgs e)
+
+        #endregion Private Methods
+
+        #region Properties
+
+        /// <summary>The user defined export options</summary>
+        public CTmaxExportOptions ExportOptions
+        {
+            get { return m_tmaxExportOptions; }
+            set { m_tmaxExportOptions = value; }
         }
 
-}// public class CFExportVideo : CFTmaxBaseForm
+        /// <summary>TrialMax media encoder wrapper</summary>
+        public FTI.Trialmax.Encode.CWMEncoder WMEncoder
+        {
+            get { return m_wmEncoder; }
+            set { m_wmEncoder = value; }
+        }
+
+        #endregion Properties
+
+    }// public class CFExportVideo : CFTmaxBaseForm
 
 }// namespace FTI.Trialmax.Forms

@@ -22,7 +22,7 @@ namespace FTI.Trialmax.Encode
 
         // bit rate on which the video will be encoded
         // yet we have fixed it to 768k
-        private string m_strBitrate = "786k";
+        private string m_strBitrate = "768k";
 
         // used to store end time of current video that is in encoding
         private double m_lEndTime = 0;
@@ -63,21 +63,6 @@ namespace FTI.Trialmax.Encode
         private bool m_bIsFinalEncoding = false;
 
         public bool m_bIsMpeg2Selected = false;
-
-
-
-        public string VideoBitRate
-        {
-            get
-            {
-                return m_strBitrate;
-            }
-            set
-            {
-                m_strBitrate = value;
-            }
-        }
-
 
         // local memeber bound to hold the sources that will be encoded in a single file
         public List<CFFMpegSource> Sources;
@@ -750,34 +735,14 @@ namespace FTI.Trialmax.Encode
                 else
                     codec = "-qscale:v 1";
             }
-            //Yasir Alam
-            //2016-04-08
-            // .mp4 should be encode with h264 video and aac audio
-            //else if (
-            //   (
-            //    extension.ToUpper().Contains(
-            //   Convert.ToString(SupportedExportFormats.MP4))) ||
-            //   (extension.ToUpper().Contains(
-            //   Convert.ToString(SupportedExportFormats.MOV))) 
-            //    )
-            //{                 
-            //    codec = "-vcodec mpeg4";
-            //}
             else if (
-               (
+               (extension.ToUpper().Contains(
+               Convert.ToString(SupportedExportFormats.MP4))) ||
                (extension.ToUpper().Contains(
                Convert.ToString(SupportedExportFormats.MOV)))
-                ))
+                )
             {
                 codec = "-vcodec mpeg4";
-            }
-            else if (
-           (
-           (extension.ToUpper().Contains(
-           Convert.ToString(SupportedExportFormats.MP4)))
-            ))
-            {
-                codec = "-vcodec libx264 -c:a libvo_aacenc";
             }
             else if (
                 (extension.ToUpper().Contains(
