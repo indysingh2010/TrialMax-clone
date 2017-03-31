@@ -698,9 +698,9 @@ BOOL CApp::InitInstance()
 
 		//Hotfix 
 	//Application does not get keyboard keys when power point presentation is running
-	//PreTranslateMessaage procedure does not get invoked because power point 2013/2016
+	//PreTranslateMessaage procedure does not get invoked because power point 2013
 	//is capturing the key and disposing it.
-	//Here we have checked the version of power point if it's 2013/2016 then we are hooking
+	//Here we have checked the version of power point if it's 2013 then we are hooking
 	//low level keyboards intrupts.
 	char temp[5];
 	DWORD cchCurDir = MAX_PATH;
@@ -718,7 +718,7 @@ BOOL CApp::InitInstance()
 	myfile.close();
 
 	ppVersion = atoi(temp);
-	if(ppVersion == 15 || ppVersion == 16)
+	if(ppVersion == 15)
 	{
 		hHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandle(NULL), 0);
 		MSG msg;
