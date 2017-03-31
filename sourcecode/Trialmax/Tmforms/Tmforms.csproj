@@ -228,12 +228,6 @@
     <Compile Include="CaseOptions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DesignationsOverlap.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DesignationsOverlap.Designer.cs">
-      <DependentUpon>DesignationsOverlap.cs</DependentUpon>
-    </Compile>
     <Compile Include="GetConfirmation.cs">
       <SubType>Form</SubType>
     </Compile>
