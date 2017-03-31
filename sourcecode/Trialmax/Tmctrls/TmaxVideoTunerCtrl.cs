@@ -35,11 +35,8 @@ namespace FTI.Trialmax.Controls
         /// <summary>The bitmap object which will store the orignal wave form for the loaded file</summary>
         private Bitmap m_orignalWave;
 
-        /// <summary>Desired latency to be used for NAudio sampling</summary>
-        private const int m_desiredLatency = 100;
-
-        /// <summary>Number of buffers to be used for NAudio sampling</summary>
-        private const int m_numberOfBuffers = 2;
+        /// <summary></summary>
+        private WaveOut playbackDevice = new WaveOut() { DesiredLatency = 100, NumberOfBuffers = 2 };
 
         /// <summary>Location of the converter to be used for video to audio conversion</summary>
         private const string m_converter = "//ffmpeg.exe";
@@ -49,6 +46,18 @@ namespace FTI.Trialmax.Controls
 
         /// <summary>Custom tune bar control for managing tune states</summary>
         private FTI.Trialmax.Controls.CTmaxVideoTuneBarCtrl m_ctrlTuneBar;
+
+        /// <summary></summary>
+        private class MinMax
+        {
+            public float minValue { get; set; }
+            public float maxValue { get; set; }
+            public MinMax(float min, float max)
+            {
+                minValue = min;
+                maxValue = max;
+            }
+        }// public class MinMax
 
         #endregion Private Members
 
@@ -320,32 +329,31 @@ namespace FTI.Trialmax.Controls
 
             var fileStream = new WaveFileReader(fileName);
 
+            var fileProvider = new WaveFileReader(fileName);
+            playbackDevice.Init(fileProvider);
+
             var sampleProvider = fileStream.ToSampleProvider();
             var Values = GetWaveFormValues(sampleProvider, fileStream.WaveFormat, fileStream.Length, fileStream.WaveFormat.SampleRate / 10);
 
             // Generating the wave form image
             Bitmap bim = new Bitmap(Values.Count, 200);
-            using (System.Drawing.Graphics g = Graphics.FromImage(bim))
+            System.Drawing.Graphics g = Graphics.FromImage(bim);
+
+            Pen pen = new Pen(Color.Red, 2.0f);
+            g.Clear(Color.Black);
+
+            var mid = 100;
+            var yScale = 100;
+
+            for (int i = 0; i < Values.Count; i++)
             {
-                Pen pen = new Pen(Color.Red, 2.0f);
-                g.Clear(Color.Black);
+                float Y1 = mid + (Values[i] * yScale);
+                float Y2 = mid - (Values[i] * yScale);
 
-                var mid = 100;
-                var yScale = 100;
-
-                List<Point> p = new List<Point>();
-
-                for (int i = 0; i < Values.Count; i++)
-                {
-                    float Y1 = mid + (Values[i] * yScale);
-                    float Y2 = mid - (Values[i] * yScale);
-                    p.Add(new Point(i, Convert.ToInt32(Math.Ceiling(Y1))));
-                    p.Add(new Point(i, Convert.ToInt32(Math.Ceiling(Y2))));
-                }
-                g.DrawLines(pen, p.ToArray());
+                g.DrawLine(pen, i, Y1, i, Y2);
             }
-
             fileStream.Close();
+            fileProvider.Close();
             return bim;
         }// public Bitmap CreateAudioWave(string fileName)
 
@@ -360,35 +368,29 @@ namespace FTI.Trialmax.Controls
         /// <returns></returns>
         private List<float> GetWaveFormValues(ISampleProvider provider, WaveFormat format, long length, int notificationCount)
         {
-            try
+            int bufferSize = format.ConvertLatencyToByteSize((((WaveOut)playbackDevice).DesiredLatency + ((WaveOut)playbackDevice).NumberOfBuffers - 1) / ((WaveOut)playbackDevice).NumberOfBuffers);
+            var buf = new float[bufferSize];
+            int samplesRead = 0;
+            int count = 0;
+
+            List<float> Values = new List<float>((int)(length / notificationCount));
+
+            float maxValue = 0;
+            while ((samplesRead = provider.Read(buf, 0, buf.Length)) > 0)
             {
-                int bufferSize = format.ConvertLatencyToByteSize((m_desiredLatency + m_numberOfBuffers - 1) / m_numberOfBuffers);
-                var buf = new float[bufferSize];
-                int samplesRead = 0;
-                int count = 0;
-
-                List<float> Values = new List<float>((int)(length / notificationCount));
-
-                float maxValue = 0;
-                while ((samplesRead = provider.Read(buf, 0, buf.Length)) > 0)
+                for (int n = 0; n < samplesRead; n += format.Channels)
                 {
-                    for (int n = 0; n < samplesRead; n++)
+                    maxValue = Math.Max(maxValue, buf[n]);
+                    count++;
+                    if (count >= notificationCount && notificationCount > 0)
                     {
-                        maxValue = Math.Max(maxValue, buf[n]);
-                        count++;
-                        if (count >= notificationCount && notificationCount > 0)
-                        {
-                            Values.Add(maxValue);
-                            maxValue = count = 0;
-                        }
+                        Values.Add(maxValue);
+                        maxValue = count = 0;
                     }
                 }
-                return Values;
             }
-            catch (Exception ex) { }
-            return new List<float>();
-
-        }// private List<float> GetWaveForm
+            return Values;
+        }// private List<MinMax> GetWaveForm
 
         /// <summary>
         /// This function is called to draw a vertical bar on the waveform to show the current position of the video
@@ -397,15 +399,11 @@ namespace FTI.Trialmax.Controls
         public void UpdateLocation(double position)
         {
             if (m_orignalWave == null) return;
-
             double length = m_ctrlPlayer.StopPosition - m_ctrlPlayer.StartPosition;
-
-            if (length < 1) return;
-
-            position = position - m_ctrlPlayer.XmlDesignation.Start;
+            position = position - m_ctrlPlayer.StartPosition;
 
             Bitmap bmp = (Bitmap)m_orignalWave.Clone();
-            Pen blackPen = new Pen(Color.Blue, Math.Max(1, bmp.Width / 1000));
+            Pen blackPen = new Pen(Color.Blue, m_orignalWave.Width / 10000);
 
             float x1 = (float)(position / length * m_orignalWave.Width);
             float y1 = 0;
