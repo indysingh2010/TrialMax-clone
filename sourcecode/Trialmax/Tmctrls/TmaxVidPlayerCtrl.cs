@@ -494,22 +494,22 @@ namespace FTI.Trialmax.Controls
 			SetCommandStates();
 		}
 
-        /// <summary>
-        /// Get the duration of the provided file name
-        /// </summary>
-        /// <param name="strFileName">Absolute path of the video file</param>
-        /// <returns>Duration of the video file</returns>
-        public double GetDuration(string strFileName)
-        {
-            try
-            {
-                return m_ctrlViewer.GetDuration(strFileName);
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
-        }// public double GetDuration(string strFileName)
+        ///// <summary>
+        ///// Get the duration of the provided file name
+        ///// </summary>
+        ///// <param name="strFileName">Absolute path of the video file</param>
+        ///// <returns>Duration of the video file</returns>
+        //public double GetDuration(string strFileName)
+        //{
+        //    try
+        //    {
+        //        return m_ctrlViewer.GetDuration(strFileName);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return 0;
+        //    }
+        //}// public double GetDuration(string strFileName)
 
 		#endregion Public Methods
 		

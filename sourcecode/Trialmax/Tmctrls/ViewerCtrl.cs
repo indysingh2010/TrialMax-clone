@@ -461,15 +461,15 @@ namespace FTI.Trialmax.Controls
 		
 		}// public bool Cue(TmxCueModes eMode, double dPosition, bool bResume)
 
-        /// <summary>
-        /// Get the duration of the provided file name
-        /// </summary>
-        /// <param name="strFileName">Absolute path of the video file</param>
-        /// <returns>Duration of the video file</returns>
-        public double GetDuration(string strFileName)
-        {
-            return ((CTmxMovie)m_aViewers[(int)TmaxMediaViewers.Tmmovie]).GetDuration(strFileName);
-        }// public double GetDuration(string strFileName)
+        ///// <summary>
+        ///// Get the duration of the provided file name
+        ///// </summary>
+        ///// <param name="strFileName">Absolute path of the video file</param>
+        ///// <returns>Duration of the video file</returns>
+        //public double GetDuration(string strFileName)
+        //{
+        //    return ((CTmxMovie)m_aViewers[(int)TmaxMediaViewers.Tmmovie]).GetDuration(strFileName);
+        //}// public double GetDuration(string strFileName)
 
 		/// <summary>This function is called to cue the active file</summary>
 		/// <param name="eMode">The enumerated cue mode</param>

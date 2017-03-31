@@ -10027,20 +10027,20 @@ namespace FTI.Trialmax.Database
 			{
 				xmlDeposition = (CXmlDeposition)(tmaxSource.UserData);
 
-                string m_currentVideoPath = m_aCaseFolders[5].Path;
-                List<long> depositionsDuration = new List<long>();
+                //string m_currentVideoPath = m_aCaseFolders[5].Path;
+                //List<long> depositionsDuration = new List<long>();
 
-                for (int index = 0; index < xmlDeposition.Segments.Count; index++)
-                {
-                    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
-                    depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
-                }
+                //for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                //{
+                //    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
+                //    depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
+                //}
 
-                for (int index = 0; index < xmlDeposition.Segments.Count; index++)
-                {
-                    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
-                    AudioWaveformGenerator.GenerateAudioWave(filePath);
-                }
+                //for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                //{
+                //    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
+                //    AudioWaveformGenerator.GenerateAudioWave(filePath);
+                //}
 
 				
 				//	Initialize a new transcript exchange object
