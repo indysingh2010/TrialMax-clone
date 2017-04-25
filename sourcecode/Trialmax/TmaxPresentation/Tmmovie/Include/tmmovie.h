@@ -130,6 +130,7 @@ class CTMMovieCtrl : public COleControl
 		short				LoadDesignation(double dPosition);
 		short				UpdateState();
 		short				GetControlKeys();
+		void				testFunction();
 	
 	//--------------------------------------------------------------------
 	//	Dispatch interface for implementing object safety
@@ -281,6 +282,8 @@ class CTMMovieCtrl : public COleControl
 	afx_msg double GetDuration(LPCTSTR lpszFilename);
 	afx_msg short UpdateScreenPosition();
 	afx_msg BOOL GetIsAudio();
+	afx_msg void ShowVideoBar();
+	afx_msg void HideVideoBar();
 	//}}AFX_DISPATCH
 	DECLARE_DISPATCH_MAP()
 
@@ -424,6 +427,8 @@ class CTMMovieCtrl : public COleControl
 	dispidGetDuration = 75L,
 	dispidUpdateScreenPosition = 76L,
 	dispidGetIsAudio = 77L,
+	dispidShowVideoBar = 78L,
+	dispidHideVideoBar = 79L,
 	eventidFileChange = 1L,
 	eventidStateChange = 2L,
 	eventidPlaylistState = 3L,

@@ -7843,7 +7843,7 @@ void CMainView::OnShadeOnCallout()
 //==============================================================================
 void CMainView::OnShowToolbar()
 {
-	
+	//m_ctrlTMMovie.testFunction();
 	//	Is this command enabled?
 	if(!IsCommandEnabled(TMAX_SHOWTOOLBAR) || (m_pToolbar == 0)) return;
 
@@ -7858,13 +7858,18 @@ void CMainView::OnShowToolbar()
 		//	Toggle the visibility of the toolbar
 		if(m_pToolbar->IsWindowVisible())
 		{
+			m_ctrlTMMovie.HideVideoBar();
 			SetControlBar(CONTROL_BAR_NONE);
 			m_pToolbar->ShowWindow(SW_HIDE);
 			if (m_bIsStatusBarShowing)
 				SetControlBar(CONTROL_BAR_STATUS);
 		}
 		else
+		{
+			m_ctrlTMMovie.ShowVideoBar();
 			SetControlBar(CONTROL_BAR_TOOLS);
+		
+		}
 	}
 }
 
