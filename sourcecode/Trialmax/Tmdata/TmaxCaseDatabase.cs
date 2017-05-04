@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Win32;
+using System.Xml;
 using System.Drawing;
 using FTI.Shared;
 using FTI.Shared.Trialmax;
@@ -5673,6 +5674,8 @@ namespace FTI.Trialmax.Database
                     RegThread = null;
                 }
                 RegThread = new Thread(new ThreadStart(this.RegisterThreadProc));
+
+                
                 RegThread.Start();
             }
             catch (System.Exception Ex)
@@ -10036,10 +10039,20 @@ namespace FTI.Trialmax.Database
                     depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
                 }
 
-                for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                if (m_tmaxAppOptions.ShowAudioWaveform == true)
                 {
-                    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
-                    AudioWaveformGenerator.GenerateAudioWave(filePath);
+                    DialogResult generateWaveform = MessageBox.Show("Do you want to generate the Audio Waveform alongwith the xmlt file?",
+                    "Generate AudioWaveform?",
+                    MessageBoxButtons.YesNo);
+
+                    if (generateWaveform == DialogResult.Yes)
+                    {
+                        for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                        {
+                            string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
+                            AudioWaveformGenerator.GenerateAudioWave(filePath);
+                        }
+                    }
                 }
 
 				
@@ -16886,6 +16899,21 @@ namespace FTI.Trialmax.Database
 			return bSuccessful;
 
 		}// public bool FilterObjections(CTmaxItems tmaxItems, CTmaxParameters tmaxParameters)
+
+
+        /// <summary>This method will add a waveform for an existing deposition that has already been added to the media tree</summary>
+        /// <param name="SegmentInfo">The segment Information is passed from the Treepane.cs file</param>
+        /// <returns>none</returns>
+        public void AddAudioWaveform(XmlNodeList SegmentInfo)
+        {
+            string m_currentVideoPath = m_aCaseFolders[5].Path;
+
+            for (int index = 0; index < SegmentInfo.Count; index++)
+            {
+                string filePath = m_currentVideoPath + "\\" + SegmentInfo[index].Attributes["filename"].Value;
+                AudioWaveformGenerator.GenerateAudioWave(filePath);
+            }
+        }// public void AddAudioWaveform(XmlNodeList SegmentInfo)
 
 		#endregion Private Methods
 		

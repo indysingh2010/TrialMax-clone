@@ -80,11 +80,7 @@ namespace FTI.Trialmax.Controls
         private Dictionary<double, List<double>> startEndTimesMapToSegment = new Dictionary<double, List<double>>();
 
         /// <summary>This variable will hold the segment number against a starting time</summary>
-        private Dictionary<double, double> segmentMapToStartTime = new Dictionary<double, double>(); 
-
-
-
-
+        private Dictionary<double, double> segmentMapToStartTime = new Dictionary<double, double>();
 
 		#endregion Private Members
 		
@@ -111,7 +107,7 @@ namespace FTI.Trialmax.Controls
 			m_ctrlPlayer.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(this.OnTmaxVideoCtrlEvent);
 			m_ctrlPlayer.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(m_ctrlTuneBar.OnTmaxVideoCtrlEvent);
 
-		}// CTmaxVideoTunerCtrl()
+            }// CTmaxVideoTunerCtrl()
 		
 		/// <summary>This method handles all video events fired by the player and tune bar</summary>
 		/// <param name="sender">The object sending the event</param>
@@ -296,6 +292,9 @@ namespace FTI.Trialmax.Controls
                     m_dDuration = m_ctrlPlayer.GetDuration(m_strFileSpec);
                     if (m_dDuration > 0)
                     {
+                        if (FTI.Shared.Trialmax.Config.Configuration.ShowAudioWaveform == true)
+                        {
+                        
                         using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
                         {
                             Rectangle cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(m_ctrlPlayer.StopPosition, bmpAudioWave.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
@@ -354,8 +353,9 @@ namespace FTI.Trialmax.Controls
                                                     GraphicsUnit.Pixel);
                             }
                             m_currentWaveFormSegmentImage =  (Bitmap)waveFormSegment;
-                            m_picWave.Image = m_currentWaveFormSegmentImage;
-                        }                        
+                            m_picWave.Image = m_currentWaveFormSegmentImage;  
+                        }
+                     }
                     }
                     else
                     {
@@ -454,6 +454,7 @@ namespace FTI.Trialmax.Controls
         /// <param name="position">The time at which the video is.</param>
         public void UpdateLocation(double position)
         {
+            if (FTI.Shared.Trialmax.Config.Configuration.ShowAudioWaveform == false) return;
             if (m_orignalWave == null) return;
 
             double length = m_ctrlPlayer.StopPosition - m_ctrlPlayer.StartPosition;
@@ -890,7 +891,7 @@ namespace FTI.Trialmax.Controls
 			}
 		
 		}// EnableLinks
-		
+
 		#endregion Properties
 
 	}// public class CTmaxVideoTunerCtrl : System.Windows.Forms.UserControl
