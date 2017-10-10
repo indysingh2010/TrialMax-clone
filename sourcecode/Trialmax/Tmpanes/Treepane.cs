@@ -1383,10 +1383,26 @@ namespace FTI.Trialmax.Panes
 
                 case TreePaneCommands.AddAudioWaveform:
                     if (FTI.Shared.Trialmax.Config.Configuration.ShowAudioWaveform == false) return false;
-                    if(tmaxNodes.Count != 1) return false;
-					if(tmaxNodes[0].IPrimary == null) return false;
-                    if (tmaxNodes[0].IPrimary.GetMediaType() == TmaxMediaTypes.Deposition) return true;
-                    return false;
+                 // if(tmaxNodes.Count != 1) return false;
+                 // if(tmaxNodes[0].IPrimary == null) return false;
+                 // if (tmaxNodes[0].IPrimary.GetMediaType() == TmaxMediaTypes.Deposition) return true;
+                 // return false;
+                    if (tmaxNodes.Count != 1 )
+                    {
+                        foreach (CTmaxMediaTreeNode tmaxNode in tmaxNodes)
+                        {
+                            if (tmaxNode.GetMediaRecord() is CDxSecondary)
+                                return false;
+                        }
+                    }
+                    foreach (CTmaxMediaTreeNode tmaxNode in tmaxNodes)
+                    {
+                        if (tmaxNode.IPrimary == null) return false;
+
+                        if (tmaxNode.IPrimary.GetMediaType() != TmaxMediaTypes.Deposition) return false;
+                       
+                    }
+                    return true;
 
                 case TreePaneCommands.PresentationRecording:
                 //	These commands require single media selections
@@ -6599,26 +6615,103 @@ namespace FTI.Trialmax.Panes
 
         protected virtual void OnCmdAddAudioWaveform(CTmaxMediaTreeNodes tmaxNodes)
         {
-            
-            this.SelectXmltFileForGeneratingAudioWaveform.Title = "Select Xmlt File for Generating Audio Waveform";
-            DialogResult result = SelectXmltFileForGeneratingAudioWaveform.ShowDialog(); // Show the dialog
-            if (result == DialogResult.OK) // Test result.
+            string missingFileInfo = "";
+            string filePath = "";
+            string audioWaveFormFileName = "";
+            string fileExtension = ".xmlt";
+            DialogResult messageBoxResult = DialogResult.Yes;
+            CDxSecondary depositionSecondaryRecord = null;
+            CDxPrimary depositionPrimaryRecord = null;
+
+            foreach (CTmaxMediaTreeNode selectedDeposition in tmaxNodes)
+            {
+                var tmaxRecord = selectedDeposition.GetMediaRecord();
+                if (tmaxRecord is CDxPrimary)
+                {
+                    depositionPrimaryRecord = (CDxPrimary)tmaxRecord;
+                    filePath = depositionPrimaryRecord.RegisterPath;
+                    audioWaveFormFileName = depositionPrimaryRecord.Name;
+
+                    if (!File.Exists(Path.Combine(filePath, audioWaveFormFileName) + fileExtension))
+                    {
+                        missingFileInfo += string.Format("Waveform file {0} not found for {1} at {2}", audioWaveFormFileName, depositionPrimaryRecord.MediaId, filePath) + System.Environment.NewLine;
+                    }
+                }
+                else
+                {
+                    depositionSecondaryRecord = (CDxSecondary)selectedDeposition.GetMediaRecord();
+                    filePath = depositionSecondaryRecord.Primary.RegisterPath;
+                    audioWaveFormFileName = depositionSecondaryRecord.Primary.Name;
+
+                    if (!File.Exists(Path.Combine(filePath, audioWaveFormFileName) + fileExtension))
+                    {
+                        missingFileInfo += string.Format("Waveform file {0} not found for {1} at {2}", audioWaveFormFileName, depositionSecondaryRecord.Primary.MediaId + "." + depositionSecondaryRecord.BarcodeId, filePath) + System.Environment.NewLine;
+                    }
+                }   
+            }
+
+            if(!string.IsNullOrEmpty(missingFileInfo))
+            {
+                messageBoxResult = MessageBox.Show(missingFileInfo + "Do you still want to proceed?", "Missing Audio Waveform Files", MessageBoxButtons.YesNo);
+            }
+
+            if (messageBoxResult == DialogResult.Yes)
             {
                 try
                 {
-                    String MediaName = tmaxNodes[0].IPrimary.ToString();
-                    string File = SelectXmltFileForGeneratingAudioWaveform.FileName;
+                    missingFileInfo = "";
+                    foreach (CTmaxMediaTreeNode selectedDeposition in tmaxNodes)
+                    {
+                        String MediaName = "";
+                        string File = "";
+                        if (selectedDeposition.GetMediaRecord() is CDxPrimary)
+                        {
+                            filePath = ((CDxPrimary)selectedDeposition.GetMediaRecord()).RegisterPath;
+                            audioWaveFormFileName = ((CDxPrimary)selectedDeposition.GetMediaRecord()).Name;
+                            MediaName = ((CDxPrimary)selectedDeposition.GetMediaRecord()).Name;
+                            File = Path.Combine(filePath, audioWaveFormFileName) + fileExtension;
 
-                    if (Path.GetExtension(File) != ".xmlt") throw new Exception("Please select an xmlt file relevant to this deposition.");
-                    XmlDocument xmlDoc = new XmlDocument();
+                            if (System.IO.File.Exists(Path.Combine(filePath, audioWaveFormFileName) + fileExtension))
+                            {
+                                XmlDocument xmlDoc = new XmlDocument();
 
-                    xmlDoc.Load(File);
+                                xmlDoc.Load(File);
 
-                    XmlNodeList DepositionInfo = xmlDoc.GetElementsByTagName("deposition");
-                    XmlNodeList SegmentInfo = xmlDoc.GetElementsByTagName("segment");
+                                XmlNodeList DepositionInfo = xmlDoc.GetElementsByTagName("deposition");
+                                XmlNodeList SegmentInfo = xmlDoc.GetElementsByTagName("segment");
 
-                    if (MediaName != DepositionInfo[0].Attributes["name"].Value) throw new Exception("The xmlt file does not belong to this Deposition");
-                    m_tmaxDatabase.AddAudioWaveform(SegmentInfo);
+                                if (MediaName != DepositionInfo[0].Attributes["name"].Value)
+                                {
+                                    missingFileInfo += string.Format("The xmlt file {0} does not belong to this Deposition {1}", File, MediaName) + System.Environment.NewLine;
+                                    // throw new Exception("The xmlt file does not belong to this Deposition");
+                                }
+                                else
+                                    m_tmaxDatabase.AddAudioWaveform(SegmentInfo);
+                            }
+                        }
+                        else
+                        {
+                            MediaName = selectedDeposition.IPrimary.ToString();
+                            File = Path.Combine(filePath, audioWaveFormFileName) + fileExtension;
+
+                            XmlDocument xmlDoc = new XmlDocument();
+
+                            xmlDoc.Load(File);
+
+                            XmlNodeList DepositionInfo = xmlDoc.GetElementsByTagName("deposition");
+                            XmlNodeList SegmentInfo = xmlDoc.GetElementsByTagName("segment");
+
+                            if (MediaName != DepositionInfo[0].Attributes["name"].Value)
+                            {
+                                missingFileInfo += string.Format("The xmlt file {0} does not belong to this Deposition {1}", File, MediaName) + System.Environment.NewLine;
+                                // throw new Exception("The xmlt file does not belong to this Deposition");
+                            }
+                            else
+                                m_tmaxDatabase.AddAudioWaveform(SegmentInfo);
+                        }
+                    }
+
+                    messageBoxResult = MessageBox.Show("Add Audio Waveform process finished." + System.Environment.NewLine + missingFileInfo, "Add Audio Waveform", MessageBoxButtons.OK);
                 }
                 catch (Exception e)
                 {

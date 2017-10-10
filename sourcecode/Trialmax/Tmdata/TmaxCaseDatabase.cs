@@ -440,6 +440,8 @@ namespace FTI.Trialmax.Database
         /// <summary>Local variable to log user level details</summary>
         private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
+        /// <summary>Local variable to store user input in Waveform message box</summary>
+        private bool GenerateWaveFormForAll = false;
 		#endregion Private Members
 		
 		#region Public Methods
@@ -9091,6 +9093,7 @@ namespace FTI.Trialmax.Database
                 CalculateTotalPages(m_RegSourceFolder);
                 m_cfRegisterProgress.TotalPages = m_totalPages*2;//33% Detection 33% extraction and 33% conversion;
                 SetRegisterProgress("Registration in progress ...");
+                this.GenerateWaveFormForAll = false;
                 //	Add the new records to the database
                 if ((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
                     AddSource(m_RegSourceFolder);
@@ -10041,11 +10044,18 @@ namespace FTI.Trialmax.Database
 
                 if (m_tmaxAppOptions.ShowAudioWaveform == true)
                 {
-                    DialogResult generateWaveform = MessageBox.Show("Do you want to generate the Audio Waveform alongwith the xmlt file?",
-                    "Generate AudioWaveform?",
-                    MessageBoxButtons.YesNo);
+                    CustomMessageDilaogResult generateWaveform = CustomMessageDilaogResult.No;
+                    if (!GenerateWaveFormForAll)
+                    {
+                        generateWaveform = CustomMesssageBox.ShowDialog("Do you want to generate the Audio Waveform alongwith the xmlt file?",
+                        "Generate AudioWaveform?",
+                        CustomMessageButtonType.YesYesToAllNo);                        
+                    }
 
-                    if (generateWaveform == DialogResult.Yes)
+                    if (generateWaveform == CustomMessageDilaogResult.YesToAll)
+                        GenerateWaveFormForAll = true;
+
+                    if (generateWaveform == CustomMessageDilaogResult.Yes || GenerateWaveFormForAll)
                     {
                         for (int index = 0; index < xmlDeposition.Segments.Count; index++)
                         {
