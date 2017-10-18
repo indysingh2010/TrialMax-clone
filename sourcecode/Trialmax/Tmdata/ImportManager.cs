@@ -229,7 +229,7 @@ namespace FTI.Trialmax.Database
 			try
 			{
 				//	Initialize the file selection dialog
-				openFile = new System.Windows.Forms.OpenFileDialog();;
+				openFile = new System.Windows.Forms.OpenFileDialog();
 				openFile.CheckFileExists = true;
 				openFile.CheckPathExists = true;
 				openFile.Multiselect = m_bAllowMultiple;
@@ -242,11 +242,11 @@ namespace FTI.Trialmax.Database
 					//Added .txt format in the option on 28June2012
                     openFile.Filter = "XML Files (*.xml)|*.xml|Text files (*.txt)|*.txt|All Files (*.*)|*.*";
 				else if(m_eFormat == TmaxImportFormats.CodesDatabase)
-					openFile.Filter = "Database Files (*.mdb)|*.mdb|All Files (*.*)|*.*";
-				else
-					openFile.Filter = "Text files (*.txt)|*.txt|All Files (*.*)|*.*";
-				
-				if(m_bAllowMultiple == true)
+					openFile.Filter = "Database Files (*.mdb)|*.mdb|All Files (*.*)|*.*";                
+                else
+                    openFile.Filter = "Text files (*.txt)|*.txt|All Files (*.*)|*.*";
+
+                if(m_bAllowMultiple == true)
 					openFile.Title = ("Select " + m_strDisplayType + " File(s)");
 				else 
 					openFile.Title = ("Select " + m_strDisplayType + " File");
@@ -276,7 +276,53 @@ namespace FTI.Trialmax.Database
 			return (m_aSourceFiles != null);
 				
 		}// public bool GetSourceFiles()
-					
+
+        /// <summary>This method will populate the source files array with the Folder selected by the user</summary>
+        /// <returns>true if the user selects Folder having one or more files</returns>
+        public bool GetSourceFolder()
+        {
+            FolderBrowserDialog openFile = null;
+
+            //	Clear the existing array
+            m_aSourceFiles = null;
+            m_iSourceIndex = -1;
+
+            try
+            {
+                //	Initialize the file selection dialog
+                openFile = new FolderBrowserDialog();
+              
+                if (m_bAllowMultiple == true)
+                    openFile.Description = ("Select " + m_strDisplayType + " Folder(s)");
+                else
+                    openFile.Description = ("Select " + m_strDisplayType + " Folder");
+
+                //	Use the folder of the last file imported to initialize the form
+                if (m_strSourceFolder.Length > 0)
+                    openFile.SelectedPath = m_strSourceFolder;
+
+                //	Open the dialog box
+                if (openFile.ShowDialog() == DialogResult.Cancel) return false;
+
+                if ((openFile.SelectedPath != null) && (Directory.GetFiles(openFile.SelectedPath).GetUpperBound(0) >= 0))
+                {
+                    m_aSourceFiles = Directory.GetFiles(openFile.SelectedPath);
+
+                    try { m_strSourceFolder = openFile.SelectedPath; }
+                    catch { }
+
+                }
+
+            }
+            catch (System.Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "GetSourceFiles", m_tmaxErrorBuilder.Message(ERROR_GET_SOURCE_FILES_EX), Ex);
+            }
+
+            return (m_aSourceFiles != null);
+
+        }// public bool GetSourceFolder()
+
 		/// <summary>This method uses the specified parameters to set the associated properties</summary>
 		/// <param name="tmaxParameters">The collection of parameters</param>
 		/// <param name="tmaxResults">The results of the operation are stored</param>
@@ -360,6 +406,14 @@ namespace FTI.Trialmax.Database
 					m_strDisplayType = "XML Script";
 					m_bAllowMultiple = true;
 					break;
+
+                case TmaxImportFormats.Treatments:
+
+                    m_strCommentCharacters = "!";
+                    m_strDelimiters = "\t";
+                    m_strDisplayType = "ZAP Script";
+                    m_bAllowMultiple = true;
+                    break;
 						
 				case TmaxImportFormats.XmlBinder:
 					
@@ -468,7 +522,10 @@ namespace FTI.Trialmax.Database
 						this.InsertAt = null;
 						this.InsertBefore = false;
 						break;
-						
+
+                    case TmaxImportFormats.Treatments:
+                        this.Target = (CBaseRecord)(tmaxItem.IPrimary);
+                        break;
 					default:
 					
 						this.Target = (CBaseRecord)(tmaxItem.IPrimary);
@@ -947,10 +1004,10 @@ namespace FTI.Trialmax.Database
 		{
 			Debug.Assert(m_tmaxDatabase != null);
 			Debug.Assert(SourceFiles != null);
-			Debug.Assert(SourceFiles.GetUpperBound(0) >= 0);
-						
-			//	Iterate the collection of source files to be imported
-			for(m_iSourceIndex = 0; m_iSourceIndex <= SourceFiles.GetUpperBound(0); m_iSourceIndex++)
+            Debug.Assert(SourceFiles.GetUpperBound(0) >= 0);
+           
+            //	Iterate the collection of source files to be imported
+            for (m_iSourceIndex = 0; m_iSourceIndex <= SourceFiles.GetUpperBound(0); m_iSourceIndex++)
 			{
 				//	Has the user cancelled?
 				if(this.Cancelled == true) break;
@@ -958,7 +1015,8 @@ namespace FTI.Trialmax.Database
 				//selected .txt option	
                 if (this.Format == TmaxImportFormats.XmlCaseCodes && Path.GetExtension(SourceFiles[m_iSourceIndex]) == ".txt")
                     this.Format = TmaxImportFormats.TextCaseCodes;
-				//	Open the stream for this file
+                              
+                //	Open the stream for this file
 				if(OpenStream(SourceFiles[m_iSourceIndex]) == true)
 				{
 					if(this.Cancelled == true) break;
@@ -1026,7 +1084,7 @@ namespace FTI.Trialmax.Database
 					
 					case TmaxImportFormats.BarcodeMap:
 					
-						return ImportBarcodeMap();
+						return ImportBarcodeMap();                   
 					
 					default:
 					
@@ -1355,8 +1413,8 @@ namespace FTI.Trialmax.Database
 
             return bSuccessful;
 
-        }// private bool ImportTextCaseCodes()
-		
+        }// private bool ImportTextCaseCodes()              
+
 		/// <summary>This method is called to import the active XML script</summary>
 		/// <returns>true if successful</returns>
 		private bool ImportXmlScript()

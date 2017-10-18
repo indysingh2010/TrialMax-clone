@@ -665,7 +665,7 @@ namespace FTI.Trialmax.Panes
 					//	Is this a media record that has been added?
 					if(O.GetMediaRecord() != null)
 					{
-						if(O.MediaType == TmaxMediaTypes.Script)
+                        if (O.MediaType == TmaxMediaTypes.Script)
 							tmaxScripts.Add(new CTmaxItem(O.GetMediaRecord()));
 					}
 					//	This could be a root level parent item 
@@ -1359,7 +1359,7 @@ namespace FTI.Trialmax.Panes
 				case TreePaneCommands.ImportAsciiScripts:
 				case TreePaneCommands.ImportAsciiBinders:
 				case TreePaneCommands.ImportXmlBinders:
-				
+               				
 					//	Only binders can be added to the root
 					if((tmaxNodes == null) || (tmaxNodes.Count == 0))
 					{ 

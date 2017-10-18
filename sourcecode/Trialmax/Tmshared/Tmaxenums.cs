@@ -528,6 +528,7 @@ namespace FTI.Shared.Trialmax
 		AsciiPickList,
 		XmlCaseCodes,
 		XmlBinder,
+        Treatments
 	}
 		
 	/// <summary>Enumerations to define export delimiters</summary>
@@ -583,6 +584,7 @@ namespace FTI.Shared.Trialmax
         TextCaseCodes,
 		AsciiBinder,
 		XmlBinder,
+        Treatments,
 	}
 		
 	/// <summary>Enumerations to define properties that can be imported from a codes file</summary>

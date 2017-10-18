@@ -1327,8 +1327,14 @@ namespace FTI.Trialmax.Panes
 				case TreePaneCommands.ImportMenu:
 
 					return (GetCommandEnabled(TreePaneCommands.ImportAsciiScripts, tmaxNodes) ||
-							GetCommandEnabled(TreePaneCommands.ImportXmlScripts, tmaxNodes));
-							
+							GetCommandEnabled(TreePaneCommands.ImportXmlScripts, tmaxNodes) ||
+                            GetCommandEnabled(TreePaneCommands.ImportTreatments, tmaxNodes));
+
+                case TreePaneCommands.ImportTreatments:
+                    if(tmaxNodes == null) return false;
+                    if (tmaxNodes.Count == 0) return false;
+                    return (((tmaxNodes[0]).MediaType == TmaxMediaTypes.Page) && ((tmaxNodes[0]).IPrimary != null));
+
 				case TreePaneCommands.ImportXmlScripts:
 				case TreePaneCommands.ImportAsciiScripts:
 				

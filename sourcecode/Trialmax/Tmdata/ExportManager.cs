@@ -67,7 +67,10 @@ namespace FTI.Trialmax.Database
 		private const int ERROR_CREATE_CODES_TABLE_FAILED		= 43;
 		private const int ERROR_NO_SOURCE_XML_BINDERS			= 44;
 		private const int ERROR_EXPORT_XML_BINDERS_EX			= 45;
-		
+        private const int ERROR_EXPORT_ZAP_FILE                 = 46;
+        private const int ERROR_TREATMENT_NOT_PRESENT           = 47;
+        private const int ERROR_TREATMENT_AT_PAGE               = 48;
+        private const int ERROR_EXPORT_ZAP_EX                   = 49;
 		#endregion Constants
 		
 		#region Private Members
@@ -382,8 +385,13 @@ namespace FTI.Trialmax.Database
 				
 						ExportCodes();
 						break;
-					
-					case TmaxExportFormats.XmlScript:
+
+                    case TmaxExportFormats.Treatments:
+
+                        ExportTreatments();
+                        break;
+
+                    case TmaxExportFormats.XmlScript:
 				
 						ExportXmlScripts();
 						break;
@@ -992,7 +1000,109 @@ namespace FTI.Trialmax.Database
 			
 			return bSuccessful;
 			
-		}// private bool ExportPickList(CTmaxPickItem tmaxPickItem, CDxPickItem dxPickItem)
+		}
+              
+        /// <summary>This method is called to export treatments in zap format</summary>
+        /// <returns>True if successful</returns>
+        private bool ExportTreatments()
+        {
+            bool bSuccessful = true;
+            CDxPrimaries dxScripts = new CDxPrimaries();
+
+            Debug.Assert(m_tmaxDatabase != null);
+
+            if (m_tmaxSource == null) return false;
+            if (m_tmaxSource.Count == 0) return false;
+
+            //	Make the status form visible
+            SetStatusVisible(true, "Exporting Treatments to ZAP file ...");
+            Cursor.Current = Cursors.WaitCursor;
+
+            //	Get the source records for the operation
+            if (GetSourceZapScripts(dxScripts) == true)
+            {
+                //	Export each script
+                foreach (CDxSecondary O in dxScripts)
+                {
+                    if (CheckAborted() == true)
+                        break;
+
+                    if (ExportTreatments(O) == false)
+                        break;
+
+                }// foreach (CDxSecondary O in dxScripts)
+
+            }// if(GetSourceZapScripts(dxScripts) == true)
+
+            Cursor.Current = Cursors.Default;
+
+            if (m_lFiles > 0)
+            {
+                SetSummary(String.Format("{0} records exported to {1} file(s)", m_lExported, m_lFiles));
+                bSuccessful = true; // At least one file exported
+            }
+
+            return bSuccessful;
+
+        }
+
+        /// <summary>This method is called to export treatments in zap format</summary>
+        /// <returns>True if successful</returns>
+        private bool ExportTreatments(CDxSecondary O)
+        {
+            bool bContinue = true;
+            string strFileSpec = "";
+            string strSourceZapFileSpec = "";
+            bool bFilled = false;
+            Debug.Assert(O != null);
+
+            //	Fill the child collection if necessary
+            if ((O.Tertiaries == null) || (O.Tertiaries.Count == 0))
+            {
+                O.Fill();
+                bFilled = true;
+            }
+
+            //	Are there any records to be exported?
+            if (O.Tertiaries.Count == 0)
+            {
+                AddMessage(m_tmaxErrorBuilder.Message(ERROR_TREATMENT_NOT_PRESENT, O.GetBarcode(false)), TmaxMessageLevels.Warning);
+                return true; // Allow to continue to the next script
+            }
+
+            //	Update the status form
+            SetStatus("Exporting " + O.GetBarcode(false) + " to ZAP ...");                       
+
+            //	Get the path to the output file
+            strFileSpec = GetExportFolderSpec();
+            if ((strFileSpec == null) || (strFileSpec.Length == 0))
+                return true; // Allow to continue to the next script
+
+            //	Export each Zap file
+            foreach (CDxTertiary T in O.Tertiaries)
+            {
+                try
+                {
+                    strSourceZapFileSpec = Database.GetFileSpec(T);
+                    File.Copy(strSourceZapFileSpec, Path.Combine(strFileSpec, Path.GetFileName(strSourceZapFileSpec)), true);
+                }
+                catch 
+                {
+                    AddMessage(m_tmaxErrorBuilder.Message(ERROR_EXPORT_ZAP_FILE, O.GetBarcode(false)), TmaxMessageLevels.Warning);
+                    continue; // Allow to continue to the next script
+                }
+            }
+            // foreach(CDxTertiary T in O.Tertiaries)
+            
+            //	Reset the secondaries if necessary
+            if (bFilled == true)
+                O.Tertiaries.Clear();
+
+            return bContinue;
+        }
+
+
+        // private bool ExportPickList(CTmaxPickItem tmaxPickItem, CDxPickItem dxPickItem)
 		
 		/// <summary>This method is called to export the source records to XML</summary>
 		/// <returns>True if successful</returns>
@@ -3055,7 +3165,54 @@ namespace FTI.Trialmax.Database
 			}
 				
 		}// private bool GetExportFileSpec(CBaseRecord dxExport)
-					
+
+        /// <summary>This method will get the folder to the export file</summary>
+        ///	<param name="dxExport">Exchange interface to the record used to export the file</param>
+        /// <returns>The fully qualified path to the export folder</returns>
+        private string GetExportFolderSpec()
+        {           
+            string strFolderPath = "";
+
+            try
+            {                
+                while (true)
+                {
+                    //	Initialize the file selection dialog
+                    var openFileDialog = new FolderBrowserDialog();
+                    openFileDialog.ShowNewFolderButton = true;
+                 
+                     //	Open the dialog box
+                    if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                    {
+                        strFolderPath = "";
+                    }
+                    else
+                    {
+                        strFolderPath = openFileDialog.SelectedPath;                                         
+                    }
+
+                    //	Clean up
+                    try { openFileDialog.Dispose(); }
+                    catch { }
+                    openFileDialog = null;
+                    Application.DoEvents();
+
+                    //	Stop here if cancelled by the user
+                    if (strFolderPath.Length == 0) return "";                                     
+
+                    break;
+
+                }// while(true)
+
+                return strFolderPath;
+            }
+            catch
+            {
+                OnError(m_tmaxErrorBuilder.Message(ERROR_GET_EXPORT_FILESPEC_EX));
+                return "";
+            }
+        }// private bool GetExportFolderSpec(CBaseRecord dxExport)
+
 		/// <summary>This method will get the path to the export file</summary>
 		///	<param name="dxExport">Exchange interface to the record used to create the file</param>
 		/// <returns>true if the user selects a file for output</returns>
@@ -3488,6 +3645,10 @@ namespace FTI.Trialmax.Database
 			m_tmaxErrorBuilder.FormatStrings.Add("No binders available to export to XML.");
 
 			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to export binders to XML: filename = %1");
+            m_tmaxErrorBuilder.FormatStrings.Add("Unable to export %1. Please check if file exists or destination folder is valid");
+            m_tmaxErrorBuilder.FormatStrings.Add("Not treatments present for %1");
+            m_tmaxErrorBuilder.FormatStrings.Add("Export Treatment is allowed for at Page level only");
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to export to XML");
 
 		}// private void SetErrorStrings()
 
@@ -3540,7 +3701,56 @@ namespace FTI.Trialmax.Database
 			return (CheckAborted() == false);
 		
 		}// private bool OnEncoderStatus(object sender, string strMessage)
-		
+
+        /// <summary>This method is called to get the collection of scripts to be exported to ZAP</summary>
+        /// <param name="dxScripts">The collection in which to store the scripts to be exported</param>
+        /// <returns>True if successful</returns>
+        private bool GetSourceZapScripts(CDxPrimaries dxScripts)
+        {
+            CDxMediaRecord dxSource = null;
+
+            Debug.Assert(m_tmaxDatabase != null);
+
+            if (m_tmaxSource == null) return false;
+            if (m_tmaxSource.Count == 0) return false;
+
+            //	Make the status form visible
+            SetStatus("Loading treatments ...");
+
+            try
+            {
+                //	Clear the caller's collection
+                dxScripts.Clear();
+
+                //	Export each of the records specified by the caller
+                foreach (CTmaxItem O in m_tmaxSource)
+                {
+                    //	Get the source record to be exported
+                    if ((dxSource = GetRecord(O)) == null) continue;
+
+                    //	The source must be a binder or a script
+                    if (dxSource.GetDataType() == TmaxDataTypes.Media)
+                    {
+                        if (dxSource.MediaType == TmaxMediaTypes.Page)
+                        {
+                            if(O.MediaLevel == TmaxMediaLevels.Secondary)
+                                dxScripts.AddList((CDxSecondary)dxSource);
+                            else
+                                AddMessage(m_tmaxErrorBuilder.Message(ERROR_TREATMENT_AT_PAGE), TmaxMessageLevels.Warning);
+                        }
+                    }
+                }
+
+            }
+            catch (System.Exception Ex)
+            {
+                m_tmaxEventSource.FireError(this, "GetSourceZapScripts", m_tmaxErrorBuilder.Message(ERROR_EXPORT_ZAP_EX), Ex);
+                AddMessage(m_tmaxErrorBuilder.Message(ERROR_EXPORT_ZAP_EX), TmaxMessageLevels.FatalError);
+            }
+
+            return (dxScripts.Count > 0);
+        }
+
 		/// <summary>This method is called to get the collection of scripts to be exported to XML</summary>
 		/// <param name="dxScripts">The collection in which to store the scripts to be exported</param>
 		/// <returns>True if successful</returns>

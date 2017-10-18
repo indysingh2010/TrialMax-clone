@@ -201,6 +201,7 @@ namespace FTI.Trialmax.Database
 		public const int ERROR_CASE_DATABASE_COMPACT_EX = ERROR_BASE_DATABASE_LAST + 117;
 		public const int ERROR_CASE_DATABASE_ON_COMPACTOR_FINISHED_EX = ERROR_BASE_DATABASE_LAST + 118;
 		public const int ERROR_CASE_DATABASE_ADD_ZAP_TREATMENT_EX = ERROR_BASE_DATABASE_LAST + 119;
+        public const int ERROR_CASE_DATABASE_IMPORT_TREATMENT_EX = ERROR_BASE_DATABASE_LAST + 120;
 
 		#endregion Error Identifiers
 
@@ -1294,7 +1295,7 @@ namespace FTI.Trialmax.Database
 					//	Do we need to add transcript information?
 					if(dxPrimary.MediaType == TmaxMediaTypes.Deposition)
 					{
-						Debug.Assert(tmaxSource.UserData != null);
+						Debug.Assert(tmaxSource.UserData != null);                       
 						if(tmaxSource.UserData != null)
 							AddTranscript(tmaxSource, dxPrimary);
 					}
@@ -1327,7 +1328,7 @@ namespace FTI.Trialmax.Database
 				}// if((dxPrimary = CreatePrimary(tmaxSource)) != null)
 				
 			}// if(tmaxSource.Files.Count > 0)
-            
+                      
             //	Add each subfolder
             foreach (CTmaxSourceFolder tmaxSubFolder in tmaxSource.SubFolders)
             {
@@ -4791,74 +4792,103 @@ namespace FTI.Trialmax.Database
 		{
 			bool bSuccessful = false;
 
-			try
-			{
-				//	First check to see if the caller is importing objections
-				if(IsObjectionsCommand(tmaxParameters) == true)
-					return ImportObjections(tmaxTarget, tmaxParameters, tmaxResults);
+            try
+            {
+                //	First check to see if the caller is importing objections
+                if (IsObjectionsCommand(tmaxParameters) == true)
+                    return ImportObjections(tmaxTarget, tmaxParameters, tmaxResults);
+                else if (IsTreatmentCommand(tmaxParameters) == true)
+                    return ImportTreatments(tmaxTarget, tmaxParameters, tmaxResults);
 
-				//	Prepare the manager for a new operation
-				m_tmaxImportManager.ImportOptions = m_tmaxStationOptions.ImportOptions;
-				m_tmaxImportManager.Initialize(tmaxParameters, tmaxResults);
-				m_tmaxImportManager.SetTarget(tmaxTarget);
-				
-				//	We MUST have a valid import format
-				if(m_tmaxImportManager.Format == TmaxImportFormats.Unknown)
-				{
-					Debug.Assert(m_tmaxImportManager.Format != TmaxImportFormats.Unknown, "Unknown import format specification");
-					return false;
-				}
-				
-				//	Prompt the user for the list of files to be imported
-				if(m_tmaxImportManager.GetSourceFiles() == false) return false;
-			
-				//	Execute the import operation
-				if(m_tmaxImportManager.Import() == true)
-				{
-					//	Should we store the results in the target collection
-					if((tmaxTarget != null) && (tmaxResults != null) && (tmaxResults.Added != null))
-					{
-						tmaxTarget.ReturnItem = new CTmaxItem();
-						tmaxTarget.ReturnItem.DataType = TmaxDataTypes.Media;
-						tmaxTarget.ReturnItem.MediaType = TmaxMediaTypes.Script;
-						
-						foreach(CTmaxItem O in tmaxResults.Added)
-						{
-							//	Only include in the return results if this was
-							//	NOT an update of an original record
-							if(O.UserData1 == null)// NO original source record
-							{
-								try
-								{
-									tmaxTarget.ReturnItem.SubItems.Add(O);
-								}
-								catch
-								{
-								}
-							}
-							else
-							{
-								//	Add to source items collection to allow the caller
-								//	to isolate those that were updated as opposed to added
-								if(tmaxTarget.ReturnItem.SourceItems == null)
-									tmaxTarget.ReturnItem.SourceItems = new CTmaxItems();
-									
-								tmaxTarget.ReturnItem.SourceItems.Add(O);
-							}
-							
-						}
-					
-					}
+                //	Prepare the manager for a new operation
+                m_tmaxImportManager.ImportOptions = m_tmaxStationOptions.ImportOptions;
+                m_tmaxImportManager.Initialize(tmaxParameters, tmaxResults);
+                m_tmaxImportManager.SetTarget(tmaxTarget);
 
-					bSuccessful = true;
-					
-				}// if(m_tmaxImportManager.Import() == true)
-			
-			}
-			catch(System.Exception Ex)
-			{
-                FireError(this,"Import",this.ExBuilder.Message(ERROR_CASE_DATABASE_IMPORT_EX),Ex);
-			}
+                //	We MUST have a valid import format
+                if (m_tmaxImportManager.Format == TmaxImportFormats.Unknown)
+                {
+                    Debug.Assert(m_tmaxImportManager.Format != TmaxImportFormats.Unknown, "Unknown import format specification");
+                    return false;
+                }
+
+                ////For Treatment import dont not take usual import code flow. Instead resuse existing Create ZAP Treatment code flow 
+                //if (m_tmaxImportManager.Format == TmaxImportFormats.Treatments)
+                //{
+                //    //	Prompt the user for the list of files to be imported
+                //    if (m_tmaxImportManager.GetSourceFolder() == false) return false;
+
+                //    string tempPath = Path.Combine(System.IO.Path.GetTempPath(), "treatments");
+
+                //    if (!Directory.Exists(tempPath))
+                //        Directory.CreateDirectory(tempPath);
+
+                //    foreach(string file in  Directory.GetFiles(m_tmaxImportManager.SourceFolder))
+                //    {
+                //        File.Copy(file, Path.Combine(tempPath, Path.GetFileName(file)));
+
+                //        tmaxTarget.SourceFolder = new CTmaxSourceFolder();
+                //        tmaxTarget.SourceFolder.Path = tempPath;
+                //        tmaxTarget.SourceFolder.GetFiles();
+
+                //        Add(tmaxTarget, tmaxParameters, tmaxResults);
+
+                //        File.Delete(Path.Combine(tempPath, Path.GetFileName(file)));
+                //    }
+
+                //    if (Directory.Exists(tempPath))
+                //        Directory.Delete(tempPath);
+                //}
+
+                if (m_tmaxImportManager.GetSourceFiles() == false) return false;
+
+                //	Execute the import operation
+                if (m_tmaxImportManager.Import() == true)
+                {
+                    //	Should we store the results in the target collection
+                    if ((tmaxTarget != null) && (tmaxResults != null) && (tmaxResults.Added != null))
+                    {
+                        tmaxTarget.ReturnItem = new CTmaxItem();
+                        tmaxTarget.ReturnItem.DataType = TmaxDataTypes.Media;
+                        tmaxTarget.ReturnItem.MediaType = TmaxMediaTypes.Script;
+
+                        foreach (CTmaxItem O in tmaxResults.Added)
+                        {
+                            //	Only include in the return results if this was
+                            //	NOT an update of an original record
+                            if (O.UserData1 == null)// NO original source record
+                            {
+                                try
+                                {
+                                    tmaxTarget.ReturnItem.SubItems.Add(O);
+                                }
+                                catch
+                                {
+                                }
+                            }
+                            else
+                            {
+                                //	Add to source items collection to allow the caller
+                                //	to isolate those that were updated as opposed to added
+                                if (tmaxTarget.ReturnItem.SourceItems == null)
+                                    tmaxTarget.ReturnItem.SourceItems = new CTmaxItems();
+
+                                tmaxTarget.ReturnItem.SourceItems.Add(O);
+                            }
+
+                        }
+
+                    }
+
+                    bSuccessful = true;
+
+                }// if(m_tmaxImportManager.Import() == true)
+
+            }
+            catch (System.Exception Ex)
+            {
+                FireError(this, "Import", this.ExBuilder.Message(ERROR_CASE_DATABASE_IMPORT_EX), Ex);
+            }
 			finally
 			{
 			}
@@ -16648,8 +16678,86 @@ namespace FTI.Trialmax.Database
 			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to compact the database: %1");
 			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while handling the compactor finished event");
 			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to add a treatment using this zap file: %1");
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to import a treatment using this zap file: %1");
 
 		}// protected override void SetErrorStrings()
+
+        /// <summary>Called to determine if the parameter for importing treatments has been set</summary>
+        /// <param name="tmaxParameters">The parameters passed with the command event arguments</param>
+        /// <returns>true if the Import Treatment parameter has been set</returns>
+        public bool IsTreatmentCommand(CTmaxParameters tmaxParameters)
+        {
+            CTmaxParameter tmaxParameter = null;
+            bool bTreatments = false;
+            TmaxImportFormats iFormat;
+
+            if (bTreatments != null)
+            {
+                if ((tmaxParameter = tmaxParameters.Find(TmaxCommandParameters.ImportFormat)) != null)
+                {
+                    iFormat = (TmaxImportFormats)(tmaxParameter.AsInteger());
+
+                    if (iFormat == TmaxImportFormats.Treatments)
+                        bTreatments = true;
+                }
+            }
+
+            return bTreatments;
+
+        }// public bool IsTreatmentCommand(CTmaxParameters tmaxParameters)
+
+        /// <summary>This method will import treatments/ZAP files from folder selected by the user</summary>
+        /// <param name="tmaxItem">The TrialMax event item used to perform the operation</param>
+        /// <param name="tmaxParameters">The parameters passed with the command event arguments</param>
+        /// <param name="tmaxResults">Collection to populate with items that represent the new records</param>
+        /// <returns>true if successful</returns>
+        private bool ImportTreatments(CTmaxItem tmaxItem, CTmaxParameters tmaxParameters, CTmaxDatabaseResults tmaxResults)
+        {
+            bool bSuccessful = false;
+            string fileName = "";
+            string zapFilePattern = "*.zap";
+            try
+            {
+                //	Prompt the user for the list of files to be imported
+                if (m_tmaxImportManager.GetSourceFolder() == false) return false;
+
+                //create "treatments" folder under Temp folder. 
+                //Temp folder usually contains too many files, so getting files opertion becomes slow, so better create separate folder under Temp
+                string tempPath = Path.Combine(System.IO.Path.GetTempPath(), "treatments");
+
+                if (!Directory.Exists(tempPath))
+                    Directory.CreateDirectory(tempPath);
+
+                foreach (string file in Directory.GetFiles(m_tmaxImportManager.SourceFolder, zapFilePattern))
+                {
+                    fileName = file;
+                    //copy source zap to temp folder similar to what is being done in Add method
+                    File.Copy(file, Path.Combine(tempPath, Path.GetFileName(file)));
+
+                    //specify source folder path
+                    tmaxItem.SourceFolder = new CTmaxSourceFolder();
+                    tmaxItem.SourceFolder.Path = tempPath;
+                    tmaxItem.SourceFolder.GetFiles();
+
+                    //use existing Add method for ZAP import. This Add method is same when we create a new treatment. Whole logic remains same and reused here
+                    Add(tmaxItem, tmaxParameters, tmaxResults);
+
+                    // delete temp file after copy
+                    File.Delete(Path.Combine(tempPath, Path.GetFileName(file))); 
+                }
+
+                //remove temp "treatments" folder
+                if (Directory.Exists(tempPath))
+                    Directory.Delete(tempPath);
+            }
+            catch (System.Exception Ex)
+            {
+                FireError(this, "ImportTreatments", this.ExBuilder.Message(ERROR_CASE_DATABASE_IMPORT_TREATMENT_EX, fileName), Ex);
+            }            
+
+            return bSuccessful;
+
+        }// private bool ImportTreatments(CTmaxItem tmaxItem, CTmaxParameters tmaxParameters, CTmaxDatabaseResults tmaxResults)
 
 		/// <summary>Called to determine if the parameter for declaring objections has been set</summary>
 		/// <param name="tmaxParameters">The parameters passed with the command event arguments</param>
@@ -17237,7 +17345,7 @@ namespace FTI.Trialmax.Database
 
 		#endregion Properties
 				
-	}// public class CTmaxCaseDatabase
+	}// public class CTmaxCaseDatabase    
 
 }// namespace FTI.Trialmax.Database
 

@@ -83,6 +83,7 @@ namespace FTI.Trialmax.Panes
 			ExportCodesDatabase,
 			ExportLoadFile,
 			ExportAsciiObjections,
+            ExportTreatments,
 			Preferences,
 			RefreshSuperNodes,
 			New,
@@ -141,6 +142,7 @@ namespace FTI.Trialmax.Panes
 			ImportAsciiBinders,
 			ImportXmlScripts,
 			ImportXmlBinders,
+            ImportTreatments,
 			SetFilter,
 			RefreshFiltered,
 			BulkUpdate,
@@ -1805,14 +1807,15 @@ namespace FTI.Trialmax.Panes
 					return false;
 
 				case TreePaneCommands.ExportMenu:
-				
-					return (GetCommandEnabled(TreePaneCommands.ExportText, tmaxNodes) ||
+
+                    return (GetCommandEnabled(TreePaneCommands.ExportTreatments, tmaxNodes) ||
 						    GetCommandEnabled(TreePaneCommands.ExportVideo, tmaxNodes) ||
 							GetCommandEnabled(TreePaneCommands.ExportLoadFile, tmaxNodes) ||
 							GetCommandEnabled(TreePaneCommands.ExportXmlScript, tmaxNodes) ||
 							GetCommandEnabled(TreePaneCommands.ExportXmlBinder, tmaxNodes) ||
 							GetCommandEnabled(TreePaneCommands.ExportCodes, tmaxNodes) ||
-							GetCommandEnabled(TreePaneCommands.ExportAsciiObjections, tmaxNodes));
+							GetCommandEnabled(TreePaneCommands.ExportAsciiObjections, tmaxNodes) ||
+                            GetCommandEnabled(TreePaneCommands.ExportTreatments, tmaxNodes));
 							
 				case TreePaneCommands.ExportText:
 				case TreePaneCommands.ExportXmlScript:
@@ -1822,6 +1825,7 @@ namespace FTI.Trialmax.Panes
 				case TreePaneCommands.ExportCodes:
 				case TreePaneCommands.ExportCodesDatabase:
 				case TreePaneCommands.ExportAsciiObjections:
+                case TreePaneCommands.ExportTreatments:
 				
 					tmaxItems = GetCmdExportItems(tmaxNodes, GetExportFormat(eCommand), (eCommand == TreePaneCommands.ExportAsciiObjections), true);
 					return ((tmaxItems != null) && (tmaxItems.Count > 0));
@@ -2361,6 +2365,7 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool118 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ExportLoadFile");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool119 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ExportVideo");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool120 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ExportAsciiObjections");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool162 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ExportTreatments");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool121 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Clean");
             Infragistics.Win.Appearance appearance58 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool122 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ScriptNewBarcodes");
@@ -2386,6 +2391,7 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool132 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ImportAsciiScripts");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool133 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ImportXmlScripts");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool134 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ImportAsciiScripts");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool164 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ImportTreatments");
             Infragistics.Win.Appearance appearance68 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool135 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ImportAsciiBinders");
             Infragistics.Win.Appearance appearance69 = new Infragistics.Win.Appearance();
@@ -2401,7 +2407,10 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.Appearance appearance74 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool141 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ImportXmlScripts");
             Infragistics.Win.Appearance appearance75 = new Infragistics.Win.Appearance();
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool165 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ImportTreatments");
+
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool142 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ExportXmlScript");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool163 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ExportTreatments");
             Infragistics.Win.Appearance appearance76 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool143 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ExportCodesDatabase");
             Infragistics.Win.Appearance appearance77 = new Infragistics.Win.Appearance();
@@ -2858,6 +2867,7 @@ namespace FTI.Trialmax.Panes
             popupMenuTool28.Tools.AddRange(new Infragistics.Win.UltraWinToolbars.ToolBase[] {
             buttonTool113,
             buttonTool114,
+            buttonTool162,
             buttonTool115,
             buttonTool116,
             buttonTool117,
@@ -2899,7 +2909,8 @@ namespace FTI.Trialmax.Panes
             buttonTool130,
             buttonTool131,
             buttonTool132,
-            buttonTool133});
+            buttonTool133,
+            buttonTool164});
             appearance68.Image = 59;
             buttonTool134.SharedProps.AppearancesSmall.Appearance = appearance68;
             buttonTool134.SharedProps.Caption = "Script(s) from Text File(s) ...";
@@ -2925,9 +2936,17 @@ namespace FTI.Trialmax.Panes
             appearance75.Image = 60;
             buttonTool141.SharedProps.AppearancesSmall.Appearance = appearance75;
             buttonTool141.SharedProps.Caption = "Script(s) from XML File ...";
+
+            buttonTool165.SharedProps.AppearancesSmall.Appearance = appearance75;
+            buttonTool165.SharedProps.Caption = "Treatment(s) from ZAP File ...";
+
             appearance76.Image = 58;
             buttonTool142.SharedProps.AppearancesSmall.Appearance = appearance76;
             buttonTool142.SharedProps.Caption = "To Script XML File ...";
+
+            buttonTool163.SharedProps.AppearancesSmall.Appearance = appearance76;
+            buttonTool163.SharedProps.Caption = "Treatments ...";
+
             appearance77.Image = 61;
             buttonTool143.SharedProps.AppearancesSmall.Appearance = appearance77;
             buttonTool143.SharedProps.Caption = "To Fielded Data Database ...";
@@ -3059,6 +3078,8 @@ namespace FTI.Trialmax.Panes
             buttonTool140,
             buttonTool141,
             buttonTool142,
+            buttonTool163,
+            buttonTool165,
             buttonTool143,
             buttonTool144,
             buttonTool145,
@@ -5098,7 +5119,7 @@ namespace FTI.Trialmax.Panes
 			{
 				//	Are we importing binders?
 				switch(eCommand)
-				{
+				{                  
 					case TreePaneCommands.ImportAsciiBinders:
 					case TreePaneCommands.ImportXmlBinders:
 					
@@ -5144,8 +5165,18 @@ namespace FTI.Trialmax.Panes
 					tmaxItem.MediaType = TmaxMediaTypes.Script;
 					if(eCommand == TreePaneCommands.ImportXmlScripts)
 						tmaxParameters.Add(TmaxCommandParameters.ImportFormat, (int)TmaxImportFormats.XmlScript);
-					else
-						tmaxParameters.Add(TmaxCommandParameters.ImportFormat, (int)TmaxImportFormats.AsciiMedia);
+                    else if (eCommand == TreePaneCommands.ImportTreatments)
+                    {                      
+                        tmaxItem.MediaType = TmaxMediaTypes.Treatment;
+                        tmaxItem.IPrimary = tmaxNodes.GetFirst().IPrimary;
+                        tmaxItem.ISecondary = tmaxNodes.GetFirst().ISecondary;
+                        tmaxItem.ITertiary = tmaxNodes.GetFirst().ITertiary;
+                        tmaxItem.MediaType = tmaxNodes.GetFirst().MediaType;
+                       
+                        tmaxParameters.Add(TmaxCommandParameters.ImportFormat, (int)TmaxImportFormats.Treatments);
+                    }
+                    else
+                        tmaxParameters.Add(TmaxCommandParameters.ImportFormat, (int)TmaxImportFormats.AsciiMedia);
 				}
 
 				FireCommand(TmaxCommands.Import, tmaxItem, tmaxParameters);
@@ -5580,10 +5611,21 @@ namespace FTI.Trialmax.Panes
 							tmaxItem = GetCommandItem(O, false);
 							tmaxItems.Add(tmaxItem);
 							break;
-							
+
+                        case TmaxExportFormats.Treatments:
+
+                            //	Is this a document?
+                            if (O.MediaType == TmaxMediaTypes.Page)
+                            {
+                                tmaxItem = GetCommandItem(O, false);
+                                tmaxItems.Add(tmaxItem);
+                            }
+                            break;
+
 						case TmaxExportFormats.AsciiMedia:
 						case TmaxExportFormats.XmlScript:
 						case TmaxExportFormats.Video:
+                       
 						
 							//	Is this a script?
 							if(O.MediaType == TmaxMediaTypes.Script)
@@ -6494,7 +6536,7 @@ namespace FTI.Trialmax.Panes
 						
 						OnCmdNewBarcodes(GetSelection(), true, false);
 						break;
-						
+                                         
 					case TreePaneCommands.ExportText:
 					case TreePaneCommands.ExportXmlScript:
 					case TreePaneCommands.ExportXmlBinder:
@@ -6502,6 +6544,7 @@ namespace FTI.Trialmax.Panes
 					case TreePaneCommands.ExportCodes:
 					case TreePaneCommands.ExportCodesDatabase:
 					case TreePaneCommands.ExportLoadFile:
+                    case TreePaneCommands.ExportTreatments:
 					
 						OnCmdExport(GetSelections(true), GetExportFormat(eCommand), false);
 						break;
@@ -6515,6 +6558,7 @@ namespace FTI.Trialmax.Panes
 					case TreePaneCommands.ImportXmlBinders:
 					case TreePaneCommands.ImportAsciiScripts:
 					case TreePaneCommands.ImportXmlScripts:
+                    case TreePaneCommands.ImportTreatments:
 					
 						OnCmdImport(GetSelections(true), eCommand);
 						break;
@@ -6717,8 +6761,33 @@ namespace FTI.Trialmax.Panes
                 {
                     MessageBox.Show(e.Message, "Incorrect File");
                 }
-
             }
+            //this.SelectXmltFileForGeneratingAudioWaveform.Title = "Select Xmlt File for Generating Audio Waveform";
+            //DialogResult result = SelectXmltFileForGeneratingAudioWaveform.ShowDialog(); // Show the dialog
+            //if (result == DialogResult.OK) // Test result.
+            //{
+            //    try
+            //    {
+            //        String MediaName = tmaxNodes[0].IPrimary.ToString();
+            //        string File = SelectXmltFileForGeneratingAudioWaveform.FileName;
+
+            //        if (Path.GetExtension(File) != ".xmlt") throw new Exception("Please select an xmlt file relevant to this deposition.");
+            //        XmlDocument xmlDoc = new XmlDocument();
+
+            //        xmlDoc.Load(File);
+
+            //        XmlNodeList DepositionInfo = xmlDoc.GetElementsByTagName("deposition");
+            //        XmlNodeList SegmentInfo = xmlDoc.GetElementsByTagName("segment");
+
+            //        if (MediaName != DepositionInfo[0].Attributes["name"].Value) throw new Exception("The xmlt file does not belong to this Deposition");
+            //        m_tmaxDatabase.AddAudioWaveform(SegmentInfo);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        MessageBox.Show(e.Message, "Incorrect File");
+            //    }
+
+            //}
         }// protected virtual void OnCmdAddAudioWaveform(CTmaxMediaTreeNodes tmaxNodes)
 
 		/// <summary>Traps the ToolClick event fired by the toolbar manager</summary>
@@ -7159,6 +7228,10 @@ namespace FTI.Trialmax.Panes
 				case TreePaneCommands.ExportXmlScript:
 				
 					return TmaxExportFormats.XmlScript;
+
+                case TreePaneCommands.ExportTreatments:
+
+                    return TmaxExportFormats.Treatments;
 					
 				case TreePaneCommands.ExportXmlBinder:
 				
