@@ -12242,7 +12242,8 @@ void CMainView::SetDisplay(short sState)
 //	::ShowCursor(100);
 	//AfxGetApp()->LoadCursorA(IDC_CURSOR1);
 	//m_ctrlTMView->SetFocus();
-	
+	//AfxMessageBox("hi");
+
 	m_bDoUpdates = FALSE;
 
 	//	Make sure the the task bar remains invisible while we move the windows around
@@ -12388,6 +12389,16 @@ void CMainView::SetDisplay(short sState)
 			{
 				m_ctrlTMMovie.ShowWindow(SW_SHOW);
 				m_ctrlTMMovie.ShowVideo(TRUE);
+			
+			//hotfix for showing/hiding the video bar on startup
+				if (m_aToolbars[sState].bShow) 
+				{
+					m_ctrlTMMovie.ShowVideoBar();
+				}
+				else
+				{
+					m_ctrlTMMovie.HideVideoBar();
+				}
 			}
 
 			//	Make sure the other controls are invisible
@@ -12514,8 +12525,20 @@ void CMainView::SetDisplay(short sState)
 			{
 				m_ctrlTMMovie.ShowWindow(SW_SHOW);
 				m_ctrlTMMovie.ShowVideo(TRUE);
+
+				//hotfix for showing/hiding the video bar on startup
+				if (m_aToolbars[sState].bShow) 
+				{
+					m_ctrlTMMovie.ShowVideoBar();
+				}
+				else
+				{
+					m_ctrlTMMovie.HideVideoBar();
+				}
+
 			}
 
+			
 			//	We have to do this because some drivers do not properly draw the
 			//	video if the loaded file does not change
 			m_ctrlTMMovie.Invalidate();
