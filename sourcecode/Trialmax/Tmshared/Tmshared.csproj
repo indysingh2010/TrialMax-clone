@@ -125,6 +125,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Config.cs" />
+    <Compile Include="CustomMessageBox.cs" />
     <Compile Include="Diagnostic.cs">
       <SubType>Code</SubType>
     </Compile>
