@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Win32;
+using System.Xml;
 using System.Drawing;
 using FTI.Shared;
 using FTI.Shared.Trialmax;
@@ -439,6 +440,8 @@ namespace FTI.Trialmax.Database
         /// <summary>Local variable to log user level details</summary>
         private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
+        /// <summary>Local variable to store user input in Waveform message box</summary>
+        private bool GenerateWaveFormForAll = false;
 		#endregion Private Members
 		
 		#region Public Methods
@@ -5673,6 +5676,8 @@ namespace FTI.Trialmax.Database
                     RegThread = null;
                 }
                 RegThread = new Thread(new ThreadStart(this.RegisterThreadProc));
+
+                
                 RegThread.Start();
             }
             catch (System.Exception Ex)
@@ -9088,6 +9093,7 @@ namespace FTI.Trialmax.Database
                 CalculateTotalPages(m_RegSourceFolder);
                 m_cfRegisterProgress.TotalPages = m_totalPages*2;//33% Detection 33% extraction and 33% conversion;
                 SetRegisterProgress("Registration in progress ...");
+                this.GenerateWaveFormForAll = false;
                 //	Add the new records to the database
                 if ((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
                     AddSource(m_RegSourceFolder);
@@ -10036,10 +10042,27 @@ namespace FTI.Trialmax.Database
                     depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
                 }
 
-                for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                if (m_tmaxAppOptions.ShowAudioWaveform == true)
                 {
-                    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
-                    AudioWaveformGenerator.GenerateAudioWave(filePath);
+                    CustomMessageDilaogResult generateWaveform = CustomMessageDilaogResult.No;
+                    if (!GenerateWaveFormForAll)
+                    {
+                        generateWaveform = CustomMesssageBox.ShowDialog("Do you want to generate the Audio Waveform alongwith the xmlt file?",
+                        "Generate AudioWaveform?",
+                        CustomMessageButtonType.YesYesToAllNo);                        
+                    }
+
+                    if (generateWaveform == CustomMessageDilaogResult.YesToAll)
+                        GenerateWaveFormForAll = true;
+
+                    if (generateWaveform == CustomMessageDilaogResult.Yes || GenerateWaveFormForAll)
+                    {
+                        for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                        {
+                            string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
+                            AudioWaveformGenerator.GenerateAudioWave(filePath);
+                        }
+                    }
                 }
 
 				
@@ -16886,6 +16909,21 @@ namespace FTI.Trialmax.Database
 			return bSuccessful;
 
 		}// public bool FilterObjections(CTmaxItems tmaxItems, CTmaxParameters tmaxParameters)
+
+
+        /// <summary>This method will add a waveform for an existing deposition that has already been added to the media tree</summary>
+        /// <param name="SegmentInfo">The segment Information is passed from the Treepane.cs file</param>
+        /// <returns>none</returns>
+        public void AddAudioWaveform(XmlNodeList SegmentInfo)
+        {
+            string m_currentVideoPath = m_aCaseFolders[5].Path;
+
+            for (int index = 0; index < SegmentInfo.Count; index++)
+            {
+                string filePath = m_currentVideoPath + "\\" + SegmentInfo[index].Attributes["filename"].Value;
+                AudioWaveformGenerator.GenerateAudioWave(filePath);
+            }
+        }// public void AddAudioWaveform(XmlNodeList SegmentInfo)
 
 		#endregion Private Methods
 		

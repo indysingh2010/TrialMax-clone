@@ -7843,7 +7843,7 @@ void CMainView::OnShadeOnCallout()
 //==============================================================================
 void CMainView::OnShowToolbar()
 {
-	
+	//m_ctrlTMMovie.testFunction();
 	//	Is this command enabled?
 	if(!IsCommandEnabled(TMAX_SHOWTOOLBAR) || (m_pToolbar == 0)) return;
 
@@ -7858,13 +7858,18 @@ void CMainView::OnShowToolbar()
 		//	Toggle the visibility of the toolbar
 		if(m_pToolbar->IsWindowVisible())
 		{
+			m_ctrlTMMovie.HideVideoBar();
 			SetControlBar(CONTROL_BAR_NONE);
 			m_pToolbar->ShowWindow(SW_HIDE);
 			if (m_bIsStatusBarShowing)
 				SetControlBar(CONTROL_BAR_STATUS);
 		}
 		else
+		{
+			m_ctrlTMMovie.ShowVideoBar();
 			SetControlBar(CONTROL_BAR_TOOLS);
+		
+		}
 	}
 }
 
@@ -12383,6 +12388,16 @@ void CMainView::SetDisplay(short sState)
 			{
 				m_ctrlTMMovie.ShowWindow(SW_SHOW);
 				m_ctrlTMMovie.ShowVideo(TRUE);
+
+				//hotfix for showing/hiding the video bar on startup
+				if (m_aToolbars[sState].bShow) 
+				{
+					m_ctrlTMMovie.ShowVideoBar();
+				}
+				else
+				{
+					m_ctrlTMMovie.HideVideoBar();
+				}
 			}
 
 			//	Make sure the other controls are invisible
@@ -12509,6 +12524,16 @@ void CMainView::SetDisplay(short sState)
 			{
 				m_ctrlTMMovie.ShowWindow(SW_SHOW);
 				m_ctrlTMMovie.ShowVideo(TRUE);
+
+				//hotfix for showing/hiding the video bar on startup
+				if (m_aToolbars[sState].bShow) 
+				{
+					m_ctrlTMMovie.ShowVideoBar();
+				}
+				else
+				{
+					m_ctrlTMMovie.HideVideoBar();
+				}
 			}
 
 			//	We have to do this because some drivers do not properly draw the

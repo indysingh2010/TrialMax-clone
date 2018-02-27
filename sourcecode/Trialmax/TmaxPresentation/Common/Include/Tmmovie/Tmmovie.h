@@ -168,6 +168,8 @@ public:
 	double GetDuration(LPCTSTR lpszFilename);
 	short UpdateScreenPosition();
 	BOOL GetIsAudio();
+	void ShowVideoBar();
+	void HideVideoBar();
 };
 
 //{{AFX_INSERT_LOCATION}}

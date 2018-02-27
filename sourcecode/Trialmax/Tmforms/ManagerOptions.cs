@@ -143,6 +143,7 @@ namespace FTI.Trialmax.Forms
 		/// <summary>Audio encoder for selected profile</summary>
 		private System.Windows.Forms.Label m_ctrlProfileAudio;
 		private System.Windows.Forms.Button m_ctrlViewCodecs;
+        private System.Windows.Forms.CheckBox m_ctrlShowAudioWaveform;
 		
 		/// <summary>Check box to set Profile Preferred flag</summary>
 		private System.Windows.Forms.CheckBox m_ctrlPreferred;
@@ -224,6 +225,7 @@ namespace FTI.Trialmax.Forms
 					m_ctrlLogDiagnostics.Checked = m_tmaxManagerOptions.LogDiagnostics;
 					m_ctrlWarnBinderDuplicates.Checked = m_tmaxManagerOptions.WarnBinderDuplicates;
 					m_ctrlFilterOnOpen.Checked = m_tmaxManagerOptions.FilterOnOpen;
+                    m_ctrlShowAudioWaveform.Checked = m_tmaxManagerOptions.ShowAudioWaveform;
 					
 					//	Fill the list of source types
 					if((m_tmaxSourceTypes != null) && (m_tmaxSourceTypes.Count > 0))
@@ -274,6 +276,7 @@ namespace FTI.Trialmax.Forms
 					m_tmaxManagerOptions.LoadLastCase = m_ctrlLoadLastCase.Checked;
 					m_tmaxManagerOptions.WarnBinderDuplicates = m_ctrlWarnBinderDuplicates.Checked;
 					m_tmaxManagerOptions.FilterOnOpen = m_ctrlFilterOnOpen.Checked;
+                    m_tmaxManagerOptions.ShowAudioWaveform = m_ctrlShowAudioWaveform.Checked;
 
 					//	Make sure the current source type is up to date
 					SetSourceFilter(true, false);
@@ -357,412 +360,426 @@ namespace FTI.Trialmax.Forms
 		/// <summary>Required method for Designer support</summary>
 		private void InitializeComponent()
 		{
-			Infragistics.Win.UltraWinTabControl.UltraTab ultraTab1 = new Infragistics.Win.UltraWinTabControl.UltraTab();
-			Infragistics.Win.UltraWinTabControl.UltraTab ultraTab2 = new Infragistics.Win.UltraWinTabControl.UltraTab();
-			Infragistics.Win.UltraWinTabControl.UltraTab ultraTab3 = new Infragistics.Win.UltraWinTabControl.UltraTab();
-			Infragistics.Win.UltraWinTabControl.UltraTab ultraTab4 = new Infragistics.Win.UltraWinTabControl.UltraTab();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(CFManagerOptions));
-			this.m_ctrlGeneralPage = new Infragistics.Win.UltraWinTabControl.UltraTabPageControl();
-			this.m_ctrlFilterOnOpen = new System.Windows.Forms.CheckBox();
-			this.m_ctrlWarnBinderDuplicates = new System.Windows.Forms.CheckBox();
-			this.m_ctrlShowForeignBarcodes = new System.Windows.Forms.CheckBox();
-			this.m_ctrlLoadLastCase = new System.Windows.Forms.CheckBox();
-			this.m_ctrlLogDiagnostics = new System.Windows.Forms.CheckBox();
-			this.m_ctrlEnableDiagnostics = new System.Windows.Forms.CheckBox();
-			this.m_ctrlShowErrorMessages = new System.Windows.Forms.CheckBox();
-			this.m_ctrlFiltersPage = new Infragistics.Win.UltraWinTabControl.UltraTabPageControl();
-			this.m_ctrlFiltersPrompt3 = new System.Windows.Forms.Label();
-			this.m_ctrlFiltersPrompt2 = new System.Windows.Forms.Label();
-			this.m_ctrlFiltersPrompt1 = new System.Windows.Forms.Label();
-			this.m_ctrlSourceFilterLabel = new System.Windows.Forms.Label();
-			this.m_ctrlSourceTypesLabel = new System.Windows.Forms.Label();
-			this.m_ctrlSourceFilter = new System.Windows.Forms.TextBox();
-			this.m_ctrlSourceTypes = new System.Windows.Forms.ListBox();
-			this.m_ctrlProfilesPage = new Infragistics.Win.UltraWinTabControl.UltraTabPageControl();
-			this.m_ctrlViewCodecs = new System.Windows.Forms.Button();
-			this.m_ctrlProfileCodecsGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlProfileAudio = new System.Windows.Forms.Label();
-			this.m_ctrlProfileVideo = new System.Windows.Forms.Label();
-			this.m_ctrlProfilesLabel = new System.Windows.Forms.Label();
-			this.m_ctrlPreferred = new System.Windows.Forms.CheckBox();
-			this.m_ctrlProfiles = new System.Windows.Forms.ListBox();
-			this.m_ctrlUpdatesPage = new Infragistics.Win.UltraWinTabControl.UltraTabPageControl();
-			this.m_ctrlUpdatesAlternateSite = new System.Windows.Forms.TextBox();
-			this.m_ctrlUpdatesAlternateSiteLabel = new System.Windows.Forms.Label();
-			this.m_ctrlUpdatesPrimarySite = new System.Windows.Forms.TextBox();
-			this.m_ctrlUpdatesPrimarySiteLabel = new System.Windows.Forms.Label();
-			this.m_ctrlUpdatesGroupId = new System.Windows.Forms.TextBox();
-			this.m_ctrlUpdatesGroupIdLabel = new System.Windows.Forms.Label();
-			this.m_ctrlCancel = new System.Windows.Forms.Button();
-			this.m_ctrlOk = new System.Windows.Forms.Button();
-			this.m_ctrlUltraTabs = new Infragistics.Win.UltraWinTabControl.UltraTabControl();
-			this.m_ctrlUltraSharedPage = new Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage();
-			this.m_ctrlGeneralPage.SuspendLayout();
-			this.m_ctrlFiltersPage.SuspendLayout();
-			this.m_ctrlProfilesPage.SuspendLayout();
-			this.m_ctrlProfileCodecsGroup.SuspendLayout();
-			this.m_ctrlUpdatesPage.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraTabs)).BeginInit();
-			this.m_ctrlUltraTabs.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// m_ctrlGeneralPage
-			// 
-			this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlFilterOnOpen);
-			this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlWarnBinderDuplicates);
-			this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlShowForeignBarcodes);
-			this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlLoadLastCase);
-			this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlLogDiagnostics);
-			this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlEnableDiagnostics);
-			this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlShowErrorMessages);
-			this.m_ctrlGeneralPage.Location = new System.Drawing.Point(-10000, -10000);
-			this.m_ctrlGeneralPage.Name = "m_ctrlGeneralPage";
-			this.m_ctrlGeneralPage.Size = new System.Drawing.Size(528, 198);
-			// 
-			// m_ctrlFilterOnOpen
-			// 
-			this.m_ctrlFilterOnOpen.Location = new System.Drawing.Point(12, 112);
-			this.m_ctrlFilterOnOpen.Name = "m_ctrlFilterOnOpen";
-			this.m_ctrlFilterOnOpen.Size = new System.Drawing.Size(180, 16);
-			this.m_ctrlFilterOnOpen.TabIndex = 4;
-			this.m_ctrlFilterOnOpen.Text = "Load filtered on case open";
-			// 
-			// m_ctrlWarnBinderDuplicates
-			// 
-			this.m_ctrlWarnBinderDuplicates.Location = new System.Drawing.Point(12, 88);
-			this.m_ctrlWarnBinderDuplicates.Name = "m_ctrlWarnBinderDuplicates";
-			this.m_ctrlWarnBinderDuplicates.Size = new System.Drawing.Size(180, 16);
-			this.m_ctrlWarnBinderDuplicates.TabIndex = 3;
-			this.m_ctrlWarnBinderDuplicates.Text = "Warn duplicate binder entries";
-			// 
-			// m_ctrlShowForeignBarcodes
-			// 
-			this.m_ctrlShowForeignBarcodes.Location = new System.Drawing.Point(12, 40);
-			this.m_ctrlShowForeignBarcodes.Name = "m_ctrlShowForeignBarcodes";
-			this.m_ctrlShowForeignBarcodes.Size = new System.Drawing.Size(180, 16);
-			this.m_ctrlShowForeignBarcodes.TabIndex = 1;
-			this.m_ctrlShowForeignBarcodes.Text = "Show foreign barcodes";
-			// 
-			// m_ctrlLoadLastCase
-			// 
-			this.m_ctrlLoadLastCase.Location = new System.Drawing.Point(12, 16);
-			this.m_ctrlLoadLastCase.Name = "m_ctrlLoadLastCase";
-			this.m_ctrlLoadLastCase.Size = new System.Drawing.Size(180, 16);
-			this.m_ctrlLoadLastCase.TabIndex = 0;
-			this.m_ctrlLoadLastCase.Text = "Load last case on startup";
-			// 
-			// m_ctrlLogDiagnostics
-			// 
-			this.m_ctrlLogDiagnostics.Location = new System.Drawing.Point(272, 40);
-			this.m_ctrlLogDiagnostics.Name = "m_ctrlLogDiagnostics";
-			this.m_ctrlLogDiagnostics.Size = new System.Drawing.Size(180, 16);
-			this.m_ctrlLogDiagnostics.TabIndex = 6;
-			this.m_ctrlLogDiagnostics.Text = "Log diagnostic messages";
-			// 
-			// m_ctrlEnableDiagnostics
-			// 
-			this.m_ctrlEnableDiagnostics.Location = new System.Drawing.Point(272, 16);
-			this.m_ctrlEnableDiagnostics.Name = "m_ctrlEnableDiagnostics";
-			this.m_ctrlEnableDiagnostics.Size = new System.Drawing.Size(180, 16);
-			this.m_ctrlEnableDiagnostics.TabIndex = 5;
-			this.m_ctrlEnableDiagnostics.Text = "Enable diagnostic messages";
-			this.m_ctrlEnableDiagnostics.Click += new System.EventHandler(this.OnClickEnableDiagnostics);
-			// 
-			// m_ctrlShowErrorMessages
-			// 
-			this.m_ctrlShowErrorMessages.Location = new System.Drawing.Point(12, 64);
-			this.m_ctrlShowErrorMessages.Name = "m_ctrlShowErrorMessages";
-			this.m_ctrlShowErrorMessages.Size = new System.Drawing.Size(180, 16);
-			this.m_ctrlShowErrorMessages.TabIndex = 2;
-			this.m_ctrlShowErrorMessages.Text = "Show error messages";
-			// 
-			// m_ctrlFiltersPage
-			// 
-			this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlFiltersPrompt3);
-			this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlFiltersPrompt2);
-			this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlFiltersPrompt1);
-			this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlSourceFilterLabel);
-			this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlSourceTypesLabel);
-			this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlSourceFilter);
-			this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlSourceTypes);
-			this.m_ctrlFiltersPage.Location = new System.Drawing.Point(-10000, -10000);
-			this.m_ctrlFiltersPage.Name = "m_ctrlFiltersPage";
-			this.m_ctrlFiltersPage.Size = new System.Drawing.Size(528, 198);
-			// 
-			// m_ctrlFiltersPrompt3
-			// 
-			this.m_ctrlFiltersPrompt3.Location = new System.Drawing.Point(272, 100);
-			this.m_ctrlFiltersPrompt3.Name = "m_ctrlFiltersPrompt3";
-			this.m_ctrlFiltersPrompt3.Size = new System.Drawing.Size(172, 16);
-			this.m_ctrlFiltersPrompt3.TabIndex = 6;
-			this.m_ctrlFiltersPrompt3.Text = "filter box (separated by spaces)";
-			// 
-			// m_ctrlFiltersPrompt2
-			// 
-			this.m_ctrlFiltersPrompt2.Location = new System.Drawing.Point(272, 84);
-			this.m_ctrlFiltersPrompt2.Name = "m_ctrlFiltersPrompt2";
-			this.m_ctrlFiltersPrompt2.Size = new System.Drawing.Size(172, 16);
-			this.m_ctrlFiltersPrompt2.TabIndex = 5;
-			this.m_ctrlFiltersPrompt2.Text = "enter valid file extensions in the";
-			// 
-			// m_ctrlFiltersPrompt1
-			// 
-			this.m_ctrlFiltersPrompt1.Location = new System.Drawing.Point(272, 68);
-			this.m_ctrlFiltersPrompt1.Name = "m_ctrlFiltersPrompt1";
-			this.m_ctrlFiltersPrompt1.Size = new System.Drawing.Size(168, 16);
-			this.m_ctrlFiltersPrompt1.TabIndex = 4;
-			this.m_ctrlFiltersPrompt1.Text = "Select source type from list and";
-			// 
-			// m_ctrlSourceFilterLabel
-			// 
-			this.m_ctrlSourceFilterLabel.Location = new System.Drawing.Point(272, 12);
-			this.m_ctrlSourceFilterLabel.Name = "m_ctrlSourceFilterLabel";
-			this.m_ctrlSourceFilterLabel.Size = new System.Drawing.Size(152, 16);
-			this.m_ctrlSourceFilterLabel.TabIndex = 3;
-			this.m_ctrlSourceFilterLabel.Text = "Source Filter";
-			// 
-			// m_ctrlSourceTypesLabel
-			// 
-			this.m_ctrlSourceTypesLabel.Location = new System.Drawing.Point(8, 12);
-			this.m_ctrlSourceTypesLabel.Name = "m_ctrlSourceTypesLabel";
-			this.m_ctrlSourceTypesLabel.Size = new System.Drawing.Size(152, 16);
-			this.m_ctrlSourceTypesLabel.TabIndex = 2;
-			this.m_ctrlSourceTypesLabel.Text = "Source Types";
-			// 
-			// m_ctrlSourceFilter
-			// 
-			this.m_ctrlSourceFilter.Location = new System.Drawing.Point(268, 28);
-			this.m_ctrlSourceFilter.Name = "m_ctrlSourceFilter";
-			this.m_ctrlSourceFilter.Size = new System.Drawing.Size(248, 20);
-			this.m_ctrlSourceFilter.TabIndex = 1;
-			this.m_ctrlSourceFilter.Text = "";
-			// 
-			// m_ctrlSourceTypes
-			// 
-			this.m_ctrlSourceTypes.Location = new System.Drawing.Point(8, 28);
-			this.m_ctrlSourceTypes.Name = "m_ctrlSourceTypes";
-			this.m_ctrlSourceTypes.Size = new System.Drawing.Size(248, 160);
-			this.m_ctrlSourceTypes.TabIndex = 0;
-			this.m_ctrlSourceTypes.SelectedIndexChanged += new System.EventHandler(this.OnSourceTypeChanged);
-			// 
-			// m_ctrlProfilesPage
-			// 
-			this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlViewCodecs);
-			this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlProfileCodecsGroup);
-			this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlProfilesLabel);
-			this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlPreferred);
-			this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlProfiles);
-			this.m_ctrlProfilesPage.Location = new System.Drawing.Point(2, 24);
-			this.m_ctrlProfilesPage.Name = "m_ctrlProfilesPage";
-			this.m_ctrlProfilesPage.Size = new System.Drawing.Size(528, 198);
-			// 
-			// m_ctrlViewCodecs
-			// 
-			this.m_ctrlViewCodecs.Location = new System.Drawing.Point(340, 168);
-			this.m_ctrlViewCodecs.Name = "m_ctrlViewCodecs";
-			this.m_ctrlViewCodecs.Size = new System.Drawing.Size(180, 23);
-			this.m_ctrlViewCodecs.TabIndex = 7;
-			this.m_ctrlViewCodecs.Text = "View Codecs";
-			this.m_ctrlViewCodecs.Click += new System.EventHandler(this.OnClickViewCodecs);
-			// 
-			// m_ctrlProfileCodecsGroup
-			// 
-			this.m_ctrlProfileCodecsGroup.Controls.Add(this.m_ctrlProfileAudio);
-			this.m_ctrlProfileCodecsGroup.Controls.Add(this.m_ctrlProfileVideo);
-			this.m_ctrlProfileCodecsGroup.Location = new System.Drawing.Point(340, 24);
-			this.m_ctrlProfileCodecsGroup.Name = "m_ctrlProfileCodecsGroup";
-			this.m_ctrlProfileCodecsGroup.Size = new System.Drawing.Size(180, 96);
-			this.m_ctrlProfileCodecsGroup.TabIndex = 3;
-			this.m_ctrlProfileCodecsGroup.TabStop = false;
-			this.m_ctrlProfileCodecsGroup.Text = "Encoders";
-			// 
-			// m_ctrlProfileAudio
-			// 
-			this.m_ctrlProfileAudio.Location = new System.Drawing.Point(8, 64);
-			this.m_ctrlProfileAudio.Name = "m_ctrlProfileAudio";
-			this.m_ctrlProfileAudio.Size = new System.Drawing.Size(164, 28);
-			this.m_ctrlProfileAudio.TabIndex = 1;
-			// 
-			// m_ctrlProfileVideo
-			// 
-			this.m_ctrlProfileVideo.Location = new System.Drawing.Point(8, 24);
-			this.m_ctrlProfileVideo.Name = "m_ctrlProfileVideo";
-			this.m_ctrlProfileVideo.Size = new System.Drawing.Size(164, 28);
-			this.m_ctrlProfileVideo.TabIndex = 0;
-			// 
-			// m_ctrlProfilesLabel
-			// 
-			this.m_ctrlProfilesLabel.Location = new System.Drawing.Point(8, 8);
-			this.m_ctrlProfilesLabel.Name = "m_ctrlProfilesLabel";
-			this.m_ctrlProfilesLabel.Size = new System.Drawing.Size(152, 12);
-			this.m_ctrlProfilesLabel.TabIndex = 2;
-			this.m_ctrlProfilesLabel.Text = "WMV Encoder Profiles";
-			// 
-			// m_ctrlPreferred
-			// 
-			this.m_ctrlPreferred.Location = new System.Drawing.Point(344, 132);
-			this.m_ctrlPreferred.Name = "m_ctrlPreferred";
-			this.m_ctrlPreferred.Size = new System.Drawing.Size(148, 24);
-			this.m_ctrlPreferred.TabIndex = 1;
-			this.m_ctrlPreferred.Text = "Preferred";
-			// 
-			// m_ctrlProfiles
-			// 
-			this.m_ctrlProfiles.HorizontalScrollbar = true;
-			this.m_ctrlProfiles.IntegralHeight = false;
-			this.m_ctrlProfiles.Location = new System.Drawing.Point(8, 24);
-			this.m_ctrlProfiles.Name = "m_ctrlProfiles";
-			this.m_ctrlProfiles.Size = new System.Drawing.Size(324, 168);
-			this.m_ctrlProfiles.TabIndex = 0;
-			this.m_ctrlProfiles.SelectedIndexChanged += new System.EventHandler(this.OnProfileSelChanged);
-			// 
-			// m_ctrlUpdatesPage
-			// 
-			this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesAlternateSite);
-			this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesAlternateSiteLabel);
-			this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesPrimarySite);
-			this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesPrimarySiteLabel);
-			this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesGroupId);
-			this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesGroupIdLabel);
-			this.m_ctrlUpdatesPage.Location = new System.Drawing.Point(-10000, -10000);
-			this.m_ctrlUpdatesPage.Name = "m_ctrlUpdatesPage";
-			this.m_ctrlUpdatesPage.Size = new System.Drawing.Size(528, 198);
-			// 
-			// m_ctrlUpdatesAlternateSite
-			// 
-			this.m_ctrlUpdatesAlternateSite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlUpdatesAlternateSite.Location = new System.Drawing.Point(88, 40);
-			this.m_ctrlUpdatesAlternateSite.Name = "m_ctrlUpdatesAlternateSite";
-			this.m_ctrlUpdatesAlternateSite.Size = new System.Drawing.Size(432, 20);
-			this.m_ctrlUpdatesAlternateSite.TabIndex = 1;
-			this.m_ctrlUpdatesAlternateSite.Text = "";
-			// 
-			// m_ctrlUpdatesAlternateSiteLabel
-			// 
-			this.m_ctrlUpdatesAlternateSiteLabel.Location = new System.Drawing.Point(8, 40);
-			this.m_ctrlUpdatesAlternateSiteLabel.Name = "m_ctrlUpdatesAlternateSiteLabel";
-			this.m_ctrlUpdatesAlternateSiteLabel.Size = new System.Drawing.Size(80, 20);
-			this.m_ctrlUpdatesAlternateSiteLabel.TabIndex = 4;
-			this.m_ctrlUpdatesAlternateSiteLabel.Text = "Alternate Site:";
-			this.m_ctrlUpdatesAlternateSiteLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// m_ctrlUpdatesPrimarySite
-			// 
-			this.m_ctrlUpdatesPrimarySite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlUpdatesPrimarySite.Location = new System.Drawing.Point(88, 12);
-			this.m_ctrlUpdatesPrimarySite.Name = "m_ctrlUpdatesPrimarySite";
-			this.m_ctrlUpdatesPrimarySite.Size = new System.Drawing.Size(432, 20);
-			this.m_ctrlUpdatesPrimarySite.TabIndex = 0;
-			this.m_ctrlUpdatesPrimarySite.Text = "";
-			// 
-			// m_ctrlUpdatesPrimarySiteLabel
-			// 
-			this.m_ctrlUpdatesPrimarySiteLabel.Location = new System.Drawing.Point(8, 12);
-			this.m_ctrlUpdatesPrimarySiteLabel.Name = "m_ctrlUpdatesPrimarySiteLabel";
-			this.m_ctrlUpdatesPrimarySiteLabel.Size = new System.Drawing.Size(80, 20);
-			this.m_ctrlUpdatesPrimarySiteLabel.TabIndex = 2;
-			this.m_ctrlUpdatesPrimarySiteLabel.Text = "Primary Site:";
-			this.m_ctrlUpdatesPrimarySiteLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// m_ctrlUpdatesGroupId
-			// 
-			this.m_ctrlUpdatesGroupId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlUpdatesGroupId.Location = new System.Drawing.Point(88, 68);
-			this.m_ctrlUpdatesGroupId.Name = "m_ctrlUpdatesGroupId";
-			this.m_ctrlUpdatesGroupId.Size = new System.Drawing.Size(432, 20);
-			this.m_ctrlUpdatesGroupId.TabIndex = 2;
-			this.m_ctrlUpdatesGroupId.Text = "";
-			// 
-			// m_ctrlUpdatesGroupIdLabel
-			// 
-			this.m_ctrlUpdatesGroupIdLabel.Location = new System.Drawing.Point(8, 68);
-			this.m_ctrlUpdatesGroupIdLabel.Name = "m_ctrlUpdatesGroupIdLabel";
-			this.m_ctrlUpdatesGroupIdLabel.Size = new System.Drawing.Size(80, 20);
-			this.m_ctrlUpdatesGroupIdLabel.TabIndex = 0;
-			this.m_ctrlUpdatesGroupIdLabel.Text = "Group Id:";
-			this.m_ctrlUpdatesGroupIdLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			// 
-			// m_ctrlCancel
-			// 
-			this.m_ctrlCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_ctrlCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.m_ctrlCancel.Location = new System.Drawing.Point(458, 242);
-			this.m_ctrlCancel.Name = "m_ctrlCancel";
-			this.m_ctrlCancel.TabIndex = 12;
-			this.m_ctrlCancel.Text = "  &Cancel";
-			// 
-			// m_ctrlOk
-			// 
-			this.m_ctrlOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlOk.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.m_ctrlOk.Location = new System.Drawing.Point(374, 242);
-			this.m_ctrlOk.Name = "m_ctrlOk";
-			this.m_ctrlOk.TabIndex = 11;
-			this.m_ctrlOk.Text = "&OK";
-			this.m_ctrlOk.Click += new System.EventHandler(this.OnClickOk);
-			// 
-			// m_ctrlUltraTabs
-			// 
-			this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlUltraSharedPage);
-			this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlGeneralPage);
-			this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlFiltersPage);
-			this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlUpdatesPage);
-			this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlProfilesPage);
-			this.m_ctrlUltraTabs.Location = new System.Drawing.Point(8, 8);
-			this.m_ctrlUltraTabs.Name = "m_ctrlUltraTabs";
-			this.m_ctrlUltraTabs.SharedControlsPage = this.m_ctrlUltraSharedPage;
-			this.m_ctrlUltraTabs.Size = new System.Drawing.Size(532, 224);
-			this.m_ctrlUltraTabs.TabIndex = 1;
-			ultraTab1.TabPage = this.m_ctrlGeneralPage;
-			ultraTab1.Text = "General";
-			ultraTab1.ToolTipText = "General Application Options";
-			ultraTab2.TabPage = this.m_ctrlFiltersPage;
-			ultraTab2.Text = "Filters";
-			ultraTab2.ToolTipText = "Registration Source Filters";
-			ultraTab3.TabPage = this.m_ctrlProfilesPage;
-			ultraTab3.Text = "Profiles";
-			ultraTab3.ToolTipText = "Set Preferred Media Encoder Profiles";
-			ultraTab4.TabPage = this.m_ctrlUpdatesPage;
-			ultraTab4.Text = "Updates";
-			ultraTab4.ToolTipText = "On-Line Updates Setup";
-			this.m_ctrlUltraTabs.Tabs.AddRange(new Infragistics.Win.UltraWinTabControl.UltraTab[] {
-																									  ultraTab1,
-																									  ultraTab2,
-																									  ultraTab3,
-																									  ultraTab4});
-			// 
-			// m_ctrlUltraSharedPage
-			// 
-			this.m_ctrlUltraSharedPage.Location = new System.Drawing.Point(-10000, -10000);
-			this.m_ctrlUltraSharedPage.Name = "m_ctrlUltraSharedPage";
-			this.m_ctrlUltraSharedPage.Size = new System.Drawing.Size(528, 198);
-			// 
-			// CFManagerOptions
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(546, 271);
-			this.Controls.Add(this.m_ctrlUltraTabs);
-			this.Controls.Add(this.m_ctrlCancel);
-			this.Controls.Add(this.m_ctrlOk);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.Name = "CFManagerOptions";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = " Manager Options";
-			this.m_ctrlGeneralPage.ResumeLayout(false);
-			this.m_ctrlFiltersPage.ResumeLayout(false);
-			this.m_ctrlProfilesPage.ResumeLayout(false);
-			this.m_ctrlProfileCodecsGroup.ResumeLayout(false);
-			this.m_ctrlUpdatesPage.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraTabs)).EndInit();
-			this.m_ctrlUltraTabs.ResumeLayout(false);
-			this.ResumeLayout(false);
+            Infragistics.Win.UltraWinTabControl.UltraTab ultraTab1 = new Infragistics.Win.UltraWinTabControl.UltraTab();
+            Infragistics.Win.UltraWinTabControl.UltraTab ultraTab2 = new Infragistics.Win.UltraWinTabControl.UltraTab();
+            Infragistics.Win.UltraWinTabControl.UltraTab ultraTab3 = new Infragistics.Win.UltraWinTabControl.UltraTab();
+            Infragistics.Win.UltraWinTabControl.UltraTab ultraTab4 = new Infragistics.Win.UltraWinTabControl.UltraTab();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CFManagerOptions));
+            this.m_ctrlGeneralPage = new Infragistics.Win.UltraWinTabControl.UltraTabPageControl();
+            this.m_ctrlFilterOnOpen = new System.Windows.Forms.CheckBox();
+            this.m_ctrlWarnBinderDuplicates = new System.Windows.Forms.CheckBox();
+            this.m_ctrlShowForeignBarcodes = new System.Windows.Forms.CheckBox();
+            this.m_ctrlLoadLastCase = new System.Windows.Forms.CheckBox();
+            this.m_ctrlLogDiagnostics = new System.Windows.Forms.CheckBox();
+            this.m_ctrlEnableDiagnostics = new System.Windows.Forms.CheckBox();
+            this.m_ctrlShowErrorMessages = new System.Windows.Forms.CheckBox();
+            this.m_ctrlFiltersPage = new Infragistics.Win.UltraWinTabControl.UltraTabPageControl();
+            this.m_ctrlFiltersPrompt3 = new System.Windows.Forms.Label();
+            this.m_ctrlFiltersPrompt2 = new System.Windows.Forms.Label();
+            this.m_ctrlFiltersPrompt1 = new System.Windows.Forms.Label();
+            this.m_ctrlSourceFilterLabel = new System.Windows.Forms.Label();
+            this.m_ctrlSourceTypesLabel = new System.Windows.Forms.Label();
+            this.m_ctrlSourceFilter = new System.Windows.Forms.TextBox();
+            this.m_ctrlSourceTypes = new System.Windows.Forms.ListBox();
+            this.m_ctrlProfilesPage = new Infragistics.Win.UltraWinTabControl.UltraTabPageControl();
+            this.m_ctrlViewCodecs = new System.Windows.Forms.Button();
+            this.m_ctrlProfileCodecsGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlProfileAudio = new System.Windows.Forms.Label();
+            this.m_ctrlProfileVideo = new System.Windows.Forms.Label();
+            this.m_ctrlProfilesLabel = new System.Windows.Forms.Label();
+            this.m_ctrlPreferred = new System.Windows.Forms.CheckBox();
+            this.m_ctrlProfiles = new System.Windows.Forms.ListBox();
+            this.m_ctrlUpdatesPage = new Infragistics.Win.UltraWinTabControl.UltraTabPageControl();
+            this.m_ctrlUpdatesAlternateSite = new System.Windows.Forms.TextBox();
+            this.m_ctrlUpdatesAlternateSiteLabel = new System.Windows.Forms.Label();
+            this.m_ctrlUpdatesPrimarySite = new System.Windows.Forms.TextBox();
+            this.m_ctrlUpdatesPrimarySiteLabel = new System.Windows.Forms.Label();
+            this.m_ctrlUpdatesGroupId = new System.Windows.Forms.TextBox();
+            this.m_ctrlUpdatesGroupIdLabel = new System.Windows.Forms.Label();
+            this.m_ctrlCancel = new System.Windows.Forms.Button();
+            this.m_ctrlOk = new System.Windows.Forms.Button();
+            this.m_ctrlUltraTabs = new Infragistics.Win.UltraWinTabControl.UltraTabControl();
+            this.m_ctrlUltraSharedPage = new Infragistics.Win.UltraWinTabControl.UltraTabSharedControlsPage();
+            this.m_ctrlShowAudioWaveform = new System.Windows.Forms.CheckBox();
+            this.m_ctrlGeneralPage.SuspendLayout();
+            this.m_ctrlFiltersPage.SuspendLayout();
+            this.m_ctrlProfilesPage.SuspendLayout();
+            this.m_ctrlProfileCodecsGroup.SuspendLayout();
+            this.m_ctrlUpdatesPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraTabs)).BeginInit();
+            this.m_ctrlUltraTabs.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // m_ctrlGeneralPage
+            // 
+            this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlShowAudioWaveform);
+            this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlFilterOnOpen);
+            this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlWarnBinderDuplicates);
+            this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlShowForeignBarcodes);
+            this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlLoadLastCase);
+            this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlLogDiagnostics);
+            this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlEnableDiagnostics);
+            this.m_ctrlGeneralPage.Controls.Add(this.m_ctrlShowErrorMessages);
+            this.m_ctrlGeneralPage.Location = new System.Drawing.Point(1, 23);
+            this.m_ctrlGeneralPage.Name = "m_ctrlGeneralPage";
+            this.m_ctrlGeneralPage.Size = new System.Drawing.Size(528, 198);
+            // 
+            // m_ctrlFilterOnOpen
+            // 
+            this.m_ctrlFilterOnOpen.Location = new System.Drawing.Point(12, 112);
+            this.m_ctrlFilterOnOpen.Name = "m_ctrlFilterOnOpen";
+            this.m_ctrlFilterOnOpen.Size = new System.Drawing.Size(180, 16);
+            this.m_ctrlFilterOnOpen.TabIndex = 4;
+            this.m_ctrlFilterOnOpen.Text = "Load filtered on case open";
+            // 
+            // m_ctrlWarnBinderDuplicates
+            // 
+            this.m_ctrlWarnBinderDuplicates.Location = new System.Drawing.Point(12, 88);
+            this.m_ctrlWarnBinderDuplicates.Name = "m_ctrlWarnBinderDuplicates";
+            this.m_ctrlWarnBinderDuplicates.Size = new System.Drawing.Size(180, 16);
+            this.m_ctrlWarnBinderDuplicates.TabIndex = 3;
+            this.m_ctrlWarnBinderDuplicates.Text = "Warn duplicate binder entries";
+            // 
+            // m_ctrlShowForeignBarcodes
+            // 
+            this.m_ctrlShowForeignBarcodes.Location = new System.Drawing.Point(12, 40);
+            this.m_ctrlShowForeignBarcodes.Name = "m_ctrlShowForeignBarcodes";
+            this.m_ctrlShowForeignBarcodes.Size = new System.Drawing.Size(180, 16);
+            this.m_ctrlShowForeignBarcodes.TabIndex = 1;
+            this.m_ctrlShowForeignBarcodes.Text = "Show foreign barcodes";
+            // 
+            // m_ctrlLoadLastCase
+            // 
+            this.m_ctrlLoadLastCase.Location = new System.Drawing.Point(12, 16);
+            this.m_ctrlLoadLastCase.Name = "m_ctrlLoadLastCase";
+            this.m_ctrlLoadLastCase.Size = new System.Drawing.Size(180, 16);
+            this.m_ctrlLoadLastCase.TabIndex = 0;
+            this.m_ctrlLoadLastCase.Text = "Load last case on startup";
+            // 
+            // m_ctrlLogDiagnostics
+            // 
+            this.m_ctrlLogDiagnostics.Location = new System.Drawing.Point(272, 40);
+            this.m_ctrlLogDiagnostics.Name = "m_ctrlLogDiagnostics";
+            this.m_ctrlLogDiagnostics.Size = new System.Drawing.Size(180, 16);
+            this.m_ctrlLogDiagnostics.TabIndex = 6;
+            this.m_ctrlLogDiagnostics.Text = "Log diagnostic messages";
+            // 
+            // m_ctrlEnableDiagnostics
+            // 
+            this.m_ctrlEnableDiagnostics.Location = new System.Drawing.Point(272, 16);
+            this.m_ctrlEnableDiagnostics.Name = "m_ctrlEnableDiagnostics";
+            this.m_ctrlEnableDiagnostics.Size = new System.Drawing.Size(180, 16);
+            this.m_ctrlEnableDiagnostics.TabIndex = 5;
+            this.m_ctrlEnableDiagnostics.Text = "Enable diagnostic messages";
+            this.m_ctrlEnableDiagnostics.Click += new System.EventHandler(this.OnClickEnableDiagnostics);
+            // 
+            // m_ctrlShowErrorMessages
+            // 
+            this.m_ctrlShowErrorMessages.Location = new System.Drawing.Point(12, 64);
+            this.m_ctrlShowErrorMessages.Name = "m_ctrlShowErrorMessages";
+            this.m_ctrlShowErrorMessages.Size = new System.Drawing.Size(180, 16);
+            this.m_ctrlShowErrorMessages.TabIndex = 2;
+            this.m_ctrlShowErrorMessages.Text = "Show error messages";
+            // 
+            // m_ctrlFiltersPage
+            // 
+            this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlFiltersPrompt3);
+            this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlFiltersPrompt2);
+            this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlFiltersPrompt1);
+            this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlSourceFilterLabel);
+            this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlSourceTypesLabel);
+            this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlSourceFilter);
+            this.m_ctrlFiltersPage.Controls.Add(this.m_ctrlSourceTypes);
+            this.m_ctrlFiltersPage.Location = new System.Drawing.Point(-10000, -10000);
+            this.m_ctrlFiltersPage.Name = "m_ctrlFiltersPage";
+            this.m_ctrlFiltersPage.Size = new System.Drawing.Size(528, 198);
+            // 
+            // m_ctrlFiltersPrompt3
+            // 
+            this.m_ctrlFiltersPrompt3.Location = new System.Drawing.Point(272, 100);
+            this.m_ctrlFiltersPrompt3.Name = "m_ctrlFiltersPrompt3";
+            this.m_ctrlFiltersPrompt3.Size = new System.Drawing.Size(172, 16);
+            this.m_ctrlFiltersPrompt3.TabIndex = 6;
+            this.m_ctrlFiltersPrompt3.Text = "filter box (separated by spaces)";
+            // 
+            // m_ctrlFiltersPrompt2
+            // 
+            this.m_ctrlFiltersPrompt2.Location = new System.Drawing.Point(272, 84);
+            this.m_ctrlFiltersPrompt2.Name = "m_ctrlFiltersPrompt2";
+            this.m_ctrlFiltersPrompt2.Size = new System.Drawing.Size(172, 16);
+            this.m_ctrlFiltersPrompt2.TabIndex = 5;
+            this.m_ctrlFiltersPrompt2.Text = "enter valid file extensions in the";
+            // 
+            // m_ctrlFiltersPrompt1
+            // 
+            this.m_ctrlFiltersPrompt1.Location = new System.Drawing.Point(272, 68);
+            this.m_ctrlFiltersPrompt1.Name = "m_ctrlFiltersPrompt1";
+            this.m_ctrlFiltersPrompt1.Size = new System.Drawing.Size(168, 16);
+            this.m_ctrlFiltersPrompt1.TabIndex = 4;
+            this.m_ctrlFiltersPrompt1.Text = "Select source type from list and";
+            // 
+            // m_ctrlSourceFilterLabel
+            // 
+            this.m_ctrlSourceFilterLabel.Location = new System.Drawing.Point(272, 12);
+            this.m_ctrlSourceFilterLabel.Name = "m_ctrlSourceFilterLabel";
+            this.m_ctrlSourceFilterLabel.Size = new System.Drawing.Size(152, 16);
+            this.m_ctrlSourceFilterLabel.TabIndex = 3;
+            this.m_ctrlSourceFilterLabel.Text = "Source Filter";
+            // 
+            // m_ctrlSourceTypesLabel
+            // 
+            this.m_ctrlSourceTypesLabel.Location = new System.Drawing.Point(8, 12);
+            this.m_ctrlSourceTypesLabel.Name = "m_ctrlSourceTypesLabel";
+            this.m_ctrlSourceTypesLabel.Size = new System.Drawing.Size(152, 16);
+            this.m_ctrlSourceTypesLabel.TabIndex = 2;
+            this.m_ctrlSourceTypesLabel.Text = "Source Types";
+            // 
+            // m_ctrlSourceFilter
+            // 
+            this.m_ctrlSourceFilter.Location = new System.Drawing.Point(268, 28);
+            this.m_ctrlSourceFilter.Name = "m_ctrlSourceFilter";
+            this.m_ctrlSourceFilter.Size = new System.Drawing.Size(248, 20);
+            this.m_ctrlSourceFilter.TabIndex = 1;
+            // 
+            // m_ctrlSourceTypes
+            // 
+            this.m_ctrlSourceTypes.Location = new System.Drawing.Point(8, 28);
+            this.m_ctrlSourceTypes.Name = "m_ctrlSourceTypes";
+            this.m_ctrlSourceTypes.Size = new System.Drawing.Size(248, 160);
+            this.m_ctrlSourceTypes.TabIndex = 0;
+            this.m_ctrlSourceTypes.SelectedIndexChanged += new System.EventHandler(this.OnSourceTypeChanged);
+            // 
+            // m_ctrlProfilesPage
+            // 
+            this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlViewCodecs);
+            this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlProfileCodecsGroup);
+            this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlProfilesLabel);
+            this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlPreferred);
+            this.m_ctrlProfilesPage.Controls.Add(this.m_ctrlProfiles);
+            this.m_ctrlProfilesPage.Location = new System.Drawing.Point(-10000, -10000);
+            this.m_ctrlProfilesPage.Name = "m_ctrlProfilesPage";
+            this.m_ctrlProfilesPage.Size = new System.Drawing.Size(528, 198);
+            // 
+            // m_ctrlViewCodecs
+            // 
+            this.m_ctrlViewCodecs.Location = new System.Drawing.Point(340, 168);
+            this.m_ctrlViewCodecs.Name = "m_ctrlViewCodecs";
+            this.m_ctrlViewCodecs.Size = new System.Drawing.Size(180, 23);
+            this.m_ctrlViewCodecs.TabIndex = 7;
+            this.m_ctrlViewCodecs.Text = "View Codecs";
+            this.m_ctrlViewCodecs.Click += new System.EventHandler(this.OnClickViewCodecs);
+            // 
+            // m_ctrlProfileCodecsGroup
+            // 
+            this.m_ctrlProfileCodecsGroup.Controls.Add(this.m_ctrlProfileAudio);
+            this.m_ctrlProfileCodecsGroup.Controls.Add(this.m_ctrlProfileVideo);
+            this.m_ctrlProfileCodecsGroup.Location = new System.Drawing.Point(340, 24);
+            this.m_ctrlProfileCodecsGroup.Name = "m_ctrlProfileCodecsGroup";
+            this.m_ctrlProfileCodecsGroup.Size = new System.Drawing.Size(180, 96);
+            this.m_ctrlProfileCodecsGroup.TabIndex = 3;
+            this.m_ctrlProfileCodecsGroup.TabStop = false;
+            this.m_ctrlProfileCodecsGroup.Text = "Encoders";
+            // 
+            // m_ctrlProfileAudio
+            // 
+            this.m_ctrlProfileAudio.Location = new System.Drawing.Point(8, 64);
+            this.m_ctrlProfileAudio.Name = "m_ctrlProfileAudio";
+            this.m_ctrlProfileAudio.Size = new System.Drawing.Size(164, 28);
+            this.m_ctrlProfileAudio.TabIndex = 1;
+            // 
+            // m_ctrlProfileVideo
+            // 
+            this.m_ctrlProfileVideo.Location = new System.Drawing.Point(8, 24);
+            this.m_ctrlProfileVideo.Name = "m_ctrlProfileVideo";
+            this.m_ctrlProfileVideo.Size = new System.Drawing.Size(164, 28);
+            this.m_ctrlProfileVideo.TabIndex = 0;
+            // 
+            // m_ctrlProfilesLabel
+            // 
+            this.m_ctrlProfilesLabel.Location = new System.Drawing.Point(8, 8);
+            this.m_ctrlProfilesLabel.Name = "m_ctrlProfilesLabel";
+            this.m_ctrlProfilesLabel.Size = new System.Drawing.Size(152, 12);
+            this.m_ctrlProfilesLabel.TabIndex = 2;
+            this.m_ctrlProfilesLabel.Text = "WMV Encoder Profiles";
+            // 
+            // m_ctrlPreferred
+            // 
+            this.m_ctrlPreferred.Location = new System.Drawing.Point(344, 132);
+            this.m_ctrlPreferred.Name = "m_ctrlPreferred";
+            this.m_ctrlPreferred.Size = new System.Drawing.Size(148, 24);
+            this.m_ctrlPreferred.TabIndex = 1;
+            this.m_ctrlPreferred.Text = "Preferred";
+            // 
+            // m_ctrlProfiles
+            // 
+            this.m_ctrlProfiles.HorizontalScrollbar = true;
+            this.m_ctrlProfiles.IntegralHeight = false;
+            this.m_ctrlProfiles.Location = new System.Drawing.Point(8, 24);
+            this.m_ctrlProfiles.Name = "m_ctrlProfiles";
+            this.m_ctrlProfiles.Size = new System.Drawing.Size(324, 168);
+            this.m_ctrlProfiles.TabIndex = 0;
+            this.m_ctrlProfiles.SelectedIndexChanged += new System.EventHandler(this.OnProfileSelChanged);
+            // 
+            // m_ctrlUpdatesPage
+            // 
+            this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesAlternateSite);
+            this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesAlternateSiteLabel);
+            this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesPrimarySite);
+            this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesPrimarySiteLabel);
+            this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesGroupId);
+            this.m_ctrlUpdatesPage.Controls.Add(this.m_ctrlUpdatesGroupIdLabel);
+            this.m_ctrlUpdatesPage.Location = new System.Drawing.Point(-10000, -10000);
+            this.m_ctrlUpdatesPage.Name = "m_ctrlUpdatesPage";
+            this.m_ctrlUpdatesPage.Size = new System.Drawing.Size(528, 198);
+            // 
+            // m_ctrlUpdatesAlternateSite
+            // 
+            this.m_ctrlUpdatesAlternateSite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlUpdatesAlternateSite.Location = new System.Drawing.Point(88, 40);
+            this.m_ctrlUpdatesAlternateSite.Name = "m_ctrlUpdatesAlternateSite";
+            this.m_ctrlUpdatesAlternateSite.Size = new System.Drawing.Size(432, 20);
+            this.m_ctrlUpdatesAlternateSite.TabIndex = 1;
+            // 
+            // m_ctrlUpdatesAlternateSiteLabel
+            // 
+            this.m_ctrlUpdatesAlternateSiteLabel.Location = new System.Drawing.Point(8, 40);
+            this.m_ctrlUpdatesAlternateSiteLabel.Name = "m_ctrlUpdatesAlternateSiteLabel";
+            this.m_ctrlUpdatesAlternateSiteLabel.Size = new System.Drawing.Size(80, 20);
+            this.m_ctrlUpdatesAlternateSiteLabel.TabIndex = 4;
+            this.m_ctrlUpdatesAlternateSiteLabel.Text = "Alternate Site:";
+            this.m_ctrlUpdatesAlternateSiteLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // m_ctrlUpdatesPrimarySite
+            // 
+            this.m_ctrlUpdatesPrimarySite.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlUpdatesPrimarySite.Location = new System.Drawing.Point(88, 12);
+            this.m_ctrlUpdatesPrimarySite.Name = "m_ctrlUpdatesPrimarySite";
+            this.m_ctrlUpdatesPrimarySite.Size = new System.Drawing.Size(432, 20);
+            this.m_ctrlUpdatesPrimarySite.TabIndex = 0;
+            // 
+            // m_ctrlUpdatesPrimarySiteLabel
+            // 
+            this.m_ctrlUpdatesPrimarySiteLabel.Location = new System.Drawing.Point(8, 12);
+            this.m_ctrlUpdatesPrimarySiteLabel.Name = "m_ctrlUpdatesPrimarySiteLabel";
+            this.m_ctrlUpdatesPrimarySiteLabel.Size = new System.Drawing.Size(80, 20);
+            this.m_ctrlUpdatesPrimarySiteLabel.TabIndex = 2;
+            this.m_ctrlUpdatesPrimarySiteLabel.Text = "Primary Site:";
+            this.m_ctrlUpdatesPrimarySiteLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // m_ctrlUpdatesGroupId
+            // 
+            this.m_ctrlUpdatesGroupId.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlUpdatesGroupId.Location = new System.Drawing.Point(88, 68);
+            this.m_ctrlUpdatesGroupId.Name = "m_ctrlUpdatesGroupId";
+            this.m_ctrlUpdatesGroupId.Size = new System.Drawing.Size(432, 20);
+            this.m_ctrlUpdatesGroupId.TabIndex = 2;
+            // 
+            // m_ctrlUpdatesGroupIdLabel
+            // 
+            this.m_ctrlUpdatesGroupIdLabel.Location = new System.Drawing.Point(8, 68);
+            this.m_ctrlUpdatesGroupIdLabel.Name = "m_ctrlUpdatesGroupIdLabel";
+            this.m_ctrlUpdatesGroupIdLabel.Size = new System.Drawing.Size(80, 20);
+            this.m_ctrlUpdatesGroupIdLabel.TabIndex = 0;
+            this.m_ctrlUpdatesGroupIdLabel.Text = "Group Id:";
+            this.m_ctrlUpdatesGroupIdLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // m_ctrlCancel
+            // 
+            this.m_ctrlCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.m_ctrlCancel.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.m_ctrlCancel.Location = new System.Drawing.Point(458, 242);
+            this.m_ctrlCancel.Name = "m_ctrlCancel";
+            this.m_ctrlCancel.Size = new System.Drawing.Size(75, 23);
+            this.m_ctrlCancel.TabIndex = 12;
+            this.m_ctrlCancel.Text = "  &Cancel";
+            // 
+            // m_ctrlOk
+            // 
+            this.m_ctrlOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlOk.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.m_ctrlOk.Location = new System.Drawing.Point(374, 242);
+            this.m_ctrlOk.Name = "m_ctrlOk";
+            this.m_ctrlOk.Size = new System.Drawing.Size(75, 23);
+            this.m_ctrlOk.TabIndex = 11;
+            this.m_ctrlOk.Text = "&OK";
+            this.m_ctrlOk.Click += new System.EventHandler(this.OnClickOk);
+            // 
+            // m_ctrlUltraTabs
+            // 
+            this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlUltraSharedPage);
+            this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlGeneralPage);
+            this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlFiltersPage);
+            this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlUpdatesPage);
+            this.m_ctrlUltraTabs.Controls.Add(this.m_ctrlProfilesPage);
+            this.m_ctrlUltraTabs.Location = new System.Drawing.Point(8, 8);
+            this.m_ctrlUltraTabs.Name = "m_ctrlUltraTabs";
+            this.m_ctrlUltraTabs.SharedControlsPage = this.m_ctrlUltraSharedPage;
+            this.m_ctrlUltraTabs.Size = new System.Drawing.Size(532, 224);
+            this.m_ctrlUltraTabs.TabIndex = 1;
+            ultraTab1.TabPage = this.m_ctrlGeneralPage;
+            ultraTab1.Text = "General";
+            ultraTab1.ToolTipText = "General Application Options";
+            ultraTab2.TabPage = this.m_ctrlFiltersPage;
+            ultraTab2.Text = "Filters";
+            ultraTab2.ToolTipText = "Registration Source Filters";
+            ultraTab3.TabPage = this.m_ctrlProfilesPage;
+            ultraTab3.Text = "Profiles";
+            ultraTab3.ToolTipText = "Set Preferred Media Encoder Profiles";
+            ultraTab4.TabPage = this.m_ctrlUpdatesPage;
+            ultraTab4.Text = "Updates";
+            ultraTab4.ToolTipText = "On-Line Updates Setup";
+            this.m_ctrlUltraTabs.Tabs.AddRange(new Infragistics.Win.UltraWinTabControl.UltraTab[] {
+            ultraTab1,
+            ultraTab2,
+            ultraTab3,
+            ultraTab4});
+            // 
+            // m_ctrlUltraSharedPage
+            // 
+            this.m_ctrlUltraSharedPage.Location = new System.Drawing.Point(-10000, -10000);
+            this.m_ctrlUltraSharedPage.Name = "m_ctrlUltraSharedPage";
+            this.m_ctrlUltraSharedPage.Size = new System.Drawing.Size(528, 198);
+            // 
+            // m_ctrlShowAudioWaveform
+            // 
+            this.m_ctrlShowAudioWaveform.AutoSize = true;
+            this.m_ctrlShowAudioWaveform.Location = new System.Drawing.Point(272, 64);
+            this.m_ctrlShowAudioWaveform.Name = "m_ctrlShowAudioWaveform";
+            this.m_ctrlShowAudioWaveform.Size = new System.Drawing.Size(199, 17);
+            this.m_ctrlShowAudioWaveform.TabIndex = 7;
+            this.m_ctrlShowAudioWaveform.Text = "Show audio waveform in tuner pane";
+            this.m_ctrlShowAudioWaveform.UseVisualStyleBackColor = true;
+            this.m_ctrlShowAudioWaveform.CheckedChanged += new System.EventHandler(this.onClickShowAudioWaveform);
+            // 
+            // CFManagerOptions
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(546, 271);
+            this.Controls.Add(this.m_ctrlUltraTabs);
+            this.Controls.Add(this.m_ctrlCancel);
+            this.Controls.Add(this.m_ctrlOk);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "CFManagerOptions";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = " Manager Options";
+            this.m_ctrlGeneralPage.ResumeLayout(false);
+            this.m_ctrlGeneralPage.PerformLayout();
+            this.m_ctrlFiltersPage.ResumeLayout(false);
+            this.m_ctrlFiltersPage.PerformLayout();
+            this.m_ctrlProfilesPage.ResumeLayout(false);
+            this.m_ctrlProfileCodecsGroup.ResumeLayout(false);
+            this.m_ctrlUpdatesPage.ResumeLayout(false);
+            this.m_ctrlUpdatesPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.m_ctrlUltraTabs)).EndInit();
+            this.m_ctrlUltraTabs.ResumeLayout(false);
+            this.ResumeLayout(false);
 
 		}
 		
@@ -913,6 +930,15 @@ namespace FTI.Trialmax.Forms
 		}
 		
 		#endregion Properties
+
+        /// <summary>This method is called when the user clicks on the ShowAudioWaveform check box</summary>
+        /// <param name="sender">The object sending the event</param>
+        /// <param name="e">The event arguments</param>
+        private void onClickShowAudioWaveform(object sender, EventArgs e)
+        {
+            // Enable/disable the ShowAudioWaveform check box
+            //m_ctrlShowAudioWaveform.Enabled = m_ctrlShowAudioWaveform.Checked;
+        }
 	
 	}// public class CFManagerOptions : System.Windows.Forms.Form
 

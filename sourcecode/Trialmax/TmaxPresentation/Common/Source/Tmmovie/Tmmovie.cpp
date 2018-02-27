@@ -890,3 +890,13 @@ BOOL CTMMovie::GetIsAudio()
 	InvokeHelper(0x4d, DISPATCH_METHOD, VT_BOOL, (void*)&result, NULL);
 	return result;
 }
+
+void CTMMovie::ShowVideoBar()
+{
+	InvokeHelper(0x4e, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+}
+
+void CTMMovie::HideVideoBar()
+{
+	InvokeHelper(0x4f, DISPATCH_METHOD, VT_EMPTY, NULL, NULL);
+}
