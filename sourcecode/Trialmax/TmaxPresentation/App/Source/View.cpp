@@ -12388,6 +12388,16 @@ void CMainView::SetDisplay(short sState)
 			{
 				m_ctrlTMMovie.ShowWindow(SW_SHOW);
 				m_ctrlTMMovie.ShowVideo(TRUE);
+
+				//hotfix for showing/hiding the video bar on startup
+				if (m_aToolbars[sState].bShow) 
+				{
+					m_ctrlTMMovie.ShowVideoBar();
+				}
+				else
+				{
+					m_ctrlTMMovie.HideVideoBar();
+				}
 			}
 
 			//	Make sure the other controls are invisible
@@ -12514,6 +12524,16 @@ void CMainView::SetDisplay(short sState)
 			{
 				m_ctrlTMMovie.ShowWindow(SW_SHOW);
 				m_ctrlTMMovie.ShowVideo(TRUE);
+
+				//hotfix for showing/hiding the video bar on startup
+				if (m_aToolbars[sState].bShow) 
+				{
+					m_ctrlTMMovie.ShowVideoBar();
+				}
+				else
+				{
+					m_ctrlTMMovie.HideVideoBar();
+				}
 			}
 
 			//	We have to do this because some drivers do not properly draw the
