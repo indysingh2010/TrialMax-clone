@@ -1391,14 +1391,14 @@ namespace FTI.Trialmax.Panes
                     {
                         foreach (CTmaxMediaTreeNode tmaxNode in tmaxNodes)
                         {
-                            if (tmaxNode.GetMediaRecord() is CDxSecondary)
+                            if (tmaxNode.GetMediaRecord() is CDxSecondary || tmaxNode.GetMediaRecord() is CDxTertiary)
                                 return false;
                         }
                     }
                     foreach (CTmaxMediaTreeNode tmaxNode in tmaxNodes)
                     {
                         if (tmaxNode.IPrimary == null) return false;
-
+                        if (tmaxNode.GetMediaRecord() is CDxSecondary || tmaxNode.GetMediaRecord() is CDxTertiary) return false;
                         if (tmaxNode.IPrimary.GetMediaType() != TmaxMediaTypes.Deposition) return false;
                        
                     }
@@ -6616,12 +6616,10 @@ namespace FTI.Trialmax.Panes
         protected virtual void OnCmdAddAudioWaveform(CTmaxMediaTreeNodes tmaxNodes)
         {
             string missingFileInfo = "";
-            string filePath = "";
             string audioWaveFormFileName = "";
-            string fileExtension = ".xmlt";
             DialogResult messageBoxResult = DialogResult.Yes;
-            CDxSecondary depositionSecondaryRecord = null;
             CDxPrimary depositionPrimaryRecord = null;
+            string treatmentFilePath = "";
 
             foreach (CTmaxMediaTreeNode selectedDeposition in tmaxNodes)
             {
@@ -6629,25 +6627,23 @@ namespace FTI.Trialmax.Panes
                 if (tmaxRecord is CDxPrimary)
                 {
                     depositionPrimaryRecord = (CDxPrimary)tmaxRecord;
-                    filePath = depositionPrimaryRecord.RegisterPath;
                     audioWaveFormFileName = depositionPrimaryRecord.Name;
+                                       
+                    treatmentFilePath = Path.Combine(depositionPrimaryRecord.Database.Folder, "_tmax_transcripts", depositionPrimaryRecord.AutoId.ToString());
 
-                    if (!File.Exists(Path.Combine(filePath, audioWaveFormFileName) + fileExtension))
+                    if (!Directory.Exists(Path.Combine(depositionPrimaryRecord.Database.Folder, "_tmax_transcripts", depositionPrimaryRecord.AutoId.ToString())))
                     {
-                        missingFileInfo += string.Format("Waveform file {0} not found for {1} at {2}", audioWaveFormFileName, depositionPrimaryRecord.MediaId, filePath) + System.Environment.NewLine;
+                        missingFileInfo += string.Format("Waveform file {0} not found for {1} under _tmax_transcripts folder", audioWaveFormFileName, depositionPrimaryRecord.MediaId) + System.Environment.NewLine;
                     }
-                }
-                else
-                {
-                    depositionSecondaryRecord = (CDxSecondary)selectedDeposition.GetMediaRecord();
-                    filePath = depositionSecondaryRecord.Primary.RegisterPath;
-                    audioWaveFormFileName = depositionSecondaryRecord.Primary.Name;
-
-                    if (!File.Exists(Path.Combine(filePath, audioWaveFormFileName) + fileExtension))
+                    else
                     {
-                        missingFileInfo += string.Format("Waveform file {0} not found for {1} at {2}", audioWaveFormFileName, depositionSecondaryRecord.Primary.MediaId + "." + depositionSecondaryRecord.BarcodeId, filePath) + System.Environment.NewLine;
+                        string[] xmltfiles = Directory.GetFiles(treatmentFilePath, "*.xmlt");
+                        if (xmltfiles == null || xmltfiles.Length == 0)
+                        {
+                            missingFileInfo += string.Format("Waveform file {0} not found for {1} at {2}", audioWaveFormFileName, depositionPrimaryRecord.MediaId, treatmentFilePath) + System.Environment.NewLine;
+                        }
                     }
-                }   
+                }               
             }
 
             if(!string.IsNullOrEmpty(missingFileInfo))
@@ -6666,49 +6662,36 @@ namespace FTI.Trialmax.Panes
                         string File = "";
                         if (selectedDeposition.GetMediaRecord() is CDxPrimary)
                         {
-                            filePath = ((CDxPrimary)selectedDeposition.GetMediaRecord()).RegisterPath;
-                            audioWaveFormFileName = ((CDxPrimary)selectedDeposition.GetMediaRecord()).Name;
                             MediaName = ((CDxPrimary)selectedDeposition.GetMediaRecord()).Name;
-                            File = Path.Combine(filePath, audioWaveFormFileName) + fileExtension;
-
-                            if (System.IO.File.Exists(Path.Combine(filePath, audioWaveFormFileName) + fileExtension))
+                            treatmentFilePath = Path.Combine(((CDxPrimary)selectedDeposition.GetMediaRecord()).Database.Folder, "_tmax_transcripts", ((CDxPrimary)selectedDeposition.GetMediaRecord()).AutoId.ToString());
+                            string[] xmltfiles = Directory.GetFiles(treatmentFilePath, "*.xmlt");
+                          
+                            if (xmltfiles != null && xmltfiles.Length > 0)
                             {
-                                XmlDocument xmlDoc = new XmlDocument();
-
-                                xmlDoc.Load(File);
-
-                                XmlNodeList DepositionInfo = xmlDoc.GetElementsByTagName("deposition");
-                                XmlNodeList SegmentInfo = xmlDoc.GetElementsByTagName("segment");
-
-                                if (MediaName != DepositionInfo[0].Attributes["name"].Value)
+                                File = Path.Combine(treatmentFilePath, xmltfiles[0]); //assuming there would be only 1 xmlt file always
+                                if (System.IO.File.Exists(File))
                                 {
-                                    missingFileInfo += string.Format("The xmlt file {0} does not belong to this Deposition {1}", File, MediaName) + System.Environment.NewLine;
-                                    // throw new Exception("The xmlt file does not belong to this Deposition");
+                                    XmlDocument xmlDoc = new XmlDocument();
+
+                                    xmlDoc.Load(File);
+
+                                    XmlNodeList DepositionInfo = xmlDoc.GetElementsByTagName("deposition");
+                                    XmlNodeList SegmentInfo = xmlDoc.GetElementsByTagName("segment");
+
+                                    if (MediaName != DepositionInfo[0].Attributes["name"].Value)
+                                    {
+                                        missingFileInfo += string.Format("The xmlt file {0} does not belong to this Deposition {1}", File, MediaName) + System.Environment.NewLine;
+                                        // throw new Exception("The xmlt file does not belong to this Deposition");
+                                    }
+                                    else
+                                    {
+                                        string error = "";
+                                        m_tmaxDatabase.AddAudioWaveform(SegmentInfo, out error);
+                                        missingFileInfo += error;
+                                    }
                                 }
-                                else
-                                    m_tmaxDatabase.AddAudioWaveform(SegmentInfo);
                             }
-                        }
-                        else
-                        {
-                            MediaName = selectedDeposition.IPrimary.ToString();
-                            File = Path.Combine(filePath, audioWaveFormFileName) + fileExtension;
-
-                            XmlDocument xmlDoc = new XmlDocument();
-
-                            xmlDoc.Load(File);
-
-                            XmlNodeList DepositionInfo = xmlDoc.GetElementsByTagName("deposition");
-                            XmlNodeList SegmentInfo = xmlDoc.GetElementsByTagName("segment");
-
-                            if (MediaName != DepositionInfo[0].Attributes["name"].Value)
-                            {
-                                missingFileInfo += string.Format("The xmlt file {0} does not belong to this Deposition {1}", File, MediaName) + System.Environment.NewLine;
-                                // throw new Exception("The xmlt file does not belong to this Deposition");
-                            }
-                            else
-                                m_tmaxDatabase.AddAudioWaveform(SegmentInfo);
-                        }
+                        }                       
                     }
 
                     messageBoxResult = MessageBox.Show("Add Audio Waveform process finished." + System.Environment.NewLine + missingFileInfo, "Add Audio Waveform", MessageBoxButtons.OK);

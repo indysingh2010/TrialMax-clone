@@ -43,6 +43,9 @@ namespace FTI.Trialmax.Reports
 		/// <summary>Local member bound to PageFooter property</summary>
 		private bool m_bPageFooter = true;
 
+        /// <summary>Local member bound to ShowEditedText property</summary>
+        private bool m_bShowEditedText = true;
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -159,7 +162,13 @@ namespace FTI.Trialmax.Reports
 			get { return m_bPageHeaderFirst; }
 			set { m_bPageHeaderFirst = value; }
 		}
-		
+
+        /// <summary>Use media font</summary>
+        public bool ShowEditedText
+        {
+            get { return m_bShowEditedText; }
+            set { m_bShowEditedText = value; }
+        }
 		#endregion Properties
 
 	}//	public class CROTranscript
