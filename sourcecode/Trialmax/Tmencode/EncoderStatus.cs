@@ -205,84 +205,87 @@ namespace FTI.Trialmax.Encode
 		/// <summary>Required by form designer to initialize child controls</summary>
 		private void InitializeComponent()
 		{
-			this.m_ctrlProgressBar = new System.Windows.Forms.ProgressBar();
-			this.m_ctrlStatus = new System.Windows.Forms.Label();
-			this.m_ctrlFileSpec = new System.Windows.Forms.Label();
-			this.m_ctrlCancel = new System.Windows.Forms.Button();
-			this.m_ctrlFileSpecLabel = new System.Windows.Forms.Label();
-			this.m_ctrlStatusLabel = new System.Windows.Forms.Label();
-			this.SuspendLayout();
-			// 
-			// m_ctrlProgressBar
-			// 
-			this.m_ctrlProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlProgressBar.Location = new System.Drawing.Point(64, 56);
-			this.m_ctrlProgressBar.Name = "m_ctrlProgressBar";
-			this.m_ctrlProgressBar.Size = new System.Drawing.Size(376, 16);
-			this.m_ctrlProgressBar.Step = 5;
-			this.m_ctrlProgressBar.TabIndex = 7;
-			// 
-			// m_ctrlStatus
-			// 
-			this.m_ctrlStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlStatus.Location = new System.Drawing.Point(68, 32);
-			this.m_ctrlStatus.Name = "m_ctrlStatus";
-			this.m_ctrlStatus.Size = new System.Drawing.Size(372, 16);
-			this.m_ctrlStatus.TabIndex = 6;
-			// 
-			// m_ctrlFileSpec
-			// 
-			this.m_ctrlFileSpec.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-				| System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlFileSpec.Location = new System.Drawing.Point(68, 8);
-			this.m_ctrlFileSpec.Name = "m_ctrlFileSpec";
-			this.m_ctrlFileSpec.Size = new System.Drawing.Size(372, 16);
-			this.m_ctrlFileSpec.TabIndex = 8;
-			// 
-			// m_ctrlCancel
-			// 
-			this.m_ctrlCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.m_ctrlCancel.Location = new System.Drawing.Point(364, 78);
-			this.m_ctrlCancel.Name = "m_ctrlCancel";
-			this.m_ctrlCancel.TabIndex = 9;
-			this.m_ctrlCancel.Text = "&Cancel";
-			this.m_ctrlCancel.Click += new System.EventHandler(this.OnClickCancel);
-			// 
-			// m_ctrlFileSpecLabel
-			// 
-			this.m_ctrlFileSpecLabel.Location = new System.Drawing.Point(8, 8);
-			this.m_ctrlFileSpecLabel.Name = "m_ctrlFileSpecLabel";
-			this.m_ctrlFileSpecLabel.Size = new System.Drawing.Size(56, 16);
-			this.m_ctrlFileSpecLabel.TabIndex = 10;
-			this.m_ctrlFileSpecLabel.Text = "Filename:";
-			// 
-			// m_ctrlStatusLabel
-			// 
-			this.m_ctrlStatusLabel.Location = new System.Drawing.Point(8, 32);
-			this.m_ctrlStatusLabel.Name = "m_ctrlStatusLabel";
-			this.m_ctrlStatusLabel.Size = new System.Drawing.Size(56, 16);
-			this.m_ctrlStatusLabel.TabIndex = 11;
-			this.m_ctrlStatusLabel.Text = "Status:";
-			// 
-			// CFEncoderStatus
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(448, 107);
-			this.ControlBox = false;
-			this.Controls.Add(this.m_ctrlStatusLabel);
-			this.Controls.Add(this.m_ctrlFileSpecLabel);
-			this.Controls.Add(this.m_ctrlCancel);
-			this.Controls.Add(this.m_ctrlFileSpec);
-			this.Controls.Add(this.m_ctrlProgressBar);
-			this.Controls.Add(this.m_ctrlStatus);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Name = "CFEncoderStatus";
-			this.ShowInTaskbar = false;
-			this.Text = "Encoder Status";
-			this.TopMost = true;
-			this.ResumeLayout(false);
+            this.m_ctrlProgressBar = new System.Windows.Forms.ProgressBar();
+            this.m_ctrlStatus = new System.Windows.Forms.Label();
+            this.m_ctrlFileSpec = new System.Windows.Forms.Label();
+            this.m_ctrlCancel = new System.Windows.Forms.Button();
+            this.m_ctrlFileSpecLabel = new System.Windows.Forms.Label();
+            this.m_ctrlStatusLabel = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // m_ctrlProgressBar
+            // 
+            this.m_ctrlProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlProgressBar.Location = new System.Drawing.Point(64, 56);
+            this.m_ctrlProgressBar.Name = "m_ctrlProgressBar";
+            this.m_ctrlProgressBar.Size = new System.Drawing.Size(376, 16);
+            this.m_ctrlProgressBar.Step = 5;
+            this.m_ctrlProgressBar.TabIndex = 7;
+            // 
+            // m_ctrlStatus
+            // 
+            this.m_ctrlStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlStatus.Location = new System.Drawing.Point(68, 32);
+            this.m_ctrlStatus.Name = "m_ctrlStatus";
+            this.m_ctrlStatus.Size = new System.Drawing.Size(372, 16);
+            this.m_ctrlStatus.TabIndex = 6;
+            // 
+            // m_ctrlFileSpec
+            // 
+            this.m_ctrlFileSpec.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlFileSpec.Location = new System.Drawing.Point(68, 8);
+            this.m_ctrlFileSpec.Name = "m_ctrlFileSpec";
+            this.m_ctrlFileSpec.Size = new System.Drawing.Size(372, 16);
+            this.m_ctrlFileSpec.TabIndex = 8;
+            // 
+            // m_ctrlCancel
+            // 
+            this.m_ctrlCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.m_ctrlCancel.Location = new System.Drawing.Point(364, 78);
+            this.m_ctrlCancel.Name = "m_ctrlCancel";
+            this.m_ctrlCancel.Size = new System.Drawing.Size(75, 23);
+            this.m_ctrlCancel.TabIndex = 9;
+            this.m_ctrlCancel.Text = "&Cancel";
+            this.m_ctrlCancel.Click += new System.EventHandler(this.OnClickCancel);
+            // 
+            // m_ctrlFileSpecLabel
+            // 
+            this.m_ctrlFileSpecLabel.Location = new System.Drawing.Point(8, 8);
+            this.m_ctrlFileSpecLabel.Name = "m_ctrlFileSpecLabel";
+            this.m_ctrlFileSpecLabel.Size = new System.Drawing.Size(56, 16);
+            this.m_ctrlFileSpecLabel.TabIndex = 10;
+            this.m_ctrlFileSpecLabel.Text = "Filename:";
+            // 
+            // m_ctrlStatusLabel
+            // 
+            this.m_ctrlStatusLabel.Location = new System.Drawing.Point(8, 32);
+            this.m_ctrlStatusLabel.Name = "m_ctrlStatusLabel";
+            this.m_ctrlStatusLabel.Size = new System.Drawing.Size(56, 16);
+            this.m_ctrlStatusLabel.TabIndex = 11;
+            this.m_ctrlStatusLabel.Text = "Status:";
+            // 
+            // CFEncoderStatus
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.CancelButton = this.m_ctrlCancel;
+            this.ClientSize = new System.Drawing.Size(448, 107);
+            this.Controls.Add(this.m_ctrlStatusLabel);
+            this.Controls.Add(this.m_ctrlFileSpecLabel);
+            this.Controls.Add(this.m_ctrlCancel);
+            this.Controls.Add(this.m_ctrlFileSpec);
+            this.Controls.Add(this.m_ctrlProgressBar);
+            this.Controls.Add(this.m_ctrlStatus);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.Name = "CFEncoderStatus";
+            this.ShowInTaskbar = false;
+            this.Text = "Encoder Status";
+            this.TopMost = true;
+            this.ResumeLayout(false);
 
 		}
 		

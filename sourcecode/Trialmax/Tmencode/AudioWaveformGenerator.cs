@@ -42,6 +42,8 @@ namespace FTI.Trialmax.Encode
 
         private static CFEncoderStatus cfEncoderStatus = null;
 
+        public static bool cfEncoderClosed = false;
+
         #endregion Private Members
 
         #region Public Methods
@@ -66,7 +68,7 @@ namespace FTI.Trialmax.Encode
 
             // Setup FFMPEG location
             string ffmpeg = System.IO.Directory.GetCurrentDirectory() + m_converter;
-
+            cfEncoderClosed = false;
             // Verify that ffmpeg exists
             if (!System.IO.File.Exists(ffmpeg)) return false;
 
@@ -111,20 +113,33 @@ namespace FTI.Trialmax.Encode
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
                 cfEncoderStatus.SetStatus("Converting video to audio ...");
-
+                cfEncoderStatus.FormClosed += new FormClosedEventHandler(cfEncoderStatus_FormClosed);        
+                
                 while (!process.HasExited)
                 {
                     cfEncoderStatus.SetProgress(m_lVideoConversionProgress);
                     cfEncoderStatus.Refresh();
+                    if (cfEncoderClosed)
+                    {
+                        break;
+                    }
                 }
 
-                cfEncoderStatus.SetStatus("Generating audio waveform ...");
-                cfEncoderStatus.Refresh();
+                if (cfEncoderClosed)
+                {
+                    cfEncoderStatus.SetStatus("Cancelled generation of audio waveform ...");
+                    cfEncoderStatus.Refresh();
+                    process.Kill();
+                }
+                else
+                {
+                    cfEncoderStatus.SetStatus("Generating audio waveform ...");
+                    cfEncoderStatus.Refresh();
 
-                CreateAudioWave(System.IO.Path.ChangeExtension(strFileSpec, m_convertToFormat));
-                System.IO.File.Delete(System.IO.Path.ChangeExtension(strFileSpec, m_convertToFormat));
-
-                cfEncoderStatus.Close();
+                    CreateAudioWave(System.IO.Path.ChangeExtension(strFileSpec, m_convertToFormat));
+                    System.IO.File.Delete(System.IO.Path.ChangeExtension(strFileSpec, m_convertToFormat));
+                }
+            //    cfEncoderStatus.Close();
                 cfEncoderStatus.Dispose();
                 cfEncoderStatus = null;
 
@@ -136,6 +151,11 @@ namespace FTI.Trialmax.Encode
             }
 
             return true;
+        }
+        
+        static void cfEncoderStatus_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            cfEncoderClosed = true;            
         }// private void GenerateAudioWave()
 
         static void process_ErrorDataReceived(object sender, DataReceivedEventArgs e)

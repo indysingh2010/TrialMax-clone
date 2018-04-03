@@ -10025,6 +10025,7 @@ namespace FTI.Trialmax.Database
 			CXmlDeposition	xmlDeposition = null;
 			string			strFileSpec = "";
 			bool			bSuccessful = false;
+            string          missingFileInfo = "";
 
 			Debug.Assert(tmaxSource.UserData != null);
 			if(tmaxSource.UserData == null) return false;
@@ -10039,7 +10040,8 @@ namespace FTI.Trialmax.Database
                 for (int index = 0; index < xmlDeposition.Segments.Count; index++)
                 {
                     string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
-                    depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
+                    if(File.Exists(filePath))
+                        depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
                 }
 
                 if (m_tmaxAppOptions.ShowAudioWaveform == true)
@@ -10060,7 +10062,10 @@ namespace FTI.Trialmax.Database
                         for (int index = 0; index < xmlDeposition.Segments.Count; index++)
                         {
                             string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
-                            AudioWaveformGenerator.GenerateAudioWave(filePath);
+                            if (File.Exists(filePath))
+                                AudioWaveformGenerator.GenerateAudioWave(filePath);
+                            else
+                               missingFileInfo += string.Format("The mpg file {0} not found at {1}", xmlDeposition.Segments[index].Filename, m_currentVideoPath) + System.Environment.NewLine;
                         }
                     }
                 }
@@ -10107,7 +10112,10 @@ namespace FTI.Trialmax.Database
 					}
 
 				}
-				
+
+                if(missingFileInfo != "")
+                    MessageBox.Show(missingFileInfo, "Add Audio Waveform", MessageBoxButtons.OK);
+
 				//	The user may have cancelled the file transfer
 				if(m_bRegisterCancelled == false)
 					return dxPrimary.Add(dxTranscript);	
@@ -16914,14 +16922,21 @@ namespace FTI.Trialmax.Database
         /// <summary>This method will add a waveform for an existing deposition that has already been added to the media tree</summary>
         /// <param name="SegmentInfo">The segment Information is passed from the Treepane.cs file</param>
         /// <returns>none</returns>
-        public void AddAudioWaveform(XmlNodeList SegmentInfo)
+        public void AddAudioWaveform(XmlNodeList SegmentInfo, out string errorMessage)
         {
             string m_currentVideoPath = m_aCaseFolders[5].Path;
+            errorMessage = "";
 
             for (int index = 0; index < SegmentInfo.Count; index++)
             {
                 string filePath = m_currentVideoPath + "\\" + SegmentInfo[index].Attributes["filename"].Value;
-                AudioWaveformGenerator.GenerateAudioWave(filePath);
+                if(File.Exists(filePath))
+                    AudioWaveformGenerator.GenerateAudioWave(filePath);
+                else
+                    errorMessage += string.Format("The mpg file {0} not found at {1}", SegmentInfo[index].Attributes["filename"].Value, m_currentVideoPath) + System.Environment.NewLine;
+
+                if (AudioWaveformGenerator.cfEncoderClosed)
+                    break;
             }
         }// public void AddAudioWaveform(XmlNodeList SegmentInfo)
 
