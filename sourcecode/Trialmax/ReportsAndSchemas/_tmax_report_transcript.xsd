@@ -29,6 +29,7 @@
               <xs:element name="H5" type="xs:int" minOccurs="0" />
               <xs:element name="H6" type="xs:int" minOccurs="0" />
               <xs:element name="H7" type="xs:int" minOccurs="0" />
+			  <xs:element name="Edit" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
