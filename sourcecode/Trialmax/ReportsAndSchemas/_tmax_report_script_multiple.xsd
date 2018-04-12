@@ -1,0 +1,53 @@
+<?xml version="1.0" standalone="yes"?>
+<xs:schema id="_tmax_report_script_multiple" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="_tmax_report_script_multiple" msdata:IsDataSet="true">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="Clip">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ClipIndex" type="xs:int" minOccurs="0" />
+              <xs:element name="Script" type="xs:int" minOccurs="0" />
+              <xs:element name="Clip" type="xs:int" minOccurs="0" />
+              <xs:element name="Transcript" type="xs:string" minOccurs="0" />
+              <xs:element name="StartPL" type="xs:string" minOccurs="0" />
+              <xs:element name="StopPL" type="xs:string" minOccurs="0" />
+              <xs:element name="Time" type="xs:string" minOccurs="0" />
+              <xs:element name="Elapsed" type="xs:string" minOccurs="0" />
+              <xs:element name="Remaining" type="xs:string" minOccurs="0" />
+              <xs:element name="Barcode" type="xs:string" minOccurs="0" />
+              <xs:element name="FileName" type="xs:string" minOccurs="0" />
+              <xs:element name="Transition" type="xs:string" minOccurs="0" />
+              <xs:element name="Graphic" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Information">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ScriptIndex" type="xs:int" minOccurs="0" />
+              <xs:element name="Name" type="xs:string" minOccurs="0" />
+              <xs:element name="Total_Time" type="xs:string" minOccurs="0" />
+              <xs:element name="Accumulated_Total_Time" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Transcript">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Clip" type="xs:int" minOccurs="0" />
+              <xs:element name="PL" type="xs:int" minOccurs="0" />
+              <xs:element name="Page" type="xs:string" minOccurs="0" />
+              <xs:element name="Line" type="xs:short" minOccurs="0" />
+              <xs:element name="LineText" type="xs:string" minOccurs="0" />
+              <xs:element name="HColor" type="xs:int" minOccurs="0" />
+              <xs:element name="Link" type="xs:string" minOccurs="0" />
+              <xs:element name="Edit" type="xs:string" minOccurs="0" />
+              <xs:element name="LinkBarcode" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
