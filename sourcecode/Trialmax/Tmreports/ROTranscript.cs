@@ -46,6 +46,8 @@ namespace FTI.Trialmax.Reports
         /// <summary>Local member bound to ShowEditedText property</summary>
         private bool m_bShowEditedText = true;
 
+        /// <summary>Local member bound to howHighlighterLabel property</summary>
+        private bool m_bShowHighlighterLabel = true;
 		#endregion Private Members
 		
 		#region Public Methods
@@ -168,6 +170,12 @@ namespace FTI.Trialmax.Reports
         {
             get { return m_bShowEditedText; }
             set { m_bShowEditedText = value; }
+        }
+
+        public bool ShowHighlighterLabel
+        {
+            get { return m_bShowHighlighterLabel; }
+            set { m_bShowHighlighterLabel = value; }
         }
 		#endregion Properties
 

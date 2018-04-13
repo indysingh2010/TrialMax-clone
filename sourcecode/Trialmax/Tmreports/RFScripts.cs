@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.Data;
@@ -187,7 +188,13 @@ namespace FTI.Trialmax.Reports
 	
 		/// <summary>Local member to keep track of the current clip index</summary>
 		private int m_iClipIndex = 0;
-	
+
+        /// <summary>Local member to keep track highlighted text duration</summary>
+        Hashtable highlighterDurationTable;
+
+        /// <summary>Local member to keep track of the designations</summary>
+        private List<string> m_designationNames;
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -832,7 +839,11 @@ namespace FTI.Trialmax.Reports
 		{
 			Debug.Assert(tmaxScript.IPrimary != null);
 			Debug.Assert(tmaxScript.SubItems != null);
-			
+            //to hold highlighter text duration
+            highlighterDurationTable = new Hashtable(); 
+            //to hold all designation names
+            m_designationNames = new List<string>();
+
 			//	Set the times
 			m_lScriptElapsed = 0;
 			m_lScriptTime = (long)(tmaxScript.UserData1);
@@ -851,9 +862,6 @@ namespace FTI.Trialmax.Reports
 			else
 				dr["Name"] = tmaxScript.IPrimary.GetBarcode(false); // MediaID
 			
-			//	Add the row
-			m_dsReportSource.Tables[INFORMATION_TABLE_NAME].Rows.Add(dr);
-
 			//	Add all designations
 			foreach(CTmaxItem O in tmaxScript.SubItems)
 			{
@@ -865,7 +873,19 @@ namespace FTI.Trialmax.Reports
 					return false;
 				
 			}// foreach(CTmaxItem O in tmaxScript.SubItems)
-			
+
+            //All designation names to be shown on report header 
+            if (m_designationNames.Count > 0)
+                dr["Deposition_Names"] = string.Join(",",m_designationNames);
+            else
+                dr["Deposition_Names"] = ""; 
+            
+            //	Add the row
+            m_dsReportSource.Tables[INFORMATION_TABLE_NAME].Rows.Add(dr);
+
+            //calculate duration of highlighted text 
+            CalculateHighlightedTextDuration(highlighterDurationTable);
+
 			//	Bump the script index
 			m_iScriptIndex++;
 			
@@ -886,7 +906,7 @@ namespace FTI.Trialmax.Reports
 			string				strFilename = "";
 			string				strStartPL = "";
 			string				strStopPL = "";
-			string				strTranscript = "";
+			string				strTranscript = "";            
 				
 			Debug.Assert(dxScene != null);
 			
@@ -917,6 +937,10 @@ namespace FTI.Trialmax.Reports
 					dxDeposition = dxDesignation.Secondary.Primary;
 			
 					strTranscript = dxDeposition.Name;
+
+                    if (!m_designationNames.Contains(strTranscript))
+                        m_designationNames.Add(strTranscript);
+
 					strStartPL = CTmaxToolbox.PLToString(dxDesignation.GetExtent().StartPL);
 					strStopPL = CTmaxToolbox.PLToString(dxDesignation.GetExtent().StopPL);
 					strFilename = dxDesignation.Secondary.GetFileName();
@@ -990,6 +1014,11 @@ namespace FTI.Trialmax.Reports
 			if(dxDesignation != null)
 			{
 				AddSource(dxScene, dxDesignation);
+                CDxExtent cExtent = dxDesignation.GetExtent();
+                if (cExtent != null)
+                {
+                    RecordSourceHighlighterDuration(cExtent, highlighterDurationTable);
+                }
 			}
 			else
 			{
@@ -1018,7 +1047,7 @@ namespace FTI.Trialmax.Reports
 			long			lPageNumber = -1;
 			bool			bSetPage = false;
 			int				iHighlighter = 0;
-			CDxQuaternary	dxLink = null;
+			CDxQuaternary	dxLink = null;         
 				
 			//	What highlighter is assigned to this designation?
 			//
@@ -1070,9 +1099,8 @@ namespace FTI.Trialmax.Reports
 
 					if(AddSource(O, bSetPage, strLinkBarcode, iHighlighter) == false)
 						return false;
-						
+                 
 				}// foreach(CXmlTranscript O in xmlDesignation.Transcripts)
-			
 			}
 			else
 			{
@@ -1163,7 +1191,6 @@ namespace FTI.Trialmax.Reports
                 if (existingHighlighter == null || existingHighlighter.Length == 0)
                 {
                     DataRow drHighlighter = m_dsReportSource.Tables[HIGHLIGHTER_TABLE_NAME].NewRow();
-             //       drHighlighter["Clip"] = m_iClipIndex;
                     drHighlighter["HName"] = m_aHighlightersNames[iHighlighter];
                     drHighlighter["HColor"] = m_aHighlighters[iHighlighter];
                     m_dsReportSource.Tables[HIGHLIGHTER_TABLE_NAME].Rows.Add(drHighlighter);
@@ -1173,7 +1200,75 @@ namespace FTI.Trialmax.Reports
 			return true;
 			
 		}// private bool AddSource(CXmlTranscript xmlTranscript)
-		
+
+        /// <summary>This method is called to record the Highlighted text duration on hashtable</summary>
+        /// <returns>true if successful</returns>
+        private void RecordSourceHighlightDuration(CXmlTranscript O, Hashtable highlighterDuration, int iHighlighter)
+        {
+            double lDuration = O.Stop - O.Start;
+            string key = m_aHighlightersNames[iHighlighter];
+
+            if (!highlighterDuration.ContainsKey(key))
+            {
+                highlighterDuration.Add(key, lDuration);
+            }
+            else
+            {
+                lDuration = O.Stop - O.Start;
+                if (lDuration > 0)
+                {
+                    double existingDuration = (double)highlighterDuration[key];
+                    existingDuration = existingDuration + lDuration;
+                    highlighterDuration[key] = existingDuration;
+                }
+            }
+        }//private void RecordSourceHighlightDuration(CXmlTranscript O, Hashtable highlighterDuration, int iHighlighter)
+
+
+        /// <summary>This method is called to record the Highlighted text duration on hashtable</summary>
+        /// <returns>true if successful</returns>
+        private void RecordSourceHighlighterDuration(CDxExtent cExtent, Hashtable highlightDurationTable)
+        {
+            double lDuration = cExtent.Stop - cExtent.Start;
+            if (!highlightDurationTable.ContainsKey(m_aHighlightersNames[cExtent.HighlighterId - 1]))
+            {
+                highlightDurationTable.Add(m_aHighlightersNames[cExtent.HighlighterId - 1], lDuration);
+            }
+            else
+            {
+                lDuration = cExtent.Stop - cExtent.Start;
+                if (lDuration > 0)
+                {
+                    double existingDuration = (double)highlightDurationTable[m_aHighlightersNames[cExtent.HighlighterId - 1]];
+                    existingDuration = existingDuration + lDuration;
+                    highlightDurationTable[m_aHighlightersNames[cExtent.HighlighterId - 1]] = existingDuration;
+                }
+            }
+        }//private void RecordSourceHighlighterDuration(CDxExtent cExtent, Hashtable highlightDurationTable)
+
+        /// <summary>This method is called to calculate time duration of the Highlighted text</summary>
+        /// <returns>true if successful</returns>
+        private void CalculateHighlightedTextDuration(Hashtable highlightDurationTable)
+        {
+            foreach (string key in highlightDurationTable.Keys)
+            {
+                double duration = (double)highlightDurationTable[key];
+                DataRow[] existingHighlighter = m_dsReportSource.Tables[HIGHLIGHTER_TABLE_NAME].Select("HName = '" + key + "'");
+                if (existingHighlighter != null && existingHighlighter.Length > 0)
+                {
+                    if (duration > 0)
+                    {
+                        existingHighlighter[0]["HDuration"] = CTmaxToolbox.SecondsToString(Math.Round(duration), 0);
+                    }
+                    else
+                    {
+                        existingHighlighter[0]["HDuration"] = "00:00:00";
+                    }
+                }
+            }
+        }//private void CalculateHighlightedTextDuration(Hashtable highlightDurationTable)
+
+
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.

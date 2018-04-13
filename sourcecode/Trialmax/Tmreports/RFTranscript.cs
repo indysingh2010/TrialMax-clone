@@ -28,6 +28,7 @@ namespace FTI.Trialmax.Reports
 		
 		private const string TRANSCRIPT_TABLE_NAME  = "Transcript";
 		private const string INFORMATION_TABLE_NAME = "Information";
+        private const string HIGHLIGHTER_TABLE_NAME = "HighlighterDetail";
 		
 		/// <summary>Error message identifiers</summary>
 		protected const int ERROR_SET_TRANSCRIPT_EX			= (ERROR_RFBASE_MAX + 1);
@@ -107,6 +108,9 @@ namespace FTI.Trialmax.Reports
 		
 		/// <summary>Array of highlighter colors</summary>
 		private int [] m_aHighlighters = new int[MAX_HIGHLIGHTERS];
+
+        /// <summary>Array of highlighter name</summary>
+        private string[] m_aHighlightersNames = new string[MAX_HIGHLIGHTERS];
 		
 		/// <summary>Debugging check box to save data set to file</summary>
 		private System.Windows.Forms.CheckBox m_ctrlSaveData;
@@ -147,6 +151,7 @@ namespace FTI.Trialmax.Reports
 		private System.Windows.Forms.ComboBox m_ctrlExportFormats;
 		private System.Windows.Forms.CheckBox m_ctrlPreviewExports;
         private CheckBox m_ctrlShowEditText;
+        private CheckBox m_ctrlShowHighlighterLabel;
 		
 		/// <summary>Options for generating the report</summary>
 		private CROTranscript m_reportOptions = null;
@@ -274,9 +279,11 @@ namespace FTI.Trialmax.Reports
 		protected override void OnLoad(EventArgs e)
 		{
 			//	Get the highlighter colors
-			for(int i = 0; i < MAX_HIGHLIGHTERS; i++)
-				m_aHighlighters[i] = GetOleHighlighter(i);
-				
+            for (int i = 0; i < MAX_HIGHLIGHTERS; i++)
+            {
+                m_aHighlighters[i] = GetOleHighlighter(i);
+                m_aHighlightersNames[i] = GetHighlighterName(i);
+            }	
 			//	Set the control values
 			Exchange(true);
 			
@@ -417,6 +424,7 @@ namespace FTI.Trialmax.Reports
 					
 					m_ctrlExportFolder.Text = Options.ExportFolder;
 					m_ctrlPreviewExports.Checked = Options.PreviewExports;
+                    m_ctrlShowHighlighterLabel.Checked = Options.ShowHighlighterLabel;
 					
 					//	Set the template selection
 					if(Options.Templates.Count > 0)
@@ -460,6 +468,7 @@ namespace FTI.Trialmax.Reports
 					Options.ExportFormat = GetExportFormat(m_ctrlExportFormats);
 					Options.ExportFolder = m_ctrlExportFolder.Text;
 					Options.PreviewExports = m_ctrlPreviewExports.Checked;
+                    Options.ShowHighlighterLabel = m_ctrlShowHighlighterLabel.Checked;
 					
 					if((Options.Template < 1) && (Options.Alternate.Length == 0))
 					{
@@ -920,7 +929,8 @@ namespace FTI.Trialmax.Reports
 		private bool SetSourceHighlights()
 		{
 			CDxTertiary dxDesignation = null;
-			
+            Hashtable highlightDurationTable = new Hashtable();
+
 			Debug.Assert(m_dxScenes != null);
 			if(m_dxScenes == null) return false;
 			
@@ -944,20 +954,23 @@ namespace FTI.Trialmax.Reports
 					//	Is this designation created from the selected deposition?
 					if((m_dxDeposition == null) || (ReferenceEquals(dxDesignation.Secondary.Primary, m_dxDeposition) == true))
 					{
-						if(dxDesignation.GetExtent() != null)
-						{
+                        CDxExtent cExtent = dxDesignation.GetExtent();
+                        if (cExtent != null)
+						{                                                  
 							//	Highlight this designation
-							SetSourceHighlight(dxDesignation.GetExtent().StartPL,
-											dxDesignation.GetExtent().StopPL,
-											dxDesignation.GetExtent().HighlighterId);
-						}
-					
-					}
-					
+                            SetSourceHighlight(cExtent);
+
+                            //Save higlighter duration in Hash table
+                            RecordSourceHighlighterDuration(cExtent, highlightDurationTable);                           
+						}					
+					}					
 				}
 			
 			}// foreach(CDxSecondary dxScene in m_dxScenes)
-			
+
+            //calculate time duration and update data table
+            CalculateHighlightedTextDuration(highlightDurationTable);           
+
 			//m_tmaxEventSource.FireElapsed(this, "SetSourceHighlights", "Time to highlight transcript: ");
 			return true;
 		
@@ -965,10 +978,13 @@ namespace FTI.Trialmax.Reports
 		
 		/// <summary>This method is called to set the highlights for the specified designation</summary>
 		/// <returns>true if successful</returns>
-		private bool SetSourceHighlight(long lFirstPL, long lLastPL, long lHighlighter)
+        private bool SetSourceHighlight(CDxExtent cExtent)
 		{
 			long lPL = 0;
-			
+            long lFirstPL = cExtent.StartPL;
+            long lLastPL = cExtent.StopPL;
+            long lHighlighter = cExtent.HighlighterId;
+            long lDuration = 0;            
 			try
 			{
 				//	Locate the rows that fall within this range
@@ -1005,6 +1021,20 @@ namespace FTI.Trialmax.Reports
 											break;
 											
 							}// switch(lHighlighter)
+
+                            if (Options.ShowHighlighterLabel)
+                            {
+                                DataRow[] existingHighlighter = m_dsReportSource.Tables[HIGHLIGHTER_TABLE_NAME].Select("HName = '" + m_aHighlightersNames[lHighlighter - 1] + "'");
+                                if (existingHighlighter == null || existingHighlighter.Length == 0)
+                                {
+                                    DataRow drHighlighter = m_dsReportSource.Tables[HIGHLIGHTER_TABLE_NAME].NewRow();
+                                    //       drHighlighter["Clip"] = m_iClipIndex;
+                                    drHighlighter["HName"] = m_aHighlightersNames[lHighlighter - 1];
+                                    drHighlighter["HColor"] = m_aHighlighters[lHighlighter - 1];
+
+                                    m_dsReportSource.Tables[HIGHLIGHTER_TABLE_NAME].Rows.Add(drHighlighter);
+                                }
+                            }
 						}
 						
 					}// if((lPL >= lFirstPL) && (lPL <= lLastPL))
@@ -1017,7 +1047,8 @@ namespace FTI.Trialmax.Reports
 					}
 					
 				}// foreach(DataRow O in m_dsReportSource.Tables[TRANSCRIPT_TABLE_NAME].Rows)
-				
+
+                
 				return true;
 			}
 			catch(System.Exception Ex)
@@ -1028,8 +1059,51 @@ namespace FTI.Trialmax.Reports
 			
 		}// private bool SetSourceHighlight(long lFirstPL, long lLastPL, long lHighlighter)
 
+        /// <summary>This method is called to record the Highlighted text duration on hashtable</summary>
+        /// <returns>true if successful</returns>
+        private void RecordSourceHighlighterDuration(CDxExtent cExtent, Hashtable highlightDurationTable)
+        {
+            double lDuration = cExtent.Stop - cExtent.Start;
+            if (!highlightDurationTable.ContainsKey(m_aHighlightersNames[cExtent.HighlighterId - 1]))
+            {
+                highlightDurationTable.Add(m_aHighlightersNames[cExtent.HighlighterId - 1], lDuration);
+            }
+            else
+            {
+                lDuration = cExtent.Stop - cExtent.Start;
+                if (lDuration > 0)
+                {
+                    double existingDuration = (double)highlightDurationTable[m_aHighlightersNames[cExtent.HighlighterId - 1]];
+                    existingDuration = existingDuration + lDuration;
+                    highlightDurationTable[m_aHighlightersNames[cExtent.HighlighterId - 1]] = existingDuration;
+                }
+            }
+        }//private void RecordSourceHighlighterDuration(CDxExtent cExtent, Hashtable highlightDurationTable)
 
-        /// <summary>This method is called to set the highlights for all scenes in the active script</summary>
+
+        /// <summary>This method is called to calculate time duration of the Highlighted text</summary>
+        /// <returns>true if successful</returns>
+        private void CalculateHighlightedTextDuration(Hashtable highlightDurationTable)
+        {
+            foreach (string key in highlightDurationTable.Keys)
+            {
+                double duration = (double)highlightDurationTable[key];
+                DataRow[] existingHighlighter = m_dsReportSource.Tables[HIGHLIGHTER_TABLE_NAME].Select("HName = '" + key + "'");
+                if (existingHighlighter != null && existingHighlighter.Length > 0)
+                {
+                    if (duration > 0)
+                    {
+                        existingHighlighter[0]["HDuration"] = CTmaxToolbox.SecondsToString(Math.Round(duration), 0);
+                    }
+                    else
+                    {
+                        existingHighlighter[0]["HDuration"] = "00:00:00";
+                    }
+                }
+            }
+        }//private void CalculateHighlightedTextDuration(Hashtable highlightDurationTable)
+
+        /// <summary>This method is called to show edited text in the transcript</summary>
         /// <returns>true if successful</returns>
         private bool SetEditedTranscriptText()
         {
@@ -1076,19 +1150,7 @@ namespace FTI.Trialmax.Reports
                                     filteredRow[0]["Edit"] = "E";
                                 }
                             }
-                            //foreach (DataRow dr in m_dsReportSource.Tables[TRANSCRIPT_TABLE_NAME].Rows)
-                            //{
-                            //    if (O.Edited)
-                            //    {
-                            //        long lPL = (long)((int)(dr["PL"]));
-
-                            //        //	Is this row within range?
-                            //        if (lPL == O.PL && Convert.ToInt32(dr["Line"]) == O.Line)
-                            //        {
-                            //            dr["LineText"] = O.Text;
-                            //        }
-                            //    }                              
-                            //}
+                           
                         }
 
                         //	Clean up
@@ -1313,6 +1375,8 @@ namespace FTI.Trialmax.Reports
             this.m_ctrlOK = new System.Windows.Forms.Button();
             this.m_ctrlCancel = new System.Windows.Forms.Button();
             this.m_ctrlOptionsGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlShowHighlighterLabel = new System.Windows.Forms.CheckBox();
+            this.m_ctrlShowEditText = new System.Windows.Forms.CheckBox();
             this.m_ctrlMediumFont = new System.Windows.Forms.CheckBox();
             this.m_ctrlPageFooter = new System.Windows.Forms.CheckBox();
             this.m_ctrlPageHeaderSubsequent = new System.Windows.Forms.CheckBox();
@@ -1337,7 +1401,6 @@ namespace FTI.Trialmax.Reports
             this.m_ctrlBrowseExportFolder = new System.Windows.Forms.Button();
             this.m_ctrlExportFormats = new System.Windows.Forms.ComboBox();
             this.m_ctrlPreviewExports = new System.Windows.Forms.CheckBox();
-            this.m_ctrlShowEditText = new System.Windows.Forms.CheckBox();
             this.m_ctrlOptionsGroup.SuspendLayout();
             this.m_ctrlContentGroup.SuspendLayout();
             this.m_ctrlStyleGroup.SuspendLayout();
@@ -1346,7 +1409,7 @@ namespace FTI.Trialmax.Reports
             // 
             // m_ctrlOK
             // 
-            this.m_ctrlOK.Location = new System.Drawing.Point(416, 280);
+            this.m_ctrlOK.Location = new System.Drawing.Point(416, 300);
             this.m_ctrlOK.Name = "m_ctrlOK";
             this.m_ctrlOK.Size = new System.Drawing.Size(75, 23);
             this.m_ctrlOK.TabIndex = 3;
@@ -1355,7 +1418,7 @@ namespace FTI.Trialmax.Reports
             // m_ctrlCancel
             // 
             this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.m_ctrlCancel.Location = new System.Drawing.Point(504, 280);
+            this.m_ctrlCancel.Location = new System.Drawing.Point(504, 300);
             this.m_ctrlCancel.Name = "m_ctrlCancel";
             this.m_ctrlCancel.Size = new System.Drawing.Size(75, 23);
             this.m_ctrlCancel.TabIndex = 4;
@@ -1363,6 +1426,7 @@ namespace FTI.Trialmax.Reports
             // 
             // m_ctrlOptionsGroup
             // 
+            this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlShowHighlighterLabel);
             this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlShowEditText);
             this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlMediumFont);
             this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlPageFooter);
@@ -1372,10 +1436,26 @@ namespace FTI.Trialmax.Reports
             this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlBoldDesignations);
             this.m_ctrlOptionsGroup.Location = new System.Drawing.Point(304, 8);
             this.m_ctrlOptionsGroup.Name = "m_ctrlOptionsGroup";
-            this.m_ctrlOptionsGroup.Size = new System.Drawing.Size(288, 160);
+            this.m_ctrlOptionsGroup.Size = new System.Drawing.Size(288, 184);
             this.m_ctrlOptionsGroup.TabIndex = 2;
             this.m_ctrlOptionsGroup.TabStop = false;
             this.m_ctrlOptionsGroup.Text = "Options";
+            // 
+            // m_ctrlShowHighlighterLabel
+            // 
+            this.m_ctrlShowHighlighterLabel.Location = new System.Drawing.Point(12, 158);
+            this.m_ctrlShowHighlighterLabel.Name = "m_ctrlShowHighlighterLabel";
+            this.m_ctrlShowHighlighterLabel.Size = new System.Drawing.Size(252, 20);
+            this.m_ctrlShowHighlighterLabel.TabIndex = 7;
+            this.m_ctrlShowHighlighterLabel.Text = "Show Highlighter Labels";
+            // 
+            // m_ctrlShowEditText
+            // 
+            this.m_ctrlShowEditText.Location = new System.Drawing.Point(12, 140);
+            this.m_ctrlShowEditText.Name = "m_ctrlShowEditText";
+            this.m_ctrlShowEditText.Size = new System.Drawing.Size(252, 16);
+            this.m_ctrlShowEditText.TabIndex = 6;
+            this.m_ctrlShowEditText.Text = "Show Edited Text";
             // 
             // m_ctrlMediumFont
             // 
@@ -1444,7 +1524,7 @@ namespace FTI.Trialmax.Reports
             // 
             // m_ctrlSaveData
             // 
-            this.m_ctrlSaveData.Location = new System.Drawing.Point(292, 280);
+            this.m_ctrlSaveData.Location = new System.Drawing.Point(292, 300);
             this.m_ctrlSaveData.Name = "m_ctrlSaveData";
             this.m_ctrlSaveData.Size = new System.Drawing.Size(92, 16);
             this.m_ctrlSaveData.TabIndex = 6;
@@ -1458,7 +1538,7 @@ namespace FTI.Trialmax.Reports
             this.m_ctrlContentGroup.Controls.Add(this.m_ctrlScriptLabel);
             this.m_ctrlContentGroup.Location = new System.Drawing.Point(7, 8);
             this.m_ctrlContentGroup.Name = "m_ctrlContentGroup";
-            this.m_ctrlContentGroup.Size = new System.Drawing.Size(288, 156);
+            this.m_ctrlContentGroup.Size = new System.Drawing.Size(288, 184);
             this.m_ctrlContentGroup.TabIndex = 0;
             this.m_ctrlContentGroup.TabStop = false;
             this.m_ctrlContentGroup.Text = "Content";
@@ -1499,7 +1579,7 @@ namespace FTI.Trialmax.Reports
             this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlTemplates);
             this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlAlternate);
             this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlBrowse);
-            this.m_ctrlStyleGroup.Location = new System.Drawing.Point(7, 172);
+            this.m_ctrlStyleGroup.Location = new System.Drawing.Point(7, 193);
             this.m_ctrlStyleGroup.Name = "m_ctrlStyleGroup";
             this.m_ctrlStyleGroup.Size = new System.Drawing.Size(288, 92);
             this.m_ctrlStyleGroup.TabIndex = 1;
@@ -1548,7 +1628,7 @@ namespace FTI.Trialmax.Reports
             this.m_ctrlExportGroup.Controls.Add(this.m_ctrlBrowseExportFolder);
             this.m_ctrlExportGroup.Controls.Add(this.m_ctrlExportFormats);
             this.m_ctrlExportGroup.Controls.Add(this.m_ctrlPreviewExports);
-            this.m_ctrlExportGroup.Location = new System.Drawing.Point(304, 172);
+            this.m_ctrlExportGroup.Location = new System.Drawing.Point(304, 193);
             this.m_ctrlExportGroup.Name = "m_ctrlExportGroup";
             this.m_ctrlExportGroup.Size = new System.Drawing.Size(288, 92);
             this.m_ctrlExportGroup.TabIndex = 9;
@@ -1599,20 +1679,12 @@ namespace FTI.Trialmax.Reports
             this.m_ctrlPreviewExports.TabIndex = 2;
             this.m_ctrlPreviewExports.Text = "Preview";
             // 
-            // m_ctrlShowEditText
-            // 
-            this.m_ctrlShowEditText.Location = new System.Drawing.Point(12, 140);
-            this.m_ctrlShowEditText.Name = "m_ctrlShowEditText";
-            this.m_ctrlShowEditText.Size = new System.Drawing.Size(252, 16);
-            this.m_ctrlShowEditText.TabIndex = 6;
-            this.m_ctrlShowEditText.Text = "Show Edited Text";
-            // 
             // CRFTranscript
             // 
             this.AcceptButton = this.m_ctrlOK;
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.CancelButton = this.m_ctrlCancel;
-            this.ClientSize = new System.Drawing.Size(598, 315);
+            this.ClientSize = new System.Drawing.Size(598, 334);
             this.ControlBox = false;
             this.Controls.Add(this.m_ctrlExportGroup);
             this.Controls.Add(this.m_ctrlStyleGroup);
