@@ -1174,13 +1174,19 @@ void CTMMovieCtrl::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		}
 		else // The video is played in presentation mode
 		{
-			double newPosition = val / m_sldVideoSliderControl->GetRangeMax() * (m_pDesignation->m_dStopTime - m_pDesignation->m_dStartTime);
+			double newPosition = (val / m_sldVideoSliderControl->GetRangeMax()) * (m_pDesignation->m_dStopTime - m_pDesignation->m_dStartTime);
 			newPosition += m_pDesignation->m_dStartTime;
 			m_Player.SetPos(newPosition); // Update the player time location
 			
 			// In presentation mode, we autoplay the video when seeking in order to 
 			// keep the behavior consistent with seek buttons in toolbar
 			Resume();
+
+			//hot fix for setting text when scrubber bar is rewinded.
+			//when scrubber bar was forwarded the text is  positioned correctly but not when rewinded. It was strange no clue found.
+			//after adding this line it now works both ways
+			SetPlaylistLine(newPosition);	
+
 		}
     }
 
