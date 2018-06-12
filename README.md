@@ -16,3 +16,6 @@ TrialMax Source Code Setup Guide for Developers:
 <li>All the required Trialmax sourcecode dependecies will be downloaded automatically from the internet.</li>
 <li>Open "TrialMax\sourcecode\Trialmax\TmaxManager_all.sln" in Visual Studio 2010. Clean the solution TmaxManager_all and then build.</li>
 </ol>
+
+
+<b>Please read the steps provided in steps.txt to setup the source code initially</b>
