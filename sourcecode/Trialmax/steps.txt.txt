@@ -1,0 +1,22 @@
+-----
+Steps for initially setting up TrailMax
+----
+1. Run TmaxDependencyDownloader
+
+2. Copy the ini files in the misc folder to the following folders:
+
+- Rename Fti-debug to Fti and copy to bin/debug
+- Rename Fti-release to Fti and copy to bin/release
+- Rename Fti-Install to Fti and copy to Install
+
+If at any point in time, the ini files need to be updated, then they need to be committed to the misc folder as well.
+
+
+3. Copy the Transcript Schemas
+
+- Copy all the files in ReportsAndSchemas (all crystal reports and schema files) to the following folders:
+a. Reports
+b. Bin/Debug
+c. Bin/Release
+
+Whenever a Report or schema file is updated, It needs to be copied to the above folders as well. Also, that updated schema or report file must be committed to github by copying it to the ReportsAndSchemas Folder.

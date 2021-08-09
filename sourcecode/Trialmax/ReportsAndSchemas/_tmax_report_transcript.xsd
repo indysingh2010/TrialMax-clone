@@ -33,6 +33,15 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+		<xs:element name="HighlighterDetail">
+          <xs:complexType>
+            <xs:sequence>
+			  <xs:element name="HColor" type="xs:int" minOccurs="0" />
+			  <xs:element name="HName" type="xs:string" minOccurs="0" />
+			  <xs:element name="HDuration" type="xs:string" minOccurs="0" />
+             </xs:sequence>
+          </xs:complexType>
+        </xs:element>
       </xs:choice>
     </xs:complexType>
   </xs:element>

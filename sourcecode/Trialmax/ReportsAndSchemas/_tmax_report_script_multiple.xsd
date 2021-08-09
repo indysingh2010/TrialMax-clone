@@ -30,6 +30,7 @@
               <xs:element name="Name" type="xs:string" minOccurs="0" />
               <xs:element name="Total_Time" type="xs:string" minOccurs="0" />
               <xs:element name="Accumulated_Total_Time" type="xs:string" minOccurs="0" />
+			  <xs:element name="Deposition_Names" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -54,6 +55,7 @@
             <xs:sequence>
 			  <xs:element name="HColor" type="xs:int" minOccurs="0" />
 			  <xs:element name="HName" type="xs:string" minOccurs="0" />
+			   <xs:element name="HDuration" type="xs:string" minOccurs="0" />
              </xs:sequence>
           </xs:complexType>
         </xs:element>
