@@ -55,6 +55,33 @@ namespace FTI.Trialmax.Controls
 		/// <summary>Custom tune bar control for managing tune states</summary>
         private FTI.Trialmax.Controls.CTmaxVideoTuneBarCtrl m_ctrlTuneBar;
 
+        /// <summary>This variable will hold the current segment number of the divided waveform</summary>
+        private double m_currentWaveFormSegment = 1;
+
+        /// <summary>This variable will hold the total number of segments of the waveform</summary>
+        private double m_totalWaveFormSegments = 0;
+
+        /// <summary>This variable will hold the number of segments in a waveform</summary>
+        private double m_secondsPerSegment = 30;
+
+        /// <summary>This variable will hold the current segment of the waveform image</summary>
+        private Bitmap m_currentWaveFormSegmentImage = null;
+
+        /// <summary>This variable will hold the original starting position of the video</summary>
+        private double m_originalPosition = 0;
+
+        /// <summary>This variable will hold the current position of the video</summary>
+        private double m_currentPosition = 0;
+
+        /// <summary>This variable will hold the previous position of the video before the event was fired</summary>
+        private double m_previousPosition = 0;
+
+        /// <summary>This variable will hold the tarting and ending time of each segments against a segment number</summary>
+        private Dictionary<double, List<double>> startEndTimesMapToSegment = new Dictionary<double, List<double>>();
+
+        /// <summary>This variable will hold the segment number against a starting time</summary>
+        private Dictionary<double, double> segmentMapToStartTime = new Dictionary<double, double>();
+
 		#endregion Private Members
 		
 		#region Public Methods
@@ -80,7 +107,7 @@ namespace FTI.Trialmax.Controls
 			m_ctrlPlayer.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(this.OnTmaxVideoCtrlEvent);
 			m_ctrlPlayer.TmaxVideoCtrlEvent += new FTI.Trialmax.Controls.TmaxVideoCtrlHandler(m_ctrlTuneBar.OnTmaxVideoCtrlEvent);
 
-		}// CTmaxVideoTunerCtrl()
+            }// CTmaxVideoTunerCtrl()
 		
 		/// <summary>This method handles all video events fired by the player and tune bar</summary>
 		/// <param name="sender">The object sending the event</param>
@@ -265,6 +292,9 @@ namespace FTI.Trialmax.Controls
                     m_dDuration = m_ctrlPlayer.GetDuration(m_strFileSpec);
                     if (m_dDuration > 0)
                     {
+                        if (FTI.Shared.Trialmax.Config.Configuration.ShowAudioWaveform == true)
+                        {
+                        
                         using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
                         {
                             Rectangle cropRect = new Rectangle(GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(m_ctrlPlayer.StopPosition, bmpAudioWave.Width) - GetLocationOnImage(m_ctrlPlayer.StartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
@@ -279,8 +309,53 @@ namespace FTI.Trialmax.Controls
                                                     cropRect,
                                                     GraphicsUnit.Pixel);
                             }
-                            m_picWave.Image = (Bitmap)m_orignalWave;
-                        }                        
+
+                            m_currentPosition = m_ctrlPlayer.StartPosition;
+                            m_previousPosition = m_ctrlPlayer.StartPosition;
+                            m_totalWaveFormSegments = Math.Ceiling(m_dDuration / m_secondsPerSegment);
+
+                            segmentMapToStartTime.Clear();
+                            startEndTimesMapToSegment.Clear();
+                            double count = 0;
+                            for (int i = 1; i <= m_totalWaveFormSegments; i++) 
+                            {
+                                segmentMapToStartTime.Add(count, i);
+                                List<double> timeList = new List<double>();
+                                timeList.Add(count);
+                                timeList.Add(count + m_secondsPerSegment);
+                                startEndTimesMapToSegment.Add(i, timeList);
+                                count += 30;
+                            }
+
+                            m_currentWaveFormSegment = segmentMapToStartTime[getSegmentStartPositionFromCurrentPosition(m_ctrlPlayer.StartPosition)];
+                            List<double> currentTimeList = startEndTimesMapToSegment[m_currentWaveFormSegment];
+
+                            double segmentStartPosition = currentTimeList[0];
+                            double segmentStopPosition = currentTimeList[1];
+
+                            Bitmap waveFormSegment = null;
+
+                            if (segmentStopPosition + segmentStartPosition > bmpAudioWave.Width)
+                            {
+                                segmentStopPosition = bmpAudioWave.Width;
+                            }
+
+                            cropRect = new Rectangle(GetLocationOnImage(segmentStartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(segmentStopPosition, bmpAudioWave.Width) - GetLocationOnImage(segmentStartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
+
+                            if (waveFormSegment != null)
+                                waveFormSegment.Dispose();
+
+                            waveFormSegment = new Bitmap(cropRect.Width, cropRect.Height);
+                            using (Graphics grpAudioWave = Graphics.FromImage(waveFormSegment))
+                            {
+                                grpAudioWave.DrawImage(bmpAudioWave, new Rectangle(0, 0, waveFormSegment.Width, waveFormSegment.Height),
+                                                    cropRect,
+                                                    GraphicsUnit.Pixel);
+                            }
+                            m_currentWaveFormSegmentImage =  (Bitmap)waveFormSegment;
+                            m_picWave.Image = m_currentWaveFormSegmentImage;  
+                        }
+                     }
                     }
                     else
                     {
@@ -317,6 +392,56 @@ namespace FTI.Trialmax.Controls
 		
 		}// public override bool SetProperties(string strFileSpec, CXmlDesignation xmlDesignation)
 
+
+        /// <summary>This method is called to get the position from it's nearest 30th interval</summary>
+        /// <summary>for example, if i put in 61, i should get 60, if i put in 55, i should get 30</summary>
+        /// <param name="position">the position after which to show the waveform</param>
+        /// <returns>the staarting position of the segment</returns>
+        private double getSegmentStartPositionFromCurrentPosition(double position)
+        {
+            return Math.Floor((double)position / m_secondsPerSegment) * m_secondsPerSegment;
+
+        }//private double getSegmentStartPositionFromCurrentPosition(double position)
+
+        /// <summary>This method is called to change the waveform segment</summary>
+        /// <param name="position">the position after which to show the waveform</param>
+        /// <returns>true if successful</returns>
+        private void UpdateWaveformSegment(double position)
+        {
+
+            m_currentWaveFormSegment = segmentMapToStartTime[getSegmentStartPositionFromCurrentPosition(position)];
+            List<double> currentTimeList = startEndTimesMapToSegment[m_currentWaveFormSegment];
+
+            double segmentStartPosition = currentTimeList[0];
+            double segmentStopPosition = currentTimeList[1];
+
+                using (Bitmap bmpAudioWave = new Bitmap(System.IO.Path.ChangeExtension(m_strFileSpec, "bmp")))
+                {
+                    Bitmap waveFormSegment = null;
+
+                    if (segmentStopPosition + segmentStartPosition > bmpAudioWave.Width)
+                    {
+                        segmentStopPosition = bmpAudioWave.Width;
+                    }
+
+                    Rectangle cropRect = new Rectangle(GetLocationOnImage(segmentStartPosition, bmpAudioWave.Width), 0, GetLocationOnImage(segmentStopPosition, bmpAudioWave.Width) - GetLocationOnImage(segmentStartPosition, bmpAudioWave.Width), bmpAudioWave.Height);
+
+                    if (waveFormSegment != null)
+                        waveFormSegment.Dispose();
+
+                    waveFormSegment = new Bitmap(cropRect.Width, cropRect.Height);
+                    using (Graphics grpAudioWave = Graphics.FromImage(waveFormSegment))
+                    {
+                        grpAudioWave.DrawImage(bmpAudioWave, new Rectangle(0, 0, waveFormSegment.Width, waveFormSegment.Height),
+                                            cropRect,
+                                            GraphicsUnit.Pixel);
+                    }
+
+                    m_currentWaveFormSegmentImage = (Bitmap)waveFormSegment;
+                }     
+        }//private void UpdateWaveformSegment(double position)
+
+
         private int GetLocationOnImage(double dOffset, int iWidth)
         {
             return Convert.ToInt32(dOffset * iWidth / m_dDuration);
@@ -329,36 +454,60 @@ namespace FTI.Trialmax.Controls
         /// <param name="position">The time at which the video is.</param>
         public void UpdateLocation(double position)
         {
+            if (FTI.Shared.Trialmax.Config.Configuration.ShowAudioWaveform == false) return;
             if (m_orignalWave == null) return;
 
             double length = m_ctrlPlayer.StopPosition - m_ctrlPlayer.StartPosition;
 
             if (length < 1) return;
 
-            position = position - m_ctrlPlayer.XmlDesignation.Start;
-
-            Bitmap orignalWaveCopy = (Bitmap)m_orignalWave.Clone();
-            Pen blackPen = new Pen(Color.Blue, Math.Max(1, orignalWaveCopy.Width / 1000));
-
-            float x1 = (float)(position / length * m_orignalWave.Width);
-            float y1 = 0;
-            float x2 = x1;
-            float y2 = 200;
-
-            // Draw line to screen.
-            using (var graphics = Graphics.FromImage(orignalWaveCopy))
+            try
             {
-                graphics.DrawLine(blackPen, x1, y1, x2, y2);
+                //the current position which must be set of the pen
+                m_currentPosition = (m_currentPosition + (position - m_previousPosition)) / m_secondsPerSegment;
+                m_currentPosition = m_secondsPerSegment * (m_currentPosition - Math.Floor(m_currentPosition));
+
+                if (m_currentWaveFormSegment != segmentMapToStartTime[getSegmentStartPositionFromCurrentPosition(position)])
+                {
+                        UpdateWaveformSegment(position);
+                }
+
+                Bitmap m_currentWaveFormSegmentClone = (Bitmap)m_currentWaveFormSegmentImage.Clone();
+
+                m_previousPosition = position;
+                position = position - m_ctrlPlayer.XmlDesignation.Start;
+
+                //the width and other properties of the pen
+                Pen blackPen = new Pen(Color.Yellow, Math.Max(1, m_currentWaveFormSegmentClone.Width / 100));
+
+                //calculating where to place the line at
+                double x1Float = ((m_currentPosition * m_currentWaveFormSegmentImage.Width )/ m_secondsPerSegment);
+
+                float x1 = (float)x1Float;
+                float y1 = 0;
+                float x2 = x1;
+                float y2 = 200;
+
+                // Draw line to screen.
+                using (var graphics = Graphics.FromImage(m_currentWaveFormSegmentClone))
+                {
+                    graphics.DrawLine(blackPen, x1, y1, x2, y2);
+                }
+
+                m_picWave.Image = m_currentWaveFormSegmentClone;
+
+                if (m_bActiveBitmap != null)
+                    m_bActiveBitmap.Dispose();
+
+                // Save the reference of the loaded bitmap so that before loading 
+                // another bitmap, we can dispose the previous one
+                m_bActiveBitmap = m_currentWaveFormSegmentClone;
             }
+            catch (Exception e)
+            {
+                Console.WriteLine("An error occurred: '{0}'", e);
+            } 
 
-            m_picWave.Image = orignalWaveCopy;
-
-            if (m_bActiveBitmap != null)
-                m_bActiveBitmap.Dispose();
-
-            // Save the reference of the loaded bitmap so that before loading 
-            // another bitmap, we can dispose the previous one
-            m_bActiveBitmap = orignalWaveCopy;
         }// public void UpdateLocation(double position)
 		
 		/// <summary>This method is called to set the control properties</summary>
@@ -742,7 +891,7 @@ namespace FTI.Trialmax.Controls
 			}
 		
 		}// EnableLinks
-		
+
 		#endregion Properties
 
 	}// public class CTmaxVideoTunerCtrl : System.Windows.Forms.UserControl

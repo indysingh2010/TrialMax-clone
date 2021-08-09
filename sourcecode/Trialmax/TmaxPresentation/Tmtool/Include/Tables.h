@@ -114,7 +114,8 @@
 #define SORTED_NUDGELEFT					82
 #define SORTED_NUDGERIGHT					83
 #define SORTED_SAVENUDGE					84
-#define SORTED_UNUSED1						85
+#define SORTED_ADJUSTABLECALLOUT			85
+#define SORTED_UNUSED1						86
 
 //------------------------------------------------------------------------------
 //	DECLARATIONS

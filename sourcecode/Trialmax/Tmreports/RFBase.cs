@@ -377,22 +377,22 @@ namespace FTI.Trialmax.Reports
 		/// <summary>This method is called to populate the error builder's format string collection</summary>
 		protected override void SetErrorStrings()
 		{
-			if(m_tmaxErrorBuilder == null) return;
-			if(m_tmaxErrorBuilder.FormatStrings == null) return;
-			
-			//	Let the base class add its strings first
-			base.SetErrorStrings();
-			
-			//	Add our custom strings
-			m_tmaxErrorBuilder.FormatStrings.Add("No XML schema file has been specified to create the report's data set");
-			m_tmaxErrorBuilder.FormatStrings.Add("The report's data schema file could not be found:\nFilename = %1");
-			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to create the report's data set.");
-			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while executing the report.");
-			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while previewing the report.");
-			
-			m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to export the report to %1  <format = %2>");
-			m_tmaxErrorBuilder.FormatStrings.Add("CRFBase reserved error 7");
-			m_tmaxErrorBuilder.FormatStrings.Add("CRFBase reserved error 8");
+            if (m_tmaxErrorBuilder == null) return;
+            if (m_tmaxErrorBuilder.FormatStrings == null) return;
+
+            //	Let the base class add its strings first
+            base.SetErrorStrings();
+
+            //	Add our custom strings
+            m_tmaxErrorBuilder.FormatStrings.Add("No XML schema file has been specified to create the report's data set");
+            m_tmaxErrorBuilder.FormatStrings.Add("The report's data schema file could not be found:\nFilename = %1");
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to create the report's data set.");
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while executing the report.");
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while previewing the report.");
+
+            m_tmaxErrorBuilder.FormatStrings.Add("An exception was raised while attempting to export the report to %1  <format = %2>");
+            m_tmaxErrorBuilder.FormatStrings.Add("CRFBase reserved error 7");
+            m_tmaxErrorBuilder.FormatStrings.Add("CRFBase reserved error 8");
 		
 		}// protected override void SetErrorStrings()
 
@@ -414,7 +414,28 @@ namespace FTI.Trialmax.Reports
 
 			return iOleColor;
 			
-		}// protected int GetOleHighlighter(int iIndex)
+		}
+
+        /// <summary>This method is called to get the highlighter name</summary>
+        /// <param name="iIndex">Index of the desired highlighter</param>
+        /// <returns>The name as a string value</returns>
+        protected string GetHighlighterName(int iIndex)
+        {
+            string highlighterName = "";
+
+            if ((m_tmaxDatabase != null) && (m_tmaxDatabase.Highlighters != null))
+            {
+                if ((iIndex >= 0) && (iIndex < m_tmaxDatabase.Highlighters.Count))
+                {
+                    highlighterName = m_tmaxDatabase.Highlighters[iIndex].Name;
+                }
+
+            }
+
+            return highlighterName;
+
+        }
+        // protected int GetOleHighlighter(int iIndex)
 		
 		/// <summary>This method handles the OK button's click event</summary>
 		/// <param name="sender">The object firing the event</param>

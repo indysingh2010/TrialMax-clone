@@ -20,6 +20,7 @@ namespace FTI.Trialmax.Reports
 		private const string XMLINI_INCLUDE_TRANSCRIPT_TEXT_KEY	= "IncludeTranscriptText";
 		private const string XMLINI_PAGE_BREAK_KEY				= "PageBreak";
 		private const string XMLINI_HIGHLIGHT_TEXT_KEY			= "HighlightText";
+        private const string XMLINI_HIGHLIGHT_INDEX_KEY         = "HighlightIndex";
 		private const string XMLINI_INDICATE_LINKS_KEY			= "IndicateLinks";
 		private const string XMLINI_INDICATE_EDITED_KEY			= "IndicateEdited";
 		private const string XMLINI_BARCODE_GRAPHIC_KEY			= "BarcodeGraphic";
@@ -34,6 +35,8 @@ namespace FTI.Trialmax.Reports
 		#endregion Constants
 		
 		#region Private Members
+        /// <summary>Local member bound to HighlighterIndex property</summary>
+        private bool m_bHighlighterIndex = true;
 
 		/// <summary>Local member bound to SceneNumber property</summary>
 		private bool m_bSceneNumber = true;
@@ -130,6 +133,7 @@ namespace FTI.Trialmax.Reports
 			m_bIncludeTranscriptText = xmlIni.ReadBool(XMLINI_INCLUDE_TRANSCRIPT_TEXT_KEY, m_bIncludeTranscriptText);
 			m_bPageBreak = xmlIni.ReadBool(XMLINI_PAGE_BREAK_KEY, m_bPageBreak);
 			m_bHighlightText = xmlIni.ReadBool(XMLINI_HIGHLIGHT_TEXT_KEY, m_bHighlightText);
+            m_bHighlighterIndex = xmlIni.ReadBool(XMLINI_HIGHLIGHT_INDEX_KEY, m_bHighlighterIndex);
 			m_bIndicateLinks = xmlIni.ReadBool(XMLINI_INDICATE_LINKS_KEY, m_bIndicateLinks);
 			m_bIndicateEdited = xmlIni.ReadBool(XMLINI_INDICATE_EDITED_KEY, m_bIndicateEdited);
 			m_bBarcodeGraphic = xmlIni.ReadBool(XMLINI_BARCODE_GRAPHIC_KEY, m_bBarcodeGraphic);
@@ -155,6 +159,7 @@ namespace FTI.Trialmax.Reports
 			xmlIni.Write(XMLINI_INCLUDE_TRANSCRIPT_TEXT_KEY, m_bIncludeTranscriptText);
 			xmlIni.Write(XMLINI_PAGE_BREAK_KEY, m_bPageBreak);
 			xmlIni.Write(XMLINI_HIGHLIGHT_TEXT_KEY, m_bHighlightText);
+            xmlIni.Write(XMLINI_HIGHLIGHT_INDEX_KEY, m_bHighlighterIndex);
 			xmlIni.Write(XMLINI_INDICATE_LINKS_KEY, m_bIndicateLinks);
 			xmlIni.Write(XMLINI_INDICATE_EDITED_KEY, m_bIndicateEdited);
 			xmlIni.Write(XMLINI_BARCODE_GRAPHIC_KEY, m_bBarcodeGraphic);
@@ -288,6 +293,13 @@ namespace FTI.Trialmax.Reports
 			get { return m_bSceneNumber; }
 			set { m_bSceneNumber = value; }
 		}
+
+        /// <summary>Show the Highlightor Index</summary>
+        public bool HighlighterIndex
+        {
+            get { return m_bHighlighterIndex; }
+            set { m_bHighlighterIndex = value; }
+        }
 
 		#endregion Properties
 

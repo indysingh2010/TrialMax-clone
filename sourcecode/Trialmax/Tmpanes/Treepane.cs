@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Messaging;
 using System.IO;
+using System.Xml;
 
 using FTI.Shared.Trialmax;
 using FTI.Trialmax.Controls;
@@ -156,7 +157,8 @@ namespace FTI.Trialmax.Panes
 			SetTargetBinder,
 			AddObjection,
 			RepeatObjection,
-            PresentationRecording
+            PresentationRecording,
+            AddAudioWaveform
 		}
 		
 		/// <summary>Actions to be taken when user drops in the tree</summary>
@@ -281,6 +283,9 @@ namespace FTI.Trialmax.Panes
 		
 		/// <summary>Local member bound to EnableContextMenu property</summary>
 		protected bool m_bEnableContextMenu = true;
+
+        /// <summary>Local member for opening File dialog for selecting Xmlt file for audio waveform generation</summary>
+        private System.Windows.Forms.OpenFileDialog SelectXmltFileForGeneratingAudioWaveform = new OpenFileDialog();
 		
 		#endregion Protected Members
 		
@@ -1294,7 +1299,7 @@ namespace FTI.Trialmax.Panes
 		/// <param name="tmaxNode">The current node selections</param>
 		/// <returns>true if command should be enabled</returns>
 		protected virtual bool GetCommandEnabled(TreePaneCommands eCommand, CTmaxMediaTreeNodes tmaxNodes)
-		{
+        {
 			CTmaxItems tmaxItems = null;
 			
 			//	Some commands are always enabled
@@ -1375,6 +1380,29 @@ namespace FTI.Trialmax.Panes
 					{
 						return true;
 					}
+
+                case TreePaneCommands.AddAudioWaveform:
+                    if (FTI.Shared.Trialmax.Config.Configuration.ShowAudioWaveform == false) return false;
+                 // if(tmaxNodes.Count != 1) return false;
+                 // if(tmaxNodes[0].IPrimary == null) return false;
+                 // if (tmaxNodes[0].IPrimary.GetMediaType() == TmaxMediaTypes.Deposition) return true;
+                 // return false;
+                    if (tmaxNodes.Count != 1 )
+                    {
+                        foreach (CTmaxMediaTreeNode tmaxNode in tmaxNodes)
+                        {
+                            if (tmaxNode.GetMediaRecord() is CDxSecondary || tmaxNode.GetMediaRecord() is CDxTertiary)
+                                return false;
+                        }
+                    }
+                    foreach (CTmaxMediaTreeNode tmaxNode in tmaxNodes)
+                    {
+                        if (tmaxNode.IPrimary == null) return false;
+                        if (tmaxNode.GetMediaRecord() is CDxSecondary || tmaxNode.GetMediaRecord() is CDxTertiary) return false;
+                        if (tmaxNode.IPrimary.GetMediaType() != TmaxMediaTypes.Deposition) return false;
+                       
+                    }
+                    return true;
 
                 case TreePaneCommands.PresentationRecording:
                 //	These commands require single media selections
@@ -2152,7 +2180,13 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool20 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Clean");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool21 = new Infragistics.Win.UltraWinToolbars.ButtonTool("BulkUpdate");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool22 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Duplicate");
+
+
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool23 = new Infragistics.Win.UltraWinToolbars.ButtonTool("MergeScripts");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool197 = new Infragistics.Win.UltraWinToolbars.ButtonTool("AddAudioWaveform");
+
+
+
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool24 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SortDesignations");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool25 = new Infragistics.Win.UltraWinToolbars.ButtonTool("ShowScrollText");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool26 = new Infragistics.Win.UltraWinToolbars.ButtonTool("HideScrollText");
@@ -2274,6 +2308,7 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool92 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Presentation");
             Infragistics.Win.Appearance appearance44 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool161 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
+
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool93 = new Infragistics.Win.UltraWinToolbars.ButtonTool("SortDesignations");
             Infragistics.Win.Appearance appearance45 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool94 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Duplicate");
@@ -2286,11 +2321,17 @@ namespace FTI.Trialmax.Panes
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool154 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Explorer");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool97 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Presentation");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool160 = new Infragistics.Win.UltraWinToolbars.ButtonTool("PresentationRecording");
+
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool98 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Builder");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool99 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Tuner");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool100 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Viewer");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool101 = new Infragistics.Win.UltraWinToolbars.ButtonTool("Codes");
             Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool102 = new Infragistics.Win.UltraWinToolbars.ButtonTool("MergeScripts");
+            Infragistics.Win.UltraWinToolbars.ButtonTool buttonTool198 = new Infragistics.Win.UltraWinToolbars.ButtonTool("AddAudioWaveform");
+
+
+
+
             Infragistics.Win.Appearance appearance49 = new Infragistics.Win.Appearance();
             Infragistics.Win.UltraWinToolbars.PopupMenuTool popupMenuTool27 = new Infragistics.Win.UltraWinToolbars.PopupMenuTool("ReportsMenu");
             Infragistics.Win.Appearance appearance50 = new Infragistics.Win.Appearance();
@@ -2583,6 +2624,7 @@ namespace FTI.Trialmax.Panes
             buttonTool21,
             buttonTool22,
             buttonTool23,
+            buttonTool197,
             buttonTool24,
             buttonTool25,
             buttonTool26,
@@ -2780,6 +2822,8 @@ namespace FTI.Trialmax.Panes
             appearance49.Image = 37;
             buttonTool102.SharedProps.AppearancesSmall.Appearance = appearance49;
             buttonTool102.SharedProps.Caption = "Merge Scripts ...";
+            buttonTool198.SharedProps.AppearancesSmall.Appearance = appearance10;
+            buttonTool198.SharedProps.Caption = "Add Audio Waveform";
             appearance50.Image = 38;
             popupMenuTool27.SharedProps.AppearancesSmall.Appearance = appearance50;
             popupMenuTool27.SharedProps.Caption = "Reports";
@@ -2987,6 +3031,7 @@ namespace FTI.Trialmax.Panes
             buttonTool95,
             popupMenuTool26,
             buttonTool102,
+            buttonTool198,
             popupMenuTool27,
             buttonTool107,
             buttonTool108,
@@ -6546,6 +6591,13 @@ namespace FTI.Trialmax.Panes
 						OnCmdAddObjection(GetSelections(true), true);
 						break;
 
+
+
+                    case TreePaneCommands.AddAudioWaveform:
+                        OnCmdAddAudioWaveform(GetSelections(true));
+                        break;
+
+
 					default:
 					
 						Debug.Assert(false);
@@ -6559,7 +6611,98 @@ namespace FTI.Trialmax.Panes
 				m_tmaxEventSource.FireError(this, "OnCommand", m_tmaxErrorBuilder.Message(ERROR_ON_COMMAND_EX, eCommand), Ex);
 			}
 		
-		}// private void OnCommand(TreePaneCommands eCommand)
+		} // private void OnCommand(TreePaneCommands eCommand)
+
+        protected virtual void OnCmdAddAudioWaveform(CTmaxMediaTreeNodes tmaxNodes)
+        {
+            string missingFileInfo = "";
+            string audioWaveFormFileName = "";
+            DialogResult messageBoxResult = DialogResult.Yes;
+            CDxPrimary depositionPrimaryRecord = null;
+            string treatmentFilePath = "";
+
+            foreach (CTmaxMediaTreeNode selectedDeposition in tmaxNodes)
+            {
+                var tmaxRecord = selectedDeposition.GetMediaRecord();
+                if (tmaxRecord is CDxPrimary)
+                {
+                    depositionPrimaryRecord = (CDxPrimary)tmaxRecord;
+                    audioWaveFormFileName = depositionPrimaryRecord.Name;
+                                       
+                    treatmentFilePath = Path.Combine(depositionPrimaryRecord.Database.Folder, "_tmax_transcripts", depositionPrimaryRecord.AutoId.ToString());
+
+                    if (!Directory.Exists(Path.Combine(depositionPrimaryRecord.Database.Folder, "_tmax_transcripts", depositionPrimaryRecord.AutoId.ToString())))
+                    {
+                        missingFileInfo += string.Format("Waveform file {0} not found for {1} under _tmax_transcripts folder", audioWaveFormFileName, depositionPrimaryRecord.MediaId) + System.Environment.NewLine;
+                    }
+                    else
+                    {
+                        string[] xmltfiles = Directory.GetFiles(treatmentFilePath, "*.xmlt");
+                        if (xmltfiles == null || xmltfiles.Length == 0)
+                        {
+                            missingFileInfo += string.Format("Waveform file {0} not found for {1} at {2}", audioWaveFormFileName, depositionPrimaryRecord.MediaId, treatmentFilePath) + System.Environment.NewLine;
+                        }
+                    }
+                }               
+            }
+
+            if(!string.IsNullOrEmpty(missingFileInfo))
+            {
+                messageBoxResult = MessageBox.Show(missingFileInfo + "Do you still want to proceed?", "Missing Audio Waveform Files", MessageBoxButtons.YesNo);
+            }
+
+            if (messageBoxResult == DialogResult.Yes)
+            {
+                try
+                {
+                    missingFileInfo = "";
+                    foreach (CTmaxMediaTreeNode selectedDeposition in tmaxNodes)
+                    {
+                        String MediaName = "";
+                        string File = "";
+                        if (selectedDeposition.GetMediaRecord() is CDxPrimary)
+                        {
+                            MediaName = ((CDxPrimary)selectedDeposition.GetMediaRecord()).Name;
+                            treatmentFilePath = Path.Combine(((CDxPrimary)selectedDeposition.GetMediaRecord()).Database.Folder, "_tmax_transcripts", ((CDxPrimary)selectedDeposition.GetMediaRecord()).AutoId.ToString());
+                            string[] xmltfiles = Directory.GetFiles(treatmentFilePath, "*.xmlt");
+                          
+                            if (xmltfiles != null && xmltfiles.Length > 0)
+                            {
+                                File = Path.Combine(treatmentFilePath, xmltfiles[0]); //assuming there would be only 1 xmlt file always
+                                if (System.IO.File.Exists(File))
+                                {
+                                    XmlDocument xmlDoc = new XmlDocument();
+
+                                    xmlDoc.Load(File);
+
+                                    XmlNodeList DepositionInfo = xmlDoc.GetElementsByTagName("deposition");
+                                    XmlNodeList SegmentInfo = xmlDoc.GetElementsByTagName("segment");
+
+                                    if (MediaName != DepositionInfo[0].Attributes["name"].Value)
+                                    {
+                                        missingFileInfo += string.Format("The xmlt file {0} does not belong to this Deposition {1}", File, MediaName) + System.Environment.NewLine;
+                                        // throw new Exception("The xmlt file does not belong to this Deposition");
+                                    }
+                                    else
+                                    {
+                                        string error = "";
+                                        m_tmaxDatabase.AddAudioWaveform(SegmentInfo, out error);
+                                        missingFileInfo += error;
+                                    }
+                                }
+                            }
+                        }                       
+                    }
+
+                    messageBoxResult = MessageBox.Show("Add Audio Waveform process finished." + System.Environment.NewLine + missingFileInfo, "Add Audio Waveform", MessageBoxButtons.OK);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message, "Incorrect File");
+                }
+
+            }
+        }// protected virtual void OnCmdAddAudioWaveform(CTmaxMediaTreeNodes tmaxNodes)
 
 		/// <summary>Traps the ToolClick event fired by the toolbar manager</summary>
 		/// <param name="sender">The object firing the event</param>
@@ -6666,9 +6809,10 @@ namespace FTI.Trialmax.Panes
 				}
 			
 			}
-			catch
-			{
-			}
+            catch (Exception ee)
+            {
+                MessageBox.Show("{0} Exception caught.", ee.ToString());
+            }
 							
 		}// OnUltraBeforeDropDown(object sender, Infragistics.Win.UltraWinToolbars.BeforeToolDropdownEventArgs e)
 

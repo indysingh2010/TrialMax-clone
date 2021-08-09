@@ -1,0 +1,39 @@
+<?xml version="1.0" standalone="yes"?>
+<xs:schema id="_tmax_report_transcript" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:element name="_tmax_report_transcript" msdata:IsDataSet="true">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="Information">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Deponent" type="xs:string" minOccurs="0" />
+              <xs:element name="Deposition_Date" type="xs:string" minOccurs="0" />
+              <xs:element name="MediaID" type="xs:string" minOccurs="0" />
+              <xs:element name="Script_Name" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Transcript">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="PL" type="xs:int" minOccurs="0" />
+              <xs:element name="Page" type="xs:string" minOccurs="0" />
+              <xs:element name="Line" type="xs:short" minOccurs="0" />
+              <xs:element name="LineText" type="xs:string" minOccurs="0" />
+              <xs:element name="FontStyle" type="xs:short" minOccurs="0" />
+              <xs:element name="FontSize" type="xs:float" minOccurs="0" />
+              <xs:element name="H1" type="xs:int" minOccurs="0" />
+              <xs:element name="H2" type="xs:int" minOccurs="0" />
+              <xs:element name="H3" type="xs:int" minOccurs="0" />
+              <xs:element name="H4" type="xs:int" minOccurs="0" />
+              <xs:element name="H5" type="xs:int" minOccurs="0" />
+              <xs:element name="H6" type="xs:int" minOccurs="0" />
+              <xs:element name="H7" type="xs:int" minOccurs="0" />
+			  <xs:element name="Edit" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -507,6 +507,7 @@ void CTMLead::Copy(CTMLead* pLead)
 	pLead->SetRotation(m_sRotation);
 	pLead->SetBitonal(m_sBitonal);
 	pLead->SetAction(m_sAction);
+	pLead->SetMaintainAspectRatio(m_sMaintainAspectRatio);
 	pLead->SetCallFrameThickness(m_sCallFrameThick);
 	pLead->SetCallFrameColor(m_sCallFrameColor);
 	pLead->SetCallHandleColor(m_sCallHandleColor);
@@ -830,7 +831,6 @@ void CTMLead::CreateUserCallout(RECT* prcUser)
 	//	Allocate a new callout
 	pCallout = new CCallout(m_pControl, this);
 	ASSERT(pCallout);
-
 	//	Was the callout window created successfully
 	if(!IsWindow(pCallout->m_hWnd))
 	{
@@ -1014,6 +1014,7 @@ CTMLead::CTMLead() : CLead()
 	m_bSplitScreen			= FALSE;
 	m_fPanPercent			= ((float)DEFAULT_PANPERCENT / 100.0);
 	m_sAction				= DEFAULT_ACTION;
+	m_sMaintainAspectRatio	= DEFAULT_ASPECTRATIO;
 	m_bRightClickPan		= DEFAULT_RIGHTCLICKPAN;
 	m_sBitonal				= DEFAULT_BITONALSCALING;
 	m_bZoomToRect			= DEFAULT_ZOOMTORECT;
@@ -2175,6 +2176,11 @@ short CTMLead::FirstPage()
 short CTMLead::GetAction() 
 {
 	return m_sAction;
+}
+
+short CTMLead::GetMaintainAspectRatio() 
+{
+	return m_sMaintainAspectRatio;
 }
 
 //==============================================================================
@@ -8971,6 +8977,11 @@ void CTMLead::SetAction(short sAction)
 	}
 }
 
+void CTMLead::SetMaintainAspectRatio(short sMaintainAspectRatio) 
+{
+	m_sMaintainAspectRatio = sMaintainAspectRatio;
+}
+
 //==============================================================================
 //
 // 	Function Name:	CTMLead::SetAnnColor()
@@ -9989,6 +10000,11 @@ void CTMLead::SetKeepAspect(BOOL bKeepAspect)
 		if(m_bScaleImage)
 			Redraw();
 	}	
+}
+
+BOOL CTMLead::GetKeepAspect() 
+{
+	return m_bKeepAspect;
 }
 
 //==============================================================================

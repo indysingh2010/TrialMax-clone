@@ -32,6 +32,7 @@ namespace FTI.Shared.Trialmax
 		private const string XMLINI_CONFIRM_DELETE_REFERENCES_KEY = "ConfirmDeleteReferences";
 		private const string XMLINI_FILTER_ON_OPEN_KEY            = "FilterOnOpen";
 		private const string XMLINI_ENABLE_DIB_PRINTING_KEY		  = "DIBPrinting";
+        private const string XMLINI_SHOW_AUDIO_WAVEFORM_KEY       = "ShowAudioWaveform";
 		
 		#endregion Constants
 		
@@ -72,6 +73,9 @@ namespace FTI.Shared.Trialmax
 
 		/// <summary>Local member bound to EnableDIBPrinting property</summary>
 		private bool m_bEnableDIBPrinting = true;
+
+        /// <summary>Local member bound to ShowAudioWaveform property</summary>
+        private bool m_bshowAudioWaveform = false;
 
 		/// <summary>Local member bound to RecentlyUsed property</summary>
 		private ArrayList m_aRecentlyUsed = new ArrayList();
@@ -241,6 +245,7 @@ namespace FTI.Shared.Trialmax
             //strdateInstalledKey = xmlIni.Read(XMLINI_DATE_INSTALLED, strdateInstalledKey);
             //m_intDaysAllowed = xmlIni.ReadInteger(XMLINI_DAYS_ALLOWED, m_intDaysAllowed);
             //DateTime.TryParse(Decrypt(strdateInstalledKey, true), out m_dateInstalled);
+            m_bshowAudioWaveform = xmlIni.ReadBool(XMLINI_SHOW_AUDIO_WAVEFORM_KEY, m_bshowAudioWaveform);
             
 
             //if (DateTime.Compare(m_dateInstalled, Convert.ToDateTime("01/01/1900 12:00:00")) == 0)
@@ -296,6 +301,7 @@ namespace FTI.Shared.Trialmax
 			xmlIni.Write(XMLINI_QUATERNARY_TEXT_MODE_KEY, m_eQuaternaryTextMode);
             //xmlIni.Write(XMLINI_DATE_INSTALLED, Encrypt(m_dateInstalled.ToString(),true));
             //xmlIni.Write(XMLINI_DAYS_ALLOWED, m_intDaysAllowed);
+            xmlIni.Write(XMLINI_SHOW_AUDIO_WAVEFORM_KEY, m_bshowAudioWaveform);
             
 
             
@@ -500,6 +506,13 @@ namespace FTI.Shared.Trialmax
 			get { return m_bShowErrorMessages; }
 			set { m_bShowErrorMessages = value; }
 		}
+
+        /// <summary>True to show Audio Waveform</summary>
+        public bool ShowAudioWaveform
+        {
+            get { return m_bshowAudioWaveform; }
+            set { m_bshowAudioWaveform = value; }
+        }
 
 		/// <summary>True to display foreign barcodes</summary>
 		public bool ShowForeignBarcodes

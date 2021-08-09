@@ -3604,6 +3604,8 @@ namespace FTI.Trialmax.TmaxManager
             m_tmaxAppOptions.Load(m_xmlIni);
             m_tmaxAppOptions.ApplicationFolder = m_strAppFolder;
 
+            FTI.Shared.Trialmax.Config.Configuration = m_tmaxAppOptions;
+
             //	Initialize the connection to the system registry
             SetSplashMessage("Initializing registry interface");
             m_tmaxRegistry.EventSource.DiagnosticEvent += new FTI.Shared.Trialmax.DiagnosticEventHandler(this.OnDiagnostic);

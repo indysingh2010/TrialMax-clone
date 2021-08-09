@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Microsoft.Win32;
+using System.Xml;
 using System.Drawing;
 using FTI.Shared;
 using FTI.Shared.Trialmax;
@@ -234,9 +235,12 @@ namespace FTI.Trialmax.Database
 
 		/// <summary>Status form displayed during a compact operation</summary>
 		private FTI.Trialmax.Forms.CFCompactorStatus m_wndCompactorStatus = null;
-		
-        /// <summary>Designations overlap form for merging scripts</summary>
-        private FTI.Trialmax.Forms.CFDesignationsOverlap m_wndDesignationsOverlap = null;
+
+
+        //Part of the duplicate designations on merge script feature. Kept for future use.
+
+        ///// <summary>Designations overlap form for merging scripts</summary>
+        //private FTI.Trialmax.Forms.CFDesignationsOverlap m_wndDesignationsOverlap = null;
 
 		/// <summary>Local member associated with the StationOptions property</summary>
 		private CTmaxStationOptions m_tmaxStationOptions = null;
@@ -436,6 +440,8 @@ namespace FTI.Trialmax.Database
         /// <summary>Local variable to log user level details</summary>
         private static readonly log4net.ILog logUser = log4net.LogManager.GetLogger("UserLog");
 
+        /// <summary>Local variable to store user input in Waveform message box</summary>
+        private bool GenerateWaveFormForAll = false;
 		#endregion Private Members
 		
 		#region Public Methods
@@ -5250,11 +5256,14 @@ namespace FTI.Trialmax.Database
 					tmaxSource = new CTmaxItems();
 					tmaxScenes = new CTmaxItems();
 
-                    // Will contain all the designations that have been already added to compare with the new
-                    // one for overlapping.
-                    // Key in this object represents the barcode of the designation and the value is the designation
-                    // itself.
-                    Dictionary<string, CTmaxItem> mergingDesignations = new Dictionary<string, CTmaxItem>();
+
+                    //Part of the duplicate designations on merge script feature. Kept for future use.
+
+                    //// Will contain all the designations that have been already added to compare with the new
+                    //// one for overlapping.
+                    //// Key in this object represents the barcode of the designation and the value is the designation
+                    //// itself.
+                    //Dictionary<string, CTmaxItem> mergingDesignations = new Dictionary<string, CTmaxItem>();
 
 					//	Build the collection of source records
 					foreach(CTmaxItem O in tmaxItem.SubItems)
@@ -5275,12 +5284,15 @@ namespace FTI.Trialmax.Database
 							{
                                 if (dxScene.GetSource() != null)
                                 {
-                                    // Check if the new designation is overlapping with previously added designations
-                                    CheckOverlappingDesignations(mergingDesignations, dxScene);
+
+                                    //Part of the duplicate designations on merge script feature. Kept for future use.
+
+                                    //// Check if the new designation is overlapping with previously added designations
+                                    //CheckOverlappingDesignations(mergingDesignations, dxScene);
                                     
-                                    // Add the new designation to a custom list so it can be checked with the next designation
-                                    // that will be added for overlapping
-                                    mergingDesignations.Add(GetBarcode(dxScene, false), new CTmaxItem(dxScene.GetSource()));
+                                    //// Add the new designation to a custom list so it can be checked with the next designation
+                                    //// that will be added for overlapping
+                                    //mergingDesignations.Add(GetBarcode(dxScene, false), new CTmaxItem(dxScene.GetSource()));
 
                                     tmaxSource.Add(new CTmaxItem(dxScene.GetSource()));
                                 }
@@ -5289,13 +5301,15 @@ namespace FTI.Trialmax.Database
 						
 					}// foreach(CTmaxItem O in tmaxItem.SubItems)
 
-                    // If m_wndDesignationsOverlap is null, it means no overlapping of designations occured
-                    if (m_wndDesignationsOverlap != null)
-                    {
-                        // Show the overlapping report for user to save
-                        m_wndDesignationsOverlap.ShowDialog();
-                        m_wndDesignationsOverlap = null;
-                    }
+                    //Part of the duplicate designations on merge script feature. Kept for future use.
+
+                    //// If m_wndDesignationsOverlap is null, it means no overlapping of designations occured
+                    //if (m_wndDesignationsOverlap != null)
+                    //{
+                    //    // Show the overlapping report for user to save
+                    //    m_wndDesignationsOverlap.ShowDialog();
+                    //    m_wndDesignationsOverlap = null;
+                    //}
 
 					//	Add the scenes
 					if(tmaxSource.Count > 0)
@@ -5329,79 +5343,83 @@ namespace FTI.Trialmax.Database
 				
 		}// public bool Merge(CTmaxItem tmaxItem, CTmaxDatabaseResults tmaxResults)
 
-        /// <summary>
-        /// Check if the new designation been added is overlapping with already added designations
-        /// </summary>
-        /// <param name="mergingDesignations">List of designations already added and checked for overlapping</param>
-        /// <param name="dxScene">New designation that is about to be added</param>
-        private void CheckOverlappingDesignations(Dictionary<string, CTmaxItem> mergingDesignations, CDxSecondary dxScene)
-        {
-            CDxMediaRecord dxSource = dxScene.GetSource();
 
-            foreach (KeyValuePair<string, CTmaxItem> item in mergingDesignations)
-            {
-                CXmlDesignation xmlDesignationNew, xmlDesignationExisting = null;
+        //Part of the duplicate designations on merge script feature. Kept for future use.
 
-                // Retrieve the designation and transcripts for the new item
-                CDxTertiary dxTertiaryNew = (CDxTertiary)dxSource;
-                xmlDesignationNew = GetXmlDesignation(dxTertiaryNew, true, false, false);
 
-                // Retrieve the designation and transcripts for the exisiting item
-                CDxTertiary dxTertiaryExisting = (CDxTertiary)item.Value.ITertiary;
-                xmlDesignationExisting = GetXmlDesignation(dxTertiaryExisting, true, false, false);
+        ///// <summary>
+        ///// Check if the new designation been added is overlapping with already added designations
+        ///// </summary>
+        ///// <param name="mergingDesignations">List of designations already added and checked for overlapping</param>
+        ///// <param name="dxScene">New designation that is about to be added</param>
+        //private void CheckOverlappingDesignations(Dictionary<string, CTmaxItem> mergingDesignations, CDxSecondary dxScene)
+        //{
+        //    CDxMediaRecord dxSource = dxScene.GetSource();
 
-                // Check for overlapping transcripts
-                List<CXmlTranscript> overlappingTranscripts = CheckOverlappingDesignations(xmlDesignationExisting, xmlDesignationNew);
+        //    foreach (KeyValuePair<string, CTmaxItem> item in mergingDesignations)
+        //    {
+        //        CXmlDesignation xmlDesignationNew, xmlDesignationExisting = null;
+
+        //        // Retrieve the designation and transcripts for the new item
+        //        CDxTertiary dxTertiaryNew = (CDxTertiary)dxSource;
+        //        xmlDesignationNew = GetXmlDesignation(dxTertiaryNew, true, false, false);
+
+        //        // Retrieve the designation and transcripts for the exisiting item
+        //        CDxTertiary dxTertiaryExisting = (CDxTertiary)item.Value.ITertiary;
+        //        xmlDesignationExisting = GetXmlDesignation(dxTertiaryExisting, true, false, false);
+
+        //        // Check for overlapping transcripts
+        //        List<CXmlTranscript> overlappingTranscripts = CheckOverlappingDesignations(xmlDesignationExisting, xmlDesignationNew);
                 
-                // Count is greater than 0 if there were any overlapping
-                if (overlappingTranscripts.Count > 0)
-                {
-                    // Check if the Overlapping Report form is already created
-                    if (m_wndDesignationsOverlap == null)
-                    {
-                        m_wndDesignationsOverlap = new CFDesignationsOverlap();
-                    }
+        //        // Count is greater than 0 if there were any overlapping
+        //        if (overlappingTranscripts.Count > 0)
+        //        {
+        //            // Check if the Overlapping Report form is already created
+        //            if (m_wndDesignationsOverlap == null)
+        //            {
+        //                m_wndDesignationsOverlap = new CFDesignationsOverlap();
+        //            }
                     
-                    // Add the overlapping designations to the report form
-                    foreach (CXmlTranscript transcript in overlappingTranscripts)
-                    {
-                        m_wndDesignationsOverlap.AppendItemToList(new string[]{
-                            "0",
-                            item.Key,
-                            GetBarcode(dxScene, false),
-                            transcript.Segment,
-                            transcript.PL.ToString(),
-                            transcript.Page.ToString(),
-                            transcript.Line.ToString(),
-                            transcript.QA,
-                            transcript.Start.ToString(),
-                            transcript.Stop.ToString(),
-                            transcript.Text
-                        });
-                    }
-                }
-            }
-        }// CheckOverlappingDesignations(Dictionary<string, CTmaxItem> mergingDesignations, CDxSecondary dxScene)
+        //            // Add the overlapping designations to the report form
+        //            foreach (CXmlTranscript transcript in overlappingTranscripts)
+        //            {
+        //                m_wndDesignationsOverlap.AppendItemToList(new string[]{
+        //                    "0",
+        //                    item.Key,
+        //                    GetBarcode(dxScene, false),
+        //                    transcript.Segment,
+        //                    transcript.PL.ToString(),
+        //                    transcript.Page.ToString(),
+        //                    transcript.Line.ToString(),
+        //                    transcript.QA,
+        //                    transcript.Start.ToString(),
+        //                    transcript.Stop.ToString(),
+        //                    transcript.Text
+        //                });
+        //            }
+        //        }
+        //    }
+        //}// CheckOverlappingDesignations(Dictionary<string, CTmaxItem> mergingDesignations, CDxSecondary dxScene)
 
-        /// <summary>Check if the provided designations have any overlapping transcripts</summary>
-        /// <param name="xmlDesignationExisting">Designation that has already been added and would be used to check overlapping</param>
-        /// <param name="xmlDesignationNew">The new designation that is about to be added</param>
-        /// <returns>A list of overlapping designations</returns>
-        private List<CXmlTranscript> CheckOverlappingDesignations(CXmlDesignation xmlDesignationExisting, CXmlDesignation xmlDesignationNew)
-        {
-            List<CXmlTranscript> overlappingTranscript = new List<CXmlTranscript>();
-            foreach (CXmlTranscript existingTrans in xmlDesignationExisting.Transcripts)
-            {
-                foreach (CXmlTranscript newTrans in xmlDesignationNew.Transcripts)
-                {
-                    if (newTrans.Equals(existingTrans))
-                    {
-                        overlappingTranscript.Add(newTrans);
-                    }
-			    }
-            }   
-            return overlappingTranscript;
-        }// private List<CXmlTranscript> CheckOverlappingDesignations(CXmlDesignation xmlDesignationExisting, CXmlDesignation xmlDesignationNew)
+        ///// <summary>Check if the provided designations have any overlapping transcripts</summary>
+        ///// <param name="xmlDesignationExisting">Designation that has already been added and would be used to check overlapping</param>
+        ///// <param name="xmlDesignationNew">The new designation that is about to be added</param>
+        ///// <returns>A list of overlapping designations</returns>
+        //private List<CXmlTranscript> CheckOverlappingDesignations(CXmlDesignation xmlDesignationExisting, CXmlDesignation xmlDesignationNew)
+        //{
+        //    List<CXmlTranscript> overlappingTranscript = new List<CXmlTranscript>();
+        //    foreach (CXmlTranscript existingTrans in xmlDesignationExisting.Transcripts)
+        //    {
+        //        foreach (CXmlTranscript newTrans in xmlDesignationNew.Transcripts)
+        //        {
+        //            if (newTrans.Equals(existingTrans))
+        //            {
+        //                overlappingTranscript.Add(newTrans);
+        //            }
+        //        }
+        //    }   
+        //    return overlappingTranscript;
+        //}// private List<CXmlTranscript> CheckOverlappingDesignations(CXmlDesignation xmlDesignationExisting, CXmlDesignation xmlDesignationNew)
 					
 		/// <summary>This method will move the records in the SourceItems collection of the event item</summary>
 		/// <param name="tmaxMove">The event item that identifies the new parent, the new insertion point, and the records to be moved</param>
@@ -5658,6 +5676,8 @@ namespace FTI.Trialmax.Database
                     RegThread = null;
                 }
                 RegThread = new Thread(new ThreadStart(this.RegisterThreadProc));
+
+                
                 RegThread.Start();
             }
             catch (System.Exception Ex)
@@ -9073,6 +9093,7 @@ namespace FTI.Trialmax.Database
                 CalculateTotalPages(m_RegSourceFolder);
                 m_cfRegisterProgress.TotalPages = m_totalPages*2;//33% Detection 33% extraction and 33% conversion;
                 SetRegisterProgress("Registration in progress ...");
+                this.GenerateWaveFormForAll = false;
                 //	Add the new records to the database
                 if ((m_RegSourceFolder != null) && (m_bRegisterCancelled == false))
                     AddSource(m_RegSourceFolder);
@@ -10004,6 +10025,7 @@ namespace FTI.Trialmax.Database
 			CXmlDeposition	xmlDeposition = null;
 			string			strFileSpec = "";
 			bool			bSuccessful = false;
+            string          missingFileInfo = "";
 
 			Debug.Assert(tmaxSource.UserData != null);
 			if(tmaxSource.UserData == null) return false;
@@ -10018,13 +10040,34 @@ namespace FTI.Trialmax.Database
                 for (int index = 0; index < xmlDeposition.Segments.Count; index++)
                 {
                     string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
-                    depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
+                    if(File.Exists(filePath))
+                        depositionsDuration.Add(AudioWaveformGenerator.GetMediaDuration(filePath).Ticks);
                 }
 
-                for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                if (m_tmaxAppOptions.ShowAudioWaveform == true)
                 {
-                    string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
-                    AudioWaveformGenerator.GenerateAudioWave(filePath);
+                    CustomMessageDilaogResult generateWaveform = CustomMessageDilaogResult.No;
+                    if (!GenerateWaveFormForAll)
+                    {
+                        generateWaveform = CustomMesssageBox.ShowDialog("Do you want to generate the Audio Waveform alongwith the xmlt file?",
+                        "Generate AudioWaveform?",
+                        CustomMessageButtonType.YesYesToAllNo);                        
+                    }
+
+                    if (generateWaveform == CustomMessageDilaogResult.YesToAll)
+                        GenerateWaveFormForAll = true;
+
+                    if (generateWaveform == CustomMessageDilaogResult.Yes || GenerateWaveFormForAll)
+                    {
+                        for (int index = 0; index < xmlDeposition.Segments.Count; index++)
+                        {
+                            string filePath = m_currentVideoPath + "\\" + xmlDeposition.Segments[index].Filename;
+                            if (File.Exists(filePath))
+                                AudioWaveformGenerator.GenerateAudioWave(filePath);
+                            else
+                               missingFileInfo += string.Format("The mpg file {0} not found at {1}", xmlDeposition.Segments[index].Filename, m_currentVideoPath) + System.Environment.NewLine;
+                        }
+                    }
                 }
 
 				
@@ -10069,7 +10112,10 @@ namespace FTI.Trialmax.Database
 					}
 
 				}
-				
+
+                if(missingFileInfo != "")
+                    MessageBox.Show(missingFileInfo, "Add Audio Waveform", MessageBoxButtons.OK);
+
 				//	The user may have cancelled the file transfer
 				if(m_bRegisterCancelled == false)
 					return dxPrimary.Add(dxTranscript);	
@@ -16871,6 +16917,25 @@ namespace FTI.Trialmax.Database
 			return bSuccessful;
 
 		}// public bool FilterObjections(CTmaxItems tmaxItems, CTmaxParameters tmaxParameters)
+
+
+        /// <summary>This method will add a waveform for an existing deposition that has already been added to the media tree</summary>
+        /// <param name="SegmentInfo">The segment Information is passed from the Treepane.cs file</param>
+        /// <returns>none</returns>
+        public void AddAudioWaveform(XmlNodeList SegmentInfo, out string errorMessage)
+        {
+            string m_currentVideoPath = m_aCaseFolders[5].Path;
+            errorMessage = "";
+
+            for (int index = 0; index < SegmentInfo.Count; index++)
+            {
+                string filePath = m_currentVideoPath + "\\" + SegmentInfo[index].Attributes["filename"].Value;
+                if(File.Exists(filePath))
+                    AudioWaveformGenerator.GenerateAudioWave(filePath);
+                else
+                    errorMessage += string.Format("The mpg file {0} not found at {1}", SegmentInfo[index].Attributes["filename"].Value, m_currentVideoPath) + System.Environment.NewLine;
+            }
+        }// public void AddAudioWaveform(XmlNodeList SegmentInfo)
 
 		#endregion Private Methods
 		

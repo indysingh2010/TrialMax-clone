@@ -167,6 +167,8 @@ BEGIN_DISPATCH_MAP(CTMMovieCtrl, COleControl)
 	DISP_FUNCTION(CTMMovieCtrl, "GetDuration", GetDuration, VT_R8, VTS_BSTR)
 	DISP_FUNCTION(CTMMovieCtrl, "UpdateScreenPosition", UpdateScreenPosition, VT_I2, VTS_NONE)
 	DISP_FUNCTION(CTMMovieCtrl, "GetIsAudio", GetIsAudio, VT_BOOL, VTS_NONE)
+	DISP_FUNCTION(CTMMovieCtrl, "ShowVideoBar", ShowVideoBar, VT_EMPTY, VTS_NONE)
+	DISP_FUNCTION(CTMMovieCtrl, "HideVideoBar", HideVideoBar, VT_EMPTY, VTS_NONE)
 	DISP_STOCKPROP_BACKCOLOR()
 	DISP_STOCKPROP_BORDERSTYLE()
 	//}}AFX_DISPATCH_MAP
@@ -1416,6 +1418,46 @@ BOOL CTMMovieCtrl::GetIsAudio()
 
 //==============================================================================
 //
+// 	Function Name:	CTMMovieCtrl::ShowVideoBar()
+//
+// 	Description:	This method is called to show the video scrubber bar
+//					
+//
+// 	Returns:		nothing
+//
+//	Notes:			In build 76, the client asked for a way to hide/unhide the video var
+//
+//==============================================================================
+void CTMMovieCtrl::ShowVideoBar() 
+{
+	if (m_sldVideoSliderControl != NULL) 
+	{
+		m_sldVideoSliderControl->ShowWindow(SW_SHOW); //  to show
+	}
+}
+
+//==============================================================================
+//
+// 	Function Name:	CTMMovieCtrl::HideVideoBar()
+//
+// 	Description:	This method is called to hide the video scrubber bar
+//					
+//
+// 	Returns:		nothing
+//
+//	Notes:			In build 76, the client asked for a way to hide/unhide the video var
+//
+//==============================================================================
+void CTMMovieCtrl::HideVideoBar() 
+{
+	if (m_sldVideoSliderControl != NULL)
+	{
+	m_sldVideoSliderControl->ShowWindow(SW_HIDE); //  to hide
+	}
+}
+
+//==============================================================================
+//
 // 	Function Name:	CTMMovieCtrl::GetMaxTime()
 //
 // 	Description:	This method is called to retrieve the maximum time for the
@@ -2543,6 +2585,8 @@ short CTMMovieCtrl::Load(LPCTSTR lpFilename, double dStart, double dStop, BOOL b
 
 		// The max range is set high so the slider represents an accurate location with resepect to the videos actual position
 		m_sldVideoSliderControl->SetRange(0, 10000, TRUE);
+
+		//m_sldVideoSliderControl->ModifyStyle
 	}
 
 	return TMMOVIE_NOERROR;
@@ -5417,3 +5461,7 @@ short CTMMovieCtrl::UpdateState()
 	return m_sState;
 }
 
+void CTMMovieCtrl::testFunction() 
+{
+	AfxMessageBox("yippee");
+}

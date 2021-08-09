@@ -146,6 +146,7 @@ namespace FTI.Trialmax.Reports
 		private System.Windows.Forms.Button m_ctrlBrowseExportFolder;
 		private System.Windows.Forms.ComboBox m_ctrlExportFormats;
 		private System.Windows.Forms.CheckBox m_ctrlPreviewExports;
+        private CheckBox m_ctrlShowEditText;
 		
 		/// <summary>Options for generating the report</summary>
 		private CROTranscript m_reportOptions = null;
@@ -410,6 +411,7 @@ namespace FTI.Trialmax.Reports
 					m_ctrlPageHeaderSubsequent.Checked = Options.PageHeaderSubsequent;
 					m_ctrlPageFooter.Checked = Options.PageFooter;
 					m_ctrlMediumFont.Checked = Options.MediumFont;
+                    m_ctrlShowEditText.Checked = Options.ShowEditedText;
 					m_ctrlSaveData.Checked = Options.SaveData;
 					m_ctrlAlternate.Text = Options.Alternate;
 					
@@ -451,6 +453,7 @@ namespace FTI.Trialmax.Reports
 					Options.PageHeaderSubsequent = m_ctrlPageHeaderSubsequent.Checked;
 					Options.PageFooter = m_ctrlPageFooter.Checked;
 					Options.MediumFont = m_ctrlMediumFont.Checked;
+                    Options.ShowEditedText = m_ctrlShowEditText.Checked;
 					Options.Template = m_ctrlTemplates.SelectedIndex + 1;
 					Options.SaveData = m_ctrlSaveData.Checked;
 					Options.Alternate = m_ctrlAlternate.Text;
@@ -522,6 +525,12 @@ namespace FTI.Trialmax.Reports
 				
 			//	Highlight the scenes
 			if(SetSourceHighlights() == false) return false;
+
+            //Show any edited text in transcript
+            if (Options.ShowEditedText)
+            {
+                if (SetEditedTranscriptText() == false) return false;
+            }
 
 			if((Options.SaveData == true) && (Options.ShowSaveData == true))
 			{
@@ -1018,7 +1027,84 @@ namespace FTI.Trialmax.Reports
 			}
 			
 		}// private bool SetSourceHighlight(long lFirstPL, long lLastPL, long lHighlighter)
-		
+
+
+        /// <summary>This method is called to set the highlights for all scenes in the active script</summary>
+        /// <returns>true if successful</returns>
+        private bool SetEditedTranscriptText()
+        {
+            CDxTertiary dxDesignation = null;
+
+            Debug.Assert(m_dxScenes != null);
+            if (m_dxScenes == null) return false;
+
+            //	Iterate the collection of scenes and highlight each designation
+            foreach (CDxSecondary dxScene in m_dxScenes)
+            {
+                //	Only designations should be in the collection
+                Debug.Assert(dxScene.GetSource() != null);
+                Debug.Assert(dxScene.GetSource().MediaType == TmaxMediaTypes.Designation);
+
+                if ((dxScene.GetSource() != null) && (dxScene.GetSource().MediaType == TmaxMediaTypes.Designation))
+                {
+                    dxDesignation = (CDxTertiary)(dxScene.GetSource());
+
+                    //	Is this designation created from the selected deposition?
+                    if ((m_dxDeposition == null) || (ReferenceEquals(dxDesignation.Secondary.Primary, m_dxDeposition) == true))
+                    {
+                        //	Get the fully qualified path to the XML file containing the transcript text
+                        string strFileSpec = m_tmaxDatabase.GetFileSpec(dxDesignation);
+                        if (System.IO.File.Exists(strFileSpec) == false)
+                        {
+                            m_tmaxEventSource.FireError(this, "AddSource", m_tmaxErrorBuilder.Message(ERROR_FILL_TRANSCRIPT_EX, dxScene.GetBarcode(false), strFileSpec));
+                            return false;
+                        }
+
+                        //	Load the file
+                        CXmlDesignation xmlDesignation = new CXmlDesignation();
+                        xmlDesignation.FastFill(strFileSpec, true, true);
+
+                        foreach (CXmlTranscript O in xmlDesignation.Transcripts)
+                        {
+                        //	Locate the rows that fall within this range
+                            if (O.Edited)
+                            {
+                                var filteredRow = m_dsReportSource.Tables[TRANSCRIPT_TABLE_NAME].Select("PL = " + O.PL + " and Line = " + O.Line);
+                                if (filteredRow != null && filteredRow.Length > 0)
+                                {
+                                    filteredRow[0]["LineText"] = O.Text;
+                                    filteredRow[0]["Edit"] = "E";
+                                }
+                            }
+                            //foreach (DataRow dr in m_dsReportSource.Tables[TRANSCRIPT_TABLE_NAME].Rows)
+                            //{
+                            //    if (O.Edited)
+                            //    {
+                            //        long lPL = (long)((int)(dr["PL"]));
+
+                            //        //	Is this row within range?
+                            //        if (lPL == O.PL && Convert.ToInt32(dr["Line"]) == O.Line)
+                            //        {
+                            //            dr["LineText"] = O.Text;
+                            //        }
+                            //    }                              
+                            //}
+                        }
+
+                        //	Clean up
+                        xmlDesignation.Clear();
+                        xmlDesignation = null;
+                    }
+
+                }
+
+            }// foreach(CDxSecondary dxScene in m_dxScenes)
+
+            //m_tmaxEventSource.FireElapsed(this, "SetSourceHighlights", "Time to highlight transcript: ");
+            return true;
+
+        }// private bool SetEditedTranscriptText()()
+
 		/// <summary>This method is called to add a line to the transcript table</summary>
 		/// <param name="xmlTranscript">The XML transcript line descriptor</param>
 		/// <param name="bPageNumber">True to include the page number</param>
@@ -1049,6 +1135,7 @@ namespace FTI.Trialmax.Reports
 				dr["H5"] = DEFAULT_HIGHLIGHTER;
 				dr["H6"] = DEFAULT_HIGHLIGHTER;
 				dr["H7"] = DEFAULT_HIGHLIGHTER;
+                dr["Edit"] = "";
 				
 				//	Add the row
 				m_dsReportSource.Tables[TRANSCRIPT_TABLE_NAME].Rows.Add(dr);
@@ -1221,318 +1308,330 @@ namespace FTI.Trialmax.Reports
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.Resources.ResourceManager resources = new System.Resources.ResourceManager(typeof(CRFTranscript));
-			this.m_ctrlOK = new System.Windows.Forms.Button();
-			this.m_ctrlCancel = new System.Windows.Forms.Button();
-			this.m_ctrlOptionsGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlMediumFont = new System.Windows.Forms.CheckBox();
-			this.m_ctrlPageFooter = new System.Windows.Forms.CheckBox();
-			this.m_ctrlPageHeaderSubsequent = new System.Windows.Forms.CheckBox();
-			this.m_ctrlPageHeaderFirst = new System.Windows.Forms.CheckBox();
-			this.m_ctrlVerticalHighlights = new System.Windows.Forms.CheckBox();
-			this.m_ctrlBoldDesignations = new System.Windows.Forms.CheckBox();
-			this.m_ctrlImages = new System.Windows.Forms.ImageList(this.components);
-			this.m_ctrlSaveData = new System.Windows.Forms.CheckBox();
-			this.m_ctrlContentGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlTranscripts = new System.Windows.Forms.CheckedListBox();
-			this.m_ctrlTranscriptsLabel = new System.Windows.Forms.Label();
-			this.m_ctrlScript = new System.Windows.Forms.Label();
-			this.m_ctrlScriptLabel = new System.Windows.Forms.Label();
-			this.m_ctrlStyleGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlAlternateLabel = new System.Windows.Forms.Label();
-			this.m_ctrlTemplates = new System.Windows.Forms.ComboBox();
-			this.m_ctrlAlternate = new System.Windows.Forms.TextBox();
-			this.m_ctrlBrowse = new System.Windows.Forms.Button();
-			this.m_ctrlExportGroup = new System.Windows.Forms.GroupBox();
-			this.m_ctrlExportFolderLabel = new System.Windows.Forms.Label();
-			this.m_ctrlExportFolder = new System.Windows.Forms.TextBox();
-			this.m_ctrlBrowseExportFolder = new System.Windows.Forms.Button();
-			this.m_ctrlExportFormats = new System.Windows.Forms.ComboBox();
-			this.m_ctrlPreviewExports = new System.Windows.Forms.CheckBox();
-			this.m_ctrlOptionsGroup.SuspendLayout();
-			this.m_ctrlContentGroup.SuspendLayout();
-			this.m_ctrlStyleGroup.SuspendLayout();
-			this.m_ctrlExportGroup.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// m_ctrlOK
-			// 
-			this.m_ctrlOK.Location = new System.Drawing.Point(416, 280);
-			this.m_ctrlOK.Name = "m_ctrlOK";
-			this.m_ctrlOK.TabIndex = 3;
-			this.m_ctrlOK.Text = "&OK";
-			// 
-			// m_ctrlCancel
-			// 
-			this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.m_ctrlCancel.Location = new System.Drawing.Point(504, 280);
-			this.m_ctrlCancel.Name = "m_ctrlCancel";
-			this.m_ctrlCancel.TabIndex = 4;
-			this.m_ctrlCancel.Text = "&Cancel";
-			// 
-			// m_ctrlOptionsGroup
-			// 
-			this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlMediumFont);
-			this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlPageFooter);
-			this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlPageHeaderSubsequent);
-			this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlPageHeaderFirst);
-			this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlVerticalHighlights);
-			this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlBoldDesignations);
-			this.m_ctrlOptionsGroup.Location = new System.Drawing.Point(304, 8);
-			this.m_ctrlOptionsGroup.Name = "m_ctrlOptionsGroup";
-			this.m_ctrlOptionsGroup.Size = new System.Drawing.Size(288, 156);
-			this.m_ctrlOptionsGroup.TabIndex = 2;
-			this.m_ctrlOptionsGroup.TabStop = false;
-			this.m_ctrlOptionsGroup.Text = "Options";
-			// 
-			// m_ctrlMediumFont
-			// 
-			this.m_ctrlMediumFont.Location = new System.Drawing.Point(12, 129);
-			this.m_ctrlMediumFont.Name = "m_ctrlMediumFont";
-			this.m_ctrlMediumFont.Size = new System.Drawing.Size(252, 16);
-			this.m_ctrlMediumFont.TabIndex = 5;
-			this.m_ctrlMediumFont.Text = "Medium Font";
-			// 
-			// m_ctrlPageFooter
-			// 
-			this.m_ctrlPageFooter.Checked = true;
-			this.m_ctrlPageFooter.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_ctrlPageFooter.Location = new System.Drawing.Point(12, 108);
-			this.m_ctrlPageFooter.Name = "m_ctrlPageFooter";
-			this.m_ctrlPageFooter.Size = new System.Drawing.Size(252, 16);
-			this.m_ctrlPageFooter.TabIndex = 4;
-			this.m_ctrlPageFooter.Text = "Include page footer";
-			// 
-			// m_ctrlPageHeaderSubsequent
-			// 
-			this.m_ctrlPageHeaderSubsequent.Checked = true;
-			this.m_ctrlPageHeaderSubsequent.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_ctrlPageHeaderSubsequent.Location = new System.Drawing.Point(12, 87);
-			this.m_ctrlPageHeaderSubsequent.Name = "m_ctrlPageHeaderSubsequent";
-			this.m_ctrlPageHeaderSubsequent.Size = new System.Drawing.Size(252, 16);
-			this.m_ctrlPageHeaderSubsequent.TabIndex = 3;
-			this.m_ctrlPageHeaderSubsequent.Text = "Include page header on subsequent pages";
-			// 
-			// m_ctrlPageHeaderFirst
-			// 
-			this.m_ctrlPageHeaderFirst.Checked = true;
-			this.m_ctrlPageHeaderFirst.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_ctrlPageHeaderFirst.Location = new System.Drawing.Point(12, 66);
-			this.m_ctrlPageHeaderFirst.Name = "m_ctrlPageHeaderFirst";
-			this.m_ctrlPageHeaderFirst.Size = new System.Drawing.Size(252, 16);
-			this.m_ctrlPageHeaderFirst.TabIndex = 2;
-			this.m_ctrlPageHeaderFirst.Text = "Include page header on first page";
-			this.m_ctrlPageHeaderFirst.Click += new System.EventHandler(this.OnClickPageHeaderFirst);
-			// 
-			// m_ctrlVerticalHighlights
-			// 
-			this.m_ctrlVerticalHighlights.Checked = true;
-			this.m_ctrlVerticalHighlights.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_ctrlVerticalHighlights.Location = new System.Drawing.Point(12, 45);
-			this.m_ctrlVerticalHighlights.Name = "m_ctrlVerticalHighlights";
-			this.m_ctrlVerticalHighlights.Size = new System.Drawing.Size(252, 16);
-			this.m_ctrlVerticalHighlights.TabIndex = 1;
-			this.m_ctrlVerticalHighlights.Text = "Vertical Highlights";
-			// 
-			// m_ctrlBoldDesignations
-			// 
-			this.m_ctrlBoldDesignations.Checked = true;
-			this.m_ctrlBoldDesignations.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.m_ctrlBoldDesignations.Location = new System.Drawing.Point(12, 24);
-			this.m_ctrlBoldDesignations.Name = "m_ctrlBoldDesignations";
-			this.m_ctrlBoldDesignations.Size = new System.Drawing.Size(252, 16);
-			this.m_ctrlBoldDesignations.TabIndex = 0;
-			this.m_ctrlBoldDesignations.Text = "Bold Designations";
-			// 
-			// m_ctrlImages
-			// 
-			this.m_ctrlImages.ImageSize = new System.Drawing.Size(16, 16);
-			this.m_ctrlImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_ctrlImages.ImageStream")));
-			this.m_ctrlImages.TransparentColor = System.Drawing.Color.Magenta;
-			// 
-			// m_ctrlSaveData
-			// 
-			this.m_ctrlSaveData.Location = new System.Drawing.Point(292, 280);
-			this.m_ctrlSaveData.Name = "m_ctrlSaveData";
-			this.m_ctrlSaveData.Size = new System.Drawing.Size(92, 16);
-			this.m_ctrlSaveData.TabIndex = 6;
-			this.m_ctrlSaveData.Text = "Save Data";
-			// 
-			// m_ctrlContentGroup
-			// 
-			this.m_ctrlContentGroup.Controls.Add(this.m_ctrlTranscripts);
-			this.m_ctrlContentGroup.Controls.Add(this.m_ctrlTranscriptsLabel);
-			this.m_ctrlContentGroup.Controls.Add(this.m_ctrlScript);
-			this.m_ctrlContentGroup.Controls.Add(this.m_ctrlScriptLabel);
-			this.m_ctrlContentGroup.Location = new System.Drawing.Point(7, 8);
-			this.m_ctrlContentGroup.Name = "m_ctrlContentGroup";
-			this.m_ctrlContentGroup.Size = new System.Drawing.Size(288, 156);
-			this.m_ctrlContentGroup.TabIndex = 0;
-			this.m_ctrlContentGroup.TabStop = false;
-			this.m_ctrlContentGroup.Text = "Content";
-			// 
-			// m_ctrlTranscripts
-			// 
-			this.m_ctrlTranscripts.Location = new System.Drawing.Point(8, 68);
-			this.m_ctrlTranscripts.Name = "m_ctrlTranscripts";
-			this.m_ctrlTranscripts.Size = new System.Drawing.Size(272, 79);
-			this.m_ctrlTranscripts.TabIndex = 4;
-			// 
-			// m_ctrlTranscriptsLabel
-			// 
-			this.m_ctrlTranscriptsLabel.Location = new System.Drawing.Point(8, 48);
-			this.m_ctrlTranscriptsLabel.Name = "m_ctrlTranscriptsLabel";
-			this.m_ctrlTranscriptsLabel.Size = new System.Drawing.Size(192, 16);
-			this.m_ctrlTranscriptsLabel.TabIndex = 2;
-			this.m_ctrlTranscriptsLabel.Text = "Transcript(s):";
-			// 
-			// m_ctrlScript
-			// 
-			this.m_ctrlScript.Location = new System.Drawing.Point(64, 24);
-			this.m_ctrlScript.Name = "m_ctrlScript";
-			this.m_ctrlScript.Size = new System.Drawing.Size(216, 16);
-			this.m_ctrlScript.TabIndex = 1;
-			// 
-			// m_ctrlScriptLabel
-			// 
-			this.m_ctrlScriptLabel.Location = new System.Drawing.Point(8, 24);
-			this.m_ctrlScriptLabel.Name = "m_ctrlScriptLabel";
-			this.m_ctrlScriptLabel.Size = new System.Drawing.Size(52, 16);
-			this.m_ctrlScriptLabel.TabIndex = 0;
-			this.m_ctrlScriptLabel.Text = "Script(s):";
-			// 
-			// m_ctrlStyleGroup
-			// 
-			this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlAlternateLabel);
-			this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlTemplates);
-			this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlAlternate);
-			this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlBrowse);
-			this.m_ctrlStyleGroup.Location = new System.Drawing.Point(7, 172);
-			this.m_ctrlStyleGroup.Name = "m_ctrlStyleGroup";
-			this.m_ctrlStyleGroup.Size = new System.Drawing.Size(288, 92);
-			this.m_ctrlStyleGroup.TabIndex = 1;
-			this.m_ctrlStyleGroup.TabStop = false;
-			this.m_ctrlStyleGroup.Text = "Style";
-			// 
-			// m_ctrlAlternateLabel
-			// 
-			this.m_ctrlAlternateLabel.Location = new System.Drawing.Point(8, 48);
-			this.m_ctrlAlternateLabel.Name = "m_ctrlAlternateLabel";
-			this.m_ctrlAlternateLabel.Size = new System.Drawing.Size(248, 16);
-			this.m_ctrlAlternateLabel.TabIndex = 3;
-			this.m_ctrlAlternateLabel.Text = "Alternate Report Template";
-			this.m_ctrlAlternateLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// m_ctrlTemplates
-			// 
-			this.m_ctrlTemplates.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.m_ctrlTemplates.Location = new System.Drawing.Point(8, 20);
-			this.m_ctrlTemplates.Name = "m_ctrlTemplates";
-			this.m_ctrlTemplates.Size = new System.Drawing.Size(272, 21);
-			this.m_ctrlTemplates.TabIndex = 0;
-			// 
-			// m_ctrlAlternate
-			// 
-			this.m_ctrlAlternate.Location = new System.Drawing.Point(8, 64);
-			this.m_ctrlAlternate.Name = "m_ctrlAlternate";
-			this.m_ctrlAlternate.Size = new System.Drawing.Size(240, 20);
-			this.m_ctrlAlternate.TabIndex = 1;
-			this.m_ctrlAlternate.Text = "";
-			// 
-			// m_ctrlBrowse
-			// 
-			this.m_ctrlBrowse.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-			this.m_ctrlBrowse.ImageIndex = 0;
-			this.m_ctrlBrowse.ImageList = this.m_ctrlImages;
-			this.m_ctrlBrowse.Location = new System.Drawing.Point(256, 64);
-			this.m_ctrlBrowse.Name = "m_ctrlBrowse";
-			this.m_ctrlBrowse.Size = new System.Drawing.Size(24, 20);
-			this.m_ctrlBrowse.TabIndex = 2;
-			this.m_ctrlBrowse.Click += new System.EventHandler(this.OnClickBrowse);
-			// 
-			// m_ctrlExportGroup
-			// 
-			this.m_ctrlExportGroup.Controls.Add(this.m_ctrlExportFolderLabel);
-			this.m_ctrlExportGroup.Controls.Add(this.m_ctrlExportFolder);
-			this.m_ctrlExportGroup.Controls.Add(this.m_ctrlBrowseExportFolder);
-			this.m_ctrlExportGroup.Controls.Add(this.m_ctrlExportFormats);
-			this.m_ctrlExportGroup.Controls.Add(this.m_ctrlPreviewExports);
-			this.m_ctrlExportGroup.Location = new System.Drawing.Point(304, 172);
-			this.m_ctrlExportGroup.Name = "m_ctrlExportGroup";
-			this.m_ctrlExportGroup.Size = new System.Drawing.Size(288, 92);
-			this.m_ctrlExportGroup.TabIndex = 9;
-			this.m_ctrlExportGroup.TabStop = false;
-			this.m_ctrlExportGroup.Text = "Export";
-			// 
-			// m_ctrlExportFolderLabel
-			// 
-			this.m_ctrlExportFolderLabel.Location = new System.Drawing.Point(10, 48);
-			this.m_ctrlExportFolderLabel.Name = "m_ctrlExportFolderLabel";
-			this.m_ctrlExportFolderLabel.Size = new System.Drawing.Size(210, 16);
-			this.m_ctrlExportFolderLabel.TabIndex = 6;
-			this.m_ctrlExportFolderLabel.Text = "Target Folder";
-			this.m_ctrlExportFolderLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
-			// 
-			// m_ctrlExportFolder
-			// 
-			this.m_ctrlExportFolder.Location = new System.Drawing.Point(6, 64);
-			this.m_ctrlExportFolder.Name = "m_ctrlExportFolder";
-			this.m_ctrlExportFolder.Size = new System.Drawing.Size(244, 20);
-			this.m_ctrlExportFolder.TabIndex = 4;
-			this.m_ctrlExportFolder.Text = "";
-			// 
-			// m_ctrlBrowseExportFolder
-			// 
-			this.m_ctrlBrowseExportFolder.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
-			this.m_ctrlBrowseExportFolder.ImageIndex = 0;
-			this.m_ctrlBrowseExportFolder.ImageList = this.m_ctrlImages;
-			this.m_ctrlBrowseExportFolder.Location = new System.Drawing.Point(255, 64);
-			this.m_ctrlBrowseExportFolder.Name = "m_ctrlBrowseExportFolder";
-			this.m_ctrlBrowseExportFolder.Size = new System.Drawing.Size(24, 20);
-			this.m_ctrlBrowseExportFolder.TabIndex = 5;
-			this.m_ctrlBrowseExportFolder.Click += new System.EventHandler(this.OnBrowseExportFolder);
-			// 
-			// m_ctrlExportFormats
-			// 
-			this.m_ctrlExportFormats.Location = new System.Drawing.Point(8, 20);
-			this.m_ctrlExportFormats.Name = "m_ctrlExportFormats";
-			this.m_ctrlExportFormats.Size = new System.Drawing.Size(172, 21);
-			this.m_ctrlExportFormats.TabIndex = 0;
-			this.m_ctrlExportFormats.Text = "comboBox1";
-			this.m_ctrlExportFormats.SelectedIndexChanged += new System.EventHandler(this.OnExportFormatsSelChanged);
-			// 
-			// m_ctrlPreviewExports
-			// 
-			this.m_ctrlPreviewExports.Location = new System.Drawing.Point(205, 25);
-			this.m_ctrlPreviewExports.Name = "m_ctrlPreviewExports";
-			this.m_ctrlPreviewExports.Size = new System.Drawing.Size(72, 16);
-			this.m_ctrlPreviewExports.TabIndex = 2;
-			this.m_ctrlPreviewExports.Text = "Preview";
-			// 
-			// CRFTranscript
-			// 
-			this.AcceptButton = this.m_ctrlOK;
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.m_ctrlCancel;
-			this.ClientSize = new System.Drawing.Size(598, 315);
-			this.ControlBox = false;
-			this.Controls.Add(this.m_ctrlExportGroup);
-			this.Controls.Add(this.m_ctrlStyleGroup);
-			this.Controls.Add(this.m_ctrlContentGroup);
-			this.Controls.Add(this.m_ctrlOptionsGroup);
-			this.Controls.Add(this.m_ctrlCancel);
-			this.Controls.Add(this.m_ctrlOK);
-			this.Controls.Add(this.m_ctrlSaveData);
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.Name = "CRFTranscript";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Transcript Report";
-			this.m_ctrlOptionsGroup.ResumeLayout(false);
-			this.m_ctrlContentGroup.ResumeLayout(false);
-			this.m_ctrlStyleGroup.ResumeLayout(false);
-			this.m_ctrlExportGroup.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CRFTranscript));
+            this.m_ctrlOK = new System.Windows.Forms.Button();
+            this.m_ctrlCancel = new System.Windows.Forms.Button();
+            this.m_ctrlOptionsGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlMediumFont = new System.Windows.Forms.CheckBox();
+            this.m_ctrlPageFooter = new System.Windows.Forms.CheckBox();
+            this.m_ctrlPageHeaderSubsequent = new System.Windows.Forms.CheckBox();
+            this.m_ctrlPageHeaderFirst = new System.Windows.Forms.CheckBox();
+            this.m_ctrlVerticalHighlights = new System.Windows.Forms.CheckBox();
+            this.m_ctrlBoldDesignations = new System.Windows.Forms.CheckBox();
+            this.m_ctrlImages = new System.Windows.Forms.ImageList(this.components);
+            this.m_ctrlSaveData = new System.Windows.Forms.CheckBox();
+            this.m_ctrlContentGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlTranscripts = new System.Windows.Forms.CheckedListBox();
+            this.m_ctrlTranscriptsLabel = new System.Windows.Forms.Label();
+            this.m_ctrlScript = new System.Windows.Forms.Label();
+            this.m_ctrlScriptLabel = new System.Windows.Forms.Label();
+            this.m_ctrlStyleGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlAlternateLabel = new System.Windows.Forms.Label();
+            this.m_ctrlTemplates = new System.Windows.Forms.ComboBox();
+            this.m_ctrlAlternate = new System.Windows.Forms.TextBox();
+            this.m_ctrlBrowse = new System.Windows.Forms.Button();
+            this.m_ctrlExportGroup = new System.Windows.Forms.GroupBox();
+            this.m_ctrlExportFolderLabel = new System.Windows.Forms.Label();
+            this.m_ctrlExportFolder = new System.Windows.Forms.TextBox();
+            this.m_ctrlBrowseExportFolder = new System.Windows.Forms.Button();
+            this.m_ctrlExportFormats = new System.Windows.Forms.ComboBox();
+            this.m_ctrlPreviewExports = new System.Windows.Forms.CheckBox();
+            this.m_ctrlShowEditText = new System.Windows.Forms.CheckBox();
+            this.m_ctrlOptionsGroup.SuspendLayout();
+            this.m_ctrlContentGroup.SuspendLayout();
+            this.m_ctrlStyleGroup.SuspendLayout();
+            this.m_ctrlExportGroup.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // m_ctrlOK
+            // 
+            this.m_ctrlOK.Location = new System.Drawing.Point(416, 280);
+            this.m_ctrlOK.Name = "m_ctrlOK";
+            this.m_ctrlOK.Size = new System.Drawing.Size(75, 23);
+            this.m_ctrlOK.TabIndex = 3;
+            this.m_ctrlOK.Text = "&OK";
+            // 
+            // m_ctrlCancel
+            // 
+            this.m_ctrlCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.m_ctrlCancel.Location = new System.Drawing.Point(504, 280);
+            this.m_ctrlCancel.Name = "m_ctrlCancel";
+            this.m_ctrlCancel.Size = new System.Drawing.Size(75, 23);
+            this.m_ctrlCancel.TabIndex = 4;
+            this.m_ctrlCancel.Text = "&Cancel";
+            // 
+            // m_ctrlOptionsGroup
+            // 
+            this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlShowEditText);
+            this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlMediumFont);
+            this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlPageFooter);
+            this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlPageHeaderSubsequent);
+            this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlPageHeaderFirst);
+            this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlVerticalHighlights);
+            this.m_ctrlOptionsGroup.Controls.Add(this.m_ctrlBoldDesignations);
+            this.m_ctrlOptionsGroup.Location = new System.Drawing.Point(304, 8);
+            this.m_ctrlOptionsGroup.Name = "m_ctrlOptionsGroup";
+            this.m_ctrlOptionsGroup.Size = new System.Drawing.Size(288, 160);
+            this.m_ctrlOptionsGroup.TabIndex = 2;
+            this.m_ctrlOptionsGroup.TabStop = false;
+            this.m_ctrlOptionsGroup.Text = "Options";
+            // 
+            // m_ctrlMediumFont
+            // 
+            this.m_ctrlMediumFont.Location = new System.Drawing.Point(12, 121);
+            this.m_ctrlMediumFont.Name = "m_ctrlMediumFont";
+            this.m_ctrlMediumFont.Size = new System.Drawing.Size(252, 16);
+            this.m_ctrlMediumFont.TabIndex = 5;
+            this.m_ctrlMediumFont.Text = "Medium Font";
+            // 
+            // m_ctrlPageFooter
+            // 
+            this.m_ctrlPageFooter.Checked = true;
+            this.m_ctrlPageFooter.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.m_ctrlPageFooter.Location = new System.Drawing.Point(12, 100);
+            this.m_ctrlPageFooter.Name = "m_ctrlPageFooter";
+            this.m_ctrlPageFooter.Size = new System.Drawing.Size(252, 16);
+            this.m_ctrlPageFooter.TabIndex = 4;
+            this.m_ctrlPageFooter.Text = "Include page footer";
+            // 
+            // m_ctrlPageHeaderSubsequent
+            // 
+            this.m_ctrlPageHeaderSubsequent.Checked = true;
+            this.m_ctrlPageHeaderSubsequent.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.m_ctrlPageHeaderSubsequent.Location = new System.Drawing.Point(12, 79);
+            this.m_ctrlPageHeaderSubsequent.Name = "m_ctrlPageHeaderSubsequent";
+            this.m_ctrlPageHeaderSubsequent.Size = new System.Drawing.Size(252, 16);
+            this.m_ctrlPageHeaderSubsequent.TabIndex = 3;
+            this.m_ctrlPageHeaderSubsequent.Text = "Include page header on subsequent pages";
+            // 
+            // m_ctrlPageHeaderFirst
+            // 
+            this.m_ctrlPageHeaderFirst.Checked = true;
+            this.m_ctrlPageHeaderFirst.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.m_ctrlPageHeaderFirst.Location = new System.Drawing.Point(12, 58);
+            this.m_ctrlPageHeaderFirst.Name = "m_ctrlPageHeaderFirst";
+            this.m_ctrlPageHeaderFirst.Size = new System.Drawing.Size(252, 16);
+            this.m_ctrlPageHeaderFirst.TabIndex = 2;
+            this.m_ctrlPageHeaderFirst.Text = "Include page header on first page";
+            this.m_ctrlPageHeaderFirst.Click += new System.EventHandler(this.OnClickPageHeaderFirst);
+            // 
+            // m_ctrlVerticalHighlights
+            // 
+            this.m_ctrlVerticalHighlights.Checked = true;
+            this.m_ctrlVerticalHighlights.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.m_ctrlVerticalHighlights.Location = new System.Drawing.Point(12, 37);
+            this.m_ctrlVerticalHighlights.Name = "m_ctrlVerticalHighlights";
+            this.m_ctrlVerticalHighlights.Size = new System.Drawing.Size(252, 16);
+            this.m_ctrlVerticalHighlights.TabIndex = 1;
+            this.m_ctrlVerticalHighlights.Text = "Vertical Highlights";
+            // 
+            // m_ctrlBoldDesignations
+            // 
+            this.m_ctrlBoldDesignations.Checked = true;
+            this.m_ctrlBoldDesignations.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.m_ctrlBoldDesignations.Location = new System.Drawing.Point(12, 16);
+            this.m_ctrlBoldDesignations.Name = "m_ctrlBoldDesignations";
+            this.m_ctrlBoldDesignations.Size = new System.Drawing.Size(252, 16);
+            this.m_ctrlBoldDesignations.TabIndex = 0;
+            this.m_ctrlBoldDesignations.Text = "Bold Designations";
+            // 
+            // m_ctrlImages
+            // 
+            this.m_ctrlImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("m_ctrlImages.ImageStream")));
+            this.m_ctrlImages.TransparentColor = System.Drawing.Color.Magenta;
+            this.m_ctrlImages.Images.SetKeyName(0, "");
+            // 
+            // m_ctrlSaveData
+            // 
+            this.m_ctrlSaveData.Location = new System.Drawing.Point(292, 280);
+            this.m_ctrlSaveData.Name = "m_ctrlSaveData";
+            this.m_ctrlSaveData.Size = new System.Drawing.Size(92, 16);
+            this.m_ctrlSaveData.TabIndex = 6;
+            this.m_ctrlSaveData.Text = "Save Data";
+            // 
+            // m_ctrlContentGroup
+            // 
+            this.m_ctrlContentGroup.Controls.Add(this.m_ctrlTranscripts);
+            this.m_ctrlContentGroup.Controls.Add(this.m_ctrlTranscriptsLabel);
+            this.m_ctrlContentGroup.Controls.Add(this.m_ctrlScript);
+            this.m_ctrlContentGroup.Controls.Add(this.m_ctrlScriptLabel);
+            this.m_ctrlContentGroup.Location = new System.Drawing.Point(7, 8);
+            this.m_ctrlContentGroup.Name = "m_ctrlContentGroup";
+            this.m_ctrlContentGroup.Size = new System.Drawing.Size(288, 156);
+            this.m_ctrlContentGroup.TabIndex = 0;
+            this.m_ctrlContentGroup.TabStop = false;
+            this.m_ctrlContentGroup.Text = "Content";
+            // 
+            // m_ctrlTranscripts
+            // 
+            this.m_ctrlTranscripts.Location = new System.Drawing.Point(8, 68);
+            this.m_ctrlTranscripts.Name = "m_ctrlTranscripts";
+            this.m_ctrlTranscripts.Size = new System.Drawing.Size(272, 79);
+            this.m_ctrlTranscripts.TabIndex = 4;
+            // 
+            // m_ctrlTranscriptsLabel
+            // 
+            this.m_ctrlTranscriptsLabel.Location = new System.Drawing.Point(8, 48);
+            this.m_ctrlTranscriptsLabel.Name = "m_ctrlTranscriptsLabel";
+            this.m_ctrlTranscriptsLabel.Size = new System.Drawing.Size(192, 16);
+            this.m_ctrlTranscriptsLabel.TabIndex = 2;
+            this.m_ctrlTranscriptsLabel.Text = "Transcript(s):";
+            // 
+            // m_ctrlScript
+            // 
+            this.m_ctrlScript.Location = new System.Drawing.Point(64, 24);
+            this.m_ctrlScript.Name = "m_ctrlScript";
+            this.m_ctrlScript.Size = new System.Drawing.Size(216, 16);
+            this.m_ctrlScript.TabIndex = 1;
+            // 
+            // m_ctrlScriptLabel
+            // 
+            this.m_ctrlScriptLabel.Location = new System.Drawing.Point(8, 24);
+            this.m_ctrlScriptLabel.Name = "m_ctrlScriptLabel";
+            this.m_ctrlScriptLabel.Size = new System.Drawing.Size(52, 16);
+            this.m_ctrlScriptLabel.TabIndex = 0;
+            this.m_ctrlScriptLabel.Text = "Script(s):";
+            // 
+            // m_ctrlStyleGroup
+            // 
+            this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlAlternateLabel);
+            this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlTemplates);
+            this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlAlternate);
+            this.m_ctrlStyleGroup.Controls.Add(this.m_ctrlBrowse);
+            this.m_ctrlStyleGroup.Location = new System.Drawing.Point(7, 172);
+            this.m_ctrlStyleGroup.Name = "m_ctrlStyleGroup";
+            this.m_ctrlStyleGroup.Size = new System.Drawing.Size(288, 92);
+            this.m_ctrlStyleGroup.TabIndex = 1;
+            this.m_ctrlStyleGroup.TabStop = false;
+            this.m_ctrlStyleGroup.Text = "Style";
+            // 
+            // m_ctrlAlternateLabel
+            // 
+            this.m_ctrlAlternateLabel.Location = new System.Drawing.Point(8, 48);
+            this.m_ctrlAlternateLabel.Name = "m_ctrlAlternateLabel";
+            this.m_ctrlAlternateLabel.Size = new System.Drawing.Size(248, 16);
+            this.m_ctrlAlternateLabel.TabIndex = 3;
+            this.m_ctrlAlternateLabel.Text = "Alternate Report Template";
+            this.m_ctrlAlternateLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            // 
+            // m_ctrlTemplates
+            // 
+            this.m_ctrlTemplates.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.m_ctrlTemplates.Location = new System.Drawing.Point(8, 20);
+            this.m_ctrlTemplates.Name = "m_ctrlTemplates";
+            this.m_ctrlTemplates.Size = new System.Drawing.Size(272, 21);
+            this.m_ctrlTemplates.TabIndex = 0;
+            // 
+            // m_ctrlAlternate
+            // 
+            this.m_ctrlAlternate.Location = new System.Drawing.Point(8, 64);
+            this.m_ctrlAlternate.Name = "m_ctrlAlternate";
+            this.m_ctrlAlternate.Size = new System.Drawing.Size(240, 20);
+            this.m_ctrlAlternate.TabIndex = 1;
+            // 
+            // m_ctrlBrowse
+            // 
+            this.m_ctrlBrowse.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.m_ctrlBrowse.ImageIndex = 0;
+            this.m_ctrlBrowse.ImageList = this.m_ctrlImages;
+            this.m_ctrlBrowse.Location = new System.Drawing.Point(256, 64);
+            this.m_ctrlBrowse.Name = "m_ctrlBrowse";
+            this.m_ctrlBrowse.Size = new System.Drawing.Size(24, 20);
+            this.m_ctrlBrowse.TabIndex = 2;
+            this.m_ctrlBrowse.Click += new System.EventHandler(this.OnClickBrowse);
+            // 
+            // m_ctrlExportGroup
+            // 
+            this.m_ctrlExportGroup.Controls.Add(this.m_ctrlExportFolderLabel);
+            this.m_ctrlExportGroup.Controls.Add(this.m_ctrlExportFolder);
+            this.m_ctrlExportGroup.Controls.Add(this.m_ctrlBrowseExportFolder);
+            this.m_ctrlExportGroup.Controls.Add(this.m_ctrlExportFormats);
+            this.m_ctrlExportGroup.Controls.Add(this.m_ctrlPreviewExports);
+            this.m_ctrlExportGroup.Location = new System.Drawing.Point(304, 172);
+            this.m_ctrlExportGroup.Name = "m_ctrlExportGroup";
+            this.m_ctrlExportGroup.Size = new System.Drawing.Size(288, 92);
+            this.m_ctrlExportGroup.TabIndex = 9;
+            this.m_ctrlExportGroup.TabStop = false;
+            this.m_ctrlExportGroup.Text = "Export";
+            // 
+            // m_ctrlExportFolderLabel
+            // 
+            this.m_ctrlExportFolderLabel.Location = new System.Drawing.Point(10, 48);
+            this.m_ctrlExportFolderLabel.Name = "m_ctrlExportFolderLabel";
+            this.m_ctrlExportFolderLabel.Size = new System.Drawing.Size(210, 16);
+            this.m_ctrlExportFolderLabel.TabIndex = 6;
+            this.m_ctrlExportFolderLabel.Text = "Target Folder";
+            this.m_ctrlExportFolderLabel.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            // 
+            // m_ctrlExportFolder
+            // 
+            this.m_ctrlExportFolder.Location = new System.Drawing.Point(6, 64);
+            this.m_ctrlExportFolder.Name = "m_ctrlExportFolder";
+            this.m_ctrlExportFolder.Size = new System.Drawing.Size(244, 20);
+            this.m_ctrlExportFolder.TabIndex = 4;
+            // 
+            // m_ctrlBrowseExportFolder
+            // 
+            this.m_ctrlBrowseExportFolder.ImageAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.m_ctrlBrowseExportFolder.ImageIndex = 0;
+            this.m_ctrlBrowseExportFolder.ImageList = this.m_ctrlImages;
+            this.m_ctrlBrowseExportFolder.Location = new System.Drawing.Point(255, 64);
+            this.m_ctrlBrowseExportFolder.Name = "m_ctrlBrowseExportFolder";
+            this.m_ctrlBrowseExportFolder.Size = new System.Drawing.Size(24, 20);
+            this.m_ctrlBrowseExportFolder.TabIndex = 5;
+            this.m_ctrlBrowseExportFolder.Click += new System.EventHandler(this.OnBrowseExportFolder);
+            // 
+            // m_ctrlExportFormats
+            // 
+            this.m_ctrlExportFormats.Location = new System.Drawing.Point(8, 20);
+            this.m_ctrlExportFormats.Name = "m_ctrlExportFormats";
+            this.m_ctrlExportFormats.Size = new System.Drawing.Size(172, 21);
+            this.m_ctrlExportFormats.TabIndex = 0;
+            this.m_ctrlExportFormats.Text = "comboBox1";
+            this.m_ctrlExportFormats.SelectedIndexChanged += new System.EventHandler(this.OnExportFormatsSelChanged);
+            // 
+            // m_ctrlPreviewExports
+            // 
+            this.m_ctrlPreviewExports.Location = new System.Drawing.Point(205, 25);
+            this.m_ctrlPreviewExports.Name = "m_ctrlPreviewExports";
+            this.m_ctrlPreviewExports.Size = new System.Drawing.Size(72, 16);
+            this.m_ctrlPreviewExports.TabIndex = 2;
+            this.m_ctrlPreviewExports.Text = "Preview";
+            // 
+            // m_ctrlShowEditText
+            // 
+            this.m_ctrlShowEditText.Location = new System.Drawing.Point(12, 140);
+            this.m_ctrlShowEditText.Name = "m_ctrlShowEditText";
+            this.m_ctrlShowEditText.Size = new System.Drawing.Size(252, 16);
+            this.m_ctrlShowEditText.TabIndex = 6;
+            this.m_ctrlShowEditText.Text = "Show Edited Text";
+            // 
+            // CRFTranscript
+            // 
+            this.AcceptButton = this.m_ctrlOK;
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.CancelButton = this.m_ctrlCancel;
+            this.ClientSize = new System.Drawing.Size(598, 315);
+            this.ControlBox = false;
+            this.Controls.Add(this.m_ctrlExportGroup);
+            this.Controls.Add(this.m_ctrlStyleGroup);
+            this.Controls.Add(this.m_ctrlContentGroup);
+            this.Controls.Add(this.m_ctrlOptionsGroup);
+            this.Controls.Add(this.m_ctrlCancel);
+            this.Controls.Add(this.m_ctrlOK);
+            this.Controls.Add(this.m_ctrlSaveData);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Name = "CRFTranscript";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Transcript Report";
+            this.m_ctrlOptionsGroup.ResumeLayout(false);
+            this.m_ctrlContentGroup.ResumeLayout(false);
+            this.m_ctrlStyleGroup.ResumeLayout(false);
+            this.m_ctrlStyleGroup.PerformLayout();
+            this.m_ctrlExportGroup.ResumeLayout(false);
+            this.m_ctrlExportGroup.PerformLayout();
+            this.ResumeLayout(false);
 
 		}
 		

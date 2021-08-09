@@ -132,7 +132,8 @@
 #define TMTB_NUDGELEFT					83
 #define TMTB_NUDGERIGHT					84
 #define TMTB_SAVENUDGE					85
-#define TMTB_MAXBUTTONS					86
+#define TMTB_ADJUSTABLECALLOUT			86
+#define TMTB_MAXBUTTONS					87
 
 //	These constants are used to map a button's identifier to its index in the
 //	image strip. They should be enumerated in the same order in which the
@@ -223,7 +224,8 @@
 #define	TMTB_IMAGE_NUDGELEFT			83
 #define	TMTB_IMAGE_NUDGERIGHT			84
 #define	TMTB_IMAGE_SAVENUDGE			85
-#define TMTB_MAXIMAGES					86
+#define	TMTB_IMAGE_ADJUSTABLECALLOUT	86
+#define TMTB_MAXIMAGES					87
 
 //	Default property values
 #define DEFAULT_TBINIFILENAME			""
